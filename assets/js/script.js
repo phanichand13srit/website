@@ -550,18 +550,24 @@ document.addEventListener("DOMContentLoaded", () => {
         try {
             const user = JSON.parse(localStorage.getItem('arshith_user'));
             const loginBtn = document.querySelector('.action-btn.login-btn');
-            if (loginBtn && user && user.name) {
-                const path = window.location.pathname;
-                let profileUrl = 'pages/profile.html';
-                if (path.includes('/pages/auth/') || path.includes('/pages/categories/') || path.includes('/pages/policies/')) {
-                    profileUrl = '../profile.html';
-                } else if (path.includes('/pages/')) {
-                    profileUrl = 'profile.html';
-                }
+            if (!loginBtn) return;
+
+            const path = window.location.pathname;
+            const isSubpage = path.includes('/pages/');
+            const isDeep = path.includes('/pages/auth/') || path.includes('/pages/categories/') || path.includes('/pages/policies/');
+
+            if (user && user.name) {
+                const profileUrl = isDeep ? '../profile.html' : (isSubpage ? 'profile.html' : 'pages/profile.html');
                 loginBtn.href = profileUrl;
                 loginBtn.title = `Account: ${user.name}`;
                 loginBtn.style.color = '#0f7139';
                 loginBtn.classList.add('user-logged-in');
+            } else {
+                const loginUrl = isDeep ? 'login.html' : (isSubpage ? 'auth/login.html' : 'pages/auth/login.html');
+                loginBtn.href = loginUrl;
+                loginBtn.title = 'Log In';
+                loginBtn.style.color = '';
+                loginBtn.classList.remove('user-logged-in');
             }
         } catch (e) {}
     }

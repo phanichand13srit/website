@@ -15,8 +15,10 @@
 
     <!-- Stylesheet -->
     <link rel="stylesheet" href="../assets/css/style.css?v=3.0">
+    <link rel="stylesheet" href="../assets/css/pages.css">
 
-        <link rel="stylesheet" href="../assets/css/pages.css">
+    <!-- Google Identity Services SDK -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 
 <body>
@@ -428,12 +430,20 @@
 
         function handleLogout() {
             localStorage.removeItem('arshith_user');
+            sessionStorage.clear();
+
+            if (window.google && google.accounts && google.accounts.id) {
+                try {
+                    google.accounts.id.disableAutoSelect();
+                } catch (err) {}
+            }
+
             if (typeof showToast === 'function') {
                 showToast('Logged out successfully');
             }
             setTimeout(() => {
-                window.location.href = 'auth/login.html';
-            }, 500);
+                window.location.href = '../index.html';
+            }, 400);
         }
     </script>
 </body>
