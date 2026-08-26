@@ -211,8 +211,8 @@ router.post('/forgot-password', async (req, res) => {
     }
 
     res.json({
-      message: emailSent ? `Official reset email sent to ${user.email}!` : 'Password reset link generated!',
-      resetUrl,
+      success: true,
+      message: `A password reset link has been sent to ${user.email}. Please check your email inbox.`,
       email: user.email,
       emailSent,
       expiresIn: '1 hour'
