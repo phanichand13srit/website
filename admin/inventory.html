@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inventory - Arshith Fresh Admin</title>
+  
+  <!-- Shared Admin Theme Stylesheet -->
+  <link rel="stylesheet" href="../assets/css/admin.css">
+</head>
+<body>
+
+  <!-- Global Header -->
+  <header class="global-topbar">
+    <div class="topbar-left">
+      <div class="shopify-logo">
+        <svg viewBox="0 0 109.5 124.5"><path d="M74.7 14.1c-.2 0-.4.1-.5.1-.2-.8-.6-1.5-1.1-2.2-2.1-2.9-5.7-4.4-10.7-4.4-1.2 0-2.5.1-3.7.4-4.8 1.1-9.4 3.9-13.6 8.3-3 3.1-6.1 7.6-7.8 11.2-.8 1.7-1.5 3.3-2.1 4.7l-15.6 4.8c-4.8 1.5-5 1.9-5.6 6.9L.1 113.1c-.5 4.3 2.5 8 6.8 8.4.4 0 .9 0 1.3-.1l74-15.3c4.5-.9 7.7-4.9 7.4-9.5l-14.9-82.5z"/></svg>
+        <span>admin</span>
+      </div>
+    </div>
+
+    <div class="topbar-center">
+      <div class="search-box-wrapper">
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <input type="text" class="global-search-input" placeholder="Search inventory SKU or products...">
+        <span class="kbd-shortcut">CTRL K</span>
+      </div>
+    </div>
+
+    <div class="topbar-right">
+      <button class="btn-view-as">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+        <span>View as</span>
+      </button>
+
+      <button class="notification-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg><span class="notification-dot"></span></button>
+
+      <div class="store-profile-dropdown">
+        <div class="store-avatar">AF</div>
+        <span class="store-name-text">Arshith Fresh</span>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+      </div>
+    </div>
+  </header>
+
+  <!-- App Layout -->
+  <div class="app-container">
+
+    <aside class="app-sidebar">
+      <div class="sidebar-menu">
+        <a href="dashboard.html" class="menu-item">
+          <div class="menu-item-left">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
+            <span>Home</span>
+          </div>
+        </a>
+
+        <a href="orders.html" class="menu-item">
+          <div class="menu-item-left">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+            <span>Orders</span>
+          </div>
+          <span class="badge-count">114</span>
+        </a>
+
+        <div class="submenu-list">
+          <a href="orders-drafts.html" class="submenu-item">Drafts</a>
+          <a href="orders-abandoned.html" class="submenu-item">Abandoned checkouts</a>
+        </div>
+
+        <a href="products.html" class="menu-item active">
+          <div class="menu-item-left">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16.5 9.4 7.55 4.24a1.78 1.78 0 0 0-2.5 1.55v12.42a1.78 1.78 0 0 0 2.5 1.55L16.5 14.6a1.78 1.78 0 0 0 0-3.2z"></path></svg>
+            <span>Products</span>
+          </div>
+        </a>
+
+        <div class="submenu-list">
+          <a href="collections.html" class="submenu-item">Collections</a>
+          <a href="inventory.html" class="submenu-item active">Inventory</a>
+          <a href="purchase-orders.html" class="submenu-item">Purchase orders</a>
+          <a href="transfers.html" class="submenu-item">Transfers</a>
+          <a href="gift-cards.html" class="submenu-item">Gift cards</a>
+        </div>
+
+        <a href="customers.html" class="menu-item">
+          <div class="menu-item-left">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>
+            <span>Customers</span>
+          </div>
+        </a>
+
+        <div class="submenu-list">
+          <a href="customer-segments.html" class="submenu-item">Segments</a>
+          <a href="customer-companies.html" class="submenu-item">Companies</a>
+        </div>
+
+        <a href="#" class="menu-item">
+          <div class="menu-item-left">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
+            <span>Analytics</span>
+          </div>
+        </a>
+      </div>
+
+      <div class="sidebar-bottom">
+        <a href="#" class="menu-item">
+          <div class="menu-item-left">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+            <span>Settings</span>
+          </div>
+        </a>
+      </div>
+    </aside>
+
+    <!-- Main Inventory Viewport -->
+    <main class="main-viewport">
+      
+      <div class="page-top-header">
+        <div class="page-title-row">
+          <h1>Inventory</h1>
+        </div>
+
+        <div class="page-action-buttons">
+          <button class="btn-pill">Export</button>
+          <button class="btn-pill">Import</button>
+        </div>
+      </div>
+
+      <div class="data-card">
+        
+        <div class="card-filter-bar">
+          <span class="tab-all-pill">All</span>
+          <div class="table-search-input-box">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <input type="text" placeholder="Search and filter">
+          </div>
+        </div>
+
+        <div class="table-scroll-container">
+          <table class="shopify-table">
+            <thead>
+              <tr>
+                <th style="width: 36px;"><input type="checkbox" class="custom-checkbox"></th>
+                <th>Product</th>
+                <th>SKU</th>
+                <th>Unavailable</th>
+                <th>Committed</th>
+                <th>Available</th>
+                <th>On hand</th>
+                <th>Incoming</th>
+              </tr>
+            </thead>
+            <tbody>
+              
+              <!-- 1. Ajwain 500g -->
+              <tr>
+                <td><input type="checkbox" class="custom-checkbox"></td>
+                <td>
+                  <div class="table-product-item">
+                    <img src="https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=80&auto=format&fit=crop&q=60" class="table-product-thumb" alt="Ajwain">
+                    <div>
+                      <div class="table-product-name">Ajwain</div>
+                      <div style="font-size:11px; color:#6d7175;">500g</div>
+                    </div>
+                  </div>
+                </td>
+                <td>S-AJWAIN-500G</td>
+                <td>0</td>
+                <td>0</td>
+                <td><strong>50</strong></td>
+                <td>50</td>
+                <td>0</td>
+              </tr>
+
+              <!-- 2. Ajwain 100g -->
+              <tr>
+                <td><input type="checkbox" class="custom-checkbox"></td>
+                <td>
+                  <div class="table-product-item">
+                    <img src="https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=80&auto=format&fit=crop&q=60" class="table-product-thumb" alt="Ajwain">
+                    <div>
+                      <div class="table-product-name">Ajwain</div>
+                      <div style="font-size:11px; color:#6d7175;">100g</div>
+                    </div>
+                  </div>
+                </td>
+                <td>S-AJWAIN-100G</td>
+                <td>0</td>
+                <td>0</td>
+                <td><strong>50</strong></td>
+                <td>50</td>
+                <td>0</td>
+              </tr>
+
+              <!-- 3. Ajwain 250g -->
+              <tr>
+                <td><input type="checkbox" class="custom-checkbox"></td>
+                <td>
+                  <div class="table-product-item">
+                    <img src="https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=80&auto=format&fit=crop&q=60" class="table-product-thumb" alt="Ajwain">
+                    <div>
+                      <div class="table-product-name">Ajwain</div>
+                      <div style="font-size:11px; color:#6d7175;">250g</div>
+                    </div>
+                  </div>
+                </td>
+                <td>S-AJWAIN-250G</td>
+                <td>0</td>
+                <td>0</td>
+                <td><strong>50</strong></td>
+                <td>50</td>
+                <td>0</td>
+              </tr>
+
+              <!-- 4. Almonds (Badam) 250g -->
+              <tr>
+                <td><input type="checkbox" class="custom-checkbox"></td>
+                <td>
+                  <div class="table-product-item">
+                    <img src="https://images.unsplash.com/photo-1508746829417-e6f548d8d6ed?w=80&auto=format&fit=crop&q=60" class="table-product-thumb" alt="Almonds Badam">
+                    <div>
+                      <div class="table-product-name">Almonds (Badam) (Premium Quality)</div>
+                      <div style="font-size:11px; color:#6d7175;">250g</div>
+                    </div>
+                  </div>
+                </td>
+                <td>DF-ALMONDS-MEDIUM-250G</td>
+                <td>0</td>
+                <td>3</td>
+                <td><strong>46</strong></td>
+                <td>49</td>
+                <td>0</td>
+              </tr>
+
+              <!-- 5. Amla Pickle 400g -->
+              <tr>
+                <td><input type="checkbox" class="custom-checkbox"></td>
+                <td>
+                  <div class="table-product-item">
+                    <img src="https://images.unsplash.com/photo-1598170845058-32b9d6a5da37?w=80&auto=format&fit=crop&q=60" class="table-product-thumb" alt="Amla Pickle">
+                    <div>
+                      <div class="table-product-name">Amla Pickle (Premium Quality)</div>
+                      <div style="font-size:11px; color:#6d7175;">400g</div>
+                    </div>
+                  </div>
+                </td>
+                <td>VP-AP-1KG-155</td>
+                <td>0</td>
+                <td>0</td>
+                <td><strong>50</strong></td>
+                <td>50</td>
+                <td>0</td>
+              </tr>
+
+              <!-- 6. Anjeer Dates DryFruit Laddu 200g -->
+              <tr>
+                <td><input type="checkbox" class="custom-checkbox"></td>
+                <td>
+                  <div class="table-product-item">
+                    <img src="https://images.unsplash.com/photo-1589367920969-ab8e050bbb04?w=80&auto=format&fit=crop&q=60" class="table-product-thumb" alt="Anjeer Laddu">
+                    <div>
+                      <div class="table-product-name">Anjeer Dates DryFruit Laddu</div>
+                      <div style="font-size:11px; color:#6d7175;">200g</div>
+                    </div>
+                  </div>
+                </td>
+                <td>S-DFL-200G-53</td>
+                <td>0</td>
+                <td>10</td>
+                <td><strong>40</strong></td>
+                <td>50</td>
+                <td>0</td>
+              </tr>
+
+              <!-- 7. Appalam Papad (Apadalu) 200g -->
+              <tr>
+                <td><input type="checkbox" class="custom-checkbox"></td>
+                <td>
+                  <div class="table-product-item">
+                    <img src="https://images.unsplash.com/photo-1586201375761-83865001e31c?w=80&auto=format&fit=crop&q=60" class="table-product-thumb" alt="Appalam Papad">
+                    <div>
+                      <div class="table-product-name">Appalam Papad (Apadalu) (Premium Quality)</div>
+                      <div style="font-size:11px; color:#6d7175;">200g</div>
+                    </div>
+                  </div>
+                </td>
+                <td>SP-APPALAM-PAPADPREMIUM-200G</td>
+                <td>0</td>
+                <td>0</td>
+                <td><strong>50</strong></td>
+                <td>50</td>
+                <td>0</td>
+              </tr>
+
+              <!-- 8. Asafoetida (Inguva) 50g -->
+              <tr>
+                <td><input type="checkbox" class="custom-checkbox"></td>
+                <td>
+                  <div class="table-product-item">
+                    <img src="https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=80&auto=format&fit=crop&q=60" class="table-product-thumb" alt="Asafoetida">
+                    <div>
+                      <div class="table-product-name">Asafoetida (Inguva) (Premium Quality)</div>
+                      <div style="font-size:11px; color:#6d7175;">50g</div>
+                    </div>
+                  </div>
+                </td>
+                <td>SP-ASAFOETIDA-50G</td>
+                <td>0</td>
+                <td>0</td>
+                <td><strong>50</strong></td>
+                <td>50</td>
+                <td>0</td>
+              </tr>
+
+            </tbody>
+          </table>
+        </div>
+
+        <div class="table-pagination-footer">
+          <span>1-50</span>
+          <button class="pagination-btn">&lt;</button>
+          <button class="pagination-btn">&gt;</button>
+        </div>
+
+      </div>
+
+    </main>
+
+  </div>
+
+  <!-- JavaScript Interactivity -->
+  <script>
+    const API_URL = 'http://localhost:5000/api/inventory';
+    const invTbody = document.querySelector('.shopify-table tbody');
+
+    async function fetchInventory() {
+      try {
+        const response = await fetch(API_URL);
+        const data = await response.json();
+        
+        invTbody.innerHTML = ''; // Clear hardcoded HTML rows
+
+        if (!data.success || data.data.length === 0) {
+          invTbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 20px;">No inventory found.</td></tr>';
+          return;
+        }
+
+        data.data.forEach(item => {
+          const variant = item.variantId;
+          if (!variant) return;
+          
+          const product = variant.productId || {};
+          const title = product.title || 'Unknown Product';
+          const image = product.image || 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=80&auto=format&fit=crop&q=60';
+          const sku = variant.sku || '-';
+          const variantTitle = variant.title || 'Default Title';
+          
+          const available = item.availableQuantity || 0;
+          const onHand = item.quantity || 0;
+          const reserved = item.reservedQuantity || 0;
+
+          const tr = document.createElement('tr');
+          // For editing later
+          tr.dataset.id = item._id;
+          tr.dataset.title = title;
+          tr.dataset.sku = sku;
+          tr.dataset.weight = variantTitle;
+
+          tr.innerHTML = `
+            <td><input type="checkbox" class="custom-checkbox"></td>
+            <td>
+              <div class="table-product-item">
+                <img src="${image}" class="table-product-thumb" alt="${title}">
+                <div>
+                  <div class="table-product-name">${title}</div>
+                  <div style="font-size:11px; color:#6d7175;">${variantTitle}</div>
+                </div>
+              </div>
+            </td>
+            <td>${sku}</td>
+            <td>0</td>
+            <td>${reserved}</td>
+            <td><strong>${available}</strong></td>
+            <td>${onHand}</td>
+            <td>0</td>
+          `;
+          invTbody.appendChild(tr);
+        });
+      } catch (err) {
+        console.error('Error fetching inventory:', err);
+      }
+    }
+
+    fetchInventory();
+
+    // Row Click to Open Inventory Variant Editor (Matching Video)
+    if (invTbody) {
+      invTbody.addEventListener('click', function(e) {
+        if (e.target.type === 'checkbox' || e.target.classList.contains('custom-checkbox')) return;
+        
+        const tr = e.target.closest('tr');
+        if (tr && tr.dataset.id) {
+          window.location.href = `inventory-variant.html?id=${tr.dataset.id}&title=${encodeURIComponent(tr.dataset.title)}&weight=${encodeURIComponent(tr.dataset.weight)}&sku=${encodeURIComponent(tr.dataset.sku)}`;
+        }
+      });
+    }
+
+    // Filter
+    const searchInput = document.querySelector('.table-search-input-box input');
+    if (searchInput && invTbody) {
+      searchInput.addEventListener('input', function(e) {
+        const q = e.target.value.toLowerCase();
+        const rows = invTbody.querySelectorAll('tr');
+        rows.forEach(r => {
+          r.style.display = r.textContent.toLowerCase().includes(q) ? '' : 'none';
+        });
+      });
+    }
+  </script>
+
+</body>
+</html>

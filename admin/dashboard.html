@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Arshith Fresh - Dynamic Admin Panel</title>
+  <!-- Google Fonts & FontAwesome Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="../assets/css/admin.css">
+</head>
+<body>
+
+  <!-- Sidebar Navigation -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-logo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+      </div>
+      <div>
+        <h2>Arshith Fresh</h2>
+        <p>Admin Control Panel</p>
+      </div>
+    </div>
+
+    <ul class="nav-menu">
+      <li class="nav-item active" onclick="switchTab('dashboard', this)">
+        <i class="fa-solid fa-chart-pie"></i>
+        <span>Dashboard</span>
+      </li>
+      <li class="nav-item" onclick="switchTab('products', this)">
+        <i class="fa-solid fa-box-open"></i>
+        <span>Products</span>
+      </li>
+      <li class="nav-item" onclick="switchTab('collections', this)">
+        <i class="fa-solid fa-layer-group"></i>
+        <span>Collections</span>
+      </li>
+      <li class="nav-item" onclick="switchTab('orders', this)">
+        <i class="fa-solid fa-cart-shopping"></i>
+        <span>Orders</span>
+      </li>
+    </ul>
+
+    <div class="server-status-pill">
+      <div class="status-dot online" id="dbStatusDot"></div>
+      <span id="dbStatusText">Checking API...</span>
+    </div>
+  </aside>
+
+  <!-- Main Content Area -->
+  <main class="main-content">
+    <header class="top-header">
+      <h2 id="tabTitle">Dashboard Overview</h2>
+      <div class="header-actions">
+        <button class="btn btn-outline" onclick="loadAllData()"><i class="fa-solid fa-rotate"></i> Refresh</button>
+        <button class="btn btn-primary" id="mainActionButton" onclick="openAddProductModal()"><i class="fa-solid fa-plus"></i> Add Product</button>
+      </div>
+    </header>
+
+    <div class="content-body">
+
+      <!-- TAB 1: DASHBOARD OVERVIEW -->
+      <div id="tab-dashboard" class="tab-content active">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-info">
+              <h3>Total Products</h3>
+              <div class="value" id="statProducts">0</div>
+            </div>
+            <div class="stat-icon icon-green"><i class="fa-solid fa-box"></i></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-info">
+              <h3>Collections</h3>
+              <div class="value" id="statCollections">0</div>
+            </div>
+            <div class="stat-icon icon-blue"><i class="fa-solid fa-folder"></i></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-info">
+              <h3>Total Orders</h3>
+              <div class="value" id="statOrders">0</div>
+            </div>
+            <div class="stat-icon icon-purple"><i class="fa-solid fa-bag-shopping"></i></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-info">
+              <h3>Backend Status</h3>
+              <div class="value" style="font-size: 18px;" id="statDb">Port 5000</div>
+            </div>
+            <div class="stat-icon icon-orange"><i class="fa-solid fa-server"></i></div>
+          </div>
+        </div>
+
+        <!-- Recent Products Quick Table -->
+        <div class="panel-card">
+          <div class="panel-header">
+            <h3>Recent Products</h3>
+            <button class="btn btn-outline btn-sm" onclick="switchTab('products', document.querySelectorAll('.nav-item')[1])">View All</button>
+          </div>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Product</th>
+                  <th>Category</th>
+                  <th>Price</th>
+                  <th>Stock</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="recentProductsBody">
+                <tr><td colspan="5" style="text-align: center;">Loading recent products...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 2: PRODUCTS -->
+      <div id="tab-products" class="tab-content">
+        <div class="panel-card">
+          <div class="panel-header">
+            <h3>Live Products List</h3>
+            <input type="text" class="form-control" style="width: 260px;" placeholder="Search products..." onkeyup="filterProducts(this.value)">
+          </div>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Product</th>
+                  <th>Category</th>
+                  <th>Price</th>
+                  <th>Stock</th>
+                  <th>Unit</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="productsTableBody">
+                <tr><td colspan="6" style="text-align: center;">Fetching live products...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 3: COLLECTIONS / CATEGORIES -->
+      <div id="tab-collections" class="tab-content">
+        <div class="panel-card">
+          <div class="panel-header">
+            <div>
+              <h3>Categories & Sub-categories</h3>
+              <p style="color: var(--text-muted); font-size: 13px; margin: 4px 0 0 0;">Manage store departments, sub-categories, and product tags.</p>
+            </div>
+            <button class="btn btn-primary btn-sm" onclick="openAddCollectionModal()"><i class="fa-solid fa-plus"></i> New Category</button>
+          </div>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th style="width: 25%;">Category</th>
+                  <th style="width: 50%;">Sub-categories</th>
+                  <th style="width: 10%;">Type</th>
+                  <th style="width: 15%; text-align: right;">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="collectionsTableBody">
+                <tr><td colspan="4" style="text-align: center;">Fetching live categories...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 4: ORDERS -->
+      <div id="tab-orders" class="tab-content">
+        <div class="panel-card">
+          <div class="panel-header">
+            <h3>Customer Orders</h3>
+          </div>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Order ID</th>
+                  <th>Customer</th>
+                  <th>Total Price</th>
+                  <th>Paid Status</th>
+                  <th>Delivery Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="ordersTableBody">
+                <tr><td colspan="6" style="text-align: center;">Fetching orders...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Add/Edit Product Modal -->
+  <div class="modal-overlay" id="productModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="productModalTitle">Add New Product</h3>
+        <button class="btn btn-outline btn-sm" onclick="closeModal('productModal')"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        <form id="productForm">
+          <input type="hidden" id="prodId">
+          <div class="form-group">
+            <label>Product Name</label>
+            <input type="text" id="prodName" class="form-control" required placeholder="e.g. Premium California Almonds or Sesame Oil" oninput="window.autoSuggestImage()">
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Category</label>
+              <select id="prodCategory" class="form-control" required onchange="onProductCategoryChange()">
+                <option value="" disabled selected>Select Category</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Sub-category</label>
+              <select id="prodSubcategory" class="form-control">
+                <option value="">Select Sub-category (Optional)</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Unit / Quantity</label>
+              <input type="text" id="prodUnit" class="form-control" placeholder="e.g. 500 g / 1 kg">
+            </div>
+            <div class="form-group">
+              <label>Brand</label>
+              <input type="text" id="prodBrand" class="form-control" value="Arshith Fresh">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Selling Price (₹)</label>
+              <input type="number" id="prodPrice" class="form-control" required placeholder="250">
+            </div>
+            <div class="form-group">
+              <label>Original Price (₹)</label>
+              <input type="number" id="prodOriginalPrice" class="form-control" placeholder="290">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Stock Count</label>
+              <input type="number" id="prodStock" class="form-control" required placeholder="50">
+            </div>
+            <div class="form-group">
+              <label>Product Tags</label>
+              <input type="text" id="prodTags" class="form-control" placeholder="e.g. Podulu, Spices, Best Sellers">
+            </div>
+          </div>
+          <div class="form-group">
+            <label><i class="fa-solid fa-image"></i> Product Image</label>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              <input type="file" id="prodImageFile" accept="image/*" class="form-control" onchange="handleProductImageFile(this)">
+              <input type="text" id="prodImage" class="form-control" placeholder="Or enter Image URL (https://...)" oninput="handleProductImageUrl(this)">
+            </div>
+            <!-- Live Image Preview Box -->
+            <div id="imagePreviewContainer" style="display: none; margin-top: 10px; padding: 12px; background: #f8fafc; border-radius: 8px; border: 1.5px dashed #cbd5e1; text-align: center;">
+              <img id="imagePreview" src="" alt="Selected Product Image" style="max-height: 140px; max-width: 100%; border-radius: 6px; object-fit: contain; box-shadow: 0 2px 6px rgba(0,0,0,0.08);">
+              <div style="margin-top: 8px;">
+                <button type="button" class="btn btn-outline btn-sm" onclick="removeProductImage()" style="color: #ef4444; border-color: #fca5a5;">
+                  <i class="fa-solid fa-trash"></i> Remove Image
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="form-group" style="display: flex; align-items: center; gap: 8px;">
+            <input type="checkbox" id="prodIsFeatured" style="width: 18px; height: 18px;">
+            <label for="prodIsFeatured" style="margin-bottom: 0; cursor: pointer;">Feature on Storefront Homepage</label>
+          </div>
+          <div class="form-group">
+            <label>Description</label>
+            <textarea id="prodDescription" class="form-control" rows="3" placeholder="Product details..."></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal('productModal')">Cancel</button>
+        <button class="btn btn-primary" onclick="saveProduct()">Save Product</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add/Edit Collection Modal -->
+  <div class="modal-overlay" id="collectionModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="collectionModalTitle">Add / Edit Category</h3>
+        <button class="btn btn-outline btn-sm" onclick="closeModal('collectionModal')"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        <form id="collectionForm">
+          <input type="hidden" id="collId">
+          <div class="form-group">
+            <label>Category Title</label>
+            <input type="text" id="collTitle" class="form-control" required placeholder="e.g. Dry Fruits or Wood Pressed Oils">
+          </div>
+          <div class="form-group">
+            <label>Sub-categories (Comma-separated)</label>
+            <input type="text" id="collSubcategories" class="form-control" placeholder="e.g. Almonds, Cashews, Dates, Walnuts, Pistachios, Raisins">
+            <small style="color: #64748b; font-size: 12px; margin-top: 4px; display: block;">Separate each sub-category with a comma. These will show up in the Product form.</small>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Type</label>
+              <select id="collType" class="form-control">
+                <option value="manual">Manual</option>
+                <option value="automated">Automated (Rule-based)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Image / Banner URL</label>
+              <input type="text" id="collImage" class="form-control" placeholder="https://images.unsplash.com/...">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Description</label>
+            <textarea id="collDescription" class="form-control" rows="2" placeholder="Brief category description..."></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal('collectionModal')">Cancel</button>
+        <button class="btn btn-primary" onclick="saveCollection()">Save Category</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let API_BASE = 'http://localhost:5000/api';
+    let productsData = [];
+    let collectionsData = [];
+    let currentUploadedImage = '';
+
+    // Tab Switching Logic
+    function switchTab(tabId, element) {
+      document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+      if (element) element.classList.add('active');
+
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      const activeTabEl = document.getElementById('tab-' + tabId);
+      if (activeTabEl) activeTabEl.classList.add('active');
+
+      const titleMap = {
+        'dashboard': 'Dashboard Overview',
+        'products': 'Products Management',
+        'collections': 'Categories & Sub-categories',
+        'orders': 'Customer Orders'
+      };
+
+      const btnMap = {
+        'dashboard': '<i class="fa-solid fa-plus"></i> Add Product',
+        'products': '<i class="fa-solid fa-plus"></i> Add Product',
+        'collections': '<i class="fa-solid fa-plus"></i> New Category',
+        'orders': '<i class="fa-solid fa-download"></i> Export Orders'
+      };
+
+      document.getElementById('tabTitle').innerText = titleMap[tabId] || 'Dashboard';
+      const mainBtn = document.getElementById('mainActionButton');
+      if (mainBtn) {
+        mainBtn.innerHTML = btnMap[tabId] || '<i class="fa-solid fa-plus"></i> Add Product';
+        mainBtn.onclick = tabId === 'collections' ? openAddCollectionModal : openAddProductModal;
+      }
+    }
+
+    // Load initial data from API
+    async function loadAllData() {
+      await checkDbStatus();
+      await fetchProducts();
+      await fetchCollections();
+      await fetchOrders();
+    }
+
+    // Check Backend Server Status
+    async function checkDbStatus() {
+      const dot = document.getElementById('dbStatusDot');
+      const text = document.getElementById('dbStatusText');
+      const statDb = document.getElementById('statDb');
+
+      try {
+        const res = await fetch(`${API_BASE}/health`);
+        if (res.ok) {
+          const data = await res.json();
+          if (dot) dot.className = 'status-dot online';
+          if (text) text.innerText = 'Local MongoDB Connected (5000)';
+          if (statDb) {
+            statDb.innerText = 'Connected';
+            statDb.style.color = '#16a34a';
+          }
+        } else {
+          throw new Error('API offline');
+        }
+      } catch (err) {
+        if (dot) dot.className = 'status-dot offline';
+        if (text) text.innerText = 'Server Disconnected (Start Backend)';
+        if (statDb) {
+          statDb.innerText = 'Offline Mode';
+          statDb.style.color = '#ef4444';
+        }
+      }
+    }
+
+    // Fetch Products
+    async function fetchProducts() {
+      try {
+        const res = await fetch(`${API_BASE}/products`);
+        if (!res.ok) throw new Error();
+        productsData = await res.json();
+      } catch (e) {
+        productsData = [];
+      }
+
+      const statProducts = document.getElementById('statProducts');
+      if (statProducts) statProducts.innerText = productsData.length;
+      renderProductsTable(productsData);
+      renderRecentProducts(productsData.slice(0, 5));
+    }
+
+    function getSmartProductImage(p) {
+      if (p && p.image && typeof p.image === 'string' && p.image.trim().length > 0) {
+        const url = p.image.trim();
+        // If it's an uploaded file (Base64 data:image) or valid path/URL, ALWAYS use it!
+        if (url.startsWith('data:image/') || url.startsWith('blob:') || url.startsWith('/') || url.startsWith('assets/')) {
+          return url;
+        }
+        if (url.startsWith('http')) {
+          if (!url.includes('/search') && !url.includes('pexels.com/search') && !url.includes('google.com')) {
+            return url;
+          }
+        }
+      }
+      const n = (p && p.name ? p.name.toLowerCase() : '');
+      const c = (p && p.category ? String(p.category).toLowerCase() : '');
+
+      if (n.includes('oil') || c.includes('oil')) {
+        return 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?auto=format&fit=crop&w=200&q=80';
+      }
+      if (n.includes('honey') || c.includes('honey')) {
+        return 'https://images.unsplash.com/photo-1587049352847-4a222e784d38?auto=format&fit=crop&w=200&q=80';
+      }
+      if (n.includes('ghee') || c.includes('ghee')) {
+        return 'https://images.unsplash.com/photo-1631451095765-2c91616fc9e6?auto=format&fit=crop&w=200&q=80';
+      }
+      if (n.includes('turmeric') || n.includes('pasupu')) {
+        return 'https://images.unsplash.com/photo-1615485290382-441e4d049cb5?auto=format&fit=crop&w=200&q=80';
+      }
+      if (n.includes('almond') || n.includes('nut') || n.includes('date') || c.includes('fruit')) {
+        return 'https://images.unsplash.com/photo-1508746829417-e6f548d8d6ed?auto=format&fit=crop&w=200&q=80';
+      }
+      if (n.includes('chilli') || n.includes('podi') || c.includes('powder') || c.includes('spice')) {
+        return 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=200&q=80';
+      }
+      return 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=200&q=80';
+    }   
+
+    function renderProductsTable(items) {
+      const tbody = document.getElementById('productsTableBody');
+      if (!tbody) return;
+      if (items.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No products found.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = items.map(p => {
+        const imgSrc = getSmartProductImage(p);
+        const subTag = p.subcategory ? `<span style="font-size:11px; background:#e0f2fe; color:#0369a1; padding:2px 6px; border-radius:4px; margin-left:4px;">${p.subcategory}</span>` : '';
+        return `
+        <tr>
+          <td>
+            <div class="cell-flex">
+              <img src="${imgSrc}" class="product-img" alt="${p.name}">
+              <div>
+                <strong>${p.name}</strong>
+                <div style="font-size: 12px; color: var(--text-muted);">${p.brand || 'Arshith Fresh'}</div>
+              </div>
+            </div>
+          </td>
+          <td><span class="badge badge-info">${p.category}</span> ${subTag}</td>
+          <td><strong>₹${p.price}</strong> ${p.originalPrice ? `<span style="text-decoration:line-through; font-size:12px; color:#94a3b8;">₹${p.originalPrice}</span>` : ''}</td>
+          <td>${p.countInStock > 0 ? `<span style="color:#16a34a; font-weight:600;">${p.countInStock} in stock</span>` : '<span style="color:#ef4444; font-weight:600;">Out of Stock</span>'}</td>
+          <td>${p.unit || '1 kg'}</td>
+          <td>
+            <button class="btn btn-outline btn-sm" onclick="window.editProduct('${p._id}')" title="Edit Product"><i class="fa-solid fa-pen" style="pointer-events:none;"></i> Edit</button>
+            <button class="btn btn-danger btn-sm" onclick="window.deleteProduct('${p._id}')" title="Delete Product"><i class="fa-solid fa-trash" style="pointer-events:none;"></i> Delete</button>
+          </td>
+        </tr>
+      `;
+      }).join('');
+    }
+
+    function renderRecentProducts(items) {
+      const tbody = document.getElementById('recentProductsBody');
+      if (!tbody) return;
+      tbody.innerHTML = items.map(p => `
+        <tr>
+          <td>
+            <div class="cell-flex">
+              <img src="${getSmartProductImage(p)}" class="product-img">
+              <strong>${p.name}</strong>
+            </div>
+          </td>
+          <td><span class="badge badge-info">${p.category}</span></td>
+          <td>₹${p.price}</td>
+          <td>${p.countInStock}</td>
+          <td><span class="badge badge-success">Active</span></td>
+        </tr>
+      `).join('');
+    }
+
+    // Fetch Collections / Categories
+    async function fetchCollections() {
+      try {
+        const res = await fetch(`${API_BASE}/collections`);
+        if (!res.ok) throw new Error();
+        collectionsData = await res.json();
+      } catch (e) {
+        collectionsData = [];
+      }
+
+      const statColl = document.getElementById('statCollections');
+      if (statColl) statColl.innerText = collectionsData.length;
+      renderCollectionsTable(collectionsData);
+      populateProductCategoryDropdown();
+    }
+
+    function renderCollectionsTable(items) {
+      const tbody = document.getElementById('collectionsTableBody');
+      if (!tbody) return;
+      if (!items || items.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align: center;">No categories found. Click "+ New Category" to create one.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = items.map(c => {
+        const subs = Array.isArray(c.subcategories) ? c.subcategories : [];
+        const subBadges = subs.length > 0
+          ? subs.map(s => `<span class="badge badge-info" style="margin: 2px 3px 2px 0; font-size: 11px; padding: 2px 7px; display: inline-block;">${s}</span>`).join('')
+          : '<span style="color: var(--text-muted); font-size: 12px; font-style: italic;">No sub-categories yet</span>';
+
+        return `
+          <tr>
+            <td>
+              <div class="cell-flex">
+                <img src="${c.image || 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=80'}" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=80';" class="collection-img">
+                <div>
+                  <strong>${c.title}</strong>
+                  <div style="font-size:12px; color:var(--text-muted);">${c.slug || ''}</div>
+                </div>
+              </div>
+            </td>
+            <td>
+              <div style="max-height: 80px; overflow-y: auto;">
+                ${subBadges}
+              </div>
+            </td>
+            <td><span class="badge ${c.collectionType === 'automated' ? 'badge-success' : 'badge-warning'}">${c.collectionType || 'manual'}</span></td>
+            <td style="text-align: right;">
+              <div style="display: flex; gap: 6px; justify-content: flex-end;">
+                <button class="btn btn-outline btn-sm" onclick="window.openEditCollectionModal('${c._id}')"><i class="fa-solid fa-pen"></i> Edit</button>
+                <button class="btn btn-danger btn-sm" onclick="window.deleteCollection('${c._id}')"><i class="fa-solid fa-trash"></i></button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // Dynamic Category & Sub-category Dropdowns in Product Form
+    function populateProductCategoryDropdown(selectedCategory = '', selectedSubcategory = '') {
+      const catSelect = document.getElementById('prodCategory');
+      if (!catSelect) return;
+
+      const currentVal = selectedCategory || catSelect.value;
+      catSelect.innerHTML = '<option value="" disabled ' + (!currentVal ? 'selected' : '') + '>Select Category</option>' +
+        collectionsData.map(c => `<option value="${c.title}" ${c.title === currentVal ? 'selected' : ''}>${c.title}</option>`).join('');
+
+      updateProductSubcategoryOptions(selectedSubcategory);
+    }
+
+    function onProductCategoryChange() {
+      updateProductSubcategoryOptions();
+      window.autoSuggestImage();
+    }
+
+    function updateProductSubcategoryOptions(selectedSubcategory = '') {
+      const catSelect = document.getElementById('prodCategory');
+      const subSelect = document.getElementById('prodSubcategory');
+      if (!catSelect || !subSelect) return;
+
+      const chosenCatTitle = catSelect.value;
+      const matchedCat = collectionsData.find(c => c.title === chosenCatTitle);
+      const subs = (matchedCat && Array.isArray(matchedCat.subcategories)) ? matchedCat.subcategories : [];
+
+      subSelect.innerHTML = '<option value="">Select Sub-category (Optional)</option>' +
+        subs.map(s => `<option value="${s}" ${s === selectedSubcategory ? 'selected' : ''}>${s}</option>`).join('');
+    }
+
+    // Fetch Orders
+    async function fetchOrders() {
+      try {
+        const res = await fetch(`${API_BASE}/orders`, {
+          headers: { 'x-admin-dev': 'true' }
+        });
+        if (!res.ok) throw new Error();
+        const orders = await res.json();
+        const statOrders = document.getElementById('statOrders');
+        if (statOrders) statOrders.innerText = orders.length;
+        renderOrdersTable(orders);
+      } catch (e) {
+        const statOrders = document.getElementById('statOrders');
+        if (statOrders) statOrders.innerText = '0';
+        const ordersBody = document.getElementById('ordersTableBody');
+        if (ordersBody) ordersBody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--text-muted);">No orders found in database.</td></tr>';
+      }
+    }
+
+    function renderOrdersTable(orders) {
+      const tbody = document.getElementById('ordersTableBody');
+      if (!tbody) return;
+      if (orders.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No orders recorded yet.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = orders.map(o => `
+        <tr>
+          <td><strong>#${String(o._id).substring(0, 8)}</strong></td>
+          <td><strong>${o.customerName || (o.user ? o.user.name : 'Customer')}</strong></td>
+          <td>₹${o.totalPrice}</td>
+          <td><span class="badge ${o.isPaid ? 'badge-success' : 'badge-warning'}">${o.isPaid ? 'Paid' : 'Pending'}</span></td>
+          <td><span class="badge ${o.isDelivered ? 'badge-success' : 'badge-info'}">${o.isDelivered ? 'Delivered' : 'Processing'}</span></td>
+          <td>
+            <button class="btn btn-outline btn-sm" onclick="window.toggleOrderStatus('${o._id}', 'isPaid', ${!o.isPaid})">
+              ${o.isPaid ? 'Mark Unpaid' : 'Mark Paid'}
+            </button>
+            <button class="btn btn-primary btn-sm" onclick="window.toggleOrderStatus('${o._id}', 'isDelivered', ${!o.isDelivered})">
+              ${o.isDelivered ? 'Mark Processing' : 'Mark Delivered'}
+            </button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    async function toggleOrderStatus(id, field, value) {
+      try {
+        const payload = { [field]: value };
+        const res = await fetch(`${API_BASE}/orders/${id}/status`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json', 'x-admin-dev': 'true' },
+          body: JSON.stringify(payload)
+        });
+        if (!res.ok) throw new Error();
+        fetchOrders();
+      } catch (err) {
+        alert('Could not update order status.');
+      }
+    }
+
+    // Filter Products
+    function filterProducts(query) {
+      const filtered = productsData.filter(p => p.name.toLowerCase().includes(query.toLowerCase()) || p.category.toLowerCase().includes(query.toLowerCase()));
+      renderProductsTable(filtered);
+    }
+
+    // Product Modal & Image Upload Actions
+    function handleProductImageFile(input) {
+      const file = input.files && input.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          currentUploadedImage = e.target.result;
+          document.getElementById('imagePreview').src = currentUploadedImage;
+          document.getElementById('imagePreviewContainer').style.display = 'block';
+          document.getElementById('prodImage').value = '';
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function handleProductImageUrl(input) {
+      if (input.value && input.value.trim().startsWith('http')) {
+        currentUploadedImage = input.value.trim();
+        document.getElementById('imagePreview').src = currentUploadedImage;
+        document.getElementById('imagePreviewContainer').style.display = 'block';
+      }
+    }
+
+    function removeProductImage() {
+      currentUploadedImage = '';
+      const fileInput = document.getElementById('prodImageFile');
+      if (fileInput) fileInput.value = '';
+      const urlInput = document.getElementById('prodImage');
+      if (urlInput) urlInput.value = '';
+      const previewImg = document.getElementById('imagePreview');
+      if (previewImg) previewImg.src = '';
+      const previewBox = document.getElementById('imagePreviewContainer');
+      if (previewBox) previewBox.style.display = 'none';
+    }
+
+    function autoSuggestImage() {
+      if (currentUploadedImage) return; // Don't override user uploaded image
+      const name = document.getElementById('prodName').value;
+      const category = document.getElementById('prodCategory').value;
+      const imgInput = document.getElementById('prodImage');
+      if (imgInput && (!imgInput.value || imgInput.dataset.autoFilled === 'true')) {
+        const suggested = getSmartProductImage({ name, category });
+        imgInput.value = suggested;
+        imgInput.dataset.autoFilled = 'true';
+        currentUploadedImage = suggested;
+        document.getElementById('imagePreview').src = suggested;
+        document.getElementById('imagePreviewContainer').style.display = 'block';
+      }
+    }
+
+    function openAddProductModal() {
+      document.getElementById('productForm').reset();
+      document.getElementById('prodId').value = '';
+      removeProductImage();
+      populateProductCategoryDropdown();
+      document.getElementById('productModalTitle').innerText = 'Add New Product';
+      document.getElementById('productModal').classList.add('active');
+    }
+
+    function editProduct(id) {
+      const prod = productsData.find(p => String(p._id) === String(id));
+      if (!prod) {
+        console.error("No product found with ID:", id);
+        return;
+      }
+
+      document.getElementById('prodId').value = prod._id;
+      document.getElementById('prodName').value = prod.name || '';
+      populateProductCategoryDropdown(prod.category || '', prod.subcategory || '');
+      document.getElementById('prodUnit').value = prod.unit || '1 kg';
+      document.getElementById('prodPrice').value = prod.price || '';
+      document.getElementById('prodOriginalPrice').value = prod.originalPrice || '';
+      document.getElementById('prodStock').value = prod.countInStock || 0;
+      document.getElementById('prodBrand').value = prod.brand || 'Arshith Fresh';
+      document.getElementById('prodTags').value = Array.isArray(prod.tags) ? prod.tags.join(', ') : (prod.tags || '');
+      
+      const prodImg = getSmartProductImage(prod);
+      currentUploadedImage = prodImg || '';
+      document.getElementById('prodImage').value = (prod.image && prod.image.startsWith('http')) ? prod.image : '';
+      if (currentUploadedImage) {
+        document.getElementById('imagePreview').src = currentUploadedImage;
+        document.getElementById('imagePreviewContainer').style.display = 'block';
+      } else {
+        removeProductImage();
+      }
+
+      document.getElementById('prodIsFeatured').checked = !!prod.isFeatured;
+      document.getElementById('prodDescription').value = prod.description || '';
+
+      document.getElementById('productModalTitle').innerText = 'Edit Product';
+      document.getElementById('productModal').classList.add('active');
+    }
+
+    async function saveProduct() {
+      const id = document.getElementById('prodId').value;
+      const nameVal = document.getElementById('prodName').value;
+      const catVal = document.getElementById('prodCategory').value;
+      const subcatVal = document.getElementById('prodSubcategory').value;
+      const tagsVal = document.getElementById('prodTags').value;
+      const imageVal = document.getElementById('prodImage').value;
+
+      const finalImg = currentUploadedImage || imageVal || getSmartProductImage({ name: nameVal, category: catVal });
+
+      const payload = {
+        name: nameVal,
+        category: catVal,
+        subcategory: subcatVal,
+        unit: document.getElementById('prodUnit').value || '1 kg',
+        price: Number(document.getElementById('prodPrice').value) || 0,
+        originalPrice: Number(document.getElementById('prodOriginalPrice').value) || 0,
+        countInStock: Number(document.getElementById('prodStock').value) || 0,
+        brand: document.getElementById('prodBrand').value || 'Arshith Fresh',
+        tags: tagsVal ? tagsVal.split(',').map(t => t.trim()).filter(Boolean) : [],
+        image: finalImg,
+        isFeatured: document.getElementById('prodIsFeatured').checked,
+        description: document.getElementById('prodDescription').value || ''
+      };
+
+      try {
+        const url = id ? `${API_BASE}/products/${id}` : `${API_BASE}/products`;
+        const method = id ? 'PUT' : 'POST';
+        const res = await fetch(url, {
+          method: method,
+          headers: { 'Content-Type': 'application/json', 'x-admin-dev': 'true' },
+          body: JSON.stringify(payload)
+        });
+
+        if (!res.ok) {
+          const errData = await res.json().catch(() => ({}));
+          throw new Error(errData.message || errData.error || 'Failed to save product');
+        }
+        alert(id ? 'Product updated successfully!' : 'Product added successfully!');
+        closeModal('productModal');
+        fetchProducts();
+      } catch (err) {
+        alert('Error: ' + err.message);
+      }
+    }
+
+    async function deleteProduct(id) {
+      if (!confirm('Are you sure you want to delete this product?')) return;
+      try {
+        const res = await fetch(`${API_BASE}/products/${id}`, {
+          method: 'DELETE',
+          headers: { 'x-admin-dev': 'true' }
+        });
+        if (!res.ok) throw new Error();
+        alert('Product deleted!');
+        fetchProducts();
+      } catch (err) {
+        alert('Could not delete product.');
+      }
+    }
+
+    // Category / Collection Modal Actions
+    function openAddCollectionModal() {
+      document.getElementById('collectionForm').reset();
+      document.getElementById('collId').value = '';
+      document.getElementById('collectionModalTitle').innerText = 'Add New Category';
+      document.getElementById('collectionModal').classList.add('active');
+    }
+
+    function openEditCollectionModal(id) {
+      const coll = collectionsData.find(c => String(c._id) === String(id));
+      if (!coll) return;
+
+      document.getElementById('collId').value = coll._id;
+      document.getElementById('collTitle').value = coll.title || '';
+      document.getElementById('collSubcategories').value = Array.isArray(coll.subcategories) ? coll.subcategories.join(', ') : (coll.subcategories || '');
+      document.getElementById('collType').value = coll.collectionType || 'manual';
+      document.getElementById('collImage').value = coll.image || '';
+      document.getElementById('collDescription').value = coll.description || '';
+
+      document.getElementById('collectionModalTitle').innerText = 'Edit Category & Subcategories';
+      document.getElementById('collectionModal').classList.add('active');
+    }
+
+    async function saveCollection() {
+      const id = document.getElementById('collId').value;
+      const title = document.getElementById('collTitle').value.trim();
+      const subcategoriesRaw = document.getElementById('collSubcategories').value;
+      const type = document.getElementById('collType').value;
+      const image = document.getElementById('collImage').value;
+      const description = document.getElementById('collDescription').value;
+
+      if (!title) {
+        alert('Please enter a category title');
+        return;
+      }
+
+      const subcategories = subcategoriesRaw.split(',').map(s => s.trim()).filter(Boolean);
+
+      const payload = {
+        title,
+        subcategories,
+        collectionType: type,
+        image: image || 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=80',
+        description
+      };
+
+      try {
+        const url = id ? `${API_BASE}/collections/${id}` : `${API_BASE}/collections`;
+        const method = id ? 'PUT' : 'POST';
+
+        const res = await fetch(url, {
+          method: method,
+          headers: { 'Content-Type': 'application/json', 'x-admin-dev': 'true' },
+          body: JSON.stringify(payload)
+        });
+
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          throw new Error(err.message || 'Failed to save category');
+        }
+
+        alert(id ? 'Category updated successfully!' : 'Category created successfully!');
+        closeModal('collectionModal');
+        fetchCollections();
+      } catch (e) {
+        alert('Error: ' + e.message);
+      }
+    }
+
+    async function deleteCollection(id) {
+      if (!confirm('Are you sure you want to delete this category?')) return;
+      try {
+        const res = await fetch(`${API_BASE}/collections/${id}`, {
+          method: 'DELETE',
+          headers: { 'x-admin-dev': 'true' }
+        });
+        if (!res.ok) throw new Error();
+        alert('Category deleted!');
+        fetchCollections();
+      } catch (e) {
+        alert('Could not delete category.');
+      }
+    }
+
+    function closeModal(modalId) {
+      document.getElementById(modalId).classList.remove('active');
+    }
+
+    // Expose functions globally to window for inline onclick handlers
+    window.editProduct = editProduct;
+    window.deleteProduct = deleteProduct;
+    window.saveProduct = saveProduct;
+    window.openAddProductModal = openAddProductModal;
+    window.openAddCollectionModal = openAddCollectionModal;
+    window.openEditCollectionModal = openEditCollectionModal;
+    window.deleteCollection = deleteCollection;
+    window.saveCollection = saveCollection;
+    window.closeModal = closeModal;
+    window.loadAllData = loadAllData;
+    window.switchTab = switchTab;
+    window.toggleOrderStatus = toggleOrderStatus;
+    window.autoSuggestImage = autoSuggestImage;
+    window.onProductCategoryChange = onProductCategoryChange;
+
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', loadAllData);
+  </script>
+</body>
+</html>

@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blogs & News – Arshith Fresh</title>
+    <meta name="description" content="Discover recipes, health tips, traditional cold-pressed oil benefits, and authentic spice powder guides on Arshith Fresh Blog.">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="../assets/css/style.css?v=3.0">
+        <link rel="stylesheet" href="../assets/css/pages.css">
+</head>
+
+<body>
+
+    <!-- Sticky Announcement Bar -->
+    <div class="announcement-bar">
+        <div class="announcement-marquee">
+            <div class="announcement-track">
+                <span>Newly Arrived Fresh Homemade Veg Pickles | Natural Ingredients & Cold-Pressed Oils Only!</span>
+                <span class="announcement-separator">•</span>
+                <span>🚚 Free shipping on all orders ₹1000 & above! | Limited time festive deal 🥳</span>
+                <span class="announcement-separator">•</span>
+                <span>Newly Arrived Fresh Homemade Veg Pickles | Natural Ingredients & Cold-Pressed Oils Only!</span>
+                <span class="announcement-separator">•</span>
+                <span>🚚 Free shipping on all orders ₹1000 & above! | Limited time festive deal 🥳</span>
+                <span class="announcement-separator">•</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header / Navigation -->
+    <header class="main-header">
+        <div class="header-container">
+            <button class="mobile-menu-btn" aria-label="Toggle Menu">
+                <span class="menu-icon-bar"></span>
+                <span class="menu-icon-bar"></span>
+                <span class="menu-icon-bar"></span>
+            </button>
+
+            <div class="header-logo">
+                <a href="../index.html">
+                    <img src="https://arshithfresh.com/cdn/shop/files/Arshithlogo111.jpg?v=1755685028&width=600" alt="Arshith Fresh Logo" class="logo-img">
+                </a>
+            </div>
+
+            <nav class="desktop-nav">
+                <ul class="nav-links">
+                    <li><a href="../index.html">Home</a></li>
+                    <li class="dropdown">
+                        <a href="collections.html" class="dropdown-trigger">Collections <span class="arrow-down">▼</span></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="collections.html?category=oils-natural-extracts">Oils</a></li>
+                            <li><a href="collections.html?category=dry-fruits-nuts">Dry Fruits</a></li>
+                            <li><a href="collections.html?category=dry-seeds">Dry Seeds</a></li>
+                            <li><a href="collections.html?category=ghee-and-honey">Ghee and Honey</a></li>
+                            <li><a href="collections.html?category=cooking-essentials">Cooking Essentials</a></li>
+                            <li><a href="collections.html?category=spices">Spices</a></li>
+                            <li><a href="collections.html?category=spice-powders-podulu">Spice Powders</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="seller.html">Become a Seller</a></li>
+                </ul>
+            </nav>
+
+            <div class="header-actions">
+                <div class="search-bar-container">
+                    <form class="search-form" action="collections.html" method="get">
+                        <input type="text" name="q" placeholder="Search..." aria-label="Search">
+                        <button type="submit" class="search-submit" aria-label="Submit search">
+                            <svg class="icon icon-search" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="9" cy="9" r="6" />
+                                <line x1="14" y1="14" x2="19" y2="19" />
+                            </svg>
+                        </button>
+                    </form>
+                </div>
+                <a href="auth/login.html" class="action-btn login-btn" title="Log In">
+                    <svg class="icon icon-account" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                        <circle cx="12" cy="7" r="4" />
+                    </svg>
+                </a>
+                <a href="cart.html" class="action-btn cart-btn" title="Cart">
+                    <svg class="icon icon-cart" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="9" cy="21" r="1" />
+                        <circle cx="20" cy="21" r="1" />
+                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+                    </svg>
+                    <span class="cart-count">0</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Drawer Menu -->
+    <div class="mobile-drawer" id="mobileDrawer">
+        <div class="drawer-header">
+            <h3>Menu</h3>
+            <button class="drawer-close-btn" aria-label="Close Menu">&times;</button>
+        </div>
+        <div class="drawer-body">
+            <ul class="drawer-nav-links">
+                <li><a href="../index.html">Home</a></li>
+                <li class="drawer-has-submenu">
+                    <a href="#" class="submenu-toggle">Collections <span class="arrow-down">▼</span></a>
+                    <ul class="drawer-submenu">
+                        <li><a href="categories/oils-natural-extracts.html">Oils</a></li>
+                        <li><a href="categories/dry-fruits-nuts.html">Dry Fruits</a></li>
+                        <li><a href="categories/dry-seeds.html">Dry Seeds</a></li>
+                        <li><a href="categories/ghee-and-honey.html">Ghee and Honey</a></li>
+                        <li><a href="categories/cooking-essentials.html">Cooking Essentials</a></li>
+                        <li><a href="categories/spices.html">Spices</a></li>
+                        <li><a href="categories/spice-powders-podulu.html">Spice Powders</a></li>
+                    </ul>
+                </li>
+                <li><a href="seller.html">Become a Seller</a></li>
+                <li><a href="auth/login.html">Log In</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="drawer-overlay" id="drawerOverlay"></div>
+
+    <!-- Hero Section -->
+    <section class="blog-page-hero">
+        <h1>Arshith Fresh Blogs & Stories</h1>
+        <p>Explore articles on traditional food heritage, cold-pressed oil extraction, natural wellness tips, and authentic South Indian recipes.</p>
+    </section>
+
+    <!-- Blog Container -->
+    <main class="blog-container">
+        <div class="blog-grid">
+
+            <!-- Blog 1 -->
+            <article class="blog-card">
+                <div class="blog-card-img-wrap">
+                    <span class="blog-tag">Specialties</span>
+                    <img src="https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?auto=format&fit=crop&w=600&q=80" alt="Dry Fishes">
+                </div>
+                <div class="blog-card-content">
+                    <div class="blog-date">August 15, 2025 • 4 min read</div>
+                    <h2 class="blog-title">Dry Fish Specials: Traditional Coastal Delicacies</h2>
+                    <p class="blog-excerpt">Discover how sun-dried fish delicacies preserve natural flavors, rich proteins, and authentic traditional recipes passed down through generations in coastal India.</p>
+                    <a href="javascript:void(0)" onclick="showToast('Reading article: Dry Fish Specials')" class="blog-read-btn">Read Article →</a>
+                </div>
+            </article>
+
+            <!-- Blog 2 -->
+            <article class="blog-card">
+                <div class="blog-card-img-wrap">
+                    <span class="blog-tag">Wellness</span>
+                    <img src="https://images.unsplash.com/photo-1615485290382-441e4d049cb5?auto=format&fit=crop&w=600&q=80" alt="Spices & Health">
+                </div>
+                <div class="blog-card-content">
+                    <div class="blog-date">August 10, 2025 • 5 min read</div>
+                    <h2 class="blog-title">Spices & Health: Pure Turmeric, Black Pepper & Cumin</h2>
+                    <p class="blog-excerpt">Uncover the medicinal and antioxidant properties of pure, unadulterated spices that enhance digestion, immunity, and overall daily vitality.</p>
+                    <a href="javascript:void(0)" onclick="showToast('Reading article: Spices & Health')" class="blog-read-btn">Read Article →</a>
+                </div>
+            </article>
+
+            <!-- Blog 3 -->
+            <article class="blog-card">
+                <div class="blog-card-img-wrap">
+                    <span class="blog-tag">Kitchen Essentials</span>
+                    <img src="https://images.unsplash.com/photo-1476224203421-9ac39bcb3327?auto=format&fit=crop&w=600&q=80" alt="Cooking Essentials">
+                </div>
+                <div class="blog-card-content">
+                    <div class="blog-date">August 05, 2025 • 3 min read</div>
+                    <h2 class="blog-title">Cooking Essentials: Why Cold-Pressed Oils Matter</h2>
+                    <p class="blog-excerpt">Learn why traditional wood-pressed (Chekku/Ghani) extraction retains natural nutrients, aroma, and essential fatty acids unlike refined oils.</p>
+                    <a href="javascript:void(0)" onclick="showToast('Reading article: Cooking Essentials')" class="blog-read-btn">Read Article →</a>
+                </div>
+            </article>
+
+            <!-- Blog 4 -->
+            <article class="blog-card">
+                <div class="blog-card-img-wrap">
+                    <span class="blog-tag">Tradition</span>
+                    <img src="https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=600&q=80" alt="Spice Powders & Podulu">
+                </div>
+                <div class="blog-card-content">
+                    <div class="blog-date">July 28, 2025 • 4 min read</div>
+                    <h2 class="blog-title">Spice Powders & Podulu: Authentic Homemade Flavors</h2>
+                    <p class="blog-excerpt">Explore the heritage of Andhra and South Indian Podulu, freshly roasted and ground with natural spices for unforgettable taste.</p>
+                    <a href="javascript:void(0)" onclick="showToast('Reading article: Spice Powders & Podulu')" class="blog-read-btn">Read Article →</a>
+                </div>
+            </article>
+
+        </div>
+    </main>
+
+    <!-- Footer Banner Image -->
+    <div class="footer-banner-wrapper">
+        <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/lastban.png?v=1750311559" alt="Footer Banner" class="footer-banner-img">
+    </div>
+
+    <!-- Main Footer -->
+    <footer class="main-footer">
+        <div class="footer-top">
+            <!-- Column 1 -->
+            <div class="footer-col brand-info">
+                <a href="../index.html">
+                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/masaaaaa-removebg-preview.png?v=1760592733" alt="Arshith Fresh Logo" class="brand-logo">
+                </a>
+                <p class="office-text"><strong>Corporate Office</strong> — Bengaluru, Karnataka, India - 560076</p>
+                <div class="footer-newsletter">
+                    <h3 class="newsletter-title">SUBSCRIBE TO OUR NEWSLETTER</h3>
+                    <form class="newsletter-form" onsubmit="event.preventDefault(); if (typeof showToast === 'function') showToast('Subscribed to newsletter!');">
+                        <input type="email" placeholder="Email" required aria-label="Email Address" class="footer-newsletter-input">
+                    </form>
+                </div>
+            </div>
+
+            <!-- Column 2 -->
+            <div class="footer-col links-col">
+                <h3 class="footer-accordion-btn">SERVICES <span class="footer-arrow">+</span></h3>
+                <ul class="footer-links-list">
+                    <li><a href="about-us.html">About Us</a></li>
+                    <li><a href="collections.html?category=all">Shop All</a></li>
+                    <li><a href="blog.html">Blog</a></li>
+                    <li><a href="seller.html">Franchise</a></li>
+                    <li><a href="http://suntechorganization.com/" target="_blank" rel="noopener noreferrer">Suntech Solutions</a></li>
+                </ul>
+            </div>
+
+            <!-- Column 3 -->
+            <div class="footer-col links-col">
+                <h3 class="footer-accordion-btn">POLICIES <span class="footer-arrow">+</span></h3>
+                <ul class="footer-links-list">
+                    <li><a href="seller.html">Contact Us</a></li>
+                    <li><a href="policies/privacy-policy.html">Privacy Policy</a></li>
+                    <li><a href="policies/shipping-policy.html">Shipping Info</a></li>
+                    <li><a href="policies/refund-policy.html">Returns & Refunds</a></li>
+                    <li><a href="track-order.html">Track Your Order</a></li>
+                    <li><a href="policies/terms-of-service.html">Terms of Service</a></li>
+                </ul>
+            </div>
+
+            <!-- Column 4 -->
+            <div class="footer-col help-col">
+                <h3 class="footer-accordion-btn">NEED HELP?</h3>
+                <div class="help-box">
+                    <p class="help-item">📍 <span>Bengaluru, Karnataka, India - 560076</span></p>
+                    <p class="help-item">📞 <a href="tel:+918618471424">+91 8618471424</a></p>
+                    <p class="help-item">✉️ <a href="mailto:support@arshithfresh.com">support@arshithfresh.com</a></p>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p class="copyright-text">© 2025 Arshith Fresh India Pvt.Ltd. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Mobile Bottom Fixed Navigation Bar -->
+    <div class="mobile-bottom-nav">
+        <a href="../index.html" class="bottom-nav-item">
+            <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/ef7b59f4-ee65-4b6a-bba4-1f005f6073e2-removebg-preview.png?v=1761987904" alt="Home">
+            <span>HOME</span>
+        </a>
+        <a href="collections.html?category=all" class="bottom-nav-item">
+            <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/shop-removebg-preview.png?v=1759814957" alt="Products">
+            <span>PRODUCTS</span>
+        </a>
+        <a href="collections.html" class="bottom-nav-item">
+            <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/offers-removebg-preview.png?v=1759815053" alt="Offers">
+            <span>OFFERS</span>
+        </a>
+        <a href="cart.html" class="bottom-nav-item">
+            <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/wallet_11-removebg-preview.png?v=1759815346" alt="Wallet">
+            <span>WALLET</span>
+        </a>
+        <a href="https://api.whatsapp.com/send/?phone=919945676029&text=Hi%20Arshith%20Fresh,%20I%27m%20interested%20in%20your%20products!" class="bottom-nav-item">
+            <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/help-removebg-preview.png?v=1759815017" alt="Contact">
+            <span>CONTACT</span>
+        </a>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../assets/js/script.js"></script>
+</body>
+
+</html>

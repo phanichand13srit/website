@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Collection Details - Arshith Fresh Admin</title>
+  
+  <!-- Shared Admin Theme Stylesheet -->
+  <link rel="stylesheet" href="../assets/css/admin.css">
+  </head>
+<body>
+
+  <!-- Topbar -->
+  <header class="global-topbar">
+    <div class="topbar-left">
+      <div class="shopify-logo">
+        <svg viewBox="0 0 109.5 124.5"><path d="M74.7 14.1c-.2 0-.4.1-.5.1-.2-.8-.6-1.5-1.1-2.2-2.1-2.9-5.7-4.4-10.7-4.4-1.2 0-2.5.1-3.7.4-4.8 1.1-9.4 3.9-13.6 8.3-3 3.1-6.1 7.6-7.8 11.2-.8 1.7-1.5 3.3-2.1 4.7l-15.6 4.8c-4.8 1.5-5 1.9-5.6 6.9L.1 113.1c-.5 4.3 2.5 8 6.8 8.4.4 0 .9 0 1.3-.1l74-15.3c4.5-.9 7.7-4.9 7.4-9.5l-14.9-82.5z"/></svg>
+        <span style="font-weight: 700; font-size: 15px; letter-spacing: -0.5px;">shopify</span>
+      </div>
+    </div>
+
+    <div class="topbar-center">
+      <div class="search-box-wrapper">
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <input type="text" class="global-search-input" placeholder="Search">
+        <span class="kbd-shortcut">CTRL K</span>
+      </div>
+    </div>
+
+    <div class="topbar-right">
+      <button class="btn-view-as">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+        <span>View as</span>
+      </button>
+
+      <button class="notification-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg></button>
+
+      <div class="store-profile-dropdown">
+        <div class="store-avatar" style="background-color: #278d43; color: #fff; font-weight: 700;">🌱</div>
+        <span class="store-name-text">Arshith Fresh</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- App Layout -->
+  <div class="app-container">
+
+    <!-- Sidebar -->
+    <aside class="app-sidebar">
+      <div class="sidebar-menu">
+        <a href="dashboard.html" class="menu-item">
+          <div class="menu-item-left">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
+            <span>Home</span>
+          </div>
+        </a>
+
+        <a href="orders.html" class="menu-item">
+          <div class="menu-item-left">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+            <span>Orders</span>
+          </div>
+          <span class="badge-count">114</span>
+        </a>
+
+        <a href="products.html" class="menu-item active">
+          <div class="menu-item-left">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16.5 9.4 7.55 4.24a1.78 1.78 0 0 0-2.5 1.55v12.42a1.78 1.78 0 0 0 2.5 1.55L16.5 14.6a1.78 1.78 0 0 0 0-3.2z"></path></svg>
+            <span>Products</span>
+          </div>
+        </a>
+
+        <div class="submenu-list">
+          <a href="collections.html" class="submenu-item active">Collections</a>
+          <a href="inventory.html" class="submenu-item">Inventory</a>
+          <a href="#" class="submenu-item">Purchase orders</a>
+          <a href="#" class="submenu-item">Transfers</a>
+          <a href="#" class="submenu-item">Gift cards</a>
+        </div>
+
+        <a href="customers.html" class="menu-item">
+          <div class="menu-item-left">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>
+            <span>Customers</span>
+          </div>
+        </a>
+
+        <a href="#" class="menu-item">
+          <div class="menu-item-left">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+            <span>Growth</span>
+          </div>
+        </a>
+
+        <a href="#" class="menu-item">
+          <div class="menu-item-left">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="5" x2="5" y2="19"></line><circle cx="6.5" cy="6.5" r="2.5"></circle><circle cx="17.5" cy="17.5" r="2.5"></circle></svg>
+            <span>Discounts</span>
+          </div>
+        </a>
+
+        <a href="#" class="menu-item">
+          <div class="menu-item-left">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+            <span>Content</span>
+          </div>
+        </a>
+
+        <a href="#" class="menu-item">
+          <div class="menu-item-left">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+            <span>Markets</span>
+          </div>
+        </a>
+
+        <a href="#" class="menu-item">
+          <div class="menu-item-left">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
+            <span>Analytics</span>
+          </div>
+        </a>
+
+        <div class="sidebar-section-header">
+          <span>Sales channels</span>
+          <span style="font-size: 14px; font-weight: normal; cursor: pointer;">›</span>
+        </div>
+
+        <a href="../index.html" target="_blank" class="menu-item">
+          <div class="menu-item-left">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
+            <span>Online Store</span>
+          </div>
+        </a>
+      </div>
+
+      <div class="sidebar-bottom">
+        <a href="#" class="menu-item">
+          <div class="menu-item-left">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+            <span>Settings</span>
+          </div>
+        </a>
+      </div>
+    </aside>
+
+    <!-- Main Viewport -->
+    <main class="main-viewport">
+      <div class="product-detail-container">
+
+        <!-- Top Navigation -->
+        <div class="detail-top-nav">
+          <div class="detail-title-group">
+            <a href="collections.html" class="btn-back-arrow" title="Back to collections">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            </a>
+            <h1 class="detail-product-heading" id="collectionHeading">Spice Powders (Podulu)</h1>
+          </div>
+
+          <div class="detail-actions-group">
+            <button class="btn-secondary-pill" onclick="alert('Duplicating collection...')">Duplicate</button>
+            <button class="btn-secondary-pill" onclick="window.open('index.html', '_blank')">View</button>
+            <button class="btn-secondary-pill" onclick="openMoreActions()">More actions ▾</button>
+          </div>
+        </div>
+
+        <!-- 2-Column Grid -->
+        <div class="product-detail-grid">
+
+          <!-- Left Main Column -->
+          <div class="detail-left-col">
+
+            <!-- Banner Header Card (Matching Video) -->
+            <div class="col-header-banner-box">
+              <img src="https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=300&auto=format&fit=crop&q=60" class="col-banner-img" id="colBannerImg" alt="Collection Banner">
+              <div class="col-banner-info">
+                <div class="col-banner-title" id="colBannerTitle">Spice Powders (Podulu)</div>
+                <div class="col-banner-desc" id="colBannerDesc">
+                  Buy authentic spice powders (podulu) online from Arshith Fresh and bring traditional taste to your everyday cooking. Our spice powders collection includes homemade karam podi, Andhra podulu, and premium Indian masala powders prepared using time-honored recipes.
+                </div>
+                <div class="col-channels-badge">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                  <span>3 channels ▾</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Collection Items / Products Section (Matching Video) -->
+            <div class="detail-card">
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <strong style="font-size: 14px;">Collection items</strong>
+                  <span id="colItemCountBadge" class="badge-count" style="background: #f1f2f4; padding: 2px 8px; border-radius: 12px; font-weight: 600;">13</span>
+                </div>
+
+                <div style="display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--text-secondary);">
+                  <span>Default sort:</span>
+                  <select class="form-control" style="width: auto; padding: 4px 8px; font-size: 12px;">
+                    <option>Oldest</option>
+                    <option>Product title A-Z</option>
+                    <option>Price: Low to High</option>
+                    <option>Price: High to Low</option>
+                    <option>Manually</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- View switchers and Filter pills -->
+              <div style="display: flex; align-items: center; justify-content: space-between; padding-top: 10px; border-top: 1px solid var(--border-color); margin-bottom: 12px;">
+                <div style="display: flex; align-items: center; gap: 6px;">
+                  <button style="border: 1px solid var(--border-color); background: #ffffff; padding: 4px 6px; border-radius: 4px; cursor: pointer;" title="List view">≡</button>
+                  <button style="border: 1px solid var(--border-color); background: #f1f2f4; padding: 4px 6px; border-radius: 4px; cursor: pointer; font-weight: bold;" title="Grid view">⊞</button>
+                  <span style="font-size: 11.5px; color: var(--text-secondary); margin-left: 4px;">4</span>
+                </div>
+
+                <div style="display: flex; align-items: center; gap: 8px; font-size: 12px;">
+                  <span style="background: #f1f2f4; border-radius: 12px; padding: 3px 10px; color: #4a4d50; font-size: 11.5px;">
+                    Status: Active, Draft, Unlisted, and Suspended ✕
+                  </span>
+                  <a href="#" style="color: var(--brand-green); font-size: 11.5px; text-decoration: underline;">Clear all</a>
+                </div>
+              </div>
+
+              <!-- 4-Column Product Grid (Matching Video Exactly) -->
+              <div class="col-products-grid" id="collectionGridContainer">
+                <!-- Dynamically populated product cards -->
+              </div>
+            </div>
+
+            <!-- Theme template -->
+            <div class="detail-card">
+              <div class="detail-card-title">
+                <span>Theme template</span>
+              </div>
+              <select class="form-control">
+                <option>Default collection</option>
+              </select>
+            </div>
+
+            <!-- SEO Preview -->
+            <div class="detail-card">
+              <div class="detail-card-title">
+                <span>Search engine listing</span>
+                <button style="background:none; border:none; color:var(--brand-green); font-size:12px; cursor:pointer;">Edit</button>
+              </div>
+              <div class="seo-preview-card">
+                <div class="seo-title" id="colSeoTitle">Spice Powders (Podulu) Online | Homemade Andhra Masala – Arshith Fresh</div>
+                <div class="seo-url" id="colSeoUrl">https://arshithfresh.com &gt; collections &gt; spice-powders-podulu</div>
+                <div class="seo-snippet" id="colSeoSnippet">
+                  Buy spice powders (podulu) online from Arshith Fresh. Homemade Andhra karam podi and Indian masala powders with no added preservatives. Fresh delivery across India.
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Right Column -->
+          <div class="detail-right-col">
+
+            <!-- Conditions Card -->
+            <div class="detail-card">
+              <div class="detail-card-title">
+                <span>Products</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+              </div>
+
+              <div class="conditions-rule-box">
+                <span>Tag</span>
+                <span class="rule-tag">includes</span>
+                <span class="rule-tag" id="ruleTagDisplay">Podulu (Podulu) OR Podulu-Premium</span>
+              </div>
+
+              <div style="margin-top: 12px; display: flex; flex-direction: column; gap: 8px;">
+                <button style="background:none; border:none; color:var(--brand-green); font-size:12.5px; font-weight:500; cursor:pointer; text-align:left; display:flex; align-items:center; gap:6px;">
+                  <span>+ Add condition</span>
+                  <span style="background:#f1f2f4; color:#616161; font-size:10.5px; padding:1px 6px; border-radius:10px;">1</span>
+                </button>
+                <button style="background:none; border:none; color:#d82c0d; font-size:12.5px; font-weight:500; cursor:pointer; text-align:left;">
+                  + Exclude
+                </button>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+    </main>
+
+  </div>
+
+  <!-- JavaScr  <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const colId = urlParams.get('id');
+
+      if (!colId) {
+        document.getElementById('collectionHeading').textContent = "Collection Not Found";
+        document.getElementById('collectionGridContainer').innerHTML = "<p>No ID provided in URL.</p>";
+        return;
+      }
+
+      try {
+        const colRes = await fetch(`http://localhost:5000/api/collections/${colId}`);
+        const colJson = await colRes.json();
+        
+        if (!colJson.success || !colJson.data) {
+          document.getElementById('collectionHeading').textContent = "Collection Not Found";
+          return;
+        }
+
+        const col = colJson.data;
+
+        document.getElementById('collectionHeading').textContent = col.title;
+        document.getElementById('colBannerTitle').textContent = col.title;
+        document.getElementById('colBannerDesc').textContent = col.description || "No description available.";
+        document.getElementById('colBannerImg').src = col.image || "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=300&auto=format&fit=crop&q=60";
+        document.getElementById('ruleTagDisplay').textContent = "Category matches collection";
+        
+        document.getElementById('colSeoTitle').textContent = `${col.title} | Arshith Fresh`;
+        document.getElementById('colSeoUrl').textContent = `https://arshithfresh.com > collections > ${col.handle}`;
+        document.getElementById('colSeoSnippet').textContent = (col.description || "").substring(0, 160) + '...';
+
+        // Fetch products to find which ones belong to this collection
+        const prodRes = await fetch('http://localhost:5000/api/products');
+        const allProducts = await prodRes.json();
+        
+        const colProducts = allProducts.filter(p => p.categoryId && (p.categoryId === col._id || p.categoryId._id === col._id));
+        
+        document.getElementById('colItemCountBadge').textContent = colProducts.length;
+
+        // Render 4-Column Product Cards Grid
+        const grid = document.getElementById('collectionGridContainer');
+        if (colProducts.length === 0) {
+          grid.innerHTML = "<p style='padding:20px; color:var(--text-secondary);'>No products in this collection.</p>";
+        } else {
+          grid.innerHTML = colProducts.map(p => {
+            const statusClass = p.status === 'active' ? 'col-card-active-badge' : 'col-card-draft-badge';
+            const imgUrl = (p.images && p.images.length > 0) ? p.images[0].url : 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=300&auto=format&fit=crop&q=60';
+            
+            return `
+            <a href="product-detail.html?id=${p._id}" class="col-product-card" title="Click to edit ${p.title}">
+              <div class="col-product-img-wrapper">
+                <img src="${imgUrl}" alt="${p.title}">
+                <span class="${statusClass}">${p.status === 'active' ? 'Active' : 'Draft'}</span>
+              </div>
+              <div class="col-product-info">
+                ${p.title}
+              </div>
+            </a>
+            `;
+          }).join('');
+        }
+      } catch (err) {
+        console.error("Error fetching collection:", err);
+      }
+    });
+  </script>
+</body>
+</html>

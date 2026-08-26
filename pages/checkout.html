@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout | Arshith Fresh</title>
+    <meta name="description" content="Secure Checkout - Arshith Fresh">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="../assets/css/style.css?v=3.0">
+
+        <link rel="stylesheet" href="../assets/css/cart.css">
+</head>
+
+<body>
+
+    <!-- TOP HEADER BAR MATCHING PIC 2 -->
+    <header class="checkout-top-bar">
+        <a href="../index.html">
+            <img src="https://arshithfresh.com/cdn/shop/files/Arshithlogo111.jpg?v=1755685028&width=600" alt="Arshith Fresh Logo" class="checkout-header-logo-img">
+        </a>
+        <a href="cart.html" class="checkout-header-cart-link" title="View Cart">
+            <div class="cart-icon-badge">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0f7139" stroke-width="2">
+                    <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <path d="M16 10a4 4 0 0 1-8 0"></path>
+                </svg>
+                <span id="checkoutTopCartCount" class="cart-badge-num">1</span>
+            </div>
+        </a>
+    </header>
+
+    <!-- MAIN TWO COLUMN GRID MATCHING PIC 2 -->
+    <div class="checkout-main-grid">
+        
+        <!-- LEFT COLUMN FORM PANE -->
+        <div class="checkout-form-pane">
+            
+            <form onsubmit="handlePlaceOrder(event)">
+                
+                <!-- CONTACT SECTION -->
+                <div class="checkout-section-title">
+                    <span>Contact</span>
+                    <a href="auth/login.html" class="signin-link">Sign in</a>
+                </div>
+
+                <div class="input-icon-wrap">
+                    <input type="text" placeholder="Email or mobile phone number" required class="form-input-control" id="contactInput">
+                    <span class="input-icon-right">ⓘ</span>
+                </div>
+
+                <label class="checkbox-row">
+                    <span class="custom-checkbox">✓</span>
+                    <span>Email me with news and offers</span>
+                </label>
+
+                <!-- DELIVERY SECTION -->
+                <div class="checkout-section-title">
+                    <span>Delivery</span>
+                </div>
+
+                <div style="margin-bottom: 12px;">
+                    <select class="form-select-control">
+                        <option value="India" selected>India</option>
+                    </select>
+                </div>
+
+                <div class="dual-inputs-grid">
+                    <input type="text" placeholder="First name" required class="form-input-control">
+                    <input type="text" placeholder="Last name" required class="form-input-control">
+                </div>
+
+                <div class="input-icon-wrap" style="margin-top: 12px;">
+                    <input type="text" placeholder="Address" required class="form-input-control">
+                    <span class="input-icon-right">🔍</span>
+                </div>
+
+                <div style="margin-top: 12px;">
+                    <input type="text" placeholder="Apartment, suite, etc. (optional)" class="form-input-control">
+                </div>
+
+                <div class="triple-inputs-grid">
+                    <input type="text" placeholder="City" required class="form-input-control">
+                    <select class="form-select-control">
+                        <option value="Karnataka" selected>Karnataka</option>
+                        <option value="Andhra Pradesh">Andhra Pradesh</option>
+                        <option value="Telangana">Telangana</option>
+                        <option value="Tamil Nadu">Tamil Nadu</option>
+                        <option value="Maharashtra">Maharashtra</option>
+                    </select>
+                    <input type="text" placeholder="PIN code" required class="form-input-control">
+                </div>
+
+                <div class="input-icon-wrap" style="margin-top: 12px;">
+                    <input type="tel" placeholder="Phone" required class="form-input-control">
+                    <span class="input-icon-right">ⓘ</span>
+                </div>
+
+                <label class="checkbox-row" style="margin-top: 16px;">
+                    <input type="checkbox" style="accent-color: #0f7139;">
+                    <span>Save this information for next time</span>
+                </label>
+
+                <label class="checkbox-row" style="margin-top: 8px;">
+                    <input type="checkbox" style="accent-color: #0f7139;">
+                    <span>Text me with news and offers</span>
+                </label>
+
+                <!-- SHIPPING METHOD SECTION -->
+                <div class="checkout-section-title">
+                    <span>Shipping method</span>
+                </div>
+
+                <div class="muted-notice-box">
+                    Enter your shipping address to view available shipping methods.
+                </div>
+
+                <!-- PAYMENT SECTION -->
+                <div class="checkout-section-title" style="margin-top: 32px;">
+                    <span>Payment</span>
+                </div>
+                <div style="font-size: 13px; color: #6b7280; margin-bottom: 12px;">
+                    All transactions are secure and encrypted.
+                </div>
+
+                <div class="payment-card-box">
+                    <div class="payment-card-header">
+                        <span class="payment-name">Razorpay Secure (UPI, Card, Int'l Card, Apple Pay)</span>
+                        <div class="payment-badges">
+                            <span style="font-size: 10px; background: #5f259f; color: #fff; padding: 2px 4px; border-radius: 2px; font-weight: bold;">UPI</span>
+                            <span style="font-size: 10px; background: #1a1f71; color: #fff; padding: 2px 4px; border-radius: 2px; font-weight: bold;">VISA</span>
+                            <span style="font-size: 10px; background: #eb001b; color: #fff; padding: 2px 4px; border-radius: 2px; font-weight: bold;">MC</span>
+                            <span class="badge-more">+18</span>
+                        </div>
+                    </div>
+                    <div class="payment-card-body">
+                        You'll be redirected to Razorpay Secure (UPI, Card, Int'l Card, Apple Pay) to complete your purchase.
+                    </div>
+                </div>
+
+                <!-- BILLING ADDRESS SECTION -->
+                <div class="checkout-section-title" style="margin-top: 28px;">
+                    <span>Billing address</span>
+                </div>
+
+                <div class="billing-options-box">
+                    <div class="billing-option-row selected">
+                        <span class="radio-dot-active"></span>
+                        <span>Same as shipping address</span>
+                    </div>
+                    <div class="billing-option-row">
+                        <span class="radio-dot-inactive"></span>
+                        <span>Use a different billing address</span>
+                    </div>
+                </div>
+
+                <!-- SUBMIT BUTTON -->
+                <button type="submit" class="pay-now-btn">Pay now</button>
+
+                <!-- FOOTER POLICY LINKS -->
+                <div class="checkout-footer-links">
+                    <a href="javascript:void(0)" onclick="openPolicyModal('returns')">Refund policy</a>
+                    <a href="javascript:void(0)" onclick="openPolicyModal('shipping')">Shipping</a>
+                    <a href="javascript:void(0)" onclick="openPolicyModal('privacy')">Privacy policy</a>
+                    <a href="javascript:void(0)" onclick="openPolicyModal('terms')">Terms of service</a>
+                </div>
+
+            </form>
+
+        </div>
+
+        <!-- RIGHT COLUMN ORDER SUMMARY PANE -->
+        <div class="checkout-summary-pane">
+            
+            <div id="checkoutSummaryList" class="summary-items-list"></div>
+
+            <div class="discount-code-wrap">
+                <input type="text" placeholder="Discount code" class="discount-input">
+                <button type="button" class="discount-apply-btn" onclick="showToast('Discount code applied!')">Apply</button>
+            </div>
+
+            <div class="summary-totals-box">
+                <div class="totals-row">
+                    <span>Subtotal</span>
+                    <span id="checkoutSubtotal">₹0.00</span>
+                </div>
+                <div class="totals-row">
+                    <span>Shipping ⓘ</span>
+                    <span style="font-size: 13px; color: #6b7280;">Enter shipping address</span>
+                </div>
+                <div class="totals-row grand-total-row">
+                    <span>Total</span>
+                    <span><span class="currency-symbol">INR</span> <strong id="checkoutGrandTotal">₹0.00</strong></span>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Script -->
+    <script src="../assets/js/script.js"></script>
+    <script>
+        function renderCheckoutPage() {
+            const summaryList = document.getElementById("checkoutSummaryList");
+            const subtotalEl = document.getElementById("checkoutSubtotal");
+            const totalEl = document.getElementById("checkoutGrandTotal");
+            const countEl = document.getElementById("checkoutTopCartCount");
+
+            if (!summaryList || !subtotalEl || !totalEl) return;
+
+            if (CART_ITEMS.length === 0) {
+                // Demo item if cart is empty
+                summaryList.innerHTML = `
+                    <div class="summary-item-row">
+                        <div class="summary-item-left">
+                            <div class="summary-img-wrap">
+                                <img src="https://arshithfresh.com/cdn/shop/files/4_6d56df69-1c9f-4f05-b1a7-ca631fc7b9aa.png" alt="Ajwain" class="summary-img">
+                                <span class="summary-qty-badge">1</span>
+                            </div>
+                            <div>
+                                <h4 class="summary-item-title">Ajwain (Premium Quality)</h4>
+                                <p class="summary-item-weight">50g</p>
+                            </div>
+                        </div>
+                        <div class="summary-item-price">₹30.00</div>
+                    </div>
+                `;
+                subtotalEl.textContent = "₹30.00";
+                totalEl.textContent = "₹30.00";
+                if (countEl) countEl.textContent = "1";
+                return;
+            }
+
+            const totalCount = CART_ITEMS.reduce((sum, item) => sum + item.quantity, 0);
+            const subtotal = CART_ITEMS.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+            summaryList.innerHTML = CART_ITEMS.map(item => `
+                <div class="summary-item-row">
+                    <div class="summary-item-left">
+                        <div class="summary-img-wrap">
+                            <img src="${item.image || 'https://arshithfresh.com/cdn/shop/files/4_6d56df69-1c9f-4f05-b1a7-ca631fc7b9aa.png'}" alt="${item.title}" class="summary-img">
+                            <span class="summary-qty-badge">${item.quantity}</span>
+                        </div>
+                        <div>
+                            <h4 class="summary-item-title">${item.title}</h4>
+                            <p class="summary-item-weight">${item.weight || 'Standard'}</p>
+                        </div>
+                    </div>
+                    <div class="summary-item-price">₹${(item.price * item.quantity).toFixed(2)}</div>
+                </div>
+            `).join("");
+
+            subtotalEl.textContent = `₹${subtotal.toFixed(2)}`;
+            totalEl.textContent = `₹${subtotal.toFixed(2)}`;
+            if (countEl) countEl.textContent = totalCount;
+        }
+
+        function handlePlaceOrder(e) {
+            e.preventDefault();
+            const orderId = "AF-" + Math.floor(100000 + Math.random() * 900000);
+            showToast(`Payment successful! Order #${orderId} placed.`);
+            CART_ITEMS = [];
+            saveCart();
+            setTimeout(() => {
+                window.location.href = "../index.html";
+            }, 1800);
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            renderCheckoutPage();
+        });
+    </script>
+</body>
+
+</html>

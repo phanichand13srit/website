@@ -1,0 +1,531 @@
+/* --- Styles from forgot-password.html --- */
+.reset-password-section {
+            background-color: #ffffff;
+            min-height: 60vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 20px 80px;
+        }
+
+        .reset-password-heading {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 42px;
+            font-weight: 400;
+            color: #0f7139;
+            text-align: center;
+            margin-bottom: 12px;
+            letter-spacing: 0.3px;
+        }
+
+        .reset-password-subtitle {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 17px;
+            color: #6a8e79;
+            text-align: center;
+            margin-bottom: 36px;
+            font-weight: 400;
+        }
+
+        .reset-password-form {
+            width: 100%;
+            max-width: 440px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .form-field-wrapper {
+            width: 100%;
+        }
+
+        .reset-input-control {
+            width: 100%;
+            height: 52px;
+            padding: 0 16px;
+            border: 1.5px solid #0f7139;
+            border-radius: 4px;
+            font-size: 15px;
+            font-family: 'Playfair Display', Georgia, serif;
+            color: #2f3e46;
+            background: #ffffff;
+            outline: none;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .reset-input-control::placeholder {
+            color: #6a8e79;
+            font-family: 'Playfair Display', Georgia, serif;
+            opacity: 0.9;
+        }
+
+        .reset-input-control:focus {
+            border-color: #0b3718;
+            box-shadow: 0 0 0 3px rgba(15, 113, 57, 0.12);
+        }
+
+        .reset-btn-wrap {
+            text-align: center;
+            margin-top: 8px;
+            margin-bottom: 12px;
+        }
+
+        .reset-submit-btn {
+            background-color: #0f7139;
+            color: #ffffff;
+            font-size: 15px;
+            font-weight: 600;
+            padding: 12px 36px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.25s ease, transform 0.15s ease;
+            font-family: var(--font-body);
+        }
+
+        .reset-submit-btn:disabled {
+            background-color: #6a8e79;
+            cursor: not-allowed;
+            transform: none;
+            opacity: 0.85;
+        }
+
+        .reset-alert-success {
+            display: none;
+            background-color: #eaf6ee;
+            color: #0f7139;
+            border: 1.5px solid #278d43;
+            border-radius: 6px;
+            padding: 12px 16px;
+            font-size: 14px;
+            font-family: var(--font-body);
+            line-height: 1.4;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-6px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .cancel-redirect-wrap {
+            text-align: center;
+            margin-top: 4px;
+        }
+
+        .cancel-redirect-wrap a {
+            color: #0f7139;
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 14px;
+            text-decoration: underline;
+            transition: color 0.2s ease;
+        }
+
+        .cancel-redirect-wrap a:hover {
+            color: #0b3718;
+        }
+
+/* --- Styles from login.html --- */
+.login-page-section {
+            background-color: #ffffff;
+            min-height: 60vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 20px 80px;
+        }
+
+        .login-heading {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 42px;
+            font-weight: 400;
+            color: #0f7139;
+            text-align: center;
+            margin-bottom: 32px;
+            letter-spacing: 0.3px;
+        }
+
+        .login-form-box {
+            width: 100%;
+            max-width: 440px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .login-field-group {
+            position: relative;
+            width: 100%;
+        }
+
+        .login-input-control {
+            width: 100%;
+            height: 52px;
+            padding: 0 16px;
+            border: 1.5px solid #0f7139;
+            border-radius: 4px;
+            font-size: 15px;
+            font-family: 'Playfair Display', Georgia, serif;
+            color: #2f3e46;
+            background: #ffffff;
+            outline: none;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .login-input-control::placeholder {
+            color: #6a8e79;
+            font-family: 'Playfair Display', Georgia, serif;
+            opacity: 0.9;
+        }
+
+        .login-input-control:focus {
+            border-color: #0b3718;
+            box-shadow: 0 0 0 3px rgba(15, 113, 57, 0.12);
+        }
+
+        .password-toggle-btn {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #ffffff;
+            border: 1.5px solid #0f7139;
+            border-radius: 6px;
+            padding: 6px;
+            cursor: pointer;
+            color: #0f7139;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .password-toggle-btn:hover {
+            background-color: rgba(15, 113, 57, 0.08);
+        }
+
+        .forgot-password-wrap {
+            text-align: left;
+            margin-top: -4px;
+            margin-bottom: 8px;
+        }
+
+        .forgot-password-wrap a {
+            color: #0f7139;
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 14px;
+            text-decoration: underline;
+            transition: color 0.2s ease;
+        }
+
+        .forgot-password-wrap a:hover {
+            color: #0b3718;
+        }
+
+        .login-btn-wrap {
+            text-align: center;
+            margin-top: 12px;
+            margin-bottom: 16px;
+        }
+
+        .login-submit-btn {
+            background-color: #0f7139;
+            color: #ffffff;
+            font-size: 15px;
+            font-weight: 600;
+            padding: 12px 36px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.25s ease, transform 0.15s ease;
+            font-family: var(--font-body);
+        }
+
+        .login-submit-btn:hover {
+            background-color: #0b3718;
+            transform: translateY(-1px);
+        }
+
+        .create-account-wrap {
+            text-align: center;
+        }
+
+        .create-account-wrap a {
+            color: #0f7139;
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 14px;
+            text-decoration: underline;
+            transition: color 0.2s ease;
+        }
+
+        .create-account-wrap a:hover {
+            color: #0b3718;
+        }
+
+/* --- Styles from register.html --- */
+.create-account-section {
+            background-color: #ffffff;
+            min-height: 60vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 20px 80px;
+        }
+
+        .create-account-heading {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 42px;
+            font-weight: 400;
+            color: #0f7139;
+            text-align: center;
+            margin-bottom: 36px;
+            letter-spacing: 0.3px;
+        }
+
+        .create-account-form {
+            width: 100%;
+            max-width: 440px;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .form-field-wrapper {
+            width: 100%;
+        }
+
+        .create-input-control {
+            width: 100%;
+            height: 52px;
+            padding: 0 16px;
+            border: 1.5px solid #0f7139;
+            border-radius: 4px;
+            font-size: 15px;
+            font-family: 'Playfair Display', Georgia, serif;
+            color: #2f3e46;
+            background: #ffffff;
+            outline: none;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .create-input-control::placeholder {
+            color: #6a8e79;
+            font-family: 'Playfair Display', Georgia, serif;
+            opacity: 0.9;
+        }
+
+        .create-input-control:focus {
+            border-color: #0b3718;
+            box-shadow: 0 0 0 3px rgba(15, 113, 57, 0.12);
+        }
+
+        .create-btn-wrap {
+            text-align: center;
+            margin-top: 14px;
+            margin-bottom: 12px;
+        }
+
+        .create-submit-btn {
+            background-color: #0f7139;
+            color: #ffffff;
+            font-size: 15px;
+            font-weight: 600;
+            padding: 12px 36px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.25s ease, transform 0.15s ease;
+            font-family: var(--font-body);
+        }
+
+        .create-submit-btn:hover {
+            background-color: #0b3718;
+            transform: translateY(-1px);
+        }
+
+        .login-redirect-wrap {
+            text-align: center;
+            margin-top: 8px;
+        }
+
+        .login-redirect-wrap a {
+            color: #0f7139;
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 14px;
+            text-decoration: underline;
+            transition: color 0.2s ease;
+        }
+
+        .login-redirect-wrap a:hover {
+            color: #0b3718;
+        }
+
+/* --- Styles from reset-password.html --- */
+.reset-password-section {
+            background-color: #ffffff;
+            min-height: 60vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 20px 80px;
+        }
+
+        .reset-password-heading {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 40px;
+            font-weight: 400;
+            color: #0f7139;
+            text-align: center;
+            margin-bottom: 12px;
+            letter-spacing: 0.3px;
+        }
+
+        .reset-password-subtitle {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 16px;
+            color: #6a8e79;
+            text-align: center;
+            margin-bottom: 32px;
+            font-weight: 400;
+        }
+
+        .reset-password-form {
+            width: 100%;
+            max-width: 440px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .form-field-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
+        .reset-input-control {
+            width: 100%;
+            height: 52px;
+            padding: 0 48px 0 16px;
+            border: 1.5px solid #0f7139;
+            border-radius: 4px;
+            font-size: 15px;
+            font-family: var(--font-body);
+            color: #2f3e46;
+            background: #ffffff;
+            outline: none;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .reset-input-control:focus {
+            border-color: #0b3718;
+            box-shadow: 0 0 0 3px rgba(15, 113, 57, 0.12);
+        }
+
+        .password-toggle-btn {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #6a8e79;
+            cursor: pointer;
+            padding: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .password-toggle-btn:hover {
+            color: #0f7139;
+        }
+
+        .reset-btn-wrap {
+            text-align: center;
+            margin-top: 8px;
+            margin-bottom: 12px;
+        }
+
+        .reset-submit-btn {
+            background-color: #0f7139;
+            color: #ffffff;
+            font-size: 15px;
+            font-weight: 600;
+            padding: 12px 36px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.25s ease, transform 0.15s ease;
+            font-family: var(--font-body);
+        }
+
+        .reset-submit-btn:hover {
+            background-color: #0b3718;
+            transform: translateY(-1px);
+        }
+
+        .reset-submit-btn:disabled {
+            background-color: #6a8e79;
+            cursor: not-allowed;
+            transform: none;
+            opacity: 0.85;
+        }
+
+        .reset-alert-success {
+            display: none;
+            background-color: #eaf6ee;
+            color: #0f7139;
+            border: 1.5px solid #278d43;
+            border-radius: 6px;
+            padding: 12px 16px;
+            font-size: 14px;
+            font-family: var(--font-body);
+            line-height: 1.4;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .reset-alert-error {
+            display: none;
+            background-color: #fef2f2;
+            color: #b91c1c;
+            border: 1.5px solid #f87171;
+            border-radius: 6px;
+            padding: 12px 16px;
+            font-size: 14px;
+            font-family: var(--font-body);
+            line-height: 1.4;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .cancel-redirect-wrap {
+            text-align: center;
+            margin-top: 4px;
+        }
+
+        .cancel-redirect-wrap a {
+            color: #0f7139;
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 14px;
+            text-decoration: underline;
+            transition: color 0.2s ease;
+        }
+
+        .cancel-redirect-wrap a:hover {
+            color: #0b3718;
+        }
