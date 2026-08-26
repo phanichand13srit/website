@@ -24,6 +24,36 @@ const userSchema = new mongoose.Schema({
     type: String,
     enum: ['customer', 'admin'],
     default: 'customer',
+  },
+  avatar: {
+    type: String,
+    default: '',
+  },
+  googleId: {
+    type: String,
+    default: '',
+  },
+  street: {
+    type: String,
+    default: '',
+  },
+  city: {
+    type: String,
+    default: '',
+  },
+  postalCode: {
+    type: String,
+    default: '',
+  },
+  country: {
+    type: String,
+    default: 'India',
+  },
+  resetPasswordToken: {
+    type: String,
+  },
+  resetPasswordExpires: {
+    type: Date,
   }
 }, { timestamps: true });
 

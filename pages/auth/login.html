@@ -15,8 +15,7 @@
 
     <!-- Stylesheet -->
     <link rel="stylesheet" href="../../assets/css/style.css?v=3.0">
-
-        <link rel="stylesheet" href="../../assets/css/auth.css">
+    <link rel="stylesheet" href="../../assets/css/auth.css">
 </head>
 
 <body>
@@ -74,7 +73,7 @@
 
             <div class="header-actions">
                 <div class="search-bar-container">
-                    <form class="search-form" action="collections.html" method="get">
+                    <form class="search-form" action="../collections.html" method="get">
                         <input type="text" name="q" placeholder="Search..." aria-label="Search">
                         <button type="submit" class="search-submit" aria-label="Submit search">
                             <svg class="icon icon-search" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
@@ -106,10 +105,24 @@
     <main class="login-page-section">
         <h1 class="login-heading">Login</h1>
 
-        <form class="login-form-box" onsubmit="event.preventDefault(); showToast('Logged in successfully!'); setTimeout(() => window.location.href='../../index.html', 1000);">
+        <div id="loginAlertBox" style="display: none; max-width: 440px; margin: 0 auto 16px auto; padding: 12px 16px; background: #fef2f2; border: 1.5px solid #fecaca; border-radius: 10px; color: #dc2626; font-size: 14px; text-align: center;"></div>
+
+        <form class="login-form-box" id="loginForm" onsubmit="handleLoginForm(event)">
             
+            <!-- Google / Gmail Sign In -->
+            <button type="button" class="google-signin-btn" onclick="handleGoogleSignIn()" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 12px; background: #ffffff; color: #1e293b; border: 1.5px solid #cbd5e1; border-radius: 30px; padding: 12px 20px; font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 2px 6px rgba(0,0,0,0.04); margin-bottom: 16px;">
+                <svg width="20" height="20" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.35 24 12 24z"/><path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.19 0 10.04 0 12s.45 3.81 1.25 5.42l4.03-3.15z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.35 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/></svg>
+                <span>Sign in with Google / Gmail</span>
+            </button>
+
+            <div style="display: flex; align-items: center; margin-bottom: 20px; color: #94a3b8; font-size: 13px;">
+                <hr style="flex: 1; border: none; border-top: 1px solid #e2e8f0;">
+                <span style="padding: 0 12px; font-weight: 500;">OR EMAIL</span>
+                <hr style="flex: 1; border: none; border-top: 1px solid #e2e8f0;">
+            </div>
+
             <div class="login-field-group">
-                <input type="email" placeholder="Email" required class="login-input-control" aria-label="Email Address">
+                <input type="email" id="loginEmail" placeholder="Email" required class="login-input-control" aria-label="Email Address">
             </div>
 
             <div class="login-field-group">
@@ -127,7 +140,7 @@
             </div>
 
             <div class="login-btn-wrap">
-                <button type="submit" class="login-submit-btn">Sign in</button>
+                <button type="submit" id="loginSubmitBtn" class="login-submit-btn">Sign in</button>
             </div>
 
             <div class="create-account-wrap">
@@ -199,12 +212,6 @@
                     <a href="https://www.instagram.com/arshith_fresh" class="social-icon-btn" target="_blank" aria-label="Instagram">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069z"/></svg>
                     </a>
-                    <a href="https://www.linkedin.com/company/arshith-fresh-india-pvt-ltd/posts/?feedView=all" class="social-icon-btn" target="_blank" aria-label="LinkedIn">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.779-1.75-1.75s.784-1.75 1.75-1.75 1.75.779 1.75 1.75-.784 1.75-1.75-1.75zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
-                    </a>
-                    <a href="https://www.linkedin.com/in/pallavi-n-4578033ab/" class="social-icon-btn" target="_blank" aria-label="LinkedIn - Pallavi N">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.779-1.75-1.75s.784-1.75 1.75-1.75 1.75.779 1.75 1.75-.784 1.75-1.75-1.75zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
-                    </a>
                     <a href="https://www.youtube.com/@VamikaDurbar" class="social-icon-btn" target="_blank" aria-label="YouTube">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.163c-.272-1.022-1.078-1.826-2.1-2.102C19.483 3.5 12 3.5 12 3.5s-7.483 0-9.398.561c-1.022.276-1.828 1.08-2.1 2.102C0 8.083 0 12 0 12s0 3.917-.502 5.837c.272 1.022 1.078 1.826 2.1 2.102C4.517 20.5 12 20.5 12 20.5s7.483 0 9.398-.561c1.022-.276 1.828-1.08 2.1-2.102C24 15.917 24 12 24 12s0-3.917-.502-5.837zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
                     </a>
@@ -215,50 +222,6 @@
             <p class="copyright-text">© 2025 Arshith Fresh India Pvt.Ltd. All rights reserved.</p>
         </div>
     </footer>
-
-    <!-- Mobile Bottom Fixed Navigation Bar -->
-    <div class="mobile-bottom-nav">
-        <a href="../../index.html" class="bottom-nav-item">
-            <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/ef7b59f4-ee65-4b6a-bba4-1f005f6073e2-removebg-preview.png?v=1761987904" alt="Home">
-            <span>HOME</span>
-        </a>
-        <a href="../collections.html?category=all" class="bottom-nav-item">
-            <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/shop-removebg-preview.png?v=1759814957" alt="Products">
-            <span>PRODUCTS</span>
-        </a>
-        <a href="../collections.html" class="bottom-nav-item">
-            <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/offers-removebg-preview.png?v=1759815053" alt="Offers">
-            <span>OFFERS</span>
-        </a>
-        <a href="../cart.html" class="bottom-nav-item">
-            <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/wallet_11-removebg-preview.png?v=1759815346" alt="Wallet">
-            <span>WALLET</span>
-        </a>
-        <a href="https://api.whatsapp.com/send/?phone=919945676029&text=Hi%20Arshith%20Fresh,%20I%27m%20interested%20in%20your%20products!" class="bottom-nav-item">
-            <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/help-removebg-preview.png?v=1759815017" alt="Contact">
-            <span>CONTACT</span>
-        </a>
-    </div>
-
-    <!-- WhatsApp Floating Button -->
-    <a href="https://api.whatsapp.com/send/?phone=919945676029&text=Hi%20Arshith%20Fresh!" class="whatsapp-float-btn" target="_blank" aria-label="Chat on WhatsApp">
-        <svg viewBox="0 0 24 24" width="30" height="30" fill="currentColor">
-            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.99c-.002 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c-.001 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-        </svg>
-    </a>
-
-    <!-- Sticky Cart Status Bar -->
-    <a href="javascript:void(0)" class="sticky-cart-bar" id="stickyCartBar" aria-label="Open cart">
-        <div class="cart-bar-header">
-            FREE Shipping on all orders above ₹1,000
-        </div>
-        <div class="cart-bar-body">
-            <span class="cart-bar-icon">🛒</span>
-            <span id="cartBarCount" class="cart-bar-count">0 items</span>
-            <span id="cartBarTotal" class="cart-bar-price">₹0</span>
-            <span class="cart-bar-link">Cart</span>
-        </div>
-    </a>
 
     <!-- Script -->
     <script src="../../assets/js/script.js"></script>
@@ -272,6 +235,69 @@
             } else {
                 pwdInput.type = 'password';
                 eyeIcon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+            }
+        }
+
+        async function handleLoginForm(e) {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            const submitBtn = document.getElementById('loginSubmitBtn');
+            const alertBox = document.getElementById('loginAlertBox');
+
+            if (alertBox) alertBox.style.display = 'none';
+            submitBtn.disabled = true;
+            submitBtn.innerText = 'Signing in...';
+
+            try {
+                const res = await fetch('http://localhost:5000/api/users/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.message || 'Invalid email or password');
+
+                localStorage.setItem('arshith_user', JSON.stringify(data));
+                if (typeof showToast === 'function') showToast('Welcome back, ' + data.name + '!');
+                setTimeout(() => {
+                    window.location.href = '../profile.html';
+                }, 700);
+            } catch (err) {
+                if (alertBox) {
+                    alertBox.innerText = err.message;
+                    alertBox.style.display = 'block';
+                } else {
+                    alert(err.message);
+                }
+                submitBtn.disabled = false;
+                submitBtn.innerText = 'Sign in';
+            }
+        }
+
+        async function handleGoogleSignIn() {
+            const promptEmail = prompt('Enter your Gmail address to sign in with Google:', 'phani@gmail.com');
+            if (!promptEmail || !promptEmail.trim()) return;
+
+            const name = promptEmail.split('@')[0];
+            try {
+                const res = await fetch('http://localhost:5000/api/users/google-auth', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: promptEmail.trim(),
+                        name: name.charAt(0).toUpperCase() + name.slice(1),
+                        picture: 'https://ui-avatars.com/api/?name=' + encodeURIComponent(name) + '&background=0f7139&color=fff'
+                    })
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.message || 'Google Sign-In failed');
+
+                localStorage.setItem('arshith_user', JSON.stringify(data));
+                alert('Successfully signed in with Google as ' + data.email);
+                window.location.href = '../profile.html';
+            } catch (err) {
+                alert('Google Sign-In Error: ' + err.message);
             }
         }
     </script>

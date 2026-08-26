@@ -231,13 +231,13 @@
             currentUser = null;
         }
 
-        if (!currentUser || !currentUser.token) {
+        if (!currentUser || !currentUser._id) {
             window.location.href = 'auth/login.html';
         } else {
             loadUserProfile();
         }
 
-        function loadUserProfile() {
+        async function loadUserProfile() {
             if (!currentUser) return;
 
             // Display Top Card Info
@@ -249,39 +249,74 @@
             document.getElementById('userGreeting').textContent = `Hello, ${name}`;
             document.getElementById('userEmailDisplay').textContent = email;
 
-            // Populate Form Fields
+            // Populate Form Fields from local cache
             document.getElementById('profileName').value = currentUser.name || '';
             document.getElementById('profileEmail').value = currentUser.email || '';
             document.getElementById('profilePhone').value = currentUser.phone || '';
+            document.getElementById('profileStreet').value = currentUser.street || '';
+            document.getElementById('profileCity').value = currentUser.city || '';
+            document.getElementById('profilePostalCode').value = currentUser.postalCode || '';
 
-            if (currentUser.address) {
-                document.getElementById('profileStreet').value = currentUser.address.street || '';
-                document.getElementById('profileCity').value = currentUser.address.city || '';
-                document.getElementById('profilePostalCode').value = currentUser.address.postalCode || '';
+            // Fetch live profile & order history from MongoDB
+            try {
+                const res = await fetch(`http://localhost:5000/api/users/profile/${currentUser._id}`);
+                if (!res.ok) throw new Error('Could not load profile');
+                const data = await res.json();
+
+                if (data && data.user) {
+                    const u = data.user;
+                    currentUser = { ...currentUser, ...u };
+                    localStorage.setItem('arshith_user', JSON.stringify(currentUser));
+
+                    document.getElementById('profileName').value = u.name || '';
+                    document.getElementById('profilePhone').value = u.phone || '';
+                    document.getElementById('profileStreet').value = u.street || '';
+                    document.getElementById('profileCity').value = u.city || '';
+                    document.getElementById('profilePostalCode').value = u.postalCode || '';
+                }
+
+                renderUserOrders(data.orders || []);
+            } catch (err) {
+                console.log('Using cached profile data:', err);
+            }
+        }
+
+        function renderUserOrders(orders) {
+            const container = document.getElementById('ordersContainer');
+            if (!container) return;
+
+            if (!orders || orders.length === 0) {
+                container.innerHTML = `
+                    <div class="orders-empty-state">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#0f7139" stroke-width="1.5"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                        <h3 style="margin: 0 0 8px 0; color: #1e293b;">No orders placed yet</h3>
+                        <p style="margin: 0 0 16px 0; color: #64748b;">Explore our 100% natural, authentic fresh products today!</p>
+                        <a href="collections.html?category=all" class="shop-now-btn">Start Shopping</a>
+                    </div>
+                `;
+                return;
             }
 
-            // Fetch latest profile from backend API
-            fetch('http://localhost:5000/api/users/profile', {
-                headers: {
-                    'Authorization': `Bearer ${currentUser.token}`
-                }
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data && data.name) {
-                    currentUser = { ...currentUser, ...data };
-                    localStorage.setItem('arshith_user', JSON.stringify(currentUser));
-                    document.getElementById('userGreeting').textContent = `Hello, ${data.name}`;
-                    document.getElementById('profileName').value = data.name;
-                    if (data.phone) document.getElementById('profilePhone').value = data.phone;
-                    if (data.address) {
-                        document.getElementById('profileStreet').value = data.address.street || '';
-                        document.getElementById('profileCity').value = data.address.city || '';
-                        document.getElementById('profilePostalCode').value = data.address.postalCode || '';
-                    }
-                }
-            })
-            .catch(err => console.log('Using cached profile data:', err));
+            container.innerHTML = `
+                <div style="display: flex; flex-direction: column; gap: 14px;">
+                    ${orders.map(o => `
+                        <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 12px; padding: 18px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.02);">
+                            <div>
+                                <div style="font-weight: 700; color: #0f7139; font-size: 15px;">Order #${String(o._id).substring(0, 8)}</div>
+                                <div style="font-size: 13px; color: #64748b; margin-top: 4px;">Placed on: ${new Date(o.createdAt).toLocaleDateString()}</div>
+                                <div style="font-size: 13px; color: #334155; margin-top: 4px;">${(o.orderItems || []).length} item(s)</div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="font-size: 18px; font-weight: 700; color: #0f172a;">₹${o.totalPrice}</div>
+                                <div style="margin-top: 6px; display: flex; gap: 6px; justify-content: flex-end;">
+                                    <span style="font-size: 11px; padding: 3px 8px; border-radius: 6px; font-weight: 600; background: ${o.isPaid ? '#dcfce7; color: #166534;' : '#fef9c3; color: #854d0e;'}">${o.isPaid ? 'Paid' : 'Pending'}</span>
+                                    <span style="font-size: 11px; padding: 3px 8px; border-radius: 6px; font-weight: 600; background: ${o.isDelivered ? '#dcfce7; color: #166534;' : '#e0f2fe; color: #0369a1;'}">${o.isDelivered ? 'Delivered' : 'Processing'}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
         }
 
         function switchTab(tabId, btn) {
@@ -301,23 +336,18 @@
             const updatedData = {
                 name: document.getElementById('profileName').value.trim(),
                 phone: document.getElementById('profilePhone').value.trim(),
-                address: {
-                    street: document.getElementById('profileStreet').value.trim(),
-                    city: document.getElementById('profileCity').value.trim(),
-                    postalCode: document.getElementById('profilePostalCode').value.trim()
-                }
+                street: document.getElementById('profileStreet').value.trim(),
+                city: document.getElementById('profileCity').value.trim(),
+                postalCode: document.getElementById('profilePostalCode').value.trim()
             };
 
             btn.disabled = true;
             btn.textContent = 'Saving...';
 
             try {
-                const response = await fetch('http://localhost:5000/api/users/profile', {
+                const response = await fetch(`http://localhost:5000/api/users/profile/${currentUser._id}`, {
                     method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${currentUser.token}`
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(updatedData)
                 });
 
@@ -332,8 +362,10 @@
                 document.getElementById('userGreeting').textContent = `Hello, ${data.name}`;
                 document.getElementById('userAvatar').textContent = data.name.charAt(0).toUpperCase();
 
-                alertBox.style.display = 'flex';
-                setTimeout(() => { alertBox.style.display = 'none'; }, 3000);
+                if (alertBox) {
+                    alertBox.style.display = 'flex';
+                    setTimeout(() => { alertBox.style.display = 'none'; }, 3000);
+                }
 
                 if (typeof showToast === 'function') {
                     showToast('Profile updated successfully!');
@@ -357,9 +389,7 @@
             const alertBox = document.getElementById('passwordSuccessAlert');
 
             if (pass !== confirmPass) {
-                if (typeof showToast === 'function') {
-                    showToast('Passwords do not match');
-                }
+                alert('Passwords do not match');
                 return;
             }
 
@@ -367,13 +397,10 @@
             btn.textContent = 'Updating...';
 
             try {
-                const response = await fetch('http://localhost:5000/api/users/profile', {
+                const response = await fetch(`http://localhost:5000/api/users/change-password/${currentUser._id}`, {
                     method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${currentUser.token}`
-                    },
-                    body: JSON.stringify({ password: pass })
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ currentPassword: pass, newPassword: pass })
                 });
 
                 const data = await response.json();
@@ -383,16 +410,16 @@
                 }
 
                 document.getElementById('passwordForm').reset();
-                alertBox.style.display = 'flex';
-                setTimeout(() => { alertBox.style.display = 'none'; }, 3000);
+                if (alertBox) {
+                    alertBox.style.display = 'flex';
+                    setTimeout(() => { alertBox.style.display = 'none'; }, 3000);
+                }
 
                 if (typeof showToast === 'function') {
                     showToast('Password changed successfully!');
                 }
             } catch (err) {
-                if (typeof showToast === 'function') {
-                    showToast(err.message || 'Error changing password');
-                }
+                alert(err.message || 'Error changing password');
             } finally {
                 btn.disabled = false;
                 btn.textContent = 'Update Password';
