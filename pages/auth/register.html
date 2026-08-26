@@ -225,6 +225,50 @@
         </div>
     </footer>
 
+    <!-- Google Account Chooser Modal -->
+    <div id="googleAuthModal" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6); z-index: 9999; backdrop-filter: blur(4px); align-items: center; justify-content: center;">
+        <div style="background: #ffffff; width: 90%; max-width: 440px; border-radius: 16px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); overflow: hidden; animation: popIn 0.25s ease-out;">
+            <div style="padding: 24px 28px 16px 28px; text-align: center; border-bottom: 1px solid #f1f5f9;">
+                <svg width="32" height="32" viewBox="0 0 24 24" style="margin-bottom: 8px;"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.35 24 12 24z"/><path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.19 0 10.04 0 12s.45 3.81 1.25 5.42l4.03-3.15z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.35 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/></svg>
+                <h3 style="margin: 0 0 6px 0; font-size: 18px; color: #1e293b; font-family: 'Plus Jakarta Sans', sans-serif;">Choose an account</h3>
+                <p style="margin: 0; font-size: 13px; color: #64748b;">to sign up for <strong>Arshith Fresh</strong></p>
+            </div>
+
+            <div style="padding: 16px 20px;">
+                <!-- Fast Account Selectors -->
+                <div onclick="selectGoogleAccount('Phani Chand', 'phanichand13@gmail.com')" style="display: flex; align-items: center; gap: 14px; padding: 12px 14px; border-radius: 10px; cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='transparent'">
+                    <div style="width: 38px; height: 38px; border-radius: 50%; background: #0f7139; color: #ffffff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px;">P</div>
+                    <div style="flex: 1;">
+                        <div style="font-weight: 600; color: #1e293b; font-size: 14px;">Phani Chand</div>
+                        <div style="font-size: 12px; color: #64748b;">phanichand13@gmail.com</div>
+                    </div>
+                </div>
+
+                <div onclick="selectGoogleAccount('Customer Demo', 'customer@gmail.com')" style="display: flex; align-items: center; gap: 14px; padding: 12px 14px; border-radius: 10px; cursor: pointer; transition: background 0.2s; border-top: 1px solid #f1f5f9;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='transparent'">
+                    <div style="width: 38px; height: 38px; border-radius: 50%; background: #0284c7; color: #ffffff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px;">C</div>
+                    <div style="flex: 1;">
+                        <div style="font-weight: 600; color: #1e293b; font-size: 14px;">Customer Demo</div>
+                        <div style="font-size: 12px; color: #64748b;">customer@gmail.com</div>
+                    </div>
+                </div>
+
+                <!-- Custom Account Input -->
+                <div style="margin-top: 12px; padding: 14px; background: #f8fafc; border: 1.5px dashed #cbd5e1; border-radius: 10px;">
+                    <label style="font-size: 12px; font-weight: 600; color: #475569; display: block; margin-bottom: 6px;">Or enter any Gmail address:</label>
+                    <div style="display: flex; gap: 8px;">
+                        <input type="email" id="customGoogleEmail" placeholder="yourname@gmail.com" style="flex: 1; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; outline: none;">
+                        <button type="button" onclick="submitCustomGoogleAccount()" style="background: #1a73e8; color: #ffffff; border: none; border-radius: 6px; padding: 8px 16px; font-size: 13px; font-weight: 600; cursor: pointer;">Next</button>
+                    </div>
+                </div>
+            </div>
+
+            <div style="padding: 12px 20px; background: #f8fafc; border-top: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-size: 11px; color: #94a3b8;">Google Identity Service</span>
+                <button type="button" onclick="closeGoogleModal()" style="background: none; border: none; color: #64748b; font-size: 13px; font-weight: 600; cursor: pointer;">Cancel</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Script -->
     <script src="../../assets/js/script.js"></script>
     <script>
@@ -270,18 +314,37 @@
             }
         }
 
-        async function handleGoogleSignIn() {
-            const promptEmail = prompt('Enter your Gmail address to sign up with Google:', 'phani@gmail.com');
-            if (!promptEmail || !promptEmail.trim()) return;
+        // Google Modal Controls
+        function handleGoogleSignIn() {
+            const modal = document.getElementById('googleAuthModal');
+            if (modal) modal.style.display = 'flex';
+        }
 
-            const name = promptEmail.split('@')[0];
+        function closeGoogleModal() {
+            const modal = document.getElementById('googleAuthModal');
+            if (modal) modal.style.display = 'none';
+        }
+
+        function submitCustomGoogleAccount() {
+            const emailInput = document.getElementById('customGoogleEmail');
+            const email = emailInput ? emailInput.value.trim() : '';
+            if (!email) {
+                alert('Please enter a Gmail address');
+                return;
+            }
+            const name = email.split('@')[0];
+            selectGoogleAccount(name.charAt(0).toUpperCase() + name.slice(1), email);
+        }
+
+        async function selectGoogleAccount(name, email) {
+            closeGoogleModal();
             try {
                 const res = await fetch('http://localhost:5000/api/users/google-auth', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        email: promptEmail.trim(),
-                        name: name.charAt(0).toUpperCase() + name.slice(1),
+                        email: email.trim(),
+                        name: name,
                         picture: 'https://ui-avatars.com/api/?name=' + encodeURIComponent(name) + '&background=0f7139&color=fff'
                     })
                 });
@@ -289,8 +352,10 @@
                 if (!res.ok) throw new Error(data.message || 'Google Sign-Up failed');
 
                 localStorage.setItem('arshith_user', JSON.stringify(data));
-                alert('Successfully registered with Google as ' + data.email);
-                window.location.href = '../profile.html';
+                if (typeof showToast === 'function') showToast('Registered with Google as ' + data.email);
+                setTimeout(() => {
+                    window.location.href = '../profile.html';
+                }, 600);
             } catch (err) {
                 alert('Google Sign-Up Error: ' + err.message);
             }
