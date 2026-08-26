@@ -289,6 +289,9 @@
     <!-- Script -->
     <script src="../../assets/js/script.js"></script>
     <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const redirectDestination = urlParams.get('redirect') || '../../index.html';
+
         async function handleRegisterForm(e) {
             e.preventDefault();
             const firstName = document.getElementById('regFirstName').value.trim();
@@ -315,10 +318,10 @@
                 if (!res.ok) throw new Error(data.message || 'Registration failed');
 
                 localStorage.setItem('arshith_user', JSON.stringify(data));
-                if (typeof showToast === 'function') showToast('Account created successfully!');
+                if (typeof showToast === 'function') showToast('Account created! Welcome to Arshith Fresh.');
                 setTimeout(() => {
-                    window.location.href = '../profile.html';
-                }, 700);
+                    window.location.href = redirectDestination;
+                }, 600);
             } catch (err) {
                 if (alertBox) {
                     alertBox.innerText = err.message;
@@ -361,10 +364,10 @@
                 if (!res.ok) throw new Error(data.message || 'Google registration failed');
 
                 localStorage.setItem('arshith_user', JSON.stringify(data));
-                if (typeof showToast === 'function') showToast('Registered with Google as ' + data.name);
+                if (typeof showToast === 'function') showToast('Welcome to Arshith Fresh, ' + data.name + '!');
                 setTimeout(() => {
-                    window.location.href = '../profile.html';
-                }, 600);
+                    window.location.href = redirectDestination;
+                }, 500);
             } catch (err) {
                 console.error(err);
                 alert('Google Registration Error: ' + err.message);
@@ -409,10 +412,10 @@
                 if (!res.ok) throw new Error(data.message || 'Google Sign-Up failed');
 
                 localStorage.setItem('arshith_user', JSON.stringify(data));
-                if (typeof showToast === 'function') showToast('Registered with Google as ' + data.email);
+                if (typeof showToast === 'function') showToast('Welcome, ' + data.name + '!');
                 setTimeout(() => {
-                    window.location.href = '../profile.html';
-                }, 600);
+                    window.location.href = redirectDestination;
+                }, 500);
             } catch (err) {
                 alert('Google Sign-Up Error: ' + err.message);
             }

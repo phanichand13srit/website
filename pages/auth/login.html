@@ -299,6 +299,9 @@
             }
         }
 
+        const urlParams = new URLSearchParams(window.location.search);
+        const redirectDestination = urlParams.get('redirect') || '../../index.html';
+
         async function handleLoginForm(e) {
             e.preventDefault();
             const email = document.getElementById('loginEmail').value.trim();
@@ -322,8 +325,8 @@
                 localStorage.setItem('arshith_user', JSON.stringify(data));
                 if (typeof showToast === 'function') showToast('Welcome back, ' + data.name + '!');
                 setTimeout(() => {
-                    window.location.href = '../profile.html';
-                }, 700);
+                    window.location.href = redirectDestination;
+                }, 600);
             } catch (err) {
                 if (alertBox) {
                     alertBox.innerText = err.message;
@@ -366,10 +369,10 @@
                 if (!res.ok) throw new Error(data.message || 'Google login failed');
 
                 localStorage.setItem('arshith_user', JSON.stringify(data));
-                if (typeof showToast === 'function') showToast('Signed in with Google as ' + data.name);
+                if (typeof showToast === 'function') showToast('Welcome back, ' + data.name + '!');
                 setTimeout(() => {
-                    window.location.href = '../profile.html';
-                }, 600);
+                    window.location.href = redirectDestination;
+                }, 500);
             } catch (err) {
                 console.error(err);
                 alert('Google Authentication Error: ' + err.message);
@@ -414,10 +417,10 @@
                 if (!res.ok) throw new Error(data.message || 'Google Sign-In failed');
 
                 localStorage.setItem('arshith_user', JSON.stringify(data));
-                if (typeof showToast === 'function') showToast('Signed in with Google as ' + data.email);
+                if (typeof showToast === 'function') showToast('Welcome, ' + data.name + '!');
                 setTimeout(() => {
-                    window.location.href = '../profile.html';
-                }, 600);
+                    window.location.href = redirectDestination;
+                }, 500);
             } catch (err) {
                 alert('Google Sign-In Error: ' + err.message);
             }
