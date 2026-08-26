@@ -121,8 +121,10 @@ router.post('/google-auth', async (req, res) => {
   }
 });
 
+const nodemailer = require('nodemailer');
+
 // @route   POST /api/users/forgot-password
-// @desc    Generate password reset token & link
+// @desc    Generate password reset token, link & send official email
 router.post('/forgot-password', async (req, res) => {
   try {
     const { email } = req.body;
@@ -144,7 +146,7 @@ router.post('/forgot-password', async (req, res) => {
 
     await user.save();
 
-    // Construct local reset URL
+    // Construct reset URL
     const resetUrl = `http://localhost:5000/pages/auth/reset-password.html?token=${resetToken}&email=${encodeURIComponent(user.email)}`;
 
     console.log(`\n======================================================`);
@@ -153,14 +155,70 @@ router.post('/forgot-password', async (req, res) => {
     console.log(`Link  : ${resetUrl}`);
     console.log(`======================================================\n`);
 
+    // Dispatch Official Email via Nodemailer if credentials configured
+    let emailSent = false;
+    const emailUser = process.env.EMAIL_USER;
+    const emailPass = process.env.EMAIL_PASS;
+
+    if (emailUser && emailPass) {
+      try {
+        const transporter = nodemailer.createTransport({
+          service: 'gmail',
+          auth: {
+            user: emailUser,
+            pass: emailPass,
+          },
+        });
+
+        const mailOptions = {
+          from: `"Arshith Fresh" <${emailUser}>`,
+          to: user.email,
+          subject: '🔑 Reset Your Arshith Fresh Password',
+          html: `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; border: 1px solid #e2e8f0; border-radius: 12px; background: #ffffff;">
+              <div style="text-align: center; margin-bottom: 24px;">
+                <h1 style="color: #0f7139; margin: 0; font-size: 26px;">Arshith Fresh</h1>
+                <p style="color: #64748b; margin-top: 4px; font-size: 14px;">100% Pure & Authentic Natural Products</p>
+              </div>
+              <div style="padding: 24px; background: #f8fafc; border-radius: 10px; margin-bottom: 20px;">
+                <h2 style="color: #1e293b; font-size: 18px; margin-top: 0;">Password Reset Request</h2>
+                <p style="color: #475569; line-height: 1.6; font-size: 14px;">
+                  Hello <strong>${user.name || 'Valued Customer'}</strong>,<br><br>
+                  We received a request to reset the password for your Arshith Fresh account (<strong>${user.email}</strong>).
+                </p>
+                <div style="text-align: center; margin: 28px 0;">
+                  <a href="${resetUrl}" style="background: #0f7139; color: #ffffff; padding: 12px 28px; border-radius: 30px; text-decoration: none; font-weight: bold; font-size: 15px; display: inline-block; box-shadow: 0 4px 12px rgba(15,113,57,0.3);">
+                    🔑 Reset My Password
+                  </a>
+                </div>
+                <p style="color: #64748b; font-size: 13px; line-height: 1.5; margin-bottom: 0;">
+                  This link is valid for <strong>60 minutes</strong>. If you did not request a password reset, you can safely ignore this email.
+                </p>
+              </div>
+              <div style="text-align: center; font-size: 12px; color: #94a3b8; border-top: 1px solid #f1f5f9; padding-top: 16px;">
+                © 2025 Arshith Fresh India Pvt. Ltd. Bengaluru, Karnataka, India - 560076
+              </div>
+            </div>
+          `,
+        };
+
+        await transporter.sendMail(mailOptions);
+        emailSent = true;
+        console.log(`📧 Official email delivered to ${user.email} via Gmail SMTP!`);
+      } catch (err) {
+        console.error('Nodemailer delivery error:', err.message);
+      }
+    }
+
     res.json({
-      message: 'Password reset link generated successfully!',
+      message: emailSent ? `Official reset email sent to ${user.email}!` : 'Password reset link generated!',
       resetUrl,
       email: user.email,
+      emailSent,
       expiresIn: '1 hour'
     });
   } catch (error) {
-    res.status(500).json({ message: 'Error generating reset token', error: error.message });
+    res.status(500).json({ message: 'Error processing forgot password request', error: error.message });
   }
 });
 
