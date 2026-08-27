@@ -12,7 +12,7 @@
     .form-label { display: block; font-size: 13px; font-weight: 500; color: var(--text-primary, #303030); margin-bottom: 5px; }
     .form-control { width: 100%; padding: 8px 12px; font-size: 13.5px; border: 1px solid var(--border-subtle, #d2d5d8); border-radius: 6px; background: #fff; color: #1a1a1a; box-sizing: border-box; outline: none; }
     .form-control:focus { border-color: #2c6ecb; box-shadow: 0 0 0 2px rgba(44, 110, 203, 0.15); }
-    .subcat-tag { background: #e0f2fe; color: #0369a1; font-size: 11.5px; font-weight: 500; padding: 2px 8px; border-radius: 4px; display: inline-block; margin: 2px 4px 2px 0; }
+    .subcat-tag { background: #e0f2fe; color: #0369a1; font-size: 11.5px; font-weight: 500; padding: 2px 8px; border-radius: 4px; display: inline-block; margin: 2px 2px; max-width: 280px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .action-btn-sm { background: none; border: 1px solid #d2d5d8; border-radius: 4px; padding: 4px 8px; cursor: pointer; font-size: 12px; color: #4a4d50; }
     .action-btn-sm:hover { background: #f1f2f4; color: #1a1a1a; }
     .action-btn-danger:hover { background: #fee2e2; border-color: #fca5a5; color: #dc2626; }
@@ -91,11 +91,11 @@
             <thead>
               <tr>
                 <th style="width: 36px;"><input type="checkbox" class="custom-checkbox"></th>
-                <th>Category</th>
-                <th>Sub-categories</th>
-                <th>Products Count</th>
-                <th>Type</th>
-                <th style="text-align: right;">Actions</th>
+                <th style="width: 200px;">Category</th>
+                <th style="min-width: 260px; max-width: 340px;">Sub-categories</th>
+                <th style="width: 140px; white-space: nowrap;">Products Count</th>
+                <th style="width: 100px; white-space: nowrap;">Type</th>
+                <th style="width: 120px; text-align: right; white-space: nowrap;">Actions</th>
               </tr>
             </thead>
             <tbody id="collectionsTableBody">
@@ -223,10 +223,14 @@
               </div>
             </div>
           </td>
-          <td style="max-width: 320px;">${subTags}</td>
-          <td><strong>${prodCount}</strong> products</td>
-          <td><span class="status-pill active">${col.collectionType || 'manual'}</span></td>
-          <td style="text-align: right;">
+          <td style="max-width: 320px;">
+            <div style="display: flex; flex-wrap: wrap; gap: 4px; max-width: 320px; max-height: 85px; overflow-y: auto; padding-right: 4px;">
+              ${subTags}
+            </div>
+          </td>
+          <td style="white-space: nowrap;"><strong>${prodCount}</strong> products</td>
+          <td style="white-space: nowrap;"><span class="status-pill active">${col.collectionType || 'manual'}</span></td>
+          <td style="text-align: right; white-space: nowrap;">
             <div style="display:flex; gap:6px; justify-content:flex-end;">
               <button class="action-btn-sm" title="Edit Category & Subcategories" onclick="openEditModal('${col._id}')"><i class="fa-solid fa-pen"></i> Edit</button>
               <button class="action-btn-sm action-btn-danger" title="Delete" onclick="deleteCollection('${col._id}', '${col.title.replace(/'/g, "\\'")}')"><i class="fa-solid fa-trash"></i></button>
