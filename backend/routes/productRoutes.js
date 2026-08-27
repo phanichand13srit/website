@@ -2,6 +2,16 @@ const express = require('express');
 const router = express.Router();
 const Product = require('../models/Product');
 
+function formatProduct(p) {
+  const obj = p.toObject ? p.toObject() : { ...p };
+  obj.title = obj.title || obj.name || 'Untitled Product';
+  obj.name = obj.name || obj.title || 'Untitled Product';
+  if (!obj.images || obj.images.length === 0) {
+    obj.images = [{ url: obj.image || 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=100&auto=format&fit=crop&q=60' }];
+  }
+  return obj;
+}
+
 // @route   GET /api/products
 // @desc    Get all products (with optional keyword search & category filter)
 router.get('/', async (req, res) => {
@@ -22,7 +32,7 @@ router.get('/', async (req, res) => {
     }
 
     const products = await Product.find(filter).sort({ createdAt: -1 });
-    res.json(products);
+    res.json(products.map(formatProduct));
   } catch (error) {
     res.status(500).json({ message: 'Server error fetching products', error: error.message });
   }
@@ -36,7 +46,7 @@ router.get('/:id', async (req, res) => {
     if (!product) {
       return res.status(404).json({ message: 'Product not found' });
     }
-    res.json(product);
+    res.json(formatProduct(product));
   } catch (error) {
     res.status(500).json({ message: 'Error retrieving product', error: error.message });
   }
@@ -46,10 +56,32 @@ router.get('/:id', async (req, res) => {
 // @desc    Create a new product (Admin)
 router.post('/', async (req, res) => {
   try {
-    const newProduct = new Product(req.body);
+    const data = { ...req.body };
+
+    // Support field aliases from admin forms
+    if (!data.name && data.title) {
+      data.name = data.title;
+    }
+    if (!data.name) {
+      data.name = 'New Product';
+    }
+    if (!data.category) {
+      data.category = data.type || data.productType || 'General';
+    }
+    if (data.price === undefined || data.price === null || isNaN(Number(data.price))) {
+      data.price = 0;
+    } else {
+      data.price = Number(data.price);
+    }
+    if (!data.image && Array.isArray(data.images) && data.images.length > 0) {
+      data.image = typeof data.images[0] === 'object' ? (data.images[0].url || '') : data.images[0];
+    }
+
+    const newProduct = new Product(data);
     const savedProduct = await newProduct.save();
     res.status(201).json(savedProduct);
   } catch (error) {
+    console.error('Error creating product:', error);
     res.status(400).json({ message: 'Error creating product', error: error.message });
   }
 });
@@ -58,9 +90,17 @@ router.post('/', async (req, res) => {
 // @desc    Update an existing product (Admin)
 router.put('/:id', async (req, res) => {
   try {
+    const data = { ...req.body };
+    if (!data.name && data.title) {
+      data.name = data.title;
+    }
+    if (data.price !== undefined && !isNaN(Number(data.price))) {
+      data.price = Number(data.price);
+    }
+
     const updatedProduct = await Product.findByIdAndUpdate(
       req.params.id,
-      req.body,
+      data,
       { new: true, runValidators: true }
     );
     if (!updatedProduct) {

@@ -323,8 +323,13 @@
               </select>
             </div>
             <div class="form-group">
-              <label>Image / Banner URL</label>
-              <input type="text" id="collImage" class="form-control" placeholder="https://images.unsplash.com/...">
+              <label>Category Image / Banner</label>
+              <input type="file" id="collImageFile" class="form-control" accept="image/*" onchange="handleCollectionImageFile(this)">
+              <input type="text" id="collImage" class="form-control" placeholder="Or paste image URL (https://...)" style="margin-top: 6px;" oninput="handleCollectionImageUrl(this)">
+              <div id="collImagePreviewContainer" style="display: none; margin-top: 8px; position: relative; width: fit-content;">
+                <img id="collImagePreview" src="" style="max-height: 80px; border-radius: 6px; border: 1px solid #cbd5e1; display: block;">
+                <button type="button" onclick="removeCollectionImage()" style="position: absolute; top: -6px; right: -6px; background: #ef4444; color: white; border: none; border-radius: 50%; width: 20px; height: 20px; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center;" title="Remove image">&times;</button>
+              </div>
             </div>
           </div>
           <div class="form-group">
@@ -828,10 +833,52 @@
       }
     }
 
-    // Category / Collection Modal Actions
+    // Category / Collection Modal Image & Actions
+    let currentCollectionUploadedImage = '';
+
+    function handleCollectionImageFile(input) {
+      const file = input.files && input.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          currentCollectionUploadedImage = e.target.result;
+          const previewImg = document.getElementById('collImagePreview');
+          const previewBox = document.getElementById('collImagePreviewContainer');
+          if (previewImg) previewImg.src = currentCollectionUploadedImage;
+          if (previewBox) previewBox.style.display = 'block';
+          const urlInput = document.getElementById('collImage');
+          if (urlInput) urlInput.value = '';
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function handleCollectionImageUrl(input) {
+      if (input.value && input.value.trim().length > 0) {
+        currentCollectionUploadedImage = input.value.trim();
+        const previewImg = document.getElementById('collImagePreview');
+        const previewBox = document.getElementById('collImagePreviewContainer');
+        if (previewImg) previewImg.src = currentCollectionUploadedImage;
+        if (previewBox) previewBox.style.display = 'block';
+      }
+    }
+
+    function removeCollectionImage() {
+      currentCollectionUploadedImage = '';
+      const fileInput = document.getElementById('collImageFile');
+      if (fileInput) fileInput.value = '';
+      const urlInput = document.getElementById('collImage');
+      if (urlInput) urlInput.value = '';
+      const previewImg = document.getElementById('collImagePreview');
+      if (previewImg) previewImg.src = '';
+      const previewBox = document.getElementById('collImagePreviewContainer');
+      if (previewBox) previewBox.style.display = 'none';
+    }
+
     function openAddCollectionModal() {
       document.getElementById('collectionForm').reset();
       document.getElementById('collId').value = '';
+      removeCollectionImage();
       document.getElementById('collectionModalTitle').innerText = 'Add New Category';
       document.getElementById('collectionModal').classList.add('active');
     }
@@ -844,8 +891,18 @@
       document.getElementById('collTitle').value = coll.title || '';
       document.getElementById('collSubcategories').value = Array.isArray(coll.subcategories) ? coll.subcategories.join(', ') : (coll.subcategories || '');
       document.getElementById('collType').value = coll.collectionType || 'manual';
-      document.getElementById('collImage').value = coll.image || '';
       document.getElementById('collDescription').value = coll.description || '';
+
+      currentCollectionUploadedImage = coll.image || '';
+      document.getElementById('collImage').value = (coll.image && coll.image.startsWith('http')) ? coll.image : '';
+      if (currentCollectionUploadedImage) {
+        const previewImg = document.getElementById('collImagePreview');
+        const previewBox = document.getElementById('collImagePreviewContainer');
+        if (previewImg) previewImg.src = currentCollectionUploadedImage;
+        if (previewBox) previewBox.style.display = 'block';
+      } else {
+        removeCollectionImage();
+      }
 
       document.getElementById('collectionModalTitle').innerText = 'Edit Category & Subcategories';
       document.getElementById('collectionModal').classList.add('active');
@@ -856,7 +913,7 @@
       const title = document.getElementById('collTitle').value.trim();
       const subcategoriesRaw = document.getElementById('collSubcategories').value;
       const type = document.getElementById('collType').value;
-      const image = document.getElementById('collImage').value;
+      const imageVal = document.getElementById('collImage').value;
       const description = document.getElementById('collDescription').value;
 
       if (!title) {
@@ -865,12 +922,13 @@
       }
 
       const subcategories = subcategoriesRaw.split(',').map(s => s.trim()).filter(Boolean);
+      const finalImage = currentCollectionUploadedImage || imageVal || 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=80';
 
       const payload = {
         title,
         subcategories,
         collectionType: type,
-        image: image || 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=80',
+        image: finalImage,
         description
       };
 
@@ -931,6 +989,9 @@
     window.toggleOrderStatus = toggleOrderStatus;
     window.autoSuggestImage = autoSuggestImage;
     window.onProductCategoryChange = onProductCategoryChange;
+    window.handleCollectionImageFile = handleCollectionImageFile;
+    window.handleCollectionImageUrl = handleCollectionImageUrl;
+    window.removeCollectionImage = removeCollectionImage;
 
     // Initialize on page load
     document.addEventListener('DOMContentLoaded', loadAllData);

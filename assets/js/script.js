@@ -410,12 +410,79 @@ document.addEventListener("DOMContentLoaded", () => {
     initCollectionSliders();
 
     // 9. Dynamic Live API & Collection Product Sync
+    // 9. Dynamic Live API & Collection Product Sync
+    async function syncStorefrontCollections() {
+        try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 2000);
+            const res = await fetch("http://localhost:5000/api/collections", { signal: controller.signal });
+            clearTimeout(timeoutId);
+
+            if (!res || !res.ok) return;
+            const collections = await res.json();
+            if (!Array.isArray(collections) || collections.length === 0) return;
+
+            const path = window.location.pathname;
+            const isSubpage = path.includes("/pages/");
+            const isDeep = path.includes("/pages/auth/") || path.includes("/pages/categories/") || path.includes("/pages/policies/");
+
+            // 1. Update Navigation Dropdown Menus
+            const dropdownMenus = document.querySelectorAll(".dropdown-menu, .drawer-submenu");
+            dropdownMenus.forEach(menu => {
+                menu.innerHTML = collections.map(c => {
+                    const slug = c.title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+                    const link = isDeep ? `../collections.html?category=${encodeURIComponent(c.title)}` : (isSubpage ? `collections.html?category=${encodeURIComponent(c.title)}` : `pages/collections.html?category=${encodeURIComponent(c.title)}`);
+                    return `<li><a href="${link}">${c.title}</a></li>`;
+                }).join('');
+            });
+
+            // 2. Update Home "Shop by Category" Grid
+            const catGrid = document.querySelector(".categories-grid");
+            if (catGrid) {
+                catGrid.innerHTML = collections.map(c => {
+                    const link = isSubpage ? `collections.html?category=${encodeURIComponent(c.title)}` : `pages/collections.html?category=${encodeURIComponent(c.title)}`;
+                    return `
+                        <a href="${link}" class="category-card">
+                            <div class="category-img-container">
+                                <img src="${c.image || 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=200'}" alt="${c.title}" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=200';">
+                            </div>
+                            <h3 class="category-name">${c.title}</h3>
+                        </a>
+                    `;
+                }).join('');
+            }
+
+            // 3. Update Collections Top Circle Row
+            const circleRow = document.querySelector(".category-circle-row");
+            if (circleRow) {
+                const urlParams = new URLSearchParams(window.location.search);
+                const activeCat = urlParams.get('category') || 'all';
+
+                let html = `
+                    <a href="collections.html?category=all" class="category-circle-item ${activeCat === 'all' ? 'active' : ''}">
+                        <div class="circle-img-wrap"><img src="https://arshithfresh.com/cdn/shop/collections/groceries_200x200_crop_center.jpg?v=1746965740" alt="All Products"></div>
+                        <span class="circle-title">All Products</span>
+                    </a>
+                `;
+                html += collections.map(c => `
+                    <a href="collections.html?category=${encodeURIComponent(c.title)}" class="category-circle-item ${activeCat.toLowerCase() === c.title.toLowerCase() ? 'active' : ''}">
+                        <div class="circle-img-wrap"><img src="${c.image || 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=200'}" alt="${c.title}"></div>
+                        <span class="circle-title">${c.title}</span>
+                    </a>
+                `).join('');
+                circleRow.innerHTML = html;
+            }
+        } catch (e) {
+            console.error("Collections sync error:", e);
+        }
+    }
+
     async function syncStorefrontProducts() {
         try {
             let apiProducts = [];
             try {
                 const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 2000); // 2 second timeout for local backend API
+                const timeoutId = setTimeout(() => controller.abort(), 2000);
                 const res = await fetch("http://localhost:5000/api/products", { signal: controller.signal });
                 clearTimeout(timeoutId);
                 if (res && res.ok) {
@@ -425,27 +492,37 @@ document.addEventListener("DOMContentLoaded", () => {
                     }
                 }
             } catch (err) {
-                // API offline or empty
+                // API offline
             }
 
-            const homeGrid = document.querySelector(".products-carousel-section .products-grid");
-            if (homeGrid) {
-                const homeList = apiProducts.length > 0 ? apiProducts : [
-                    { name: "Cold Pressed Groundnut Oil - 1L", price: 349, originalPrice: 420, image: "https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM_1.jpg?v=1757334051&width=400" },
-                    { name: "Cold Pressed Sesame / Gingelly Oil - 1L", price: 440, originalPrice: 520, image: "https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM.jpg?v=1757334052&width=400" },
-                    { name: "Cold Pressed Coconut Oil - 1L", price: 380, originalPrice: 450, image: "https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?w=500" },
-                    { name: "Pure Buffalo Ghee (Premium Quality)", price: 440, originalPrice: 520, image: "https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-09-15_at_4.34.52_PM.jpg?v=1757934372" }
-                ];
-                homeGrid.innerHTML = homeList.map(p => createProductCardHTML(p)).join('');
+            // 1. Update Homepage Product Grids
+            const homeGrids = document.querySelectorAll(".products-carousel-section .products-grid, .products-grid");
+            if (homeGrids.length > 0) {
+                const displayList = apiProducts.length > 0 ? apiProducts : [];
+                if (displayList.length > 0) {
+                    homeGrids.forEach(grid => {
+                        grid.innerHTML = displayList.map(p => createProductCardHTML(p)).join('');
+                    });
+                }
             }
 
             const path = window.location.pathname.toLowerCase();
             const colGrid = document.getElementById("collectionsProductGrid");
             if (!colGrid) return;
 
-            // 1. On All Products page (collections.html)
+            const urlParams = new URLSearchParams(window.location.search);
+            const targetCategory = urlParams.get('category');
+
+            // 2. On All Products / Collections page
             if (path.endsWith("collections") || path.endsWith("collections.html")) {
-                const displayProducts = apiProducts || [];
+                let displayProducts = apiProducts || [];
+                if (targetCategory && targetCategory !== 'all') {
+                    displayProducts = displayProducts.filter(p => 
+                        (p.category && p.category.toLowerCase().includes(targetCategory.toLowerCase())) ||
+                        (p.name && p.name.toLowerCase().includes(targetCategory.toLowerCase()))
+                    );
+                }
+
                 if (displayProducts.length > 0) {
                     colGrid.innerHTML = displayProducts.map(p => createProductCardHTML(p)).join('');
                     const countElem = document.getElementById("collectionProductCount");
@@ -456,7 +533,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     colGrid.innerHTML = `
                         <div class="empty-collection-state" style="grid-column: 1 / -1; padding: 60px 20px; text-align: center; background: #ffffff; border: 1.5px dashed #cbd5e1; border-radius: 16px; margin: 20px 0;">
                             <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#0f7139" stroke-width="1.5" style="margin-bottom: 12px;"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
-                            <h3 style="font-family:'Playfair Display', serif; font-size:20px; color:#0f7139; margin:0 0 8px 0;">No products in this collection yet</h3>
+                            <h3 style="font-family:'Playfair Display', serif; font-size:20px; color:#0f7139; margin:0 0 8px 0;">No products found in this category</h3>
                             <p style="color:#64748b; font-size:14px; margin:0;">Products added by Admin will appear here automatically.</p>
                         </div>
                     `;
@@ -468,7 +545,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
-            // 2. On Subcollection pages (oils, ghee, dry fruits, seeds, spices, powders, cooking essentials)
+            // 3. Category Subpages
             let categoryProducts = [];
             if (apiProducts && apiProducts.length > 0) {
                 if (path.includes("oils-natural-extracts")) {
@@ -494,18 +571,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (countElem) {
                     countElem.textContent = `${categoryProducts.length} products`;
                 }
-            } else {
-                colGrid.innerHTML = `
-                    <div class="empty-collection-state" style="grid-column: 1 / -1; padding: 60px 20px; text-align: center; background: #ffffff; border: 1.5px dashed #cbd5e1; border-radius: 16px; margin: 20px 0;">
-                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#0f7139" stroke-width="1.5" style="margin-bottom: 12px;"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
-                        <h3 style="font-family:'Playfair Display', serif; font-size:20px; color:#0f7139; margin:0 0 8px 0;">No products in this collection yet</h3>
-                        <p style="color:#64748b; font-size:14px; margin:0;">Products added by Admin will appear here automatically.</p>
-                    </div>
-                `;
-                const countElem = document.getElementById("collectionProductCount");
-                if (countElem) {
-                    countElem.textContent = "0 products";
-                }
             }
         } catch (e) {
             console.error("Product sync error:", e);
@@ -517,14 +582,19 @@ document.addEventListener("DOMContentLoaded", () => {
         const name = p.name || p.title || p.productName || "Arshith Fresh Product";
         const price = Number(p.price || p.salePrice || p.currentPrice || 30);
         const originalPrice = Number(p.originalPrice || p.regularPrice || p.mrp || Math.round(price * 1.25));
-        const image = p.image || p.img || p.imageUrl || "https://arshithfresh.com/cdn/shop/collections/spice_200x200_crop_center.png?v=1746963495";
+        const image = p.image || (p.images && p.images[0] ? p.images[0].url : '') || "https://arshithfresh.com/cdn/shop/collections/spice_200x200_crop_center.png?v=1746963495";
         const discount = originalPrice > price ? Math.round(((originalPrice - price) / originalPrice) * 100) : 0;
         const reviewsCount = p.reviewsCount || Math.floor(Math.random() * 20) + 25;
         const fallbackImg = "https://arshithfresh.com/cdn/shop/collections/spice_200x200_crop_center.png?v=1746963495";
 
+        const path = window.location.pathname;
+        const isSubpage = path.includes('/pages/');
+        const isDeep = path.includes('/pages/auth/') || path.includes('/pages/categories/') || path.includes('/pages/policies/');
+        const productDetailUrl = isDeep ? `../product.html?id=${p._id}` : (isSubpage ? `product.html?id=${p._id}` : `pages/product.html?id=${p._id}`);
+
         return `
-            <div class="product-card">
-                <div class="product-card-link">
+            <div class="product-card" data-id="${p._id || ''}">
+                <a href="${p._id ? productDetailUrl : 'javascript:void(0)'}" class="product-card-link" style="text-decoration:none; color:inherit; display:block;">
                     <div class="product-image-container">
                         ${discount > 0 ? `<span class="card-discount-tag">${discount}% Off</span>` : ''}
                         <img src="${image}" alt="${name}" class="primary-img" onerror="this.onerror=null; this.src='${fallbackImg}';">
@@ -540,10 +610,85 @@ document.addEventListener("DOMContentLoaded", () => {
                             <span class="sale-price">From Rs. ${price.toFixed(2)}</span>
                         </div>
                     </div>
-                </div>
+                </a>
                 <button class="add-to-cart-btn">ADD TO CART</button>
             </div>
         `;
+    }
+
+    async function syncSingleProductView() {
+        const viewContainer = document.getElementById("productDetailView");
+        if (!viewContainer) return;
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const productId = urlParams.get('id');
+
+        if (!productId) {
+            viewContainer.innerHTML = `
+                <div style="text-align: center; padding: 40px;">
+                    <h2>Product Not Specified</h2>
+                    <p><a href="collections.html" style="color:#0f7139;">Browse All Products</a></p>
+                </div>
+            `;
+            return;
+        }
+
+        try {
+            const res = await fetch(`http://localhost:5000/api/products/${productId}`);
+            if (!res.ok) throw new Error("Product not found");
+            const p = await res.json();
+
+            const name = p.name || p.title || "Arshith Fresh Product";
+            const price = Number(p.price || 0);
+            const originalPrice = Number(p.originalPrice || Math.round(price * 1.25));
+            const image = p.image || (p.images && p.images[0] ? p.images[0].url : '') || "https://arshithfresh.com/cdn/shop/collections/spice_200x200_crop_center.png?v=1746963495";
+            const discount = originalPrice > price ? Math.round(((originalPrice - price) / originalPrice) * 100) : 0;
+
+            viewContainer.innerHTML = `
+                <div class="product-detail-layout" style="display: flex; gap: 40px; flex-wrap: wrap; padding: 40px 20px; max-width: 1200px; margin: 0 auto;">
+                    <div class="product-gallery-side" style="flex: 1; min-width: 300px;">
+                        <div style="position: relative; border-radius: 12px; overflow: hidden; border: 1px solid #e2e8f0;">
+                            ${discount > 0 ? `<span class="card-discount-tag" style="position: absolute; top: 12px; left: 12px; background: #e11d48; color: #fff; padding: 4px 8px; border-radius: 4px; font-weight: 700; font-size: 12px;">${discount}% OFF</span>` : ''}
+                            <img src="${image}" alt="${name}" style="width: 100%; max-height: 480px; object-fit: contain;">
+                        </div>
+                    </div>
+                    <div class="product-info-side" style="flex: 1; min-width: 300px;">
+                        <span style="display: inline-block; font-size: 13px; color: #0f7139; font-weight: 600; text-transform: uppercase; margin-bottom: 8px;">${p.category || 'General'}</span>
+                        <h1 style="font-family: 'Playfair Display', serif; font-size: 32px; color: #0f7139; margin-bottom: 12px;">${name}</h1>
+                        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+                            <span style="font-size: 24px; font-weight: 700; color: #0f7139;">₹${price.toFixed(2)}</span>
+                            ${originalPrice > price ? `<span style="font-size: 16px; text-decoration: line-through; color: #94a3b8;">₹${originalPrice.toFixed(2)}</span>` : ''}
+                        </div>
+                        <p style="font-size: 14px; color: #475569; margin-bottom: 16px;"><strong>Unit:</strong> ${p.unit || '1 kg'} | <strong>Brand:</strong> ${p.brand || 'Arshith Fresh'}</p>
+                        <div style="margin-bottom: 24px;">
+                            <span style="display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; ${p.countInStock > 0 ? 'background: #dcfce7; color: #166534;' : 'background: #fee2e2; color: #991b1b;'}">
+                                ${p.countInStock > 0 ? `In Stock (${p.countInStock} available)` : 'Out of Stock'}
+                            </span>
+                        </div>
+                        <div style="font-size: 14px; line-height: 1.6; color: #334155; margin-bottom: 24px; background: #f8fafc; padding: 16px; border-radius: 8px;">
+                            ${p.description || 'Pure and natural quality products from Arshith Fresh.'}
+                        </div>
+                        <button class="add-to-cart-btn" style="width: 100%; height: 50px; background: #0f7139; color: #fff; border: none; border-radius: 6px; font-weight: 700; font-size: 16px; cursor: pointer;">
+                            ADD TO CART
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            const relatedGrid = document.getElementById("relatedProductsGrid");
+            if (relatedGrid) {
+                const allRes = await fetch("http://localhost:5000/api/products");
+                if (allRes.ok) {
+                    const allProducts = await allRes.json();
+                    const related = allProducts.filter(item => item._id !== p._id && item.category === p.category).slice(0, 4);
+                    if (related.length > 0) {
+                        relatedGrid.innerHTML = related.map(item => createProductCardHTML(item)).join('');
+                    }
+                }
+            }
+        } catch (e) {
+            viewContainer.innerHTML = `<div style="text-align: center; padding: 40px;"><h2>Product Not Found</h2></div>`;
+        }
     }
 
     function syncAuthHeader() {
@@ -572,7 +717,9 @@ document.addEventListener("DOMContentLoaded", () => {
         } catch (e) {}
     }
 
+    syncStorefrontCollections();
     syncStorefrontProducts();
+    syncSingleProductView();
     syncAuthHeader();
 });
 

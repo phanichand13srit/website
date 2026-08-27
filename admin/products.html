@@ -603,10 +603,12 @@
 
         products.forEach(product => {
           const statusClass = product.status === 'active' ? 'active' : 'draft';
-          const imgUrl = (product.images && product.images.length > 0) ? product.images[0].url : 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=100&auto=format&fit=crop&q=60';
+          const imgUrl = (product.images && product.images.length > 0 && product.images[0].url) ? product.images[0].url : (product.image || 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=100&auto=format&fit=crop&q=60');
           
-          let variantsCount = product.variants ? product.variants.length : 0;
-          let stockText = `${variantsCount} variants`;
+          let prodName = product.name || product.title || 'Untitled Product';
+          let catName = product.category || (product.categoryId ? product.categoryId.name : 'Uncategorized');
+          let stockVal = product.countInStock !== undefined ? product.countInStock : (product.variants ? product.variants.length : 0);
+          let stockText = `${stockVal} in stock`;
 
           const tr = document.createElement('tr');
           tr.dataset.id = product._id;
@@ -616,13 +618,13 @@
             <td><input type="checkbox" class="custom-checkbox"></td>
             <td>
               <div class="table-product-item">
-                <img src="${imgUrl}" class="table-product-thumb" alt="${product.title}">
-                <span class="table-product-name">${product.title}</span>
+                <img src="${imgUrl}" class="table-product-thumb" alt="${prodName}">
+                <span class="table-product-name">${prodName}</span>
               </div>
             </td>
             <td><span class="status-pill ${statusClass}">${product.status === 'active' ? 'Active' : 'Draft'}</span></td>
             <td>${stockText}</td>
-            <td>${product.categoryId ? product.categoryId.name : 'Uncategorized'}</td>
+            <td>${catName}</td>
             <td>2</td>
             <td>0</td>
             <td>${product.type || 'Standard'}</td>
@@ -686,6 +688,46 @@
     }
     function closeQuickAddModal() {
       document.getElementById('quickAddModal').classList.remove('active');
+    }
+
+    const addProductForm = document.getElementById('addProductForm');
+    if (addProductForm) {
+      addProductForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const title = document.getElementById('prodTitle') ? document.getElementById('prodTitle').value : '';
+        const category = document.getElementById('prodCategory') ? document.getElementById('prodCategory').value : '';
+        const type = document.getElementById('prodType') ? document.getElementById('prodType').value : '';
+        const vendor = document.getElementById('prodVendor') ? document.getElementById('prodVendor').value : '';
+        const description = document.getElementById('prodDesc') ? document.getElementById('prodDesc').value : '';
+        const status = document.getElementById('prodStatus') ? document.getElementById('prodStatus').value : 'draft';
+
+        const payload = {
+          name: title || 'New Product',
+          title: title || 'New Product',
+          category: category || type || 'General',
+          brand: vendor || 'Arshith Fresh India Pvt Ltd',
+          description: description,
+          status: status
+        };
+
+        try {
+          const res = await fetch(API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+          if (res.ok) {
+            alert('Product created successfully!');
+            closeModal();
+            fetchProducts();
+          } else {
+            const err = await res.json();
+            alert('Error: ' + (err.message || 'Failed to create product'));
+          }
+        } catch (err) {
+          alert('Error creating product: ' + err.message);
+        }
+      });
     }
   </script>
 
