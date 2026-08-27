@@ -69,7 +69,7 @@
     <main class="main-viewport">
       <div class="page-top-header">
         <div class="page-title-row">
-          <h1>Collections & Categories</h1>
+          <h1>Collections & Categories <span id="collectionCount" style="font-size: 16px; font-weight: normal; color: #6d7175;">(0)</span></h1>
         </div>
         <div class="page-action-buttons">
           <button class="btn-pill" onclick="fetchCollections()"><i class="fa-solid fa-rotate"></i> Refresh</button>
@@ -196,6 +196,11 @@
 
     function renderTable(collections) {
       tbody.innerHTML = '';
+      const countElem = document.getElementById('collectionCount');
+      if (countElem) {
+        countElem.textContent = `(${collections ? collections.length : 0})`;
+      }
+
       if (!collections || collections.length === 0) {
         tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 25px; color: #6d7175;">No categories found. Click "+ Add category" to create one.</td></tr>';
         return;
