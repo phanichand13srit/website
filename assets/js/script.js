@@ -427,17 +427,12 @@ document.addEventListener("DOMContentLoaded", () => {
             } catch (err) {
                 // API offline or empty
             }
-
-            const homeGrid = document.querySelector(".products-carousel-section .products-grid");
-            if (homeGrid) {
-                const homeList = apiProducts.length > 0 ? apiProducts : [
-                    { name: "Cold Pressed Groundnut Oil - 1L", price: 349, originalPrice: 420, image: "https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM_1.jpg?v=1757334051&width=400" },
-                    { name: "Cold Pressed Sesame / Gingelly Oil - 1L", price: 440, originalPrice: 520, image: "https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM.jpg?v=1757334052&width=400" },
-                    { name: "Cold Pressed Coconut Oil - 1L", price: 380, originalPrice: 450, image: "https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?w=500" },
-                    { name: "Pure Buffalo Ghee (Premium Quality)", price: 440, originalPrice: 520, image: "https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-09-15_at_4.34.52_PM.jpg?v=1757934372" }
-                ];
-                homeGrid.innerHTML = homeList.map(p => createProductCardHTML(p)).join('');
-            }
+            const homeGrids = document.querySelectorAll(".products-carousel-section .products-grid");
+            homeGrids.forEach(grid => {
+                if (apiProducts && apiProducts.length > 0) {
+                    grid.innerHTML = apiProducts.map(p => createProductCardHTML(p)).join('');
+                }
+            });
 
             const path = window.location.pathname.toLowerCase();
             const colGrid = document.getElementById("collectionsProductGrid");
@@ -476,7 +471,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 } else if (path.includes("ghee-and-honey")) {
                     categoryProducts = apiProducts.filter(p => (p.category && (p.category.toLowerCase().includes("ghee") || p.category.toLowerCase().includes("honey"))) || (p.name && (p.name.toLowerCase().includes("ghee") || p.name.toLowerCase().includes("honey"))));
                 } else if (path.includes("dry-fruits-nuts")) {
-                    categoryProducts = apiProducts.filter(p => (p.category && p.category.toLowerCase().includes("dry")) || (p.name && (p.name.toLowerCase().includes("almond") || p.name.toLowerCase().includes("cashew") || p.name.toLowerCase().includes("pista") || p.name.toLowerCase().includes("walnut"))));
+                    categoryProducts = apiProducts.filter(p => (p.category && p.category.toLowerCase().includes("dry")) || (p.name && (p.name.toLowerCase().includes("almond") || p.name.toLowerCase().includes("cashew") || p.name.toLowerCase().includes("pista") || p.name.toLowerCase().includes("walnut") || p.name.toLowerCase().includes("anjeer") || p.name.toLowerCase().includes("date"))));
                 } else if (path.includes("dry-seeds")) {
                     categoryProducts = apiProducts.filter(p => (p.category && p.category.toLowerCase().includes("seed")) || (p.name && p.name.toLowerCase().includes("seed")));
                 } else if (path.includes("cooking-essentials")) {
@@ -588,7 +583,17 @@ document.addEventListener("DOMContentLoaded", () => {
         const name = p.name || p.title || p.productName || "Arshith Fresh Product";
         const price = Number(p.price || p.salePrice || p.currentPrice || 30);
         const originalPrice = Number(p.originalPrice || p.regularPrice || p.mrp || Math.round(price * 1.25));
-        const image = p.image || p.img || p.imageUrl || "https://arshithfresh.com/cdn/shop/collections/spice_200x200_crop_center.png?v=1746963495";
+        const image = p.image || (p.images && p.images[0] ? (typeof p.images[0] === 'object' ? p.images[0].url : p.images[0]) : '') || p.img || p.imageUrl || "https://arshithfresh.com/cdn/shop/collections/spice_200x200_crop_center.png?v=1746963495";
+        
+        let secondImage = '';
+        if (Array.isArray(p.images) && p.images.length > 1) {
+            secondImage = typeof p.images[1] === 'object' ? (p.images[1].url || '') : p.images[1];
+        }
+        if (!secondImage && p.hoverImage) {
+            secondImage = p.hoverImage;
+        }
+        const hasSecondImage = Boolean(secondImage && secondImage !== image);
+
         const discount = originalPrice > price ? Math.round(((originalPrice - price) / originalPrice) * 100) : 0;
         const reviewsCount = p.reviewsCount || Math.floor(Math.random() * 20) + 25;
         const fallbackImg = "https://arshithfresh.com/cdn/shop/collections/spice_200x200_crop_center.png?v=1746963495";
@@ -609,9 +614,10 @@ document.addEventListener("DOMContentLoaded", () => {
         return `
             <div class="product-card">
                 <a href="${productUrl}" class="product-card-link" style="text-decoration: none; color: inherit; display: block; cursor: pointer;">
-                    <div class="product-image-container">
+                    <div class="product-image-container ${hasSecondImage ? 'has-second-img' : ''}">
                         ${discount > 0 ? `<span class="card-discount-tag">${discount}% Off</span>` : ''}
                         <img src="${image}" alt="${name}" class="primary-img" onerror="this.onerror=null; this.src='${fallbackImg}';">
+                        ${hasSecondImage ? `<img src="${secondImage}" alt="${name}" class="hover-img" onerror="this.style.display='none';">` : ''}
                     </div>
                     <div class="product-info">
                         <h3 class="card__heading" title="${name}">${name}</h3>
@@ -682,9 +688,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
         try {
             const res = await fetch(`http://localhost:5000/api/products/${productId}`);
-            if (!res.ok) throw new Error("Product not found");
-            const p = await res.json();
-            renderSingleProductDetail(p, viewContainer);
+            if (res.ok) {
+                const p = await res.json();
+                renderSingleProductDetail(p, viewContainer);
+                return;
+            }
+
+            // Resilient Fallback: If direct ID failed, fetch product list and search
+            const allRes = await fetch("http://localhost:5000/api/products");
+            if (allRes.ok) {
+                const list = await allRes.json();
+                if (list.length > 0) {
+                    const cleanSlug = productId.replace(/-/g, ' ').toLowerCase();
+                    const matched = list.find(item => (item.name || '').toLowerCase().includes(cleanSlug.split(' ')[0])) || list[0];
+                    renderSingleProductDetail(matched, viewContainer);
+                    return;
+                }
+            }
+            throw new Error("Product not found");
         } catch (e) {
             viewContainer.innerHTML = `<div style="text-align: center; padding: 60px 20px;"><h2>Product Not Found</h2><p style="color:#64748b; margin-top:8px;">The product you requested could not be found.</p><a href="../index.html" class="continue-shopping-btn" style="display:inline-block; margin-top:16px;">Back to Home</a></div>`;
         }
@@ -694,7 +715,20 @@ document.addEventListener("DOMContentLoaded", () => {
         const name = p.name || p.title || "Arshith Fresh Product";
         const price = Number(p.price || 0);
         const originalPrice = Number(p.originalPrice || Math.round(price * 1.25));
-        const image = p.image || (p.images && p.images[0] ? p.images[0].url : '') || "https://arshithfresh.com/cdn/shop/collections/spice_200x200_crop_center.png?v=1746963495";
+        
+        // Extract all images
+        let allImgs = [];
+        if (Array.isArray(p.images) && p.images.length > 0) {
+            allImgs = p.images.map(img => typeof img === 'object' ? (img.url || '') : img).filter(Boolean);
+        }
+        if (allImgs.length === 0 && p.image) {
+            allImgs = [p.image];
+        }
+        if (allImgs.length === 0) {
+            allImgs = ["https://arshithfresh.com/cdn/shop/collections/spice_200x200_crop_center.png?v=1746963495"];
+        }
+
+        const mainImage = allImgs[0];
         const discount = originalPrice > price ? Math.round(((originalPrice - price) / originalPrice) * 100) : 0;
         const discountAmount = (originalPrice - price).toFixed(2);
         const isInstock = (p.countInStock ?? 10) > 0;
@@ -704,6 +738,9 @@ document.addEventListener("DOMContentLoaded", () => {
         const brand = p.brand || 'Arshith Fresh';
         const description = p.description || '100% pure, natural, and preservative-free authentic grocery freshly packed and delivered from Arshith Fresh.';
         const id = p._id || '';
+
+        window.CURRENT_DETAIL_PRODUCT = p;
+        const prodImage = p.image || (p.images && p.images[0] ? (p.images[0].url || p.images[0]) : '') || mainImage;
 
         // Update page title
         document.title = `${name} | Arshith Fresh`;
@@ -726,8 +763,18 @@ document.addEventListener("DOMContentLoaded", () => {
                 <div class="product-gallery-side">
                     <div style="position: relative; border-radius: 16px; overflow: hidden; border: 1px solid #e2e8f0; background: #fafbfc; text-align: center; padding: 24px;">
                         ${discount > 0 ? `<span class="card-discount-tag" style="position: absolute; top: 16px; left: 16px; background: #e11d48; color: #fff; padding: 6px 12px; border-radius: 6px; font-weight: 700; font-size: 13px; letter-spacing: 0.5px;">${discount}% OFF</span>` : ''}
-                        <img src="${image}" alt="${name}" id="mainDetailProductImg" style="width: 100%; max-height: 440px; object-fit: contain; transition: transform 0.3s ease;">
+                        <img src="${mainImage}" alt="${name}" id="mainDetailProductImg" style="width: 100%; max-height: 440px; object-fit: contain; transition: transform 0.3s ease;">
                     </div>
+
+                    ${allImgs.length > 1 ? `
+                    <div class="product-thumbnails-carousel" style="display: flex; gap: 10px; margin-top: 14px; overflow-x: auto; padding-bottom: 4px;">
+                        ${allImgs.map((imgUrl, i) => `
+                            <div class="detail-thumb-item ${i === 0 ? 'active' : ''}" onclick="switchDetailImage('${imgUrl.replace(/'/g, "\\'")}', this)" style="width: 72px; height: 72px; border-radius: 8px; border: 2px solid ${i === 0 ? '#0f7139' : '#e2e8f0'}; background: #fafbfc; padding: 4px; cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease;">
+                                <img src="${imgUrl}" alt="${name} thumbnail ${i + 1}" style="max-height: 100%; max-width: 100%; object-fit: contain;">
+                            </div>
+                        `).join('')}
+                    </div>
+                    ` : ''}
                 </div>
 
                 <!-- RIGHT PRODUCT DETAILS -->
@@ -774,11 +821,11 @@ document.addEventListener("DOMContentLoaded", () => {
                             <button type="button" onclick="const q = document.getElementById('detailQtyInput'); q.value = Number(q.value) + 1;" style="width: 40px; height: 100%; border: none; background: transparent; font-size: 18px; cursor: pointer; color: #475569;">+</button>
                         </div>
 
-                        <button type="button" onclick="const q = Number(document.getElementById('detailQtyInput').value) || 1; addToStoreCart('${id}', '${name.replace(/'/g, "\\'")}', ${price}, '${image.replace(/'/g, "\\'")}', q);" style="flex: 1; min-width: 160px; height: 50px; background: #0f7139; color: #fff; border: none; border-radius: 8px; font-weight: 700; font-size: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: background 0.2s;">
+                        <button type="button" onclick="handleDetailAddToCart(false)" style="flex: 1; min-width: 160px; height: 50px; background: #0f7139; color: #fff; border: none; border-radius: 8px; font-weight: 700; font-size: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: background 0.2s;">
                             🛒 ADD TO CART
                         </button>
 
-                        <button type="button" onclick="const q = Number(document.getElementById('detailQtyInput').value) || 1; addToStoreCart('${id}', '${name.replace(/'/g, "\\'")}', ${price}, '${image.replace(/'/g, "\\'")}', q); window.location.href='cart.html';" style="flex: 1; min-width: 140px; height: 50px; background: #1e293b; color: #fff; border: none; border-radius: 8px; font-weight: 700; font-size: 15px; cursor: pointer; transition: background 0.2s;">
+                        <button type="button" onclick="handleDetailAddToCart(true)" style="flex: 1; min-width: 140px; height: 50px; background: #1e293b; color: #fff; border: none; border-radius: 8px; font-weight: 700; font-size: 15px; cursor: pointer; transition: background 0.2s;">
                             ⚡ BUY NOW
                         </button>
                     </div>
@@ -803,6 +850,25 @@ document.addEventListener("DOMContentLoaded", () => {
         // Load Related Products
         loadRelatedProducts(p);
     }
+
+    window.handleDetailAddToCart = function(isBuyNow = false) {
+        const qInput = document.getElementById('detailQtyInput');
+        const qty = qInput ? (Number(qInput.value) || 1) : 1;
+        if (window.CURRENT_DETAIL_PRODUCT) {
+            const prod = window.CURRENT_DETAIL_PRODUCT;
+            const pImg = prod.image || (prod.images && prod.images[0] ? (prod.images[0].url || prod.images[0]) : '') || "https://arshithfresh.com/cdn/shop/collections/spice_200x200_crop_center.png?v=1746963495";
+            addToStoreCart(
+                prod._id || '',
+                prod.name || prod.title || 'Arshith Fresh Product',
+                Number(prod.price) || 0,
+                pImg,
+                qty
+            );
+            if (isBuyNow) {
+                window.location.href = 'cart.html';
+            }
+        }
+    };
 
     async function loadRelatedProducts(currentProduct) {
         const relatedGrid = document.getElementById("relatedProductsGrid");
@@ -853,5 +919,24 @@ document.addEventListener("DOMContentLoaded", () => {
     syncSingleProductView();
     syncAuthHeader();
 });
+
+// Global Image Thumbnail Switcher for Product Detail
+window.switchDetailImage = function(url, thumbElem) {
+    const mainImg = document.getElementById('mainDetailProductImg');
+    if (mainImg) {
+        mainImg.style.opacity = '0.6';
+        mainImg.src = url;
+        setTimeout(() => { mainImg.style.opacity = '1'; }, 150);
+    }
+    document.querySelectorAll('.detail-thumb-item').forEach(el => {
+        el.style.borderColor = '#e2e8f0';
+        el.classList.remove('active');
+    });
+    if (thumbElem) {
+        thumbElem.style.borderColor = '#0f7139';
+        thumbElem.classList.add('active');
+    }
+};
+
 
 

@@ -46,6 +46,10 @@ const productSchema = new mongoose.Schema({
     type: String,
     default: '',
   },
+  images: [{
+    url: { type: String, default: '' },
+    alt: { type: String, default: '' }
+  }],
   hoverImage: {
     type: String,
     default: '',
