@@ -62,8 +62,6 @@
 }
 
 html {
-  height: 100%;
-  overflow-y: auto;
   scroll-behavior: smooth;
 }
 
@@ -74,9 +72,8 @@ body {
   font-size: 13px;
   line-height: 1.4;
   -webkit-font-smoothing: antialiased;
-  min-height: 100%;
-  overflow-x: hidden;
-  overflow-y: auto;
+  margin: 0;
+  padding: 0;
 }
 
 /* Custom Scrollbar */
