@@ -410,79 +410,12 @@ document.addEventListener("DOMContentLoaded", () => {
     initCollectionSliders();
 
     // 9. Dynamic Live API & Collection Product Sync
-    // 9. Dynamic Live API & Collection Product Sync
-    async function syncStorefrontCollections() {
-        try {
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 2000);
-            const res = await fetch("http://localhost:5000/api/collections", { signal: controller.signal });
-            clearTimeout(timeoutId);
-
-            if (!res || !res.ok) return;
-            const collections = await res.json();
-            if (!Array.isArray(collections) || collections.length === 0) return;
-
-            const path = window.location.pathname;
-            const isSubpage = path.includes("/pages/");
-            const isDeep = path.includes("/pages/auth/") || path.includes("/pages/categories/") || path.includes("/pages/policies/");
-
-            // 1. Update Navigation Dropdown Menus
-            const dropdownMenus = document.querySelectorAll(".dropdown-menu, .drawer-submenu");
-            dropdownMenus.forEach(menu => {
-                menu.innerHTML = collections.map(c => {
-                    const slug = c.title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-                    const link = isDeep ? `../collections.html?category=${encodeURIComponent(c.title)}` : (isSubpage ? `collections.html?category=${encodeURIComponent(c.title)}` : `pages/collections.html?category=${encodeURIComponent(c.title)}`);
-                    return `<li><a href="${link}">${c.title}</a></li>`;
-                }).join('');
-            });
-
-            // 2. Update Home "Shop by Category" Grid
-            const catGrid = document.querySelector(".categories-grid");
-            if (catGrid) {
-                catGrid.innerHTML = collections.map(c => {
-                    const link = isSubpage ? `collections.html?category=${encodeURIComponent(c.title)}` : `pages/collections.html?category=${encodeURIComponent(c.title)}`;
-                    return `
-                        <a href="${link}" class="category-card">
-                            <div class="category-img-container">
-                                <img src="${c.image || 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=200'}" alt="${c.title}" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=200';">
-                            </div>
-                            <h3 class="category-name">${c.title}</h3>
-                        </a>
-                    `;
-                }).join('');
-            }
-
-            // 3. Update Collections Top Circle Row
-            const circleRow = document.querySelector(".category-circle-row");
-            if (circleRow) {
-                const urlParams = new URLSearchParams(window.location.search);
-                const activeCat = urlParams.get('category') || 'all';
-
-                let html = `
-                    <a href="collections.html?category=all" class="category-circle-item ${activeCat === 'all' ? 'active' : ''}">
-                        <div class="circle-img-wrap"><img src="https://arshithfresh.com/cdn/shop/collections/groceries_200x200_crop_center.jpg?v=1746965740" alt="All Products"></div>
-                        <span class="circle-title">All Products</span>
-                    </a>
-                `;
-                html += collections.map(c => `
-                    <a href="collections.html?category=${encodeURIComponent(c.title)}" class="category-circle-item ${activeCat.toLowerCase() === c.title.toLowerCase() ? 'active' : ''}">
-                        <div class="circle-img-wrap"><img src="${c.image || 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=200'}" alt="${c.title}"></div>
-                        <span class="circle-title">${c.title}</span>
-                    </a>
-                `).join('');
-                circleRow.innerHTML = html;
-            }
-        } catch (e) {
-            console.error("Collections sync error:", e);
-        }
-    }
-
     async function syncStorefrontProducts() {
         try {
             let apiProducts = [];
             try {
                 const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 2000);
+                const timeoutId = setTimeout(() => controller.abort(), 2000); // 2 second timeout for local backend API
                 const res = await fetch("http://localhost:5000/api/products", { signal: controller.signal });
                 clearTimeout(timeoutId);
                 if (res && res.ok) {
@@ -492,37 +425,27 @@ document.addEventListener("DOMContentLoaded", () => {
                     }
                 }
             } catch (err) {
-                // API offline
+                // API offline or empty
             }
 
-            // 1. Update Homepage Product Grids
-            const homeGrids = document.querySelectorAll(".products-carousel-section .products-grid, .products-grid");
-            if (homeGrids.length > 0) {
-                const displayList = apiProducts.length > 0 ? apiProducts : [];
-                if (displayList.length > 0) {
-                    homeGrids.forEach(grid => {
-                        grid.innerHTML = displayList.map(p => createProductCardHTML(p)).join('');
-                    });
-                }
+            const homeGrid = document.querySelector(".products-carousel-section .products-grid");
+            if (homeGrid) {
+                const homeList = apiProducts.length > 0 ? apiProducts : [
+                    { name: "Cold Pressed Groundnut Oil - 1L", price: 349, originalPrice: 420, image: "https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM_1.jpg?v=1757334051&width=400" },
+                    { name: "Cold Pressed Sesame / Gingelly Oil - 1L", price: 440, originalPrice: 520, image: "https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM.jpg?v=1757334052&width=400" },
+                    { name: "Cold Pressed Coconut Oil - 1L", price: 380, originalPrice: 450, image: "https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?w=500" },
+                    { name: "Pure Buffalo Ghee (Premium Quality)", price: 440, originalPrice: 520, image: "https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-09-15_at_4.34.52_PM.jpg?v=1757934372" }
+                ];
+                homeGrid.innerHTML = homeList.map(p => createProductCardHTML(p)).join('');
             }
 
             const path = window.location.pathname.toLowerCase();
             const colGrid = document.getElementById("collectionsProductGrid");
             if (!colGrid) return;
 
-            const urlParams = new URLSearchParams(window.location.search);
-            const targetCategory = urlParams.get('category');
-
-            // 2. On All Products / Collections page
+            // 1. On All Products page (collections.html)
             if (path.endsWith("collections") || path.endsWith("collections.html")) {
-                let displayProducts = apiProducts || [];
-                if (targetCategory && targetCategory !== 'all') {
-                    displayProducts = displayProducts.filter(p => 
-                        (p.category && p.category.toLowerCase().includes(targetCategory.toLowerCase())) ||
-                        (p.name && p.name.toLowerCase().includes(targetCategory.toLowerCase()))
-                    );
-                }
-
+                const displayProducts = apiProducts || [];
                 if (displayProducts.length > 0) {
                     colGrid.innerHTML = displayProducts.map(p => createProductCardHTML(p)).join('');
                     const countElem = document.getElementById("collectionProductCount");
@@ -533,7 +456,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     colGrid.innerHTML = `
                         <div class="empty-collection-state" style="grid-column: 1 / -1; padding: 60px 20px; text-align: center; background: #ffffff; border: 1.5px dashed #cbd5e1; border-radius: 16px; margin: 20px 0;">
                             <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#0f7139" stroke-width="1.5" style="margin-bottom: 12px;"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
-                            <h3 style="font-family:'Playfair Display', serif; font-size:20px; color:#0f7139; margin:0 0 8px 0;">No products found in this category</h3>
+                            <h3 style="font-family:'Playfair Display', serif; font-size:20px; color:#0f7139; margin:0 0 8px 0;">No products in this collection yet</h3>
                             <p style="color:#64748b; font-size:14px; margin:0;">Products added by Admin will appear here automatically.</p>
                         </div>
                     `;
@@ -545,7 +468,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
-            // 3. Category Subpages
+            // 2. On Subcollection pages (oils, ghee, dry fruits, seeds, spices, powders, cooking essentials)
             let categoryProducts = [];
             if (apiProducts && apiProducts.length > 0) {
                 if (path.includes("oils-natural-extracts")) {
@@ -571,30 +494,121 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (countElem) {
                     countElem.textContent = `${categoryProducts.length} products`;
                 }
+            } else {
+                colGrid.innerHTML = `
+                    <div class="empty-collection-state" style="grid-column: 1 / -1; padding: 60px 20px; text-align: center; background: #ffffff; border: 1.5px dashed #cbd5e1; border-radius: 16px; margin: 20px 0;">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#0f7139" stroke-width="1.5" style="margin-bottom: 12px;"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+                        <h3 style="font-family:'Playfair Display', serif; font-size:20px; color:#0f7139; margin:0 0 8px 0;">No products in this collection yet</h3>
+                        <p style="color:#64748b; font-size:14px; margin:0;">Products added by Admin will appear here automatically.</p>
+                    </div>
+                `;
+                const countElem = document.getElementById("collectionProductCount");
+                if (countElem) {
+                    countElem.textContent = "0 products";
+                }
             }
         } catch (e) {
             console.error("Product sync error:", e);
         }
     }
 
+    // Global Cart State
+    let CART_ITEMS = [];
+    try {
+        const saved = localStorage.getItem("arshith_cart");
+        if (saved) {
+            CART_ITEMS = JSON.parse(saved);
+        }
+    } catch (e) {}
+
+    function saveCart() {
+        try {
+            localStorage.setItem("arshith_cart", JSON.stringify(CART_ITEMS));
+        } catch (e) {}
+        updateCartCountBadge();
+    }
+
+    function addToStoreCart(id, name, price, image, qty = 1) {
+        const existing = CART_ITEMS.find(item => item.id === id || item.title === name);
+        if (existing) {
+            existing.quantity += Number(qty);
+        } else {
+            CART_ITEMS.push({
+                id: id || String(Date.now()),
+                title: name,
+                name: name,
+                price: Number(price) || 0,
+                image: image || "https://arshithfresh.com/cdn/shop/collections/spice_200x200_crop_center.png?v=1746963495",
+                quantity: Number(qty)
+            });
+        }
+        saveCart();
+        if (typeof showToast === "function") {
+            showToast(`Added ${name} to cart!`);
+        } else {
+            alert(`Added ${name} to cart!`);
+        }
+    }
+
+    function updateCartQuantity(index, newQty) {
+        if (newQty <= 0) {
+            CART_ITEMS.splice(index, 1);
+        } else {
+            CART_ITEMS[index].quantity = newQty;
+        }
+        saveCart();
+    }
+
+    function removeFromCart(index) {
+        CART_ITEMS.splice(index, 1);
+        saveCart();
+    }
+
+    function updateCartCountBadge() {
+        const totalCount = CART_ITEMS.reduce((sum, item) => sum + (item.quantity || 1), 0);
+        const badges = document.querySelectorAll(".cart-count");
+        badges.forEach(b => b.textContent = totalCount);
+        const barCount = document.getElementById("cartBarCount");
+        if (barCount) barCount.textContent = `${totalCount} items`;
+        const barTotal = document.getElementById("cartBarTotal");
+        if (barTotal) {
+            const subtotal = CART_ITEMS.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            barTotal.textContent = `₹${subtotal.toFixed(2)}`;
+        }
+    }
+    window.CART_ITEMS = CART_ITEMS;
+    window.addToStoreCart = addToStoreCart;
+    window.updateCartQuantity = updateCartQuantity;
+    window.removeFromCart = removeFromCart;
+    window.saveCart = saveCart;
+    window.updateCartCountBadge = updateCartCountBadge;
+
     function createProductCardHTML(p) {
         if (!p) return "";
         const name = p.name || p.title || p.productName || "Arshith Fresh Product";
         const price = Number(p.price || p.salePrice || p.currentPrice || 30);
         const originalPrice = Number(p.originalPrice || p.regularPrice || p.mrp || Math.round(price * 1.25));
-        const image = p.image || (p.images && p.images[0] ? p.images[0].url : '') || "https://arshithfresh.com/cdn/shop/collections/spice_200x200_crop_center.png?v=1746963495";
+        const image = p.image || p.img || p.imageUrl || "https://arshithfresh.com/cdn/shop/collections/spice_200x200_crop_center.png?v=1746963495";
         const discount = originalPrice > price ? Math.round(((originalPrice - price) / originalPrice) * 100) : 0;
         const reviewsCount = p.reviewsCount || Math.floor(Math.random() * 20) + 25;
         const fallbackImg = "https://arshithfresh.com/cdn/shop/collections/spice_200x200_crop_center.png?v=1746963495";
+        const id = p._id || "";
 
-        const path = window.location.pathname;
-        const isSubpage = path.includes('/pages/');
-        const isDeep = path.includes('/pages/auth/') || path.includes('/pages/categories/') || path.includes('/pages/policies/');
-        const productDetailUrl = isDeep ? `../product.html?id=${p._id}` : (isSubpage ? `product.html?id=${p._id}` : `pages/product.html?id=${p._id}`);
+        // Calculate correct relative path to pages/product.html
+        const path = window.location.pathname.toLowerCase();
+        let productUrl = "pages/product.html";
+        if (path.includes("/pages/categories/") || path.includes("/pages/auth/") || path.includes("/pages/policies/")) {
+            productUrl = "../product.html";
+        } else if (path.includes("/pages/")) {
+            productUrl = "product.html";
+        }
+        if (id) {
+            productUrl += `?id=${id}`;
+        }
 
         return `
-            <div class="product-card" data-id="${p._id || ''}">
-                <a href="${p._id ? productDetailUrl : 'javascript:void(0)'}" class="product-card-link" style="text-decoration:none; color:inherit; display:block;">
+            <div class="product-card">
+                <a href="${productUrl}" class="product-card-link" style="text-decoration: none; color: inherit; display: block; cursor: pointer;">
                     <div class="product-image-container">
                         ${discount > 0 ? `<span class="card-discount-tag">${discount}% Off</span>` : ''}
                         <img src="${image}" alt="${name}" class="primary-img" onerror="this.onerror=null; this.src='${fallbackImg}';">
@@ -611,25 +625,58 @@ document.addEventListener("DOMContentLoaded", () => {
                         </div>
                     </div>
                 </a>
-                <button class="add-to-cart-btn">ADD TO CART</button>
+                <button class="add-to-cart-btn" onclick="addToStoreCart('${id}', '${name.replace(/'/g, "\\'")}', ${price}, '${image.replace(/'/g, "\\'")}')">ADD TO CART</button>
             </div>
         `;
     }
 
+    // 3. Sync Storefront Homepage Collections from Database
+    async function syncStorefrontCollections() {
+        const slider = document.querySelector(".categories-slider") || document.getElementById("categoriesSlider");
+        if (!slider) return;
+
+        try {
+            const res = await fetch("http://localhost:5000/api/collections");
+            if (!res.ok) return;
+            const collections = await res.json();
+            if (!collections || collections.length === 0) return;
+
+            slider.innerHTML = collections.map(col => {
+                const title = col.title || "Category";
+                const img = col.image || "https://arshithfresh.com/cdn/shop/collections/spice_200x200_crop_center.png?v=1746963495";
+                const slug = col.slug || title.toLowerCase().replace(/\s+/g, '-');
+                return `
+                    <div class="category-card" onclick="window.location.href='pages/categories/${slug}.html'">
+                        <div class="category-img-container">
+                            <img src="${img}" alt="${title}" class="category-img" onerror="this.src='https://arshithfresh.com/cdn/shop/collections/spice_200x200_crop_center.png?v=1746963495';">
+                        </div>
+                        <h4 class="category-name">${title}</h4>
+                    </div>
+                `;
+            }).join('');
+        } catch (e) {}
+    }
+
+    // 4. Sync Single Product Detail View (if on product view page or ?id= is present)
     async function syncSingleProductView() {
-        const viewContainer = document.getElementById("productDetailView");
+        const viewContainer = document.getElementById("productDetailView") || document.getElementById("singleProductContainer");
         if (!viewContainer) return;
 
         const urlParams = new URLSearchParams(window.location.search);
-        const productId = urlParams.get('id');
+        const productId = urlParams.get("id");
 
         if (!productId) {
-            viewContainer.innerHTML = `
-                <div style="text-align: center; padding: 40px;">
-                    <h2>Product Not Specified</h2>
-                    <p><a href="collections.html" style="color:#0f7139;">Browse All Products</a></p>
-                </div>
-            `;
+            // If no ID passed in URL, fetch the first available product as default
+            try {
+                const res = await fetch("http://localhost:5000/api/products");
+                if (res.ok) {
+                    const products = await res.json();
+                    if (products.length > 0) {
+                        renderSingleProductDetail(products[0], viewContainer);
+                        return;
+                    }
+                }
+            } catch (e) {}
             return;
         }
 
@@ -637,58 +684,142 @@ document.addEventListener("DOMContentLoaded", () => {
             const res = await fetch(`http://localhost:5000/api/products/${productId}`);
             if (!res.ok) throw new Error("Product not found");
             const p = await res.json();
+            renderSingleProductDetail(p, viewContainer);
+        } catch (e) {
+            viewContainer.innerHTML = `<div style="text-align: center; padding: 60px 20px;"><h2>Product Not Found</h2><p style="color:#64748b; margin-top:8px;">The product you requested could not be found.</p><a href="../index.html" class="continue-shopping-btn" style="display:inline-block; margin-top:16px;">Back to Home</a></div>`;
+        }
+    }
 
-            const name = p.name || p.title || "Arshith Fresh Product";
-            const price = Number(p.price || 0);
-            const originalPrice = Number(p.originalPrice || Math.round(price * 1.25));
-            const image = p.image || (p.images && p.images[0] ? p.images[0].url : '') || "https://arshithfresh.com/cdn/shop/collections/spice_200x200_crop_center.png?v=1746963495";
-            const discount = originalPrice > price ? Math.round(((originalPrice - price) / originalPrice) * 100) : 0;
+    function renderSingleProductDetail(p, viewContainer) {
+        const name = p.name || p.title || "Arshith Fresh Product";
+        const price = Number(p.price || 0);
+        const originalPrice = Number(p.originalPrice || Math.round(price * 1.25));
+        const image = p.image || (p.images && p.images[0] ? p.images[0].url : '') || "https://arshithfresh.com/cdn/shop/collections/spice_200x200_crop_center.png?v=1746963495";
+        const discount = originalPrice > price ? Math.round(((originalPrice - price) / originalPrice) * 100) : 0;
+        const discountAmount = (originalPrice - price).toFixed(2);
+        const isInstock = (p.countInStock ?? 10) > 0;
+        const category = p.category || 'Natural Food';
+        const subcategory = p.subcategory || '';
+        const unit = p.unit || '1 unit';
+        const brand = p.brand || 'Arshith Fresh';
+        const description = p.description || '100% pure, natural, and preservative-free authentic grocery freshly packed and delivered from Arshith Fresh.';
+        const id = p._id || '';
 
-            viewContainer.innerHTML = `
-                <div class="product-detail-layout" style="display: flex; gap: 40px; flex-wrap: wrap; padding: 40px 20px; max-width: 1200px; margin: 0 auto;">
-                    <div class="product-gallery-side" style="flex: 1; min-width: 300px;">
-                        <div style="position: relative; border-radius: 12px; overflow: hidden; border: 1px solid #e2e8f0;">
-                            ${discount > 0 ? `<span class="card-discount-tag" style="position: absolute; top: 12px; left: 12px; background: #e11d48; color: #fff; padding: 4px 8px; border-radius: 4px; font-weight: 700; font-size: 12px;">${discount}% OFF</span>` : ''}
-                            <img src="${image}" alt="${name}" style="width: 100%; max-height: 480px; object-fit: contain;">
-                        </div>
-                    </div>
-                    <div class="product-info-side" style="flex: 1; min-width: 300px;">
-                        <span style="display: inline-block; font-size: 13px; color: #0f7139; font-weight: 600; text-transform: uppercase; margin-bottom: 8px;">${p.category || 'General'}</span>
-                        <h1 style="font-family: 'Playfair Display', serif; font-size: 32px; color: #0f7139; margin-bottom: 12px;">${name}</h1>
-                        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
-                            <span style="font-size: 24px; font-weight: 700; color: #0f7139;">₹${price.toFixed(2)}</span>
-                            ${originalPrice > price ? `<span style="font-size: 16px; text-decoration: line-through; color: #94a3b8;">₹${originalPrice.toFixed(2)}</span>` : ''}
-                        </div>
-                        <p style="font-size: 14px; color: #475569; margin-bottom: 16px;"><strong>Unit:</strong> ${p.unit || '1 kg'} | <strong>Brand:</strong> ${p.brand || 'Arshith Fresh'}</p>
-                        <div style="margin-bottom: 24px;">
-                            <span style="display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; ${p.countInStock > 0 ? 'background: #dcfce7; color: #166534;' : 'background: #fee2e2; color: #991b1b;'}">
-                                ${p.countInStock > 0 ? `In Stock (${p.countInStock} available)` : 'Out of Stock'}
-                            </span>
-                        </div>
-                        <div style="font-size: 14px; line-height: 1.6; color: #334155; margin-bottom: 24px; background: #f8fafc; padding: 16px; border-radius: 8px;">
-                            ${p.description || 'Pure and natural quality products from Arshith Fresh.'}
-                        </div>
-                        <button class="add-to-cart-btn" style="width: 100%; height: 50px; background: #0f7139; color: #fff; border: none; border-radius: 6px; font-weight: 700; font-size: 16px; cursor: pointer;">
-                            ADD TO CART
-                        </button>
+        // Update page title
+        document.title = `${name} | Arshith Fresh`;
+
+        viewContainer.innerHTML = `
+            <!-- Breadcrumbs -->
+            <nav style="margin-bottom: 24px; font-size: 13.5px; color: #64748b; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                <a href="../index.html" style="color: #0f7139; text-decoration: none;">Home</a>
+                <span>/</span>
+                <a href="collections.html?category=all" style="color: #0f7139; text-decoration: none;">Collections</a>
+                <span>/</span>
+                <span style="color: #0f7139; font-weight: 500;">${category}</span>
+                <span>/</span>
+                <span style="color: #1e293b; font-weight: 600;">${name}</span>
+            </nav>
+
+            <div class="product-detail-layout" style="display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; background: #ffffff; padding: 32px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.04); border: 1px solid #e2e8f0;">
+                
+                <!-- LEFT GALLERY -->
+                <div class="product-gallery-side">
+                    <div style="position: relative; border-radius: 16px; overflow: hidden; border: 1px solid #e2e8f0; background: #fafbfc; text-align: center; padding: 24px;">
+                        ${discount > 0 ? `<span class="card-discount-tag" style="position: absolute; top: 16px; left: 16px; background: #e11d48; color: #fff; padding: 6px 12px; border-radius: 6px; font-weight: 700; font-size: 13px; letter-spacing: 0.5px;">${discount}% OFF</span>` : ''}
+                        <img src="${image}" alt="${name}" id="mainDetailProductImg" style="width: 100%; max-height: 440px; object-fit: contain; transition: transform 0.3s ease;">
                     </div>
                 </div>
-            `;
 
-            const relatedGrid = document.getElementById("relatedProductsGrid");
-            if (relatedGrid) {
-                const allRes = await fetch("http://localhost:5000/api/products");
-                if (allRes.ok) {
-                    const allProducts = await allRes.json();
-                    const related = allProducts.filter(item => item._id !== p._id && item.category === p.category).slice(0, 4);
-                    if (related.length > 0) {
-                        relatedGrid.innerHTML = related.map(item => createProductCardHTML(item)).join('');
-                    }
-                }
+                <!-- RIGHT PRODUCT DETAILS -->
+                <div class="product-info-side">
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                        <span style="background: #e8f5e9; color: #0f7139; font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 20px; text-transform: uppercase;">${category}</span>
+                        ${subcategory ? `<span style="background: #f1f5f9; color: #475569; font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 20px;">${subcategory}</span>` : ''}
+                    </div>
+
+                    <h1 style="font-family: 'Playfair Display', serif; font-size: 32px; color: #0f172a; margin: 0 0 12px 0; line-height: 1.25;">${name}</h1>
+
+                    <!-- Ratings -->
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 18px;">
+                        <div style="color: #f59e0b; font-size: 16px;">★★★★★</div>
+                        <span style="font-size: 13px; color: #64748b; font-weight: 500;">4.9 (48 customer reviews)</span>
+                        <span style="color: #cbd5e1;">•</span>
+                        <span style="color: #16a34a; font-size: 13px; font-weight: 600;">✓ Verified Product</span>
+                    </div>
+
+                    <!-- Price Box -->
+                    <div style="background: #f8fafc; padding: 16px 20px; border-radius: 12px; margin-bottom: 22px; border: 1px solid #edf2f7; display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap;">
+                        <span style="font-size: 32px; font-weight: 800; color: #0f7139;">₹${price.toFixed(2)}</span>
+                        ${originalPrice > price ? `<span style="font-size: 18px; text-decoration: line-through; color: #94a3b8; font-weight: 500;">₹${originalPrice.toFixed(2)}</span>` : ''}
+                        ${discount > 0 ? `<span style="font-size: 13px; color: #e11d48; font-weight: 700; background: #ffe4e6; padding: 2px 8px; border-radius: 4px;">Save ₹${discountAmount}</span>` : ''}
+                    </div>
+
+                    <!-- Specs List -->
+                    <div style="margin-bottom: 22px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 13.5px;">
+                        <div style="background: #fff; border: 1px solid #e2e8f0; padding: 10px 14px; border-radius: 8px;">
+                            <strong style="color:#64748b; font-size:12px; display:block;">UNIT / NET WEIGHT</strong>
+                            <span style="font-weight:600; color:#1e293b;">${unit}</span>
+                        </div>
+                        <div style="background: #fff; border: 1px solid #e2e8f0; padding: 10px 14px; border-radius: 8px;">
+                            <strong style="color:#64748b; font-size:12px; display:block;">AVAILABILITY</strong>
+                            <span style="font-weight:600; color:${isInstock ? '#16a34a' : '#dc2626'};">${isInstock ? `In Stock (${p.countInStock || 15} left)` : 'Out of Stock'}</span>
+                        </div>
+                    </div>
+
+                    <!-- Quantity + Action Buttons -->
+                    <div style="display: flex; gap: 14px; margin-bottom: 24px; flex-wrap: wrap;">
+                        <div style="display: flex; align-items: center; border: 1.5px solid #cbd5e1; border-radius: 8px; overflow: hidden; background: #fff; height: 50px;">
+                            <button type="button" onclick="const q = document.getElementById('detailQtyInput'); if (Number(q.value) > 1) q.value = Number(q.value) - 1;" style="width: 40px; height: 100%; border: none; background: transparent; font-size: 18px; cursor: pointer; color: #475569;">−</button>
+                            <input type="number" id="detailQtyInput" value="1" min="1" readonly style="width: 44px; text-align: center; border: none; font-size: 16px; font-weight: 700; color: #1e293b; outline: none;">
+                            <button type="button" onclick="const q = document.getElementById('detailQtyInput'); q.value = Number(q.value) + 1;" style="width: 40px; height: 100%; border: none; background: transparent; font-size: 18px; cursor: pointer; color: #475569;">+</button>
+                        </div>
+
+                        <button type="button" onclick="const q = Number(document.getElementById('detailQtyInput').value) || 1; addToStoreCart('${id}', '${name.replace(/'/g, "\\'")}', ${price}, '${image.replace(/'/g, "\\'")}', q);" style="flex: 1; min-width: 160px; height: 50px; background: #0f7139; color: #fff; border: none; border-radius: 8px; font-weight: 700; font-size: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: background 0.2s;">
+                            🛒 ADD TO CART
+                        </button>
+
+                        <button type="button" onclick="const q = Number(document.getElementById('detailQtyInput').value) || 1; addToStoreCart('${id}', '${name.replace(/'/g, "\\'")}', ${price}, '${image.replace(/'/g, "\\'")}', q); window.location.href='cart.html';" style="flex: 1; min-width: 140px; height: 50px; background: #1e293b; color: #fff; border: none; border-radius: 8px; font-weight: 700; font-size: 15px; cursor: pointer; transition: background 0.2s;">
+                            ⚡ BUY NOW
+                        </button>
+                    </div>
+
+                    <!-- Description Card -->
+                    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; margin-bottom: 20px;">
+                        <h3 style="font-size: 15px; font-weight: 700; color: #0f7139; margin: 0 0 10px 0;">Product Description & Highlights</h3>
+                        <div style="font-size: 14px; line-height: 1.7; color: #475569;">${description}</div>
+                    </div>
+
+                    <!-- Trust Icons -->
+                    <div style="display: flex; gap: 20px; font-size: 12.5px; color: #64748b; flex-wrap: wrap;">
+                        <span>🌿 <strong>100% Pure & Fresh</strong></span>
+                        <span>🚚 <strong>Free Delivery Above ₹1000</strong></span>
+                        <span>🔒 <strong>Secure Checkout</strong></span>
+                    </div>
+                </div>
+
+            </div>
+        `;
+
+        // Load Related Products
+        loadRelatedProducts(p);
+    }
+
+    async function loadRelatedProducts(currentProduct) {
+        const relatedGrid = document.getElementById("relatedProductsGrid");
+        if (!relatedGrid) return;
+
+        try {
+            const res = await fetch("http://localhost:5000/api/products");
+            if (!res.ok) return;
+            const allProducts = await res.json();
+            const related = allProducts.filter(item => item._id !== currentProduct._id && item.category === currentProduct.category).slice(0, 4);
+            if (related.length > 0) {
+                relatedGrid.innerHTML = related.map(item => createProductCardHTML(item)).join('');
+            } else {
+                const other = allProducts.filter(item => item._id !== currentProduct._id).slice(0, 4);
+                relatedGrid.innerHTML = other.map(item => createProductCardHTML(item)).join('');
             }
-        } catch (e) {
-            viewContainer.innerHTML = `<div style="text-align: center; padding: 40px;"><h2>Product Not Found</h2></div>`;
-        }
+        } catch (e) {}
     }
 
     function syncAuthHeader() {
@@ -722,4 +853,5 @@ document.addEventListener("DOMContentLoaded", () => {
     syncSingleProductView();
     syncAuthHeader();
 });
+
 

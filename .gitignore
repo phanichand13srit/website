@@ -3,7 +3,9 @@ node_modules/
 backend/node_modules/
 
 # Environment Variables
-# backend/.env (uncomment if you want to keep .env private)
+.env
+backend/.env
+*.env
 
 # IDE & OS
 .vscode/

@@ -289,7 +289,9 @@
 
   </div>
 
-  <!-- JavaScr  <script>
+  <script>
+    const API_BASE = 'http://localhost:5000/api';
+
     document.addEventListener("DOMContentLoaded", async () => {
       const urlParams = new URLSearchParams(window.location.search);
       const colId = urlParams.get('id');
@@ -301,51 +303,52 @@
       }
 
       try {
-        const colRes = await fetch(`http://localhost:5000/api/collections/${colId}`);
-        const colJson = await colRes.json();
-        
-        if (!colJson.success || !colJson.data) {
+        const colRes = await fetch(`${API_BASE}/collections/${colId}`);
+        if (!colRes.ok) {
           document.getElementById('collectionHeading').textContent = "Collection Not Found";
           return;
         }
 
-        const col = colJson.data;
+        const col = await colRes.json();
 
         document.getElementById('collectionHeading').textContent = col.title;
         document.getElementById('colBannerTitle').textContent = col.title;
-        document.getElementById('colBannerDesc').textContent = col.description || "No description available.";
+        document.getElementById('colBannerDesc').textContent = col.description || "Fresh natural products collection.";
         document.getElementById('colBannerImg').src = col.image || "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=300&auto=format&fit=crop&q=60";
-        document.getElementById('ruleTagDisplay').textContent = "Category matches collection";
+        document.getElementById('ruleTagDisplay').textContent = (col.subcategories && col.subcategories.length > 0) ? col.subcategories.join(', ') : "All Products";
         
         document.getElementById('colSeoTitle').textContent = `${col.title} | Arshith Fresh`;
-        document.getElementById('colSeoUrl').textContent = `https://arshithfresh.com > collections > ${col.handle}`;
-        document.getElementById('colSeoSnippet').textContent = (col.description || "").substring(0, 160) + '...';
+        document.getElementById('colSeoUrl').textContent = `https://arshithfresh.com > collections > ${col.slug || col.title.toLowerCase()}`;
+        document.getElementById('colSeoSnippet').textContent = (col.description || "").substring(0, 160) || `Buy authentic ${col.title} online from Arshith Fresh.`;
 
         // Fetch products to find which ones belong to this collection
-        const prodRes = await fetch('http://localhost:5000/api/products');
+        const prodRes = await fetch(`${API_BASE}/products`);
         const allProducts = await prodRes.json();
         
-        const colProducts = allProducts.filter(p => p.categoryId && (p.categoryId === col._id || p.categoryId._id === col._id));
+        const colProducts = allProducts.filter(p => p.category && p.category.toLowerCase() === col.title.toLowerCase());
         
         document.getElementById('colItemCountBadge').textContent = colProducts.length;
 
         // Render 4-Column Product Cards Grid
         const grid = document.getElementById('collectionGridContainer');
         if (colProducts.length === 0) {
-          grid.innerHTML = "<p style='padding:20px; color:var(--text-secondary);'>No products in this collection.</p>";
+          grid.innerHTML = "<p style='padding:20px; color:var(--text-secondary);'>No products found in this category.</p>";
         } else {
           grid.innerHTML = colProducts.map(p => {
-            const statusClass = p.status === 'active' ? 'col-card-active-badge' : 'col-card-draft-badge';
-            const imgUrl = (p.images && p.images.length > 0) ? p.images[0].url : 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=300&auto=format&fit=crop&q=60';
+            const inStock = (Number(p.countInStock) || 0) > 0;
+            const statusClass = inStock ? 'col-card-active-badge' : 'col-card-draft-badge';
+            const imgUrl = p.image || 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=300&auto=format&fit=crop&q=60';
+            const title = p.name || 'Product';
             
             return `
-            <a href="product-detail.html?id=${p._id}" class="col-product-card" title="Click to edit ${p.title}">
+            <a href="product-detail.html?id=${p._id}" class="col-product-card" title="Click to edit ${title}">
               <div class="col-product-img-wrapper">
-                <img src="${imgUrl}" alt="${p.title}">
-                <span class="${statusClass}">${p.status === 'active' ? 'Active' : 'Draft'}</span>
+                <img src="${imgUrl}" alt="${title}" onerror="this.src='https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=300';">
+                <span class="${statusClass}">${inStock ? 'Active' : 'Out of stock'}</span>
               </div>
               <div class="col-product-info">
-                ${p.title}
+                ${title}
+                <div style="font-size:11.5px; color:#64748b; margin-top:2px;">₹${p.price || 0} / ${p.unit || '1 kg'}</div>
               </div>
             </a>
             `;

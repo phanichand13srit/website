@@ -7,6 +7,89 @@
   
   <!-- Shared Admin Theme Stylesheet -->
   <link rel="stylesheet" href="../assets/css/admin.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    .form-row {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .form-row .form-group {
+      flex: 1;
+      margin-bottom: 0;
+    }
+    .form-group {
+      margin-bottom: 14px;
+    }
+    .form-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-primary, #303030);
+      margin-bottom: 5px;
+    }
+    .form-control {
+      width: 100%;
+      padding: 8px 12px;
+      font-size: 13.5px;
+      border: 1px solid var(--border-subtle, #d2d5d8);
+      border-radius: 6px;
+      background: #fff;
+      color: #1a1a1a;
+      box-sizing: border-box;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .form-control:focus {
+      border-color: #2c6ecb;
+      box-shadow: 0 0 0 2px rgba(44, 110, 203, 0.15);
+    }
+    .badge-category {
+      background: #f1f5f9;
+      color: #334155;
+      font-size: 11.5px;
+      font-weight: 500;
+      padding: 3px 8px;
+      border-radius: 4px;
+      display: inline-block;
+    }
+    .badge-subcategory {
+      background: #e0f2fe;
+      color: #0369a1;
+      font-size: 11px;
+      font-weight: 500;
+      padding: 2px 7px;
+      border-radius: 4px;
+      display: inline-block;
+    }
+    .action-btn-sm {
+      background: none;
+      border: 1px solid #d2d5d8;
+      border-radius: 4px;
+      padding: 4px 8px;
+      cursor: pointer;
+      font-size: 12px;
+      color: #4a4d50;
+      transition: background 0.15s;
+    }
+    .action-btn-sm:hover {
+      background: #f1f2f4;
+      color: #1a1a1a;
+    }
+    .action-btn-danger:hover {
+      background: #fee2e2;
+      border-color: #fca5a5;
+      color: #dc2626;
+    }
+    .table-product-thumb {
+      width: 40px;
+      height: 40px;
+      border-radius: 6px;
+      object-fit: cover;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+    }
+  </style>
 </head>
 <body>
 
@@ -30,17 +113,17 @@
           <circle cx="11" cy="11" r="8"></circle>
           <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
         </svg>
-        <input type="text" class="global-search-input" placeholder="Search products, orders, customers...">
+        <input type="text" id="topGlobalSearch" class="global-search-input" placeholder="Search products, orders, customers...">
         <span class="kbd-shortcut">CTRL K</span>
       </div>
     </div>
 
     <!-- Right Header Actions: View As, Notification, Store Name -->
     <div class="topbar-right">
-      <button class="btn-view-as">
+      <a href="../index.html" target="_blank" class="btn-view-as" style="text-decoration:none; color:inherit;">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-        <span>View as</span>
-      </button>
+        <span>View Store</span>
+      </a>
 
       <button class="notification-btn" aria-label="Notifications">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
@@ -68,20 +151,20 @@
         <a href="dashboard.html" class="menu-item">
           <div class="menu-item-left">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
-            <span>Home</span>
+            <span>Dashboard</span>
           </div>
         </a>
 
-        <!-- Orders (with badge 114) -->
+        <!-- Orders -->
         <a href="orders.html" class="menu-item">
           <div class="menu-item-left">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
             <span>Orders</span>
           </div>
-          <span class="badge-count">114</span>
+          <span class="badge-count" id="sidebarOrdersBadge">0</span>
         </a>
 
-        <!-- Products (Expanded Submenu) -->
+        <!-- Products (Active) -->
         <a href="products.html" class="menu-item active">
           <div class="menu-item-left">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16.5 9.4 7.55 4.24a1.78 1.78 0 0 0-2.5 1.55v12.42a1.78 1.78 0 0 0 2.5 1.55L16.5 14.6a1.78 1.78 0 0 0 0-3.2z"></path></svg>
@@ -91,11 +174,8 @@
 
         <!-- Submenu Links for Products -->
         <div class="submenu-list">
-          <a href="collections.html" class="submenu-item">Collections</a>
+          <a href="collections.html" class="submenu-item">Collections / Categories</a>
           <a href="inventory.html" class="submenu-item">Inventory</a>
-          <a href="#" class="submenu-item">Purchase orders</a>
-          <a href="#" class="submenu-item">Transfers</a>
-          <a href="#" class="submenu-item">Gift cards</a>
         </div>
 
         <!-- Customers -->
@@ -105,39 +185,11 @@
             <span>Customers</span>
           </div>
         </a>
-
-        <a href="#" class="menu-item">
-          <div class="menu-item-left">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
-            <span>Growth</span>
-          </div>
-        </a>
-
-        <a href="#" class="menu-item">
-          <div class="menu-item-left">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="5" x2="5" y2="19"></line><circle cx="6.5" cy="6.5" r="2.5"></circle><circle cx="17.5" cy="17.5" r="2.5"></circle></svg>
-            <span>Discounts</span>
-          </div>
-        </a>
-
-        <a href="#" class="menu-item">
-          <div class="menu-item-left">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
-            <span>Content</span>
-          </div>
-        </a>
-
-        <a href="#" class="menu-item">
-          <div class="menu-item-left">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
-            <span>Analytics</span>
-          </div>
-        </a>
       </div>
 
       <!-- Settings at Bottom of Sidebar -->
       <div class="sidebar-bottom">
-        <a href="#" class="menu-item">
+        <a href="dashboard.html" class="menu-item">
           <div class="menu-item-left">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
             <span>Settings</span>
@@ -147,21 +199,19 @@
     </aside>
 
     <!-- =======================================================================
-         3. MAIN PRODUCTS TABLE VIEWPORT (MATCHING EXACT VIDEO SCREEN)
+         3. MAIN PRODUCTS TABLE VIEWPORT
          ======================================================================= -->
     <main class="main-viewport">
       
       <!-- Top Action Bar -->
       <div class="page-top-header">
         <div class="page-title-row">
-          <h1>Products</h1>
+          <h1>Products <span id="productTotalCount" style="font-size: 16px; font-weight: normal; color: #6d7175;">(Loading...)</span></h1>
         </div>
 
         <div class="page-action-buttons">
-          <button class="btn-pill">Export</button>
-          <button class="btn-pill">Import</button>
-          <button class="btn-pill">More actions <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></button>
-          <button id="openAddProductModalBtn" class="btn-pill btn-pill-primary">Add product</button>
+          <button class="btn-pill" onclick="fetchProducts()"><i class="fa-solid fa-rotate"></i> Refresh</button>
+          <button id="openAddProductModalBtn" class="btn-pill btn-pill-primary"><i class="fa-solid fa-plus"></i> Add product</button>
         </div>
       </div>
 
@@ -170,15 +220,15 @@
         
         <!-- Filter Tabs & Search Bar -->
         <div class="card-filter-bar">
-          <span class="tab-all-pill">All</span>
+          <span class="tab-all-pill" style="font-weight: 600;">All Products</span>
           
-          <div class="table-search-input-box">
+          <div class="table-search-input-box" style="max-width: 400px;">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-            <input type="text" id="productSearchInput" placeholder="Search and filter">
+            <input type="text" id="productSearchInput" placeholder="Search by name, category, or subcategory...">
           </div>
         </div>
 
-        <!-- Horizontal Scrollable Table matching Video Columns -->
+        <!-- Scrollable Table -->
         <div class="table-scroll-container">
           <table class="shopify-table" id="productsTable">
             <thead>
@@ -188,481 +238,283 @@
                 <th>Status</th>
                 <th>Inventory</th>
                 <th>Category</th>
-                <th>Channels</th>
-                <th>Catalogs</th>
-                <th>Product type</th>
+                <th>Sub-category</th>
+                <th>Price</th>
                 <th>Vendor</th>
+                <th style="text-align: right;">Actions</th>
               </tr>
             </thead>
             <tbody id="productsTableBody">
-              
-              <!-- 1. Chilli Powder -->
               <tr>
-                <td><input type="checkbox" class="custom-checkbox"></td>
-                <td>
-                  <div class="table-product-item">
-                    <img src="https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=100&auto=format&fit=crop&q=60" class="table-product-thumb" alt="Chilli Powder">
-                    <span class="table-product-name">Chilli Powder</span>
-                  </div>
+                <td colspan="9" style="text-align: center; padding: 30px; color: #6d7175;">
+                  <i class="fa-solid fa-spinner fa-spin" style="font-size: 20px; margin-bottom: 8px;"></i><br>
+                  Loading live products from database...
                 </td>
-                <td><span class="status-pill draft">Draft</span></td>
-                <td>150 in stock for 3 variants</td>
-                <td>Uncategorized</td>
-                <td>2</td>
-                <td>0</td>
-                <td>Cooking Ingredients</td>
-                <td>Arshith Fresh India Pvt Ltd</td>
               </tr>
-
-              <!-- 2. Chilli Powder Premium -->
-              <tr>
-                <td><input type="checkbox" class="custom-checkbox"></td>
-                <td>
-                  <div class="table-product-item">
-                    <img src="https://images.unsplash.com/photo-1627435601361-ec25f5b1d0e5?w=100&auto=format&fit=crop&q=60" class="table-product-thumb" alt="Chilli Powder Premium">
-                    <span class="table-product-name">Chilli Powder (Premium)</span>
-                  </div>
-                </td>
-                <td><span class="status-pill draft">Draft</span></td>
-                <td>44 in stock for 2 variants</td>
-                <td>Uncategorized</td>
-                <td>3</td>
-                <td>0</td>
-                <td>Deal Of the Week</td>
-                <td>Arshith Fresh India Pvt Ltd</td>
-              </tr>
-
-              <!-- 3. Dry-Seeds-Combo -->
-              <tr>
-                <td><input type="checkbox" class="custom-checkbox"></td>
-                <td>
-                  <div class="table-product-item">
-                    <img src="https://images.unsplash.com/photo-1508746829417-e6f548d8d6ed?w=100&auto=format&fit=crop&q=60" class="table-product-thumb" alt="Dry Seeds Combo">
-                    <span class="table-product-name">Dry-Seeds-Combo (Premium Quality)</span>
-                  </div>
-                </td>
-                <td><span class="status-pill active">Active</span></td>
-                <td>400 in stock for 2 variants</td>
-                <td>Uncategorized</td>
-                <td>3</td>
-                <td>0</td>
-                <td>Dry Seeds</td>
-                <td>Arshith Fresh India Pvt Ltd</td>
-              </tr>
-
-              <!-- 4. Dry-Fruits-Combo -->
-              <tr>
-                <td><input type="checkbox" class="custom-checkbox"></td>
-                <td>
-                  <div class="table-product-item">
-                    <img src="https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=100&auto=format&fit=crop&q=60" class="table-product-thumb" alt="Dry Fruits Combo">
-                    <span class="table-product-name">Dry-Fruits-Combo (Premium Quality)</span>
-                  </div>
-                </td>
-                <td><span class="status-pill draft">Draft</span></td>
-                <td>100 in stock for 2 variants</td>
-                <td>Uncategorized</td>
-                <td>3</td>
-                <td>0</td>
-                <td>Dry Fruits</td>
-                <td>Arshith Fresh India Pvt Ltd</td>
-              </tr>
-
-              <!-- 5. Besan Flour Soft Grinding -->
-              <tr>
-                <td><input type="checkbox" class="custom-checkbox"></td>
-                <td>
-                  <div class="table-product-item">
-                    <img src="https://images.unsplash.com/photo-1586201375761-83865001e31c?w=100&auto=format&fit=crop&q=60" class="table-product-thumb" alt="Besan Flour">
-                    <span class="table-product-name">Besan Flour Soft Grinding (Premium Quality)</span>
-                  </div>
-                </td>
-                <td><span class="status-pill active">Active</span></td>
-                <td>200 in stock for 2 variants</td>
-                <td>Uncategorized</td>
-                <td>3</td>
-                <td>0</td>
-                <td>Cooking Ingredients-Premium</td>
-                <td>Arshith Fresh India Pvt Ltd</td>
-              </tr>
-
-              <!-- 6. Sambar Chilli Powder Soft Grinding -->
-              <tr>
-                <td><input type="checkbox" class="custom-checkbox"></td>
-                <td>
-                  <div class="table-product-item">
-                    <img src="https://images.unsplash.com/photo-1627435601361-ec25f5b1d0e5?w=100&auto=format&fit=crop&q=60" class="table-product-thumb" alt="Sambar Chilli Powder">
-                    <span class="table-product-name">Sambar Chilli Powder Soft Grinding (Premium Quality)</span>
-                  </div>
-                </td>
-                <td><span class="status-pill active">Active</span></td>
-                <td>100 in stock for 2 variants</td>
-                <td>Uncategorized</td>
-                <td>3</td>
-                <td>1</td>
-                <td>Cooking Ingredients</td>
-                <td>Arshith Fresh India Pvt Ltd</td>
-              </tr>
-
-              <!-- 7. Mixed Rice Powder (Podulu) -->
-              <tr>
-                <td><input type="checkbox" class="custom-checkbox"></td>
-                <td>
-                  <div class="table-product-item">
-                    <img src="https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=100&auto=format&fit=crop&q=60" class="table-product-thumb" alt="Mixed Rice Powder">
-                    <span class="table-product-name">Mixed Rice Powder (Premium Quality)</span>
-                  </div>
-                </td>
-                <td><span class="status-pill draft">Draft</span></td>
-                <td>200 in stock for 2 variants</td>
-                <td>Uncategorized</td>
-                <td>3</td>
-                <td>1</td>
-                <td>Podulu-Premium</td>
-                <td>Arshith Fresh India Pvt Ltd</td>
-              </tr>
-
-              <!-- 8. Makhana (Premium Quality) -->
-              <tr>
-                <td><input type="checkbox" class="custom-checkbox"></td>
-                <td>
-                  <div class="table-product-item">
-                    <img src="https://images.unsplash.com/photo-1508746829417-e6f548d8d6ed?w=100&auto=format&fit=crop&q=60" class="table-product-thumb" alt="Makhana">
-                    <span class="table-product-name">Makhana (Premium Quality)</span>
-                  </div>
-                </td>
-                <td><span class="status-pill active">Active</span></td>
-                <td>200 in stock for 2 variants</td>
-                <td>Uncategorized</td>
-                <td>2</td>
-                <td>1</td>
-                <td>Dry Seeds</td>
-                <td>Arshith Fresh India Pvt Ltd</td>
-              </tr>
-
-              <!-- 9. Urad Dal -->
-              <tr>
-                <td><input type="checkbox" class="custom-checkbox"></td>
-                <td>
-                  <div class="table-product-item">
-                    <img src="https://images.unsplash.com/photo-1586201375761-83865001e31c?w=100&auto=format&fit=crop&q=60" class="table-product-thumb" alt="Urad Dal">
-                    <span class="table-product-name">Urad Dal (Premium Quality)</span>
-                  </div>
-                </td>
-                <td><span class="status-pill active">Active</span></td>
-                <td>200 in stock for 2 variants</td>
-                <td>Uncategorized</td>
-                <td>3</td>
-                <td>1</td>
-                <td>Cooking Ingredients</td>
-                <td>Arshith Fresh India Pvt Ltd</td>
-              </tr>
-
-              <!-- 10. Chana Dal Unpolished -->
-              <tr>
-                <td><input type="checkbox" class="custom-checkbox"></td>
-                <td>
-                  <div class="table-product-item">
-                    <img src="https://images.unsplash.com/photo-1586201375761-83865001e31c?w=100&auto=format&fit=crop&q=60" class="table-product-thumb" alt="Chana Dal">
-                    <span class="table-product-name">Chana Dal Unpolished (Premium Quality)</span>
-                  </div>
-                </td>
-                <td><span class="status-pill draft">Draft</span></td>
-                <td>199 in stock for 2 variants</td>
-                <td>Uncategorized</td>
-                <td>3</td>
-                <td>1</td>
-                <td>Cooking Ingredients</td>
-                <td>Arshith Fresh India Pvt Ltd</td>
-              </tr>
-
             </tbody>
           </table>
         </div>
-
-        <!-- Table Footer Pagination -->
-        <div class="table-pagination-footer">
-          <span>1-50</span>
-          <button class="pagination-btn" aria-label="Previous page">&lt;</button>
-          <button class="pagination-btn" aria-label="Next page">&gt;</button>
-        </div>
-
       </div>
-
     </main>
-
   </div>
 
   <!-- =========================================================================
-       4. "ADD PRODUCT" MODAL (WITH METRIC VARIANTS & LOCAL FILE PICKER)
-       ========================================================================= -->
-  <div id="addProductModal" class="modal-overlay" aria-hidden="true">
-    <div class="modal-box">
-      
-      <div class="modal-header">
-        <h3>Add New Product</h3>
-        <button id="closeAddProductModalBtn" style="background:none; border:none; font-size:20px; cursor:pointer;">&times;</button>
-      </div>
-
-      <form id="addProductForm">
-        <div class="modal-body">
-          
-          <!-- Product Title -->
-          <div class="form-group">
-            <label for="prodTitle" class="form-label">Product Title *</label>
-            <input type="text" id="prodTitle" class="form-control" placeholder="e.g. Sambar Chilli Powder Soft Grinding (Premium Quality)" required>
-          </div>
-
-          <!-- Product Type and Status -->
-          <div class="form-row">
-            <div class="form-group">
-              <label for="prodType" class="form-label">Product Type *</label>
-              <select id="prodType" class="form-control" required>
-                <option value="Cooking Ingredients">Cooking Ingredients</option>
-                <option value="Cooking Ingredients-Premium">Cooking Ingredients-Premium</option>
-                <option value="Podulu-Premium">Podulu-Premium (Spice Powders)</option>
-                <option value="Dry Fruits">Dry Fruits</option>
-                <option value="Dry Seeds">Dry Seeds</option>
-                <option value="Spices-Premium">Spices-Premium</option>
-                <option value="Deal Of the Week">Deal Of the Week</option>
-                <option value="Dry Fish">Dry Fish</option>
-              </select>
-            </div>
-
-            <div class="form-group">
-              <label for="prodStatus" class="form-label">Status *</label>
-              <select id="prodStatus" class="form-control" required>
-                <option value="active">Active</option>
-                <option value="draft" selected>Draft</option>
-                <option value="archived">Archived</option>
-              </select>
-            </div>
-          </div>
-
-          <!-- Weight Metric Variant & Quantity -->
-          <div class="form-row">
-            <div class="form-group">
-              <label for="prodMetric" class="form-label">Weight Metric / Variant *</label>
-              <select id="prodMetric" class="form-control" required>
-                <option value="500g">500g</option>
-                <option value="1kg">1kg</option>
-                <option value="250g">250g</option>
-                <option value="100g">100g</option>
-                <option value="50g">50g</option>
-                <option value="2 variants (500g, 1kg)">2 variants (500g, 1kg)</option>
-                <option value="3 variants (250g, 500g, 1kg)">3 variants (250g, 500g, 1kg)</option>
-              </select>
-            </div>
-
-            <div class="form-group">
-              <label for="prodStock" class="form-label">Inventory Quantity *</label>
-              <input type="number" id="prodStock" class="form-control" placeholder="100" min="0" required>
-            </div>
-          </div>
-
-          <!-- Vendor & Pricing -->
-          <div class="form-row">
-            <div class="form-group">
-              <label for="prodVendor" class="form-label">Vendor</label>
-              <input type="text" id="prodVendor" class="form-control" value="Arshith Fresh India Pvt Ltd" readonly>
-            </div>
-
-            <div class="form-group">
-              <label for="prodPrice" class="form-label">Price (₹) *</label>
-              <input type="number" id="prodPrice" class="form-control" placeholder="180.00" min="0" step="0.01" required>
-          <div class="form-group">
-            <label class="form-label">Title</label>
-            <input type="text" id="quickTitle" class="form-control" placeholder="e.g. Organic Turmeric Powder" required>
-          </div>
-          <div class="form-group" style="margin-top: 12px;">
-            <label class="form-label">Status</label>
-            <select id="quickStatus" class="form-control">
-              <option value="Active">Active</option>
-              <option value="Draft">Draft</option>
-            </select>
-          </div>
-        </div>
-        
-        <div class="modal-footer">
-          <button type="button" class="btn-cancel" onclick="closeQuickAddModal()">Cancel</button>
-          <button type="submit" id="quickSubmitBtn" class="btn-save">Create product</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <!-- =========================================================================
-       5. FULL ADD PRODUCT MODAL (MATCHING VIDEO UI)
+       4. ADD / EDIT PRODUCT MODAL
        ========================================================================= -->
   <div class="modal-overlay" id="addProductModal">
-    <div class="modal-box" style="max-width: 650px;">
+    <div class="modal-box" style="max-width: 680px; width: 95%;">
       <div class="modal-header">
-        <h3>Add Product</h3>
-        <button class="btn-icon" id="closeAddProductModalBtn" style="border:none; background:none; cursor:pointer; font-size:18px;">&times;</button>
+        <h3 id="modalHeading">Add New Product</h3>
+        <button class="btn-icon" id="closeAddProductModalBtn" style="border:none; background:none; cursor:pointer; font-size:20px;">&times;</button>
       </div>
 
       <form id="addProductForm">
-        <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
-          <!-- Left Column -->
-          <div style="display: flex; gap: 20px;">
-            <div style="flex: 2;">
-              <div class="form-group">
-                <label class="form-label">Title</label>
-                <input type="text" id="prodTitle" class="form-control" placeholder="Short sleeve t-shirt" required>
-              </div>
+        <input type="hidden" id="prodEditId">
+        <div class="modal-body" style="max-height: 70vh; overflow-y: auto; padding: 18px 24px;">
+          
+          <div class="form-group">
+            <label class="form-label">Product Name *</label>
+            <input type="text" id="prodName" class="form-control" placeholder="e.g. Groundnut Oil (Wood Pressed)" required>
+          </div>
 
-              <div class="form-group">
-                <label class="form-label">Description</label>
-                <div style="border: 1px solid var(--border-subtle); border-radius: 4px; overflow:hidden;">
-                  <div style="background: var(--bg-surface); border-bottom: 1px solid var(--border-subtle); padding: 6px; display: flex; gap: 4px;">
-                    <button type="button" class="btn-icon" style="border:none; background:none; cursor:pointer; font-size: 13px; font-weight:600;">B</button>
-                    <button type="button" class="btn-icon" style="border:none; background:none; cursor:pointer; font-style: italic;">I</button>
-                    <button type="button" class="btn-icon" style="border:none; background:none; cursor:pointer; text-decoration: underline;">U</button>
-                  </div>
-                  <textarea id="prodDesc" class="form-control" rows="4" style="border:none; border-radius:0; resize:vertical;"></textarea>
-                </div>
-              </div>
-
-              <div class="form-group" style="margin-top: 16px;">
-                <label class="form-label">Media</label>
-                <div style="border: 2px dashed var(--border-subtle); border-radius: 6px; padding: 20px; text-align: center; cursor: pointer;" onclick="document.getElementById('prodImageFile').click()">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#6d7175" stroke-width="2" style="margin-bottom:8px;">
-                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                    <circle cx="8.5" cy="8.5" r="1.5"></circle>
-                    <polyline points="21 15 16 10 5 21"></polyline>
-                  </svg>
-                  <p style="margin:0; font-size: 13px; font-weight: 500;">Add file</p>
-                  <p style="margin:4px 0 0; font-size: 12px; color: var(--text-secondary);">Accepts images</p>
-                  <input type="file" id="prodImageFile" style="display:none;" accept="image/*">
-                </div>
-                <div id="imagePreviewBox" style="margin-top: 12px; display: none; align-items: center; gap: 12px;">
-                  <img id="imageThumb" src="" alt="Preview" style="width: 50px; height: 50px; border-radius: 4px; object-fit: cover; border: 1px solid var(--border-subtle);">
-                  <span style="font-size: 13px; color: var(--text-secondary);">Image selected</span>
-                </div>
-              </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Category *</label>
+              <select id="prodCategory" class="form-control" required onchange="onCategorySelectChange()">
+                <option value="" disabled selected>Select Category</option>
+              </select>
             </div>
 
-            <!-- Right Column -->
-            <div style="flex: 1;">
-              <div class="form-group">
-                <label class="form-label">Status</label>
-                <select id="prodStatus" class="form-control">
-                  <option value="active">Active</option>
-                  <option value="draft" selected>Draft</option>
-                  <option value="archived">Archived</option>
-                </select>
-              </div>
+            <div class="form-group">
+              <label class="form-label">Sub-category</label>
+              <select id="prodSubcategory" class="form-control">
+                <option value="">Select Sub-category (Optional)</option>
+              </select>
+            </div>
+          </div>
 
-              <div class="form-group">
-                <label class="form-label">Product organization</label>
-                <div style="margin-top: 8px;">
-                  <label style="font-size: 12.5px; display:block; margin-bottom: 4px;">Product category</label>
-                  <input type="text" id="prodCategory" class="form-control" placeholder="Apparel & Accessories">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Selling Price (₹) *</label>
+              <input type="number" id="prodPrice" class="form-control" placeholder="349" min="0" required>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Original / MRP (₹)</label>
+              <input type="number" id="prodOriginalPrice" class="form-control" placeholder="470" min="0">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Unit / Quantity *</label>
+              <input type="text" id="prodUnit" class="form-control" placeholder="e.g. 1 Litre, 500 g, 250 g" required>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Stock Quantity *</label>
+              <input type="number" id="prodStock" class="form-control" placeholder="25" min="0" required>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Brand / Vendor</label>
+              <input type="text" id="prodBrand" class="form-control" value="Arshith Fresh">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" style="display: flex; justify-content: space-between; align-items: center;">
+              <span>Product Image</span>
+              <span style="font-size: 11.5px; color: #64748b; font-weight: normal;">Choose from laptop or paste URL</span>
+            </label>
+            
+            <!-- Choose File from Laptop / Drag & Drop Box -->
+            <div id="productImageDropzone" style="border: 2px dashed #cbd5e1; border-radius: 8px; padding: 18px 16px; text-align: center; cursor: pointer; background: #f8fafc; transition: all 0.2s ease;">
+              <input type="file" id="prodImageFile" accept="image/*" style="display: none;" onchange="handleProductFileSelect(event)">
+              <i class="fa-solid fa-cloud-arrow-up" style="font-size: 28px; color: #0f7139; margin-bottom: 6px;"></i>
+              <div style="font-size: 13.5px; font-weight: 600; color: #1e293b;">Click to choose image from laptop</div>
+              <div style="font-size: 11.5px; color: #64748b; margin-top: 2px;">Supports JPG, PNG, WEBP, GIF (Drag and drop here)</div>
+            </div>
+
+            <!-- Divider -->
+            <div style="display: flex; align-items: center; margin: 10px 0; gap: 10px;">
+              <div style="flex: 1; height: 1px; background: #e2e8f0;"></div>
+              <span style="font-size: 11px; color: #94a3b8; font-weight: 600;">OR PASTE IMAGE URL</span>
+              <div style="flex: 1; height: 1px; background: #e2e8f0;"></div>
+            </div>
+
+            <input type="text" id="prodImage" class="form-control" placeholder="https://images.unsplash.com/... or chosen image data" oninput="updateImagePreview(this.value)">
+            
+            <!-- Selected Image Preview Card -->
+            <div id="imagePreviewContainer" style="margin-top: 10px; display: none; background: #f8fafc; padding: 10px 14px; border-radius: 8px; border: 1px solid #e2e8f0;">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <img id="imagePreview" src="" alt="Product Preview" style="width: 56px; height: 56px; border-radius: 6px; object-fit: cover; border: 1px solid #cbd5e1; background: #fff;">
+                <div style="flex: 1;">
+                  <div style="font-size: 13px; font-weight: 600; color: #1e293b;" id="imagePreviewName">Image Selected</div>
+                  <div style="font-size: 11.5px; color: #16a34a; font-weight: 500;">✓ Ready to save with product</div>
                 </div>
-                <div style="margin-top: 8px;">
-                  <label style="font-size: 12.5px; display:block; margin-bottom: 4px;">Product type</label>
-                  <input type="text" id="prodType" class="form-control" placeholder="Shirts">
-                </div>
-                <div style="margin-top: 8px;">
-                  <label style="font-size: 12.5px; display:block; margin-bottom: 4px;">Vendor</label>
-                  <input type="text" id="prodVendor" class="form-control" placeholder="Store name">
-                </div>
+                <button type="button" class="action-btn-sm action-btn-danger" onclick="removeProductImage()" style="padding: 5px 10px; font-size: 12px;">
+                  <i class="fa-solid fa-trash"></i> Remove
+                </button>
               </div>
             </div>
           </div>
+
+          <div class="form-group">
+            <label class="form-label">Description</label>
+            <textarea id="prodDesc" class="form-control" rows="3" placeholder="Pure natural product details..."></textarea>
+          </div>
+
+          <div class="form-group" style="display: flex; align-items: center; gap: 8px;">
+            <input type="checkbox" id="prodIsFeatured" style="width: 16px; height: 16px; cursor: pointer;">
+            <label for="prodIsFeatured" style="margin: 0; cursor: pointer; font-size: 13px;">Feature on Storefront Homepage</label>
+          </div>
         </div>
 
-        <div class="modal-footer" style="background: var(--bg-surface); border-top: 1px solid var(--border-color); padding: 16px 20px; display: flex; justify-content: flex-end; gap: 12px;">
+        <div class="modal-footer" style="background: var(--bg-surface); border-top: 1px solid var(--border-color); padding: 14px 24px; display: flex; justify-content: flex-end; gap: 10px;">
           <button type="button" id="cancelModalBtn" class="btn-pill">Cancel</button>
-          <button type="submit" class="btn-pill btn-pill-primary">Save product</button>
+          <button type="submit" id="saveProductBtn" class="btn-pill btn-pill-primary">Save Product</button>
         </div>
       </form>
-
     </div>
   </div>
 
   <script>
+    const API_BASE = 'http://localhost:5000/api';
     const tableBody = document.getElementById('productsTableBody');
-    const searchInput = document.getElementById('productsSearchInput');
+    const searchInput = document.getElementById('productSearchInput');
     const selectAllCheckbox = document.getElementById('selectAllCheckbox');
+    
+    let allProducts = [];
+    let allCollections = [];
 
-    const API_URL = 'http://localhost:5000/api/products';
+    // 1. Fetch Categories / Collections for dropdowns
+    async function fetchCollections() {
+      try {
+        const res = await fetch(`${API_BASE}/collections`);
+        if (!res.ok) throw new Error();
+        allCollections = await res.json();
+      } catch (e) {
+        allCollections = [];
+      }
+      populateCategoryDropdown();
+    }
 
-    // Fetch Products from API
+    function populateCategoryDropdown(selectedCategory = '', selectedSubcategory = '') {
+      const catSelect = document.getElementById('prodCategory');
+      if (!catSelect) return;
+
+      catSelect.innerHTML = '<option value="" disabled ' + (!selectedCategory ? 'selected' : '') + '>Select Category</option>' +
+        allCollections.map(c => `<option value="${c.title}" ${c.title === selectedCategory ? 'selected' : ''}>${c.title}</option>`).join('');
+
+      updateSubcategoryDropdown(selectedSubcategory);
+    }
+
+    function onCategorySelectChange() {
+      updateSubcategoryDropdown();
+    }
+
+    function updateSubcategoryDropdown(selectedSubcategory = '') {
+      const catSelect = document.getElementById('prodCategory');
+      const subSelect = document.getElementById('prodSubcategory');
+      if (!catSelect || !subSelect) return;
+
+      const chosenCat = catSelect.value;
+      const matched = allCollections.find(c => c.title === chosenCat);
+      const subs = (matched && Array.isArray(matched.subcategories)) ? matched.subcategories : [];
+
+      subSelect.innerHTML = '<option value="">Select Sub-category (Optional)</option>' +
+        subs.map(s => `<option value="${s}" ${s === selectedSubcategory ? 'selected' : ''}>${s}</option>`).join('');
+    }
+
+    // 2. Fetch Products from MongoDB
     async function fetchProducts() {
       try {
-        const response = await fetch(API_URL);
-        const products = await response.json();
+        tableBody.innerHTML = `<tr><td colspan="9" style="text-align: center; padding: 25px; color: #6d7175;"><i class="fa-solid fa-spinner fa-spin"></i> Loading...</td></tr>`;
         
-        tableBody.innerHTML = ''; 
+        const response = await fetch(`${API_BASE}/products`);
+        allProducts = await response.json();
+        
+        document.getElementById('productTotalCount').textContent = `(${allProducts.length})`;
 
-        if(products.length === 0) {
-          tableBody.innerHTML = '<tr><td colspan="9" style="text-align: center; padding: 20px;">No products found.</td></tr>';
-          return;
-        }
-
-        products.forEach(product => {
-          const statusClass = product.status === 'active' ? 'active' : 'draft';
-          const imgUrl = (product.images && product.images.length > 0 && product.images[0].url) ? product.images[0].url : (product.image || 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=100&auto=format&fit=crop&q=60');
-          
-          let prodName = product.name || product.title || 'Untitled Product';
-          let catName = product.category || (product.categoryId ? product.categoryId.name : 'Uncategorized');
-          let stockVal = product.countInStock !== undefined ? product.countInStock : (product.variants ? product.variants.length : 0);
-          let stockText = `${stockVal} in stock`;
-
-          const tr = document.createElement('tr');
-          tr.dataset.id = product._id;
-          tr.style.cursor = 'pointer';
-
-          tr.innerHTML = `
-            <td><input type="checkbox" class="custom-checkbox"></td>
-            <td>
-              <div class="table-product-item">
-                <img src="${imgUrl}" class="table-product-thumb" alt="${prodName}">
-                <span class="table-product-name">${prodName}</span>
-              </div>
-            </td>
-            <td><span class="status-pill ${statusClass}">${product.status === 'active' ? 'Active' : 'Draft'}</span></td>
-            <td>${stockText}</td>
-            <td>${catName}</td>
-            <td>2</td>
-            <td>0</td>
-            <td>${product.type || 'Standard'}</td>
-            <td>${product.brand || 'Arshith Fresh'}</td>
-          `;
-          tableBody.appendChild(tr);
-        });
+        renderProductsTable(allProducts);
       } catch (err) {
         console.error('Error fetching products:', err);
-        tableBody.innerHTML = '<tr><td colspan="9" style="text-align: center; padding: 20px;">Failed to load products.</td></tr>';
+        tableBody.innerHTML = '<tr><td colspan="9" style="text-align: center; padding: 25px; color: #ef4444;">Failed to load products from backend API. Please make sure server is running on port 5000.</td></tr>';
       }
     }
 
-    document.addEventListener('DOMContentLoaded', fetchProducts);
+    // 3. Render Products in Table
+    function renderProductsTable(products) {
+      tableBody.innerHTML = ''; 
 
-    // Row Click to Open Product Details Page
-    tableBody.addEventListener('click', function(e) {
-      if (e.target.type === 'checkbox' || e.target.classList.contains('custom-checkbox')) return;
-      
-      const tr = e.target.closest('tr');
-      if (tr && tr.dataset.id) {
-        window.location.href = `product-detail.html?id=${tr.dataset.id}`;
+      if (!products || products.length === 0) {
+        tableBody.innerHTML = '<tr><td colspan="9" style="text-align: center; padding: 30px; color: #6d7175;">No products found in database. Click "+ Add product" to create one.</td></tr>';
+        return;
       }
-    });
 
-    // Client-side search filter
-    if (searchInput) {
-      searchInput.addEventListener('input', function(e) {
-        const term = e.target.value.toLowerCase();
-        const rows = tableBody.querySelectorAll('tr');
-        rows.forEach(row => {
-          const text = row.textContent.toLowerCase();
-          row.style.display = text.includes(term) ? '' : 'none';
-        });
+      products.forEach(product => {
+        const title = product.name || 'Unnamed Product';
+        const category = product.category || 'General';
+        const subcategory = product.subcategory || '-';
+        const stock = Number(product.countInStock) || 0;
+        const unit = product.unit || '1 unit';
+        const price = product.price ? `₹${product.price}` : '₹0';
+        const imgUrl = product.image || 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=100&auto=format&fit=crop&q=60';
+        const isInstock = stock > 0;
+        const statusClass = isInstock ? 'active' : 'draft';
+        const statusLabel = isInstock ? 'Active' : 'Out of stock';
+
+        const tr = document.createElement('tr');
+        tr.dataset.id = product._id;
+
+        tr.innerHTML = `
+          <td><input type="checkbox" class="custom-checkbox"></td>
+          <td>
+            <div class="table-product-item">
+              <img src="${imgUrl}" class="table-product-thumb" alt="${title}" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=100';">
+              <div>
+                <span class="table-product-name" style="font-weight:600; color:#1a1a1a;">${title}</span>
+                <div style="font-size:11.5px; color:#6d7175; margin-top:2px;">${unit}</div>
+              </div>
+            </div>
+          </td>
+          <td><span class="status-pill ${statusClass}">${statusLabel}</span></td>
+          <td><strong>${stock}</strong> in stock</td>
+          <td><span class="badge-category">${category}</span></td>
+          <td>${subcategory !== '-' ? `<span class="badge-subcategory">${subcategory}</span>` : '<span style="color:#94a3b8; font-size:12px;">-</span>'}</td>
+          <td><strong>${price}</strong></td>
+          <td style="color:#475569; font-size:12.5px;">${product.brand || 'Arshith Fresh'}</td>
+          <td style="text-align: right;">
+            <div style="display:flex; gap:6px; justify-content:flex-end;">
+              <button class="action-btn-sm" title="Edit Product" onclick="window.location.href='product-detail.html?id=${product._id}'"><i class="fa-solid fa-pen"></i></button>
+              <button class="action-btn-sm action-btn-danger" title="Delete Product" onclick="deleteProduct('${product._id}', '${title.replace(/'/g, "\\'")}')"><i class="fa-solid fa-trash"></i></button>
+            </div>
+          </td>
+        `;
+        tableBody.appendChild(tr);
       });
     }
 
-    // Select All Checkbox
+    // 4. Search Filter
+    if (searchInput) {
+      searchInput.addEventListener('input', function(e) {
+        const term = e.target.value.toLowerCase().trim();
+        if (!term) {
+          renderProductsTable(allProducts);
+          return;
+        }
+        const filtered = allProducts.filter(p => {
+          const name = (p.name || '').toLowerCase();
+          const cat = (p.category || '').toLowerCase();
+          const sub = (p.subcategory || '').toLowerCase();
+          return name.includes(term) || cat.includes(term) || sub.includes(term);
+        });
+        renderProductsTable(filtered);
+      });
+    }
+
+    // 5. Select All Checkbox
     if (selectAllCheckbox) {
       selectAllCheckbox.addEventListener('change', function() {
         const checkboxes = tableBody.querySelectorAll('.custom-checkbox');
@@ -670,65 +522,226 @@
       });
     }
 
-    // Modal toggles
+    // 6. Image File Upload & Preview Handlers
+    function handleProductFileSelect(event) {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+
+      if (!file.type.startsWith('image/')) {
+        alert('Please select an image file (JPG, PNG, WEBP, GIF)');
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const base64 = e.target.result;
+        document.getElementById('prodImage').value = base64;
+        updateImagePreview(base64, file.name);
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function updateImagePreview(url, fileName) {
+      const container = document.getElementById('imagePreviewContainer');
+      const img = document.getElementById('imagePreview');
+      const label = document.getElementById('imagePreviewName');
+
+      if (url && (url.trim().startsWith('http') || url.trim().startsWith('data:image'))) {
+        img.src = url.trim();
+        if (label) {
+          label.textContent = fileName || (url.startsWith('data:') ? 'Local Image File' : 'Web Image URL');
+        }
+        container.style.display = 'block';
+      } else {
+        container.style.display = 'none';
+      }
+    }
+
+    function removeProductImage() {
+      document.getElementById('prodImage').value = '';
+      const fileInput = document.getElementById('prodImageFile');
+      if (fileInput) fileInput.value = '';
+      document.getElementById('imagePreview').src = '';
+      document.getElementById('imagePreviewContainer').style.display = 'none';
+    }
+
+    // Setup Drag & Drop for Image Dropzone
+    const dropzone = document.getElementById('productImageDropzone');
+    if (dropzone) {
+      dropzone.addEventListener('click', () => {
+        document.getElementById('prodImageFile').click();
+      });
+      ['dragenter', 'dragover'].forEach(name => {
+        dropzone.addEventListener(name, (e) => {
+          e.preventDefault();
+          dropzone.style.borderColor = '#0f7139';
+          dropzone.style.background = '#e8f5e9';
+        });
+      });
+      ['dragleave', 'drop'].forEach(name => {
+        dropzone.addEventListener(name, (e) => {
+          e.preventDefault();
+          dropzone.style.borderColor = '#cbd5e1';
+          dropzone.style.background = '#f8fafc';
+        });
+      });
+      dropzone.addEventListener('drop', (e) => {
+        const files = e.dataTransfer && e.dataTransfer.files;
+        if (files && files[0]) {
+          handleProductFileSelect({ target: { files: [files[0]] } });
+        }
+      });
+    }
+
+    // 7. Modal Handlers: Add & Edit
     const modal = document.getElementById('addProductModal');
     const openBtn = document.getElementById('openAddProductModalBtn');
     const closeBtn = document.getElementById('closeAddProductModalBtn');
     const cancelBtn = document.getElementById('cancelModalBtn');
-    
-    if (openBtn) openBtn.addEventListener('click', () => { modal.classList.add('active'); });
-    const closeModal = () => {
+
+    function openAddModal() {
+      document.getElementById('addProductForm').reset();
+      document.getElementById('prodEditId').value = '';
+      document.getElementById('modalHeading').textContent = 'Add New Product';
+      removeProductImage();
+      populateCategoryDropdown();
+      modal.classList.add('active');
+    }
+
+    function openEditProductModal(id) {
+      const prod = allProducts.find(p => String(p._id) === String(id));
+      if (!prod) return;
+
+      document.getElementById('prodEditId').value = prod._id;
+      document.getElementById('prodName').value = prod.name || '';
+      document.getElementById('prodPrice').value = prod.price || '';
+      document.getElementById('prodOriginalPrice').value = prod.originalPrice || '';
+      document.getElementById('prodUnit').value = prod.unit || '1 kg';
+      document.getElementById('prodStock').value = prod.countInStock ?? 15;
+      document.getElementById('prodBrand').value = prod.brand || 'Arshith Fresh';
+      document.getElementById('prodImage').value = prod.image || '';
+      document.getElementById('prodDesc').value = prod.description || '';
+      document.getElementById('prodIsFeatured').checked = !!prod.isFeatured;
+
+      updateImagePreview(prod.image);
+      populateCategoryDropdown(prod.category || '', prod.subcategory || '');
+
+      document.getElementById('modalHeading').textContent = 'Edit Product';
+      modal.classList.add('active');
+    }
+
+    function closeModal() {
       modal.classList.remove('active');
-    };
+    }
+
+    if (openBtn) openBtn.addEventListener('click', openAddModal);
     if (closeBtn) closeBtn.addEventListener('click', closeModal);
     if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
 
-    function openQuickAddModal() {
-      document.getElementById('quickAddModal').classList.add('active');
-    }
-    function closeQuickAddModal() {
-      document.getElementById('quickAddModal').classList.remove('active');
-    }
+    // 8. Save Product (POST / PUT)
+    document.getElementById('addProductForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const id = document.getElementById('prodEditId').value;
+      const name = document.getElementById('prodName').value.trim();
+      const category = document.getElementById('prodCategory').value;
+      const subcategory = document.getElementById('prodSubcategory').value;
+      const price = Number(document.getElementById('prodPrice').value);
+      const originalPrice = Number(document.getElementById('prodOriginalPrice').value) || 0;
+      const unit = document.getElementById('prodUnit').value.trim();
+      const countInStock = Number(document.getElementById('prodStock').value) || 0;
+      const brand = document.getElementById('prodBrand').value.trim() || 'Arshith Fresh';
+      const image = document.getElementById('prodImage').value.trim();
+      const description = document.getElementById('prodDesc').value.trim();
+      const isFeatured = document.getElementById('prodIsFeatured').checked;
 
-    const addProductForm = document.getElementById('addProductForm');
-    if (addProductForm) {
-      addProductForm.addEventListener('submit', async function(e) {
-        e.preventDefault();
-        const title = document.getElementById('prodTitle') ? document.getElementById('prodTitle').value : '';
-        const category = document.getElementById('prodCategory') ? document.getElementById('prodCategory').value : '';
-        const type = document.getElementById('prodType') ? document.getElementById('prodType').value : '';
-        const vendor = document.getElementById('prodVendor') ? document.getElementById('prodVendor').value : '';
-        const description = document.getElementById('prodDesc') ? document.getElementById('prodDesc').value : '';
-        const status = document.getElementById('prodStatus') ? document.getElementById('prodStatus').value : 'draft';
+      const payload = {
+        name,
+        category,
+        subcategory,
+        price,
+        originalPrice,
+        unit,
+        countInStock,
+        brand,
+        image,
+        description,
+        isFeatured
+      };
 
-        const payload = {
-          name: title || 'New Product',
-          title: title || 'New Product',
-          category: category || type || 'General',
-          brand: vendor || 'Arshith Fresh India Pvt Ltd',
-          description: description,
-          status: status
-        };
+      const saveBtn = document.getElementById('saveProductBtn');
+      saveBtn.disabled = true;
+      saveBtn.textContent = 'Saving...';
 
-        try {
-          const res = await fetch(API_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-          });
-          if (res.ok) {
-            alert('Product created successfully!');
-            closeModal();
-            fetchProducts();
-          } else {
-            const err = await res.json();
-            alert('Error: ' + (err.message || 'Failed to create product'));
-          }
-        } catch (err) {
-          alert('Error creating product: ' + err.message);
+      try {
+        const url = id ? `${API_BASE}/products/${id}` : `${API_BASE}/products`;
+        const method = id ? 'PUT' : 'POST';
+
+        const res = await fetch(url, {
+          method,
+          headers: { 'Content-Type': 'application/json', 'x-admin-dev': 'true' },
+          body: JSON.stringify(payload)
+        });
+
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          throw new Error(err.message || 'Failed to save product');
         }
-      });
+
+        alert(id ? 'Product updated successfully!' : 'Product added successfully!');
+        closeModal();
+        fetchProducts();
+      } catch (err) {
+        alert('Error: ' + err.message);
+      } finally {
+        saveBtn.disabled = false;
+        saveBtn.textContent = 'Save Product';
+      }
+    });
+
+    // 9. Delete Product
+    async function deleteProduct(id, name) {
+      if (!confirm(`Are you sure you want to delete "${name}"?`)) return;
+
+      try {
+        const res = await fetch(`${API_BASE}/products/${id}`, {
+          method: 'DELETE',
+          headers: { 'x-admin-dev': 'true' }
+        });
+
+        if (!res.ok) throw new Error('Could not delete product');
+        alert('Product deleted successfully!');
+        fetchProducts();
+      } catch (err) {
+        alert('Error deleting product: ' + err.message);
+      }
     }
+
+    // 10. Fetch Orders Count for sidebar
+    async function fetchOrdersCount() {
+      try {
+        const res = await fetch(`${API_BASE}/orders`);
+        if (res.ok) {
+          const orders = await res.json();
+          const badge = document.getElementById('sidebarOrdersBadge');
+          if (badge) badge.textContent = orders.length;
+        }
+      } catch (e) {}
+    }
+
+    // Expose functions globally
+    window.openEditProductModal = openEditProductModal;
+    window.deleteProduct = deleteProduct;
+    window.onCategorySelectChange = onCategorySelectChange;
+    window.updateImagePreview = updateImagePreview;
+    window.fetchProducts = fetchProducts;
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      fetchCollections();
+      fetchProducts();
+      fetchOrdersCount();
+    });
   </script>
 
 </body>

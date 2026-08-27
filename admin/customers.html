@@ -5,329 +5,172 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Customers - Arshith Fresh Admin</title>
   
-  <!-- Shared Admin Theme Stylesheet -->
   <link rel="stylesheet" href="../assets/css/admin.css">
-  </head>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
 <body>
 
-  <!-- =========================================================================
-       1. GLOBAL TOP HEADER (Shopify-Style Dark Theme)
-       ========================================================================= -->
+  <!-- Top Header -->
   <header class="global-topbar">
     <div class="topbar-left">
       <div class="shopify-logo">
-        <svg viewBox="0 0 109.5 124.5">
-          <path d="M74.7 14.1c-.2 0-.4.1-.5.1-.2-.8-.6-1.5-1.1-2.2-2.1-2.9-5.7-4.4-10.7-4.4-1.2 0-2.5.1-3.7.4-4.8 1.1-9.4 3.9-13.6 8.3-3 3.1-6.1 7.6-7.8 11.2-.8 1.7-1.5 3.3-2.1 4.7l-15.6 4.8c-4.8 1.5-5 1.9-5.6 6.9L.1 113.1c-.5 4.3 2.5 8 6.8 8.4.4 0 .9 0 1.3-.1l74-15.3c4.5-.9 7.7-4.9 7.4-9.5l-14.9-82.5z"/>
-        </svg>
-        <span style="font-weight: 700; font-size: 15px; letter-spacing: -0.5px;">shopify</span>
+        <svg viewBox="0 0 109.5 124.5"><path d="M74.7 14.1c-.2 0-.4.1-.5.1-.2-.8-.6-1.5-1.1-2.2-2.1-2.9-5.7-4.4-10.7-4.4-1.2 0-2.5.1-3.7.4-4.8 1.1-9.4 3.9-13.6 8.3-3 3.1-6.1 7.6-7.8 11.2-.8 1.7-1.5 3.3-2.1 4.7l-15.6 4.8c-4.8 1.5-5 1.9-5.6 6.9L.1 113.1c-.5 4.3 2.5 8 6.8 8.4.4 0 .9 0 1.3-.1l74-15.3c4.5-.9 7.7-4.9 7.4-9.5l-14.9-82.5z"/></svg>
+        <span>admin</span>
       </div>
     </div>
 
-    <!-- Center Search Bar with CTRL K -->
     <div class="topbar-center">
       <div class="search-box-wrapper">
-        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="11" cy="11" r="8"></circle>
-          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-        </svg>
-        <input type="text" class="global-search-input" placeholder="Search">
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <input type="text" class="global-search-input" placeholder="Search customers...">
         <span class="kbd-shortcut">CTRL K</span>
       </div>
     </div>
 
-    <!-- Right Header Actions -->
     <div class="topbar-right">
-      <!-- Persona / Bot icon -->
-      <button class="notification-btn" aria-label="Assistant / Profile">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="12" cy="12" r="10"></circle>
-          <circle cx="9" cy="10" r="1.5" fill="currentColor"></circle>
-          <circle cx="15" cy="10" r="1.5" fill="currentColor"></circle>
-          <path d="M8 15s1.5 2 4 2 4-2 4-2"></path>
-        </svg>
-      </button>
-
-      <!-- Notification Bell -->
-      <button class="notification-btn" aria-label="Notifications">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
-          <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
-        </svg>
-      </button>
-
-      <!-- Store Profile -->
+      <a href="../index.html" target="_blank" class="btn-view-as" style="text-decoration:none; color:inherit;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+        <span>View Store</span>
+      </a>
       <div class="store-profile-dropdown">
-        <div class="store-avatar" style="background-color: #278d43; color: #fff; font-weight: 700;">🌱</div>
+        <div class="store-avatar">AF</div>
         <span class="store-name-text">Arshith Fresh</span>
       </div>
     </div>
   </header>
 
-  <!-- =========================================================================
-       2. APP CONTAINER & SIDEBAR
-       ========================================================================= -->
+  <!-- App Layout -->
   <div class="app-container">
-
     <aside class="app-sidebar">
       <div class="sidebar-menu">
-        <!-- Home -->
-        <a href="dashboard.html" class="menu-item">
-          <div class="menu-item-left">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
-            <span>Home</span>
-          </div>
-        </a>
-
-        <!-- Orders -->
-        <a href="orders.html" class="menu-item">
-          <div class="menu-item-left">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
-            <span>Orders</span>
-          </div>
-          <span class="badge-count">114</span>
-        </a>
-
+        <a href="dashboard.html" class="menu-item"><div class="menu-item-left"><i class="fa-solid fa-house"></i><span>Dashboard</span></div></a>
+        <a href="orders.html" class="menu-item"><div class="menu-item-left"><i class="fa-solid fa-bag-shopping"></i><span>Orders</span></div></a>
+        <a href="products.html" class="menu-item"><div class="menu-item-left"><i class="fa-solid fa-tag"></i><span>Products</span></div></a>
         <div class="submenu-list">
-          <a href="orders-drafts.html" class="submenu-item">Drafts</a>
-          <a href="orders-abandoned.html" class="submenu-item">Abandoned checkouts</a>
-        </div>
-
-        <!-- Products -->
-        <a href="products.html" class="menu-item">
-          <div class="menu-item-left">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16.5 9.4 7.55 4.24a1.78 1.78 0 0 0-2.5 1.55v12.42a1.78 1.78 0 0 0 2.5 1.55L16.5 14.6a1.78 1.78 0 0 0 0-3.2z"></path></svg>
-            <span>Products</span>
-          </div>
-        </a>
-
-        <div class="submenu-list">
-          <a href="collections.html" class="submenu-item">Collections</a>
+          <a href="collections.html" class="submenu-item">Collections / Categories</a>
           <a href="inventory.html" class="submenu-item">Inventory</a>
-          <a href="purchase-orders.html" class="submenu-item">Purchase orders</a>
-          <a href="transfers.html" class="submenu-item">Transfers</a>
-          <a href="gift-cards.html" class="submenu-item">Gift cards</a>
         </div>
-
-        <!-- Customers (Active Highlighted) -->
-        <a href="customers.html" class="menu-item active">
-          <div class="menu-item-left">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-              <circle cx="9" cy="7" r="4"></circle>
-            </svg>
-            <span>Customers</span>
-          </div>
-        </a>
-
-        <div class="submenu-list">
-          <a href="customer-segments.html" class="submenu-item">Segments</a>
-          <a href="customer-companies.html" class="submenu-item">Companies</a>
-        </div>
-
-        <!-- Growth -->
-        <a href="#" class="menu-item">
-          <div class="menu-item-left">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
-            <span>Growth</span>
-          </div>
-        </a>
-
-        <!-- Discounts -->
-        <a href="#" class="menu-item">
-          <div class="menu-item-left">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="5" x2="5" y2="19"></line><circle cx="6.5" cy="6.5" r="2.5"></circle><circle cx="17.5" cy="17.5" r="2.5"></circle></svg>
-            <span>Discounts</span>
-          </div>
-        </a>
-
-        <!-- Content -->
-        <a href="#" class="menu-item">
-          <div class="menu-item-left">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
-            <span>Content</span>
-          </div>
-        </a>
-
-        <!-- Markets -->
-        <a href="#" class="menu-item">
-          <div class="menu-item-left">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
-            <span>Markets</span>
-          </div>
-        </a>
-
-        <!-- Analytics -->
-        <a href="#" class="menu-item">
-          <div class="menu-item-left">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
-            <span>Analytics</span>
-          </div>
-        </a>
-
-        <!-- Sales Channels Section -->
-        <div class="sidebar-section-header">
-          <span>Sales channels</span>
-          <span style="font-size: 14px; font-weight: normal; cursor: pointer;">›</span>
-        </div>
-
-        <a href="../index.html" target="_blank" class="menu-item">
-          <div class="menu-item-left">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
-            <span>Online Store</span>
-          </div>
-        </a>
-
-        <a href="#" class="menu-item">
-          <div class="menu-item-left">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
-            <span>Point of Sale</span>
-          </div>
-        </a>
-
-        <a href="#" class="menu-item">
-          <div class="menu-item-left">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path><line x1="12" y1="7" x2="12" y2="13"></line><line x1="9" y1="10" x2="15" y2="10"></line></svg>
-            <span>Inbox</span>
-          </div>
-        </a>
-      </div>
-
-      <!-- Bottom Settings -->
-      <div class="sidebar-bottom">
-        <a href="#" class="menu-item">
-          <div class="menu-item-left">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
-            <span>Settings</span>
-          </div>
-        </a>
+        <a href="customers.html" class="menu-item active"><div class="menu-item-left"><i class="fa-solid fa-users"></i><span>Customers</span></div></a>
       </div>
     </aside>
 
-    <!-- =========================================================================
-         3. MAIN CUSTOMERS CONTENT
-         ========================================================================= -->
     <main class="main-viewport">
-      
-      <!-- Top Action Bar -->
-      <div class="table-page-header" style="margin-bottom: 16px;">
-        <div style="display: flex; align-items: center; gap: 8px;">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: #202223;">
-            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-            <circle cx="9" cy="7" r="4"></circle>
-          </svg>
-          <h1 style="font-size: 20px; font-weight: 700; color: #202223;">Customers</h1>
+      <div class="page-top-header">
+        <div class="page-title-row">
+          <h1>Customers & Users <span id="customerCount" style="font-size: 16px; font-weight: normal; color: #6d7175;">(0)</span></h1>
         </div>
-
-        <div style="display: flex; align-items: center; gap: 8px;">
-          <button class="btn-secondary-pill" onclick="exportCustomers()">Export</button>
-          <button class="btn-secondary-pill" onclick="importCustomers()">Import</button>
-          <button class="btn-primary-pill" onclick="openAddCustomerModal()">Add customer</button>
+        <div class="page-action-buttons">
+          <button class="btn-pill" onclick="fetchCustomers()"><i class="fa-solid fa-rotate"></i> Refresh</button>
         </div>
       </div>
 
-      <!-- Customers Table Card -->
       <div class="data-card">
-
-        <!-- Search Bar within Card -->
-        <div style="padding: 12px 16px; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; background: #ffffff;">
-          <div style="display: flex; align-items: center; gap: 8px; flex: 1; max-width: 450px;">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6d7175" stroke-width="2">
-              <circle cx="11" cy="11" r="8"></circle>
-              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-            </svg>
-            <input type="text" id="customerSearchInput" placeholder="Search customers" style="border: none; outline: none; width: 100%; font-size: 13px; color: var(--text-primary); background: transparent;">
+        <div class="card-filter-bar">
+          <span class="tab-all-pill" style="font-weight: 600;">All Registered Users</span>
+          <div class="table-search-input-box" style="max-width: 400px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <input type="text" id="customerSearchInput" placeholder="Search by name, email, or phone...">
           </div>
-
-          <!-- Column selector icon -->
-          <button style="background: none; border: none; cursor: pointer; color: #6d7175; padding: 4px 6px; border-radius: 4px;" title="Customize columns">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-              <line x1="9" y1="3" x2="9" y2="21"></line>
-              <line x1="15" y1="3" x2="15" y2="21"></line>
-            </svg>
-          </button>
         </div>
 
-        <!-- Table Viewport -->
         <div class="table-scroll-container">
-          <table class="shopify-table" id="customersTable">
+          <table class="shopify-table">
             <thead>
               <tr>
-                <th style="width: 44px; padding-left: 16px;"><input type="checkbox" id="selectAllCheckbox" class="custom-checkbox"></th>
-                <th style="width: 32%;">Customer name</th>
-                <th style="width: 24%;">Email subscription</th>
-                <th style="width: 20%;"><span class="location-dotted">Location</span></th>
-                <th style="width: 10%; text-align: center;">Orders</th>
-                <th style="width: 14%; text-align: right; padding-right: 24px;">Amount spent</th>
+                <th style="width: 36px;"><input type="checkbox" class="custom-checkbox"></th>
+                <th>Customer / User</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Role</th>
+                <th>City / Location</th>
+                <th>Joined Date</th>
               </tr>
             </thead>
             <tbody id="customersTableBody">
+              <tr><td colspan="7" style="text-align: center; padding: 25px;"><i class="fa-solid fa-spinner fa-spin"></i> Loading users...</td></tr>
             </tbody>
           </table>
         </div>
-
       </div>
-
     </main>
   </div>
 
-  <!-- JavaScript Interactivity -->
   <script>
-    async function fetchCustomers() {
-      const tbody = document.getElementById('customersTableBody');
-      try {
-        const res = await fetch('http://localhost:5000/api/customers');
-        const data = await res.json();
-        
-        tbody.innerHTML = '';
-        if (!data.success || data.data.length === 0) {
-          tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 20px;">No customers found.</td></tr>';
-          return;
-        }
+    const API_BASE = 'http://localhost:5000/api';
+    const tbody = document.getElementById('customersTableBody');
+    const searchInput = document.getElementById('customerSearchInput');
 
-        data.data.forEach(cust => {
-          const fullName = `${cust.firstName} ${cust.lastName}`;
-          const isSubscribed = true; // placeholder for email subscription
-          const location = "India"; // placeholder
-          
-          const tr = document.createElement('tr');
-          tr.innerHTML = `
-            <td style="padding-left: 16px;"><input type="checkbox" class="custom-checkbox row-select"></td>
-            <td style="font-weight: 500; color: #202223;">${fullName}</td>
-            <td><span class="badge-sub-status ${isSubscribed ? 'sub' : 'not-sub'}">${isSubscribed ? 'Subscribed' : 'Not subscribed'}</span></td>
-            <td style="color: var(--text-secondary);">${location}</td>
-            <td style="text-align: center; color: var(--text-secondary);">${cust.ordersCount}</td>
-            <td style="text-align: right; padding-right: 24px; font-weight: 500;">₹${cust.totalSpent.toFixed(2)}</td>
-          `;
-          tbody.appendChild(tr);
-        });
+    let allUsers = [];
+
+    async function fetchCustomers() {
+      try {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 25px;"><i class="fa-solid fa-spinner fa-spin"></i> Loading users...</td></tr>';
+        
+        const res = await fetch(`${API_BASE}/users`);
+        if (!res.ok) throw new Error();
+        allUsers = await res.json();
+
+        document.getElementById('customerCount').textContent = `(${allUsers.length})`;
+        renderUsers(allUsers);
       } catch (err) {
         console.error('Error fetching customers:', err);
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 20px; color: #ef4444;">Failed to load users from database.</td></tr>';
       }
     }
 
-    document.addEventListener('DOMContentLoaded', fetchCustomers);
+    function renderUsers(users) {
+      tbody.innerHTML = '';
+      if (!users || users.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 25px; color: #6d7175;">No registered users found.</td></tr>';
+        return;
+      }
 
-    // Client-side Search Filter (Both table search and top global search)
-    function filterCustomers(query) {
-      const q = query.toLowerCase();
-      const rows = document.querySelectorAll('#customersTableBody tr');
-      rows.forEach(row => {
-        const text = row.textContent.toLowerCase();
-        row.style.display = text.includes(q) ? '' : 'none';
+      users.forEach(u => {
+        const name = u.name || 'User';
+        const date = new Date(u.createdAt || Date.now()).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' });
+        const isAdm = u.role === 'admin';
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><input type="checkbox" class="custom-checkbox"></td>
+          <td>
+            <div style="display:flex; align-items:center; gap:10px;">
+              <div style="width:34px; height:34px; border-radius:50%; background:#e2e8f0; color:#334155; font-weight:700; font-size:13px; display:flex; align-items:center; justify-content:center;">
+                ${name.charAt(0).toUpperCase()}
+              </div>
+              <strong style="color: #1a1a1a;">${name}</strong>
+            </div>
+          </td>
+          <td>${u.email}</td>
+          <td>${u.phone || '<span style="color:#94a3b8;">-</span>'}</td>
+          <td>
+            <span class="status-pill ${isAdm ? 'active' : 'draft'}">${isAdm ? 'Admin' : 'Customer'}</span>
+          </td>
+          <td>${u.city || u.street || 'India'}</td>
+          <td><span style="font-size: 12px; color: #64748b;">${date}</span></td>
+        `;
+        tbody.appendChild(tr);
       });
     }
 
-    const searchInput = document.getElementById('customerSearchInput');
     if (searchInput) {
-      searchInput.addEventListener('input', (e) => filterCustomers(e.target.value));
+      searchInput.addEventListener('input', function(e) {
+        const q = e.target.value.toLowerCase().trim();
+        if (!q) {
+          renderUsers(allUsers);
+          return;
+        }
+        const filtered = allUsers.filter(u => {
+          const name = (u.name || '').toLowerCase();
+          const email = (u.email || '').toLowerCase();
+          const phone = (u.phone || '').toLowerCase();
+          return name.includes(q) || email.includes(q) || phone.includes(q);
+        });
+        renderUsers(filtered);
+      });
     }
 
-    const globalSearch = document.querySelector('.global-search-input');
-    if (globalSearch) {
-      globalSearch.addEventListener('input', (e) => filterCustomers(e.target.value));
-    }
+    document.addEventListener('DOMContentLoaded', fetchCustomers);
   </script>
-
 </body>
 </html>

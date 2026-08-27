@@ -5,16 +5,23 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Orders - Arshith Fresh Admin</title>
   
-  <!-- Shared Admin Theme Stylesheet -->
   <link rel="stylesheet" href="../assets/css/admin.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    .status-badge-paid { background: #dcfce7; color: #166534; padding: 3px 8px; border-radius: 12px; font-size: 11.5px; font-weight: 600; }
+    .status-badge-pending { background: #fef9c3; color: #854d0e; padding: 3px 8px; border-radius: 12px; font-size: 11.5px; font-weight: 600; }
+    .status-badge-delivered { background: #dbeafe; color: #1e40af; padding: 3px 8px; border-radius: 12px; font-size: 11.5px; font-weight: 600; }
+  </style>
 </head>
 <body>
 
-  <!-- Global Header -->
+  <!-- TOP HEADER -->
   <header class="global-topbar">
     <div class="topbar-left">
       <div class="shopify-logo">
-        <svg viewBox="0 0 109.5 124.5"><path d="M74.7 14.1c-.2 0-.4.1-.5.1-.2-.8-.6-1.5-1.1-2.2-2.1-2.9-5.7-4.4-10.7-4.4-1.2 0-2.5.1-3.7.4-4.8 1.1-9.4 3.9-13.6 8.3-3 3.1-6.1 7.6-7.8 11.2-.8 1.7-1.5 3.3-2.1 4.7l-15.6 4.8c-4.8 1.5-5 1.9-5.6 6.9L.1 113.1c-.5 4.3 2.5 8 6.8 8.4.4 0 .9 0 1.3-.1l74-15.3c4.5-.9 7.7-4.9 7.4-9.5l-14.9-82.5z"/></svg>
+        <svg viewBox="0 0 109.5 124.5">
+          <path d="M74.7 14.1c-.2 0-.4.1-.5.1-.2-.8-.6-1.5-1.1-2.2-2.1-2.9-5.7-4.4-10.7-4.4-1.2 0-2.5.1-3.7.4-4.8 1.1-9.4 3.9-13.6 8.3-3 3.1-6.1 7.6-7.8 11.2-.8 1.7-1.5 3.3-2.1 4.7l-15.6 4.8c-4.8 1.5-5 1.9-5.6 6.9L.1 113.1c-.5 4.3 2.5 8 6.8 8.4.4 0 .9 0 1.3-.1l74-15.3c4.5-.9 7.7-4.9 7.4-9.5l-14.9-82.5z"/>
+        </svg>
         <span>admin</span>
       </div>
     </div>
@@ -22,118 +29,54 @@
     <div class="topbar-center">
       <div class="search-box-wrapper">
         <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-        <input type="text" class="global-search-input" placeholder="Search orders, customers, items...">
+        <input type="text" class="global-search-input" placeholder="Search orders, customers...">
         <span class="kbd-shortcut">CTRL K</span>
       </div>
     </div>
 
     <div class="topbar-right">
-      <button class="btn-view-as">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-        <span>View as</span>
-      </button>
-
-      <button class="notification-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg><span class="notification-dot"></span></button>
-
+      <a href="../index.html" target="_blank" class="btn-view-as" style="text-decoration:none; color:inherit;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+        <span>View Store</span>
+      </a>
       <div class="store-profile-dropdown">
         <div class="store-avatar">AF</div>
         <span class="store-name-text">Arshith Fresh</span>
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
       </div>
     </div>
   </header>
 
-  <!-- App Layout -->
+  <!-- APP LAYOUT -->
   <div class="app-container">
-
     <aside class="app-sidebar">
       <div class="sidebar-menu">
-        <a href="dashboard.html" class="menu-item">
-          <div class="menu-item-left">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
-            <span>Home</span>
-          </div>
-        </a>
-
-        <a href="orders.html" class="menu-item active">
-          <div class="menu-item-left">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
-            <span>Orders</span>
-          </div>
-          <span class="badge-count">114</span>
-        </a>
-
+        <a href="dashboard.html" class="menu-item"><div class="menu-item-left"><i class="fa-solid fa-house"></i><span>Dashboard</span></div></a>
+        <a href="orders.html" class="menu-item active"><div class="menu-item-left"><i class="fa-solid fa-bag-shopping"></i><span>Orders</span></div></a>
+        <a href="products.html" class="menu-item"><div class="menu-item-left"><i class="fa-solid fa-tag"></i><span>Products</span></div></a>
         <div class="submenu-list">
-          <a href="orders-drafts.html" class="submenu-item">Drafts</a>
-          <a href="orders-abandoned.html" class="submenu-item">Abandoned checkouts</a>
-        </div>
-
-        <a href="products.html" class="menu-item">
-          <div class="menu-item-left">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16.5 9.4 7.55 4.24a1.78 1.78 0 0 0-2.5 1.55v12.42a1.78 1.78 0 0 0 2.5 1.55L16.5 14.6a1.78 1.78 0 0 0 0-3.2z"></path></svg>
-            <span>Products</span>
-          </div>
-        </a>
-
-        <div class="submenu-list">
-          <a href="collections.html" class="submenu-item">Collections</a>
+          <a href="collections.html" class="submenu-item">Collections / Categories</a>
           <a href="inventory.html" class="submenu-item">Inventory</a>
-          <a href="purchase-orders.html" class="submenu-item">Purchase orders</a>
-          <a href="transfers.html" class="submenu-item">Transfers</a>
-          <a href="gift-cards.html" class="submenu-item">Gift cards</a>
         </div>
-
-        <a href="customers.html" class="menu-item">
-          <div class="menu-item-left">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>
-            <span>Customers</span>
-          </div>
-        </a>
-
-        <div class="submenu-list">
-          <a href="customer-segments.html" class="submenu-item">Segments</a>
-          <a href="customer-companies.html" class="submenu-item">Companies</a>
-        </div>
-
-        <a href="#" class="menu-item">
-          <div class="menu-item-left">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
-            <span>Analytics</span>
-          </div>
-        </a>
-      </div>
-
-      <div class="sidebar-bottom">
-        <a href="#" class="menu-item">
-          <div class="menu-item-left">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
-            <span>Settings</span>
-          </div>
-        </a>
+        <a href="customers.html" class="menu-item"><div class="menu-item-left"><i class="fa-solid fa-users"></i><span>Customers</span></div></a>
       </div>
     </aside>
 
-    <!-- Main Orders Viewport -->
     <main class="main-viewport">
-      
       <div class="page-top-header">
         <div class="page-title-row">
-          <h1>Orders</h1>
+          <h1>Orders <span id="ordersTotalCount" style="font-size: 16px; font-weight: normal; color: #6d7175;">(0)</span></h1>
         </div>
-
         <div class="page-action-buttons">
-          <button class="btn-pill">Export</button>
-          <button class="btn-pill btn-pill-primary">Create order</button>
+          <button class="btn-pill" onclick="fetchOrders()"><i class="fa-solid fa-rotate"></i> Refresh</button>
         </div>
       </div>
 
       <div class="data-card">
-        
         <div class="card-filter-bar">
-          <span class="tab-all-pill">All</span>
-          <div class="table-search-input-box">
+          <span class="tab-all-pill" style="font-weight: 600;">All Orders</span>
+          <div class="table-search-input-box" style="max-width: 400px;">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-            <input type="text" placeholder="Search and filter orders">
+            <input type="text" id="orderSearchInput" placeholder="Search by Order ID or Customer Name...">
           </div>
         </div>
 
@@ -145,94 +88,135 @@
                 <th>Order</th>
                 <th>Date</th>
                 <th>Customer</th>
-                <th>Channel</th>
-                <th>Total</th>
-                <th>Payment status</th>
-                <th>Fulfillment status</th>
                 <th>Items</th>
-                <th style="text-align:right;">Actions</th>
+                <th>Total</th>
+                <th>Payment</th>
+                <th>Fulfillment Status</th>
+                <th style="text-align:right;">Update Status</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody id="ordersTableBody">
+              <tr><td colspan="9" style="text-align: center; padding: 25px;"><i class="fa-solid fa-spinner fa-spin"></i> Loading orders from database...</td></tr>
             </tbody>
           </table>
         </div>
-
-        <div class="table-pagination-footer">
-          <span>1-50</span>
-          <button class="pagination-btn">&lt;</button>
-          <button class="pagination-btn">&gt;</button>
-        </div>
-
       </div>
-
     </main>
-
   </div>
 
   <script>
-    const API_URL = 'http://localhost:5000/api/orders';
-    const tbody = document.querySelector('.shopify-table tbody');
+    const API_BASE = 'http://localhost:5000/api';
+    const tbody = document.getElementById('ordersTableBody');
+    const searchInput = document.getElementById('orderSearchInput');
+
+    let allOrders = [];
 
     async function fetchOrders() {
       try {
-        const response = await fetch(API_URL);
-        const data = await response.json();
+        tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; padding: 25px;"><i class="fa-solid fa-spinner fa-spin"></i> Loading...</td></tr>';
         
-        tbody.innerHTML = ''; // Clear hardcoded rows
-
-        if (!data.success || data.data.length === 0) {
-          tbody.innerHTML = '<tr><td colspan="10" style="text-align: center; padding: 20px;">No orders found.</td></tr>';
-          return;
-        }
-
-        data.data.forEach(order => {
-          const date = new Date(order.createdAt).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
-          const customerName = order.customerId ? `${order.customerId.firstName || ''} ${order.customerId.lastName || ''}`.trim() : 'Guest';
-          const total = `₹${order.total.toFixed(2)}`;
-          
-          let paymentBadge = '';
-          if (order.paymentStatus === 'paid') paymentBadge = '<span class="status-pill active">Paid</span>';
-          else if (order.paymentStatus === 'pending') paymentBadge = '<span class="status-pill draft">Pending</span>';
-          else paymentBadge = `<span class="status-pill archived">${order.paymentStatus}</span>`;
-
-          let fulfillmentBadge = '';
-          if (order.fulfillmentStatus === 'fulfilled') fulfillmentBadge = '<span class="status-pill active">Fulfilled</span>';
-          else fulfillmentBadge = '<span class="status-pill draft">Unfulfilled</span>';
-
-          const tr = document.createElement('tr');
-          tr.innerHTML = `
-            <td><input type="checkbox" class="custom-checkbox"></td>
-            <td><strong>#${order.orderNumber}</strong></td>
-            <td>${date}</td>
-            <td><strong>${customerName || 'Unknown Customer'}</strong></td>
-            <td>Online Store</td>
-            <td><strong>${total}</strong></td>
-            <td>${paymentBadge}</td>
-            <td>${fulfillmentBadge}</td>
-            <td>-</td>
-            <td style="text-align:right;"><button class="btn-pill" onclick="alert('Order view coming soon')">View</button></td>
-          `;
-          tbody.appendChild(tr);
+        const res = await fetch(`${API_BASE}/orders`, {
+          headers: { 'x-admin-dev': 'true' }
         });
+        
+        if (!res.ok) throw new Error();
+        allOrders = await res.json();
+        
+        document.getElementById('ordersTotalCount').textContent = `(${allOrders.length})`;
+        renderOrders(allOrders);
       } catch (err) {
         console.error('Error fetching orders:', err);
+        tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; padding: 25px; color: #ef4444;">Failed to load orders.</td></tr>';
       }
     }
 
-    fetchOrders();
+    function renderOrders(orders) {
+      tbody.innerHTML = '';
 
-    // Filter
-    const searchInput = document.querySelector('.table-search-input-box input');
-    if (searchInput && tbody) {
-      searchInput.addEventListener('input', function(e) {
-        const q = e.target.value.toLowerCase();
-        const rows = tbody.querySelectorAll('tr');
-        rows.forEach(r => {
-          r.style.display = r.textContent.toLowerCase().includes(q) ? '' : 'none';
-        });
+      if (!orders || orders.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; padding: 30px; color: #6d7175;">No orders placed yet. Place an order on the storefront website to see it here!</td></tr>';
+        return;
+      }
+
+      orders.forEach(order => {
+        const orderIdShort = String(order._id).substring(0, 8);
+        const date = new Date(order.createdAt).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+        const customer = order.customerName || (order.shippingAddress ? `${order.shippingAddress.address}, ${order.shippingAddress.city}` : 'Customer');
+        const total = `₹${order.totalPrice || 0}`;
+        const itemsCount = order.orderItems ? order.orderItems.length : 1;
+
+        const isPaid = order.isPaid;
+        const payBadge = isPaid
+          ? '<span class="status-badge-paid">Paid</span>'
+          : `<span class="status-badge-pending">${order.paymentMethod || 'COD'}</span>`;
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><input type="checkbox" class="custom-checkbox"></td>
+          <td><strong>#${orderIdShort}</strong></td>
+          <td><span style="font-size: 12px; color: #475569;">${date}</span></td>
+          <td>
+            <strong>${customer}</strong>
+            ${order.customerPhone ? `<div style="font-size:11px; color:#64748b;">${order.customerPhone}</div>` : ''}
+          </td>
+          <td>${itemsCount} items</td>
+          <td><strong>${total}</strong></td>
+          <td>${payBadge}</td>
+          <td>
+            <span class="status-pill ${order.status === 'Delivered' ? 'active' : (order.status === 'Cancelled' ? 'archived' : 'draft')}">
+              ${order.status || 'Confirmed'}
+            </span>
+          </td>
+          <td style="text-align:right;">
+            <select class="form-control" style="width: auto; display: inline-block; padding: 4px 8px; font-size: 12px;" onchange="updateOrderStatus('${order._id}', this.value)">
+              <option value="Confirmed" ${order.status === 'Confirmed' ? 'selected' : ''}>Confirmed</option>
+              <option value="Processing" ${order.status === 'Processing' ? 'selected' : ''}>Processing</option>
+              <option value="Shipped" ${order.status === 'Shipped' ? 'selected' : ''}>Shipped</option>
+              <option value="Delivered" ${order.status === 'Delivered' ? 'selected' : ''}>Delivered</option>
+              <option value="Cancelled" ${order.status === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
+            </select>
+          </td>
+        `;
+        tbody.appendChild(tr);
       });
     }
+
+    async function updateOrderStatus(orderId, newStatus) {
+      try {
+        const isDelivered = newStatus === 'Delivered';
+        const res = await fetch(`${API_BASE}/orders/${orderId}/status`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json', 'x-admin-dev': 'true' },
+          body: JSON.stringify({ status: newStatus, isDelivered })
+        });
+        if (res.ok) {
+          fetchOrders();
+        } else {
+          alert('Failed to update status.');
+        }
+      } catch (e) {
+        alert('Error updating order status.');
+      }
+    }
+
+    if (searchInput) {
+      searchInput.addEventListener('input', function(e) {
+        const q = e.target.value.toLowerCase().trim();
+        if (!q) {
+          renderOrders(allOrders);
+          return;
+        }
+        const filtered = allOrders.filter(o => {
+          const id = String(o._id).toLowerCase();
+          const cust = (o.customerName || '').toLowerCase();
+          return id.includes(q) || cust.includes(q);
+        });
+        renderOrders(filtered);
+      });
+    }
+
+    window.updateOrderStatus = updateOrderStatus;
+    document.addEventListener('DOMContentLoaded', fetchOrders);
   </script>
 </body>
 </html>
