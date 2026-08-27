@@ -111,7 +111,7 @@
     <div class="modal-box" style="max-width: 600px; width: 95%;">
       <div class="modal-header">
         <h3 id="collectionModalTitle">Add / Edit Category</h3>
-        <button class="btn-icon" onclick="closeModal()" style="border:none; background:none; cursor:pointer; font-size:20px;">&times;</button>
+        <button class="btn-icon" type="button" onclick="closeModal()" style="border:none; background:none; cursor:pointer; font-size:20px;">&times;</button>
       </div>
       <form id="collectionForm">
         <input type="hidden" id="collId">
@@ -134,7 +134,7 @@
             </label>
 
             <!-- Choose File from Laptop / Drag & Drop -->
-            <div id="collImageDropzone" style="border: 2px dashed #cbd5e1; border-radius: 8px; padding: 14px 16px; text-align: center; cursor: pointer; background: #f8fafc; margin-bottom: 8px; transition: all 0.2s ease;">
+            <div id="collImageDropzone" style="border: 2px dashed #cbd5e1; border-radius: 8px; padding: 14px 16px; text-align: center; cursor: pointer; background: #f8fafc; margin-bottom: 8px; transition: all 0.2s ease;" onclick="document.getElementById('collImageFile').click()">
               <input type="file" id="collImageFile" accept="image/*" style="display: none;" onchange="handleCollFileSelect(event)">
               <i class="fa-solid fa-cloud-arrow-up" style="font-size: 24px; color: #0f7139; margin-bottom: 4px;"></i>
               <div style="font-size: 13px; font-weight: 600; color: #1e293b;">Click to choose image from laptop</div>
@@ -167,13 +167,15 @@
   </div>
 
   <script>
-    const API_BASE = 'http://localhost:5000/api';
+    const API_BASE = window.location.origin.includes('http') ? window.location.origin + '/api' : 'http://localhost:5000/api';
     const tbody = document.getElementById('collectionsTableBody');
     const searchInput = document.getElementById('collectionSearchInput');
     const modal = document.getElementById('collectionModal');
 
     let allCollections = [];
     let allProducts = [];
+
+
 
     async function fetchCollections() {
       try {
@@ -184,51 +186,72 @@
           fetch(`${API_BASE}/products`)
         ]);
 
-        allCollections = await colRes.json();
-        allProducts = await prodRes.json();
+        const colData = await colRes.json();
+        const prodData = await prodRes.json();
+
+        allCollections = Array.isArray(colData) ? colData : (colData.data || []);
+        allProducts = Array.isArray(prodData) ? prodData : (prodData.data || []);
 
         renderTable(allCollections);
       } catch (err) {
         console.error('Error fetching collections:', err);
-        tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 20px; color: #ef4444;">Failed to load collections.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 20px; color: #ef4444;">Failed to load collections. Please refresh.</td></tr>';
       }
+    }
+
+    function getCollectionImage(col) {
+      if (col && col.image && col.image.trim() !== '') return col.image;
+      const title = (col ? (col.title || col.name || '') : '').toLowerCase();
+      if (title.includes('oil')) return '../assets/images/banners/oils_banner_hero_golden.png';
+      if (title.includes('dry fruit') || title.includes('nut') || title.includes('badam') || title.includes('kaju')) return 'https://images.unsplash.com/photo-1608797178974-15b35a64ede9?w=300&auto=format&fit=crop&q=80';
+      if (title.includes('seed')) return '../assets/images/banners/seeds_banner_blue_bowls.png';
+      if (title.includes('ghee') || title.includes('honey')) return '../assets/images/banners/ghee_honey_banner_jars.png';
+      if (title.includes('cooking') || title.includes('essential')) return '../assets/images/banners/cooking_essentials_banner_pouches.png';
+      if (title.includes('vegetable') || title.includes('veggie')) return 'https://images.unsplash.com/photo-1540420773420-3366772f4999?w=300&auto=format&fit=crop&q=80';
+      if (title.includes('powder') || title.includes('podi')) return '../assets/images/banners/spice_powders_banner_pouches.png';
+      if (title.includes('spice')) return '../assets/images/banners/spices_banner_pouches.png';
+      return 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=300&auto=format&fit=crop&q=80';
     }
 
     function renderTable(collections) {
       tbody.innerHTML = '';
+      const list = Array.isArray(collections) ? collections : [];
+      
       const countElem = document.getElementById('collectionCount');
       if (countElem) {
-        countElem.textContent = `(${collections ? collections.length : 0})`;
+        countElem.textContent = `(${list.length})`;
       }
 
-      if (!collections || collections.length === 0) {
+      if (list.length === 0) {
         tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 25px; color: #6d7175;">No categories found. Click "+ Add category" to create one.</td></tr>';
         return;
       }
 
-      collections.forEach(col => {
-        const prodCount = allProducts.filter(p => p.category && p.category.toLowerCase() === col.title.toLowerCase()).length;
+      list.forEach(col => {
+        if (!col) return;
+        const colTitle = col.title || col.name || 'Untitled Category';
+        const prodCount = (Array.isArray(allProducts) ? allProducts : []).filter(p => p && p.category && p.category.toLowerCase() === colTitle.toLowerCase()).length;
         const subs = Array.isArray(col.subcategories) ? col.subcategories : [];
         const subTags = subs.length > 0
           ? subs.map(s => `<span class="subcat-tag">${s}</span>`).join('')
           : '<span style="color:#94a3b8; font-size:12px; font-style:italic;">No sub-categories</span>';
 
-        const imgUrl = col.image || 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=80&auto=format&fit=crop&q=60';
+        const imgUrl = getCollectionImage(col);
 
         const tr = document.createElement('tr');
         tr.innerHTML = `
           <td><input type="checkbox" class="custom-checkbox"></td>
           <td>
             <div class="table-product-item">
-              <img src="${imgUrl}" class="table-product-thumb" alt="${col.title}" onerror="this.src='https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=80';">
+              <img src="${imgUrl}" class="table-product-thumb" alt="${colTitle}" onerror="this.src='https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=80';">
               <div>
-                <span class="table-product-name" style="font-weight: 600; color:#1a1a1a;">${col.title}</span>
+                <span class="table-product-name" style="font-weight: 600; color:#1a1a1a;">${colTitle}</span>
                 <div style="font-size:11.5px; color:#6d7175;">${col.slug || ''}</div>
               </div>
             </div>
           </td>
-          <td style="max-width: 360px;">
-            <div style="display: flex; flex-wrap: wrap; gap: 4px; max-width: 360px;">
+          <td style="max-width: 380px;">
+            <div style="display: flex; flex-wrap: wrap; gap: 6px; padding: 4px 0;">
               ${subTags}
             </div>
           </td>
@@ -236,7 +259,7 @@
           <td style="text-align: right; white-space: nowrap;">
             <div style="display:flex; gap:6px; justify-content:flex-end;">
               <button class="action-btn-sm" title="Edit Category & Subcategories" onclick="openEditModal('${col._id}')"><i class="fa-solid fa-pen"></i> Edit</button>
-              <button class="action-btn-sm action-btn-danger" title="Delete" onclick="deleteCollection('${col._id}', '${col.title.replace(/'/g, "\\'")}')"><i class="fa-solid fa-trash"></i></button>
+              <button class="action-btn-sm action-btn-danger" title="Delete" onclick="deleteCollection('${col._id}', '${colTitle.replace(/'/g, "\\'")}')"><i class="fa-solid fa-trash"></i></button>
             </div>
           </td>
         `;
@@ -395,6 +418,7 @@
     window.openAddModal = openAddModal;
     window.closeModal = closeModal;
 
+    fetchCollections();
     document.addEventListener('DOMContentLoaded', fetchCollections);
   </script>
 </body>

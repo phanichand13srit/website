@@ -444,6 +444,7 @@ button, input, select, textarea {
   min-height: calc(100vh - var(--topbar-height));
   width: calc(100% - var(--sidebar-width));
   box-sizing: border-box;
+  overflow-y: auto;
 }
 
 /* Page Action Header (Title + Export + Import + More + Add Product) */
@@ -565,10 +566,12 @@ button, input, select, textarea {
   font-size: 13px;
 }
 
-/* Table Responsive Horizontal Scroll */
+/* Table Responsive Horizontal and Vertical Scroll */
 .table-scroll-container {
   width: 100%;
   overflow-x: auto;
+  overflow-y: auto;
+  max-height: calc(100vh - 200px);
 }
 
 .shopify-table {

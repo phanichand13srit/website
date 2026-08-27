@@ -129,44 +129,58 @@ const sampleCollections = [
   { 
     title: 'Oils', 
     description: 'Wood Pressed & Cold Pressed Oils', 
+    image: '../assets/images/banners/oils_banner_hero_golden.png',
     conditionsSummary: 'Tag includes Oils',
     subcategories: ['Cold-Pressed Groundnut Oil', 'Wood-Pressed Sesame Oil', 'Coconut Oil', 'Sunflower Oil', 'Mustard Oil', 'Castor Oil']
   },
   { 
     title: 'Dry Fruits', 
     description: 'Almonds, Cashews, Walnuts & Raisins', 
+    image: 'https://images.unsplash.com/photo-1608797178974-15b35a64ede9?w=500&auto=format&fit=crop&q=80',
     conditionsSummary: 'Tag includes Dry Fruits',
     subcategories: ['Almonds (Badam)', 'Cashews (Kaju)', 'Dates (Khajoor)', 'Walnuts (Akhrot)', 'Pistachios (Pista)', 'Raisins (Kismis)', 'Dry Figs (Anjeer)']
   },
   { 
     title: 'Seeds', 
     description: 'Chia, Flax, Pumpkin & Sunflower Seeds', 
+    image: '../assets/images/banners/seeds_banner_blue_bowls.png',
     conditionsSummary: 'Tag includes Seeds',
     subcategories: ['Chia Seeds', 'Flax Seeds', 'Pumpkin Seeds', 'Sunflower Seeds', 'Watermelon Seeds', 'Sesame Seeds (Til)']
   },
   { 
     title: 'Ghee & Honey', 
     description: 'Pure Buffalo Ghee & Wild Forest Honey', 
+    image: '../assets/images/banners/ghee_honey_banner_jars.png',
     conditionsSummary: 'Tag includes Ghee',
     subcategories: ['Pure Desi Cow Ghee', 'Pure Buffalo Ghee', 'Raw Wild Forest Honey', 'Organic Honeycomb']
   },
   { 
     title: 'Cooking Essentials', 
     description: 'Daily Kitchen Essentials', 
+    image: '../assets/images/banners/cooking_essentials_banner_pouches.png',
     conditionsSummary: 'Tag includes Essentials',
     subcategories: ['Cold-Pressed Cooking Oils', 'Rock Salt / Himalayan Pink Salt', 'Natural Organic Jaggery / Bellam', 'Country Tamarind / Chintapandu']
   },
   { 
     title: 'Spices', 
     description: 'Whole authentic spices', 
+    image: '../assets/images/banners/spices_banner_pouches.png',
     conditionsSummary: 'Tag includes Spices',
     subcategories: ['Whole Spices', 'Black Pepper', 'Green Cardamom (Elaichi)', 'Cloves (Lavangam)', 'Cinnamon (Dalchina Chekka)', 'Cumin Seeds (Jeera)', 'Mustard Seeds (Avalu)']
   },
   { 
     title: 'Spice Powders', 
     description: 'Traditional homemade Andhra podulu', 
+    image: '../assets/images/banners/spice_powders_banner_pouches.png',
     conditionsSummary: 'Tag includes Powders',
     subcategories: ['Chana Dal Podi (Pappula Podi)', 'Garlic Podi (Vellulli Karam)', 'Kandi Podi', 'Karivepaku Podi (Curry Leaf)', 'Flax Seed Podi', 'Sambar & Rasam Powder']
+  },
+  { 
+    title: 'Fresh Vegetables', 
+    description: 'Farm-fresh organic vegetables & greens', 
+    image: 'https://images.unsplash.com/photo-1540420773420-3366772f4999?w=500&auto=format&fit=crop&q=80',
+    conditionsSummary: 'Tag includes Vegetables',
+    subcategories: ['Tomatoes', 'Onions', 'Potatoes', 'Green Leafy Vegetables', 'Carrots & Beetroots', 'Organic Chillies']
   }
 ];
 

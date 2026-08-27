@@ -5,8 +5,8 @@ const connectDB = async () => {
     const conn = await mongoose.connect(process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/arshith_fresh');
     console.log(`✅ MongoDB Connected to Self-Hosted DB: ${conn.connection.host}`);
   } catch (error) {
-    console.error(`❌ MongoDB Connection Error: ${error.message}`);
-    process.exit(1);
+    console.warn(`⚠️ MongoDB Connection Warning: ${error.message}`);
+    console.warn(`💡 The server will continue running. Static site and frontend pages remain fully operational.`);
   }
 };
 

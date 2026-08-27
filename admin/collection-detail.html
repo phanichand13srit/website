@@ -311,11 +311,23 @@
 
         const col = await colRes.json();
 
+        function getCollectionImage(col) {
+          if (col.image && col.image.trim() !== '') return col.image;
+          const title = (col.title || col.name || '').toLowerCase();
+          if (title.includes('oil')) return '../assets/images/banners/oils_banner_hero_golden.png';
+          if (title.includes('dry fruit') || title.includes('nut') || title.includes('badam') || title.includes('kaju')) return 'https://images.unsplash.com/photo-1608797178974-15b35a64ede9?w=300&auto=format&fit=crop&q=80';
+          if (title.includes('seed')) return '../assets/images/banners/seeds_banner_blue_bowls.png';
+          if (title.includes('ghee') || title.includes('honey')) return '../assets/images/banners/ghee_honey_banner_jars.png';
+          if (title.includes('cooking') || title.includes('essential')) return '../assets/images/banners/cooking_essentials_banner_pouches.png';
+          if (title.includes('powder') || title.includes('podi')) return '../assets/images/banners/spice_powders_banner_pouches.png';
+          if (title.includes('spice')) return '../assets/images/banners/spices_banner_pouches.png';
+          return 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=300&auto=format&fit=crop&q=80';
+        }
+
         document.getElementById('collectionHeading').textContent = col.title;
-        document.getElementById('colBannerTitle').textContent = col.title;
         document.getElementById('colBannerDesc').textContent = col.description || "Fresh natural products collection.";
-        document.getElementById('colBannerImg').src = col.image || "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=300&auto=format&fit=crop&q=60";
-        document.getElementById('ruleTagDisplay').textContent = (col.subcategories && col.subcategories.length > 0) ? col.subcategories.join(', ') : "All Products";
+        document.getElementById('colBannerImg').src = getCollectionImage(col);
+        document.getElementById('ruleTagDisplay').textContent = (col.subcategories && col.subcategories.length > 0) ? col.subcategories.join(', ') : "Category matches collection";
         
         document.getElementById('colSeoTitle').textContent = `${col.title} | Arshith Fresh`;
         document.getElementById('colSeoUrl').textContent = `https://arshithfresh.com > collections > ${col.slug || col.title.toLowerCase()}`;

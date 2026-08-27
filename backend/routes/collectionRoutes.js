@@ -6,10 +6,10 @@ const Collection = require('../models/Collection');
 // @desc    Get all collections
 router.get('/', async (req, res) => {
   try {
-    const collections = await Collection.find({}).sort({ title: 1 });
+    const collections = await Collection.find({}).sort({ createdAt: -1 });
     res.json(collections);
   } catch (error) {
-    res.status(500).json({ message: 'Error retrieving collections', error: error.message });
+    res.status(500).json({ success: false, message: 'Error retrieving collections', error: error.message });
   }
 });
 
@@ -19,11 +19,12 @@ router.get('/:id', async (req, res) => {
   try {
     const collection = await Collection.findById(req.params.id);
     if (!collection) {
-      return res.status(404).json({ message: 'Collection not found' });
+      return res.status(404).json({ success: false, message: 'Collection not found' });
     }
-    res.json(collection);
+    const colObj = collection.toObject();
+    res.json({ success: true, data: colObj, ...colObj });
   } catch (error) {
-    res.status(500).json({ message: 'Error retrieving collection', error: error.message });
+    res.status(500).json({ success: false, message: 'Error retrieving collection', error: error.message });
   }
 });
 
@@ -31,8 +32,13 @@ router.get('/:id', async (req, res) => {
 // @desc    Create a collection (Admin)
 router.post('/', async (req, res) => {
   try {
-    const { title, description, image, collectionType, conditionsSummary, subcategories } = req.body;
+    const { title, name, description, image, collectionType, conditionsSummary, subcategories } = req.body;
+    const colTitle = (title || name || '').trim();
     
+    if (!colTitle) {
+      return res.status(400).json({ success: false, message: 'Collection title is required' });
+    }
+
     // Parse subcategories if sent as comma-separated string or array
     let parsedSubs = [];
     if (Array.isArray(subcategories)) {
@@ -42,19 +48,23 @@ router.post('/', async (req, res) => {
     }
 
     const collection = new Collection({
-      title,
-      slug: title.toLowerCase().replace(/\s+/g, '-'),
-      description,
-      image,
+      title: colTitle,
+      slug: colTitle.toLowerCase().replace(/\s+/g, '-'),
+      description: description || '',
+      image: image || '',
       subcategories: parsedSubs,
       collectionType: collectionType || 'manual',
-      conditionsSummary: conditionsSummary || 'All Products',
+      conditionsSummary: conditionsSummary || `Tag includes ${colTitle}`,
     });
 
     const saved = await collection.save();
-    res.status(201).json(saved);
+    console.log(`✅ Saved new collection to MongoDB: "${saved.title}" (ID: ${saved._id})`);
+    
+    const savedObj = saved.toObject();
+    res.status(201).json({ success: true, data: savedObj, ...savedObj });
   } catch (error) {
-    res.status(400).json({ message: 'Error creating collection', error: error.message });
+    console.error('❌ Error saving collection to MongoDB:', error.message);
+    res.status(400).json({ success: false, message: 'Error creating collection', error: error.message });
   }
 });
 
@@ -62,17 +72,18 @@ router.post('/', async (req, res) => {
 // @desc    Update a collection & its subcategories (Admin)
 router.put('/:id', async (req, res) => {
   try {
-    const { title, description, image, collectionType, conditionsSummary, subcategories } = req.body;
+    const { title, name, description, image, collectionType, conditionsSummary, subcategories } = req.body;
+    const colTitle = (title || name || '').trim();
 
     let parsedSubs = undefined;
     if (Array.isArray(subcategories)) {
       parsedSubs = subcategories.map(s => String(s).trim()).filter(Boolean);
-    } else if (typeof subcategories === 'string') {
+    } else if (typeof subcategories === 'string' && subcategories.trim()) {
       parsedSubs = subcategories.split(',').map(s => s.trim()).filter(Boolean);
     }
 
     const updateData = {
-      ...(title && { title, slug: title.toLowerCase().replace(/\s+/g, '-') }),
+      ...(colTitle && { title: colTitle, slug: colTitle.toLowerCase().replace(/\s+/g, '-') }),
       ...(description !== undefined && { description }),
       ...(image !== undefined && { image }),
       ...(collectionType && { collectionType }),
@@ -87,12 +98,16 @@ router.put('/:id', async (req, res) => {
     );
 
     if (!updated) {
-      return res.status(404).json({ message: 'Collection not found' });
+      return res.status(404).json({ success: false, message: 'Collection not found' });
     }
 
-    res.json(updated);
+    console.log(`✅ Updated collection in MongoDB: "${updated.title}" (ID: ${updated._id})`);
+
+    const updatedObj = updated.toObject();
+    res.json({ success: true, data: updatedObj, ...updatedObj });
   } catch (error) {
-    res.status(400).json({ message: 'Error updating collection', error: error.message });
+    console.error('❌ Error updating collection in MongoDB:', error.message);
+    res.status(400).json({ success: false, message: 'Error updating collection', error: error.message });
   }
 });
 
