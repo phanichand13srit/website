@@ -339,9 +339,50 @@
     if (categorySelect) categorySelect.addEventListener('change', (e) => selectCategory(e.target.value));
     if (stockSelect) stockSelect.addEventListener('change', applyFilters);
 
+    function openImageLightbox(e, src, title) {
+      if (e && e.stopPropagation) e.stopPropagation();
+      const lightbox = document.getElementById('imgPreviewLightbox');
+      const img = document.getElementById('imgPreviewLightboxImg');
+      const caption = document.getElementById('imgPreviewLightboxTitle');
+      if (!lightbox || !img) return;
+
+      img.src = src;
+      caption.textContent = title || 'Product Image Preview';
+      lightbox.classList.add('active');
+    }
+
+    function closeImageLightbox(e) {
+      if (e && e.stopPropagation) e.stopPropagation();
+      const lightbox = document.getElementById('imgPreviewLightbox');
+      if (lightbox) lightbox.classList.remove('active');
+    }
+
+    document.addEventListener('click', function(e) {
+      if (e.target && e.target.classList && e.target.classList.contains('table-product-thumb')) {
+        e.stopPropagation();
+        openImageLightbox(e, e.target.src, e.target.alt || e.target.title || 'Product Image');
+      }
+    });
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closeImageLightbox();
+    });
+
+    window.openImageLightbox = openImageLightbox;
+    window.closeImageLightbox = closeImageLightbox;
     window.saveStock = saveStock;
     window.selectCategory = selectCategory;
     document.addEventListener('DOMContentLoaded', fetchInventory);
   </script>
+
+  <!-- Universal Image Preview Lightbox Modal -->
+  <div id="imgPreviewLightbox" class="img-preview-lightbox" onclick="closeImageLightbox(event)">
+    <div class="img-preview-card" onclick="event.stopPropagation()">
+      <button type="button" class="img-preview-close-btn" onclick="closeImageLightbox(event)">&times;</button>
+      <img id="imgPreviewLightboxImg" src="" alt="Full Preview">
+      <div id="imgPreviewLightboxTitle" class="img-preview-title">Product Image</div>
+    </div>
+  </div>
+
 </body>
 </html>

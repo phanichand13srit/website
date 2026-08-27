@@ -621,6 +621,95 @@ button, input, select, textarea {
   border-radius: var(--radius-sm);
   border: 1px solid var(--border-color);
   background-color: #f4f4f5;
+  cursor: zoom-in !important;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.table-product-thumb:hover {
+  transform: scale(1.15);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+/* Image Preview Lightbox Modal */
+.img-preview-lightbox {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(4px);
+  z-index: 99999;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding: 20px;
+}
+
+.img-preview-lightbox.active {
+  display: flex !important;
+}
+
+.img-preview-card {
+  position: relative;
+  max-width: 90vw;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: zoomIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes zoomIn {
+  from { transform: scale(0.85); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.img-preview-card img {
+  max-width: 100%;
+  max-height: 75vh;
+  border-radius: 12px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
+  object-fit: contain;
+  background: #ffffff;
+  padding: 8px;
+}
+
+.img-preview-title {
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  margin-top: 12px;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 4px 14px;
+  border-radius: 20px;
+}
+
+.img-preview-close-btn {
+  position: absolute;
+  top: -14px;
+  right: -14px;
+  width: 34px;
+  height: 34px;
+  background: #ffffff;
+  color: #1a1a1a;
+  border-radius: 50%;
+  border: none;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  transition: transform 0.15s ease;
+}
+
+.img-preview-close-btn:hover {
+  transform: scale(1.15);
+  background: #f1f5f9;
 }
 
 .table-product-name {
