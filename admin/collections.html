@@ -91,15 +91,14 @@
             <thead>
               <tr>
                 <th style="width: 36px;"><input type="checkbox" class="custom-checkbox"></th>
-                <th style="width: 200px;">Category</th>
-                <th style="min-width: 260px; max-width: 340px;">Sub-categories</th>
-                <th style="width: 140px; white-space: nowrap;">Products Count</th>
-                <th style="width: 100px; white-space: nowrap;">Type</th>
+                <th style="width: 220px;">Category</th>
+                <th style="min-width: 280px;">Sub-categories</th>
+                <th style="width: 150px; white-space: nowrap;">Products Count</th>
                 <th style="width: 120px; text-align: right; white-space: nowrap;">Actions</th>
               </tr>
             </thead>
             <tbody id="collectionsTableBody">
-              <tr><td colspan="6" style="text-align: center; padding: 25px;"><i class="fa-solid fa-spinner fa-spin"></i> Loading...</td></tr>
+              <tr><td colspan="5" style="text-align: center; padding: 25px;"><i class="fa-solid fa-spinner fa-spin"></i> Loading...</td></tr>
             </tbody>
           </table>
         </div>
@@ -178,7 +177,7 @@
 
     async function fetchCollections() {
       try {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 25px;"><i class="fa-solid fa-spinner fa-spin"></i> Loading...</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 25px;"><i class="fa-solid fa-spinner fa-spin"></i> Loading...</td></tr>';
         
         const [colRes, prodRes] = await Promise.all([
           fetch(`${API_BASE}/collections`),
@@ -191,14 +190,14 @@
         renderTable(allCollections);
       } catch (err) {
         console.error('Error fetching collections:', err);
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 20px; color: #ef4444;">Failed to load collections.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 20px; color: #ef4444;">Failed to load collections.</td></tr>';
       }
     }
 
     function renderTable(collections) {
       tbody.innerHTML = '';
       if (!collections || collections.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 25px; color: #6d7175;">No categories found. Click "+ Add category" to create one.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 25px; color: #6d7175;">No categories found. Click "+ Add category" to create one.</td></tr>';
         return;
       }
 
@@ -223,13 +222,12 @@
               </div>
             </div>
           </td>
-          <td style="max-width: 320px;">
-            <div style="display: flex; flex-wrap: wrap; gap: 4px; max-width: 320px; max-height: 85px; overflow-y: auto; padding-right: 4px;">
+          <td style="max-width: 340px;">
+            <div style="display: flex; flex-wrap: wrap; gap: 4px; max-width: 340px; max-height: 85px; overflow-y: auto; padding-right: 4px;">
               ${subTags}
             </div>
           </td>
           <td style="white-space: nowrap;"><strong>${prodCount}</strong> products</td>
-          <td style="white-space: nowrap;"><span class="status-pill active">${col.collectionType || 'manual'}</span></td>
           <td style="text-align: right; white-space: nowrap;">
             <div style="display:flex; gap:6px; justify-content:flex-end;">
               <button class="action-btn-sm" title="Edit Category & Subcategories" onclick="openEditModal('${col._id}')"><i class="fa-solid fa-pen"></i> Edit</button>
