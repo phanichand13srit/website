@@ -252,27 +252,51 @@
       await loadProduct();
     });
 
+    const DEFAULT_COLLECTIONS = [
+      { title: 'Oils', subcategories: ['Cold-Pressed oils', 'seed oils', 'Groundnut Oil', 'Sesame Oil', 'Coconut Oil', 'Sunflower Oil'] },
+      { title: 'Dry Fruits', subcategories: ['Almonds (Badam)', 'Cashews (Kaju)', 'Dates (Khajoor)', 'Walnuts (Akhrot)', 'Pistachios (Pista)', 'Raisins (Kismis)', 'Dry Figs (Anjeer)'] },
+      { title: 'Seeds', subcategories: ['Chia Seeds', 'Flax Seeds', 'Pumpkin Seeds', 'Sunflower Seeds', 'Watermelon Seeds', 'Sesame Seeds (Til)'] },
+      { title: 'Ghee & Honey', subcategories: ['Pure Desi Cow Ghee', 'Pure Buffalo Ghee', 'Raw Wild Forest Honey', 'Organic Honeycomb'] },
+      { title: 'Spices', subcategories: ['Whole Spices', 'Black Pepper', 'Green Cardamom (Elaichi)', 'Cloves (Lavangam)', 'Cinnamon (Dalchina Chekka)', 'Cumin Seeds (Jeera)', 'Mustard Seeds (Avalu)'] },
+      { title: 'Spice Powders', subcategories: ['Chana Dal Podi (Pappula Podi)', 'Garlic Podi (Vellulli Karam)', 'Kandi Podi', 'Karivepaku Podi (Curry Leaf)', 'Flax Seed Podi', 'Sambar & Rasam Powder'] },
+      { title: 'Cooking Essentials', subcategories: ['Rice & Grains', 'Dals & Pulses', 'Natural Salt', 'Jaggery'] }
+    ];
+
     async function loadCollections() {
       try {
         const res = await fetch(`${API_BASE}/collections`);
         if (!res.ok) throw new Error();
-        collectionsList = await res.json();
-        const select = document.getElementById('selectCategory');
-        select.innerHTML = '<option value="" disabled selected>Select Category</option>' +
-          collectionsList.map(c => `<option value="${c.title}">${c.title}</option>`).join('');
+        const json = await res.json();
+        const items = Array.isArray(json) ? json : (json.data || []);
+        collectionsList = items.length > 0 ? items : DEFAULT_COLLECTIONS;
       } catch (err) {
-        console.error('Error loading collections:', err);
+        collectionsList = DEFAULT_COLLECTIONS;
       }
+      populateCategoryDropdowns();
+    }
+
+    function populateCategoryDropdowns(selectedCategory = '', selectedSubcategory = '') {
+      const select = document.getElementById('selectCategory');
+      if (!select) return;
+
+      const list = collectionsList.length > 0 ? collectionsList : DEFAULT_COLLECTIONS;
+      select.innerHTML = '<option value="" disabled ' + (!selectedCategory ? 'selected' : '') + '>Select Category</option>' +
+        list.map(c => `<option value="${c.title}" ${c.title.toLowerCase().trim() === selectedCategory.toLowerCase().trim() ? 'selected' : ''}>${c.title}</option>`).join('');
+
+      onCategoryChange(selectedSubcategory);
     }
 
     function onCategoryChange(selectedSub = '') {
-      const catVal = document.getElementById('selectCategory').value;
+      const catVal = (document.getElementById('selectCategory').value || '').toLowerCase().trim();
       const subSelect = document.getElementById('selectSubcategory');
-      const matched = collectionsList.find(c => c.title === catVal);
+      if (!subSelect) return;
+
+      const list = collectionsList.length > 0 ? collectionsList : DEFAULT_COLLECTIONS;
+      const matched = list.find(c => (c.title || '').toLowerCase().trim() === catVal);
       const subs = (matched && Array.isArray(matched.subcategories)) ? matched.subcategories : [];
       
-      subSelect.innerHTML = '<option value="">Select Sub-category</option>' +
-        subs.map(s => `<option value="${s}" ${s === selectedSub ? 'selected' : ''}>${s}</option>`).join('');
+      subSelect.innerHTML = '<option value="">Select Sub-category (Optional)</option>' +
+        subs.map(s => `<option value="${s}" ${s.toLowerCase().trim() === selectedSub.toLowerCase().trim() ? 'selected' : ''}>${s}</option>`).join('');
     }
 
     async function loadProduct() {
@@ -317,10 +341,7 @@
       document.getElementById('selectProductStatus').value = inStock ? 'Active' : 'Draft';
 
       // Category & Subcategory
-      if (data.category) {
-        document.getElementById('selectCategory').value = data.category;
-        onCategoryChange(data.subcategory || '');
-      }
+      populateCategoryDropdowns(data.category || '', data.subcategory || '');
 
       // SEO Preview
       document.getElementById('seoTitle').textContent = `Buy ${title} Online | Arshith Fresh`;

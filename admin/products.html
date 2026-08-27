@@ -402,14 +402,26 @@
     let allProducts = [];
     let allCollections = [];
 
+    const DEFAULT_COLLECTIONS = [
+      { title: 'Oils', subcategories: ['Cold-Pressed oils', 'seed oils', 'Groundnut Oil', 'Sesame Oil', 'Coconut Oil', 'Sunflower Oil'] },
+      { title: 'Dry Fruits', subcategories: ['Almonds (Badam)', 'Cashews (Kaju)', 'Dates (Khajoor)', 'Walnuts (Akhrot)', 'Pistachios (Pista)', 'Raisins (Kismis)', 'Dry Figs (Anjeer)'] },
+      { title: 'Seeds', subcategories: ['Chia Seeds', 'Flax Seeds', 'Pumpkin Seeds', 'Sunflower Seeds', 'Watermelon Seeds', 'Sesame Seeds (Til)'] },
+      { title: 'Ghee & Honey', subcategories: ['Pure Desi Cow Ghee', 'Pure Buffalo Ghee', 'Raw Wild Forest Honey', 'Organic Honeycomb'] },
+      { title: 'Spices', subcategories: ['Whole Spices', 'Black Pepper', 'Green Cardamom (Elaichi)', 'Cloves (Lavangam)', 'Cinnamon (Dalchina Chekka)', 'Cumin Seeds (Jeera)', 'Mustard Seeds (Avalu)'] },
+      { title: 'Spice Powders', subcategories: ['Chana Dal Podi (Pappula Podi)', 'Garlic Podi (Vellulli Karam)', 'Kandi Podi', 'Karivepaku Podi (Curry Leaf)', 'Flax Seed Podi', 'Sambar & Rasam Powder'] },
+      { title: 'Cooking Essentials', subcategories: ['Rice & Grains', 'Dals & Pulses', 'Natural Salt', 'Jaggery'] }
+    ];
+
     // 1. Fetch Categories / Collections for dropdowns
     async function fetchCollections() {
       try {
         const res = await fetch(`${API_BASE}/collections`);
         if (!res.ok) throw new Error();
-        allCollections = await res.json();
+        const json = await res.json();
+        const items = Array.isArray(json) ? json : (json.data || []);
+        allCollections = items.length > 0 ? items : DEFAULT_COLLECTIONS;
       } catch (e) {
-        allCollections = [];
+        allCollections = DEFAULT_COLLECTIONS;
       }
       populateCategoryDropdown();
     }
@@ -418,8 +430,10 @@
       const catSelect = document.getElementById('prodCategory');
       if (!catSelect) return;
 
-      catSelect.innerHTML = '<option value="" disabled ' + (!selectedCategory ? 'selected' : '') + '>Select Category</option>' +
-        allCollections.map(c => `<option value="${c.title}" ${c.title === selectedCategory ? 'selected' : ''}>${c.title}</option>`).join('');
+      const list = allCollections.length > 0 ? allCollections : DEFAULT_COLLECTIONS;
+      const opts = list.map(c => `<option value="${c.title}" ${c.title.toLowerCase().trim() === selectedCategory.toLowerCase().trim() ? 'selected' : ''}>${c.title}</option>`).join('');
+      
+      catSelect.innerHTML = '<option value="" disabled ' + (!selectedCategory ? 'selected' : '') + '>Select Category</option>' + opts;
 
       updateSubcategoryDropdown(selectedSubcategory);
     }
@@ -433,12 +447,13 @@
       const subSelect = document.getElementById('prodSubcategory');
       if (!catSelect || !subSelect) return;
 
-      const chosenCat = catSelect.value;
-      const matched = allCollections.find(c => c.title === chosenCat);
+      const chosenCat = (catSelect.value || '').toLowerCase().trim();
+      const list = allCollections.length > 0 ? allCollections : DEFAULT_COLLECTIONS;
+      const matched = list.find(c => (c.title || '').toLowerCase().trim() === chosenCat);
       const subs = (matched && Array.isArray(matched.subcategories)) ? matched.subcategories : [];
 
       subSelect.innerHTML = '<option value="">Select Sub-category (Optional)</option>' +
-        subs.map(s => `<option value="${s}" ${s === selectedSubcategory ? 'selected' : ''}>${s}</option>`).join('');
+        subs.map(s => `<option value="${s}" ${s.toLowerCase().trim() === selectedSubcategory.toLowerCase().trim() ? 'selected' : ''}>${s}</option>`).join('');
     }
 
     let activeProdCategory = 'all';
