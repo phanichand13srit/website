@@ -104,31 +104,33 @@
               <textarea id="inputProductDescription" class="form-control" rows="5" placeholder="Detailed product description..."></textarea>
             </div>
 
-            <!-- Media / Image -->
+            <!-- Media / Images -->
             <div class="detail-card">
-              <div class="detail-card-title">
-                <span>Product Media & Image</span>
-                <span style="font-size: 11.5px; color: #64748b; font-weight: normal;">Upload from laptop or paste URL</span>
+              <div class="detail-card-title" style="display: flex; justify-content: space-between; align-items: center;">
+                <span>Product Media & Gallery</span>
+                <span id="imageCountBadge" style="font-size: 12px; color: #0f7139; font-weight: 600; background: #e8f5e9; padding: 2px 8px; border-radius: 12px;">0 images</span>
               </div>
 
-              <!-- Choose File from Laptop / Drag & Drop -->
-              <div id="productDetailDropzone" style="border: 2px dashed #cbd5e1; border-radius: 8px; padding: 18px 16px; text-align: center; cursor: pointer; background: #f8fafc; margin-bottom: 12px; transition: all 0.2s ease;">
-                <input type="file" id="inputProductFile" accept="image/*" style="display: none;" onchange="handleDetailFileSelect(event)">
-                <i class="fa-solid fa-cloud-arrow-up" style="font-size: 28px; color: #0f7139; margin-bottom: 6px;"></i>
-                <div style="font-size: 13.5px; font-weight: 600; color: #1e293b;">Click to choose image from laptop</div>
-                <div style="font-size: 11.5px; color: #64748b; margin-top: 2px;">Supports JPG, PNG, WEBP, GIF (Drag & drop here)</div>
+              <!-- Choose Multiple Files from Laptop / Drag & Drop -->
+              <div id="productDetailDropzone" style="border: 2px dashed #cbd5e1; border-radius: 8px; padding: 20px 16px; text-align: center; cursor: pointer; background: #f8fafc; margin-bottom: 12px; transition: all 0.2s ease;">
+                <input type="file" id="inputProductFile" accept="image/*" multiple style="display: none;" onchange="handleMultipleFileSelect(event)">
+                <i class="fa-solid fa-cloud-arrow-up" style="font-size: 30px; color: #0f7139; margin-bottom: 6px;"></i>
+                <div style="font-size: 13.5px; font-weight: 600; color: #1e293b;">Click to choose images from laptop (Select multiple)</div>
+                <div style="font-size: 11.5px; color: #64748b; margin-top: 2px;">Supports JPG, PNG, WEBP, GIF — Drag & drop multiple files</div>
               </div>
 
-              <div style="display: flex; align-items: center; margin: 10px 0; gap: 10px;">
-                <div style="flex: 1; height: 1px; background: #e2e8f0;"></div>
-                <span style="font-size: 11px; color: #94a3b8; font-weight: 600;">OR PASTE IMAGE URL</span>
-                <div style="flex: 1; height: 1px; background: #e2e8f0;"></div>
+              <!-- Add Image by URL -->
+              <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+                <input type="text" id="inputNewImageUrl" class="form-control" placeholder="Or paste image URL (https://...) to add" style="flex: 1;">
+                <button type="button" class="btn-pill" onclick="addImageByUrl()" style="white-space: nowrap;"><i class="fa-solid fa-plus"></i> Add URL</button>
               </div>
 
-              <input type="text" id="inputProductImage" class="form-control" placeholder="https://images.unsplash.com/... or chosen image data" oninput="updateMediaPreview(this.value)">
-              
-              <div class="media-preview-box" id="mediaPreviewBox" style="margin-top: 12px; text-align: center; background: #f8fafc; padding: 12px; border-radius: 8px; border: 1px solid #e2e8f0;">
-                <img id="mediaPreviewImg" src="" alt="Product Preview" style="max-height: 180px; max-width: 100%; border-radius: 6px; object-fit: contain;" onerror="this.src='https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=300';">
+              <!-- Hidden compatibility field -->
+              <input type="hidden" id="inputProductImage" value="">
+
+              <!-- Multiple Images Grid -->
+              <div id="multipleImagesGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 10px; margin-top: 10px;">
+                <!-- Dynamically populated images -->
               </div>
             </div>
 
@@ -235,6 +237,7 @@
     let currentProductId = null;
     let collectionsList = [];
     let currentProductData = null;
+    let uploadedImages = [];
 
     document.addEventListener("DOMContentLoaded", async () => {
       const urlParams = new URLSearchParams(window.location.search);
@@ -252,43 +255,41 @@
     async function loadCollections() {
       try {
         const res = await fetch(`${API_BASE}/collections`);
-        if (res.ok) {
-          collectionsList = await res.json();
-          const catSelect = document.getElementById('selectCategory');
-          catSelect.innerHTML = '<option value="" disabled>Select Category</option>' +
-            collectionsList.map(c => `<option value="${c.title}">${c.title}</option>`).join('');
-        }
-      } catch (e) {
-        console.error('Error loading collections:', e);
+        if (!res.ok) throw new Error();
+        collectionsList = await res.json();
+        const select = document.getElementById('selectCategory');
+        select.innerHTML = '<option value="" disabled selected>Select Category</option>' +
+          collectionsList.map(c => `<option value="${c.title}">${c.title}</option>`).join('');
+      } catch (err) {
+        console.error('Error loading collections:', err);
       }
     }
 
     function onCategoryChange(selectedSub = '') {
-      const catSelect = document.getElementById('selectCategory');
+      const catVal = document.getElementById('selectCategory').value;
       const subSelect = document.getElementById('selectSubcategory');
-      const catVal = catSelect.value;
       const matched = collectionsList.find(c => c.title === catVal);
       const subs = (matched && Array.isArray(matched.subcategories)) ? matched.subcategories : [];
-
-      subSelect.innerHTML = '<option value="">Select Sub-category (Optional)</option>' +
+      
+      subSelect.innerHTML = '<option value="">Select Sub-category</option>' +
         subs.map(s => `<option value="${s}" ${s === selectedSub ? 'selected' : ''}>${s}</option>`).join('');
     }
 
     async function loadProduct() {
       try {
-        const response = await fetch(`${API_BASE}/products/${currentProductId}`);
-        if (!response.ok) throw new Error('Product not found');
-        currentProductData = await response.json();
-        
-        populateProductData(currentProductData);
+        const res = await fetch(`${API_BASE}/products/${currentProductId}`);
+        if (!res.ok) throw new Error("Product not found");
+        const data = await res.json();
+        currentProductData = data;
+        populateProductData(data);
       } catch (err) {
-        console.error('Error fetching product:', err);
-        document.getElementById('productTitleHeading').textContent = "Product Not Found";
+        console.error('Error loading product:', err);
+        document.getElementById('productTitleHeading').textContent = "Error Loading Product";
       }
     }
 
     function populateProductData(data) {
-      const title = data.name || 'Unnamed Product';
+      const title = data.name || data.title || 'Untitled';
       document.getElementById('productTitleHeading').textContent = title;
       document.getElementById('inputProductTitle').value = title;
       document.getElementById('inputProductDescription').value = data.description || '';
@@ -299,9 +300,15 @@
       document.getElementById('inputVendor').value = data.brand || 'Arshith Fresh';
       document.getElementById('inputIsFeatured').checked = !!data.isFeatured;
       
-      const img = data.image || 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=300';
-      document.getElementById('inputProductImage').value = data.image || '';
-      updateMediaPreview(img);
+      // Load Multiple Images
+      uploadedImages = [];
+      if (Array.isArray(data.images) && data.images.length > 0) {
+        uploadedImages = data.images.map(img => typeof img === 'object' ? img.url : img).filter(Boolean);
+      } else if (data.image) {
+        uploadedImages = [data.image];
+      }
+      
+      renderImagesGrid();
 
       // Status
       const inStock = (Number(data.countInStock) || 0) > 0;
@@ -321,34 +328,95 @@
       document.getElementById('seoSnippet').textContent = data.description ? data.description.substring(0, 150) + '...' : `Buy authentic ${title} online from Arshith Fresh.`;
     }
 
-    function handleDetailFileSelect(event) {
-      const file = event.target.files && event.target.files[0];
-      if (!file) return;
+    function renderImagesGrid() {
+      const grid = document.getElementById('multipleImagesGrid');
+      const countBadge = document.getElementById('imageCountBadge');
+      if (!grid) return;
 
-      if (!file.type.startsWith('image/')) {
-        alert('Please select an image file (JPG, PNG, WEBP, GIF)');
+      if (countBadge) {
+        countBadge.textContent = `${uploadedImages.length} image${uploadedImages.length === 1 ? '' : 's'}`;
+      }
+
+      if (uploadedImages.length === 0) {
+        grid.innerHTML = `<div style="grid-column: 1 / -1; text-align: center; color: #94a3b8; font-size: 12.5px; padding: 16px; background: #f8fafc; border-radius: 6px; border: 1px dashed #e2e8f0;">No images uploaded yet. Upload from laptop or paste image URLs above.</div>`;
+        document.getElementById('inputProductImage').value = '';
         return;
       }
 
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        const base64 = e.target.result;
-        document.getElementById('inputProductImage').value = base64;
-        updateMediaPreview(base64);
-      };
-      reader.readAsDataURL(file);
+      document.getElementById('inputProductImage').value = uploadedImages[0] || '';
+
+      grid.innerHTML = uploadedImages.map((url, idx) => {
+        const isPrimary = idx === 0;
+        return `
+          <div style="position: relative; border-radius: 8px; border: 2px solid ${isPrimary ? '#0f7139' : '#e2e8f0'}; background: #ffffff; padding: 6px; display: flex; flex-direction: column; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+            <div style="width: 100%; height: 95px; display: flex; align-items: center; justify-content: center; overflow: hidden; border-radius: 4px; background: #fafbfc; position: relative;">
+              <img src="${url}" alt="Image ${idx + 1}" style="max-height: 100%; max-width: 100%; object-fit: contain;" onerror="this.src='https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=100';">
+              
+              ${isPrimary ? `<span style="position: absolute; top: 4px; left: 4px; background: #0f7139; color: #fff; font-size: 9.5px; font-weight: 700; padding: 2px 6px; border-radius: 4px; letter-spacing: 0.3px;">PRIMARY</span>` : ''}
+
+              <button type="button" onclick="removeImage(${idx})" title="Remove image" style="position: absolute; top: 4px; right: 4px; background: rgba(220, 38, 38, 0.9); color: #ffffff; border: none; border-radius: 50%; width: 22px; height: 22px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 11px; transition: transform 0.15s ease;" onmouseover="this.style.transform='scale(1.15)'" onmouseout="this.style.transform='scale(1)'">
+                <i class="fa-solid fa-xmark"></i>
+              </button>
+            </div>
+
+            ${!isPrimary ? `<button type="button" onclick="setAsPrimaryImage(${idx})" style="font-size: 11px; font-weight: 600; border: 1px solid #cbd5e1; background: #f8fafc; color: #334155; border-radius: 4px; padding: 3px 6px; cursor: pointer; margin-top: 6px; width: 100%; transition: all 0.15s ease;" onmouseover="this.style.borderColor='#0f7139'; this.style.color='#0f7139';">Set Primary</button>` : `<div style="font-size: 11px; font-weight: 600; color: #0f7139; margin-top: 6px; text-align: center;">Main Image</div>`}
+          </div>
+        `;
+      }).join('');
     }
 
-    function updateMediaPreview(url) {
-      const previewImg = document.getElementById('mediaPreviewImg');
-      if (url && (url.trim().startsWith('http') || url.trim().startsWith('data:image'))) {
-        previewImg.src = url.trim();
-      } else {
-        previewImg.src = 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=300';
+    function handleMultipleFileSelect(event) {
+      const files = event.target.files;
+      if (!files || files.length === 0) return;
+
+      const fileList = Array.from(files);
+      let loadedCount = 0;
+
+      fileList.forEach(file => {
+        if (!file.type.startsWith('image/')) return;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          uploadedImages.push(e.target.result);
+          loadedCount++;
+          if (loadedCount === fileList.length) {
+            renderImagesGrid();
+          }
+        };
+        reader.readAsDataURL(file);
+      });
+
+      // Clear input so same file can be re-selected if needed
+      event.target.value = '';
+    }
+
+    function addImageByUrl() {
+      const input = document.getElementById('inputNewImageUrl');
+      const url = input ? input.value.trim() : '';
+      if (!url) {
+        alert('Please enter a valid image URL');
+        return;
+      }
+      uploadedImages.push(url);
+      input.value = '';
+      renderImagesGrid();
+    }
+
+    function removeImage(index) {
+      if (index >= 0 && index < uploadedImages.length) {
+        uploadedImages.splice(index, 1);
+        renderImagesGrid();
       }
     }
 
-    // Setup Drag & Drop for Product Detail
+    function setAsPrimaryImage(index) {
+      if (index > 0 && index < uploadedImages.length) {
+        const item = uploadedImages.splice(index, 1)[0];
+        uploadedImages.unshift(item);
+        renderImagesGrid();
+      }
+    }
+
+    // Setup Drag & Drop for Multiple Images
     const detailDropzone = document.getElementById('productDetailDropzone');
     if (detailDropzone) {
       detailDropzone.addEventListener('click', () => {
@@ -370,8 +438,8 @@
       });
       detailDropzone.addEventListener('drop', (e) => {
         const files = e.dataTransfer && e.dataTransfer.files;
-        if (files && files[0]) {
-          handleDetailFileSelect({ target: { files: [files[0]] } });
+        if (files && files.length > 0) {
+          handleMultipleFileSelect({ target: { files } });
         }
       });
     }
@@ -392,8 +460,11 @@
       const category = document.getElementById('selectCategory').value;
       const subcategory = document.getElementById('selectSubcategory').value;
       const brand = document.getElementById('inputVendor').value.trim() || 'Arshith Fresh';
-      const image = document.getElementById('inputProductImage').value.trim();
       const isFeatured = document.getElementById('inputIsFeatured').checked;
+
+      // Construct images array
+      const images = uploadedImages.map(url => ({ url }));
+      const image = uploadedImages[0] || '';
 
       const payload = {
         name,
@@ -406,6 +477,7 @@
         subcategory,
         brand,
         image,
+        images,
         isFeatured
       };
 
@@ -419,7 +491,7 @@
         if (response.ok) {
           const resData = await response.json();
           populateProductData(resData);
-          showToast("Product updated successfully!");
+          showToast("Product updated with images successfully!");
         } else {
           showToast("Failed to save product details.");
         }

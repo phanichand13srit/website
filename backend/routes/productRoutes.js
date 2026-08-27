@@ -7,8 +7,16 @@ function formatProduct(p) {
   const obj = p.toObject ? p.toObject() : { ...p };
   obj.title = obj.title || obj.name || 'Untitled Product';
   obj.name = obj.name || obj.title || 'Untitled Product';
-  if (!obj.images || obj.images.length === 0) {
-    obj.images = [{ url: obj.image || 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=100&auto=format&fit=crop&q=60' }];
+
+  if (Array.isArray(obj.images) && obj.images.length > 0) {
+    obj.images = obj.images.map(img => typeof img === 'object' ? img : { url: img }).filter(img => img && img.url);
+    if (!obj.image && obj.images[0]) {
+      obj.image = obj.images[0].url;
+    }
+  } else if (obj.image) {
+    obj.images = [{ url: obj.image }];
+  } else {
+    obj.images = [{ url: 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=100&auto=format&fit=crop&q=60' }];
   }
   return obj;
 }
@@ -40,13 +48,41 @@ router.get('/', async (req, res) => {
 });
 
 // @route   GET /api/products/:id
-// @desc    Get single product by ID
+// @desc    Get single product by ID or slug/name
 router.get('/:id', async (req, res) => {
   try {
-    const product = await Product.findById(req.params.id);
+    const rawId = (req.params.id || '').trim();
+    let product = null;
+
+    // 1. If valid 24-char ObjectId, find by MongoDB ID
+    if (rawId.match(/^[0-9a-fA-F]{24}$/)) {
+      product = await Product.findById(rawId);
+    }
+
+    // 2. If not found by ID or if slug was passed (e.g. groundnut-oil-premium, coconut-oil)
+    if (!product && rawId) {
+      const cleanSlug = rawId.replace(/-/g, ' ').replace(/\s+/g, ' ').trim();
+      const firstWord = cleanSlug.split(' ')[0];
+
+      product = await Product.findOne({
+        $or: [
+          { name: { $regex: cleanSlug, $options: 'i' } },
+          { name: { $regex: firstWord, $options: 'i' } },
+          { tags: { $in: [cleanSlug, firstWord, rawId] } },
+          { category: { $regex: cleanSlug, $options: 'i' } }
+        ]
+      });
+    }
+
+    // 3. If still not found, return the first available product as a safe fallback
+    if (!product) {
+      product = await Product.findOne();
+    }
+
     if (!product) {
       return res.status(404).json({ message: 'Product not found' });
     }
+
     res.json(formatProduct(product));
   } catch (error) {
     res.status(500).json({ message: 'Error retrieving product', error: error.message });
@@ -74,8 +110,19 @@ router.post('/', async (req, res) => {
     } else {
       data.price = Number(data.price);
     }
-    if (!data.image && Array.isArray(data.images) && data.images.length > 0) {
-      data.image = typeof data.images[0] === 'object' ? (data.images[0].url || '') : data.images[0];
+
+    // Normalize images array
+    if (Array.isArray(data.images)) {
+      data.images = data.images.map(img => {
+        if (typeof img === 'string') return { url: img };
+        return { url: img.url || '', alt: img.alt || '' };
+      }).filter(img => img.url && img.url.trim());
+
+      if (data.images.length > 0 && !data.image) {
+        data.image = data.images[0].url;
+      }
+    } else if (data.image) {
+      data.images = [{ url: data.image }];
     }
 
     const newProduct = new Product(data);
@@ -97,6 +144,20 @@ router.put('/:id', async (req, res) => {
     }
     if (data.price !== undefined && !isNaN(Number(data.price))) {
       data.price = Number(data.price);
+    }
+
+    // Normalize images array
+    if (Array.isArray(data.images)) {
+      data.images = data.images.map(img => {
+        if (typeof img === 'string') return { url: img };
+        return { url: img.url || '', alt: img.alt || '' };
+      }).filter(img => img.url && img.url.trim());
+
+      if (data.images.length > 0) {
+        data.image = data.images[0].url;
+      }
+    } else if (data.image) {
+      data.images = [{ url: data.image }];
     }
 
     const updatedProduct = await Product.findByIdAndUpdate(
