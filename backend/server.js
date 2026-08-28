@@ -50,6 +50,12 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '../index.html'));
 });
 
+// Explicit search route redirect to support legacy /search URLs
+app.get('/search', (req, res) => {
+  const query = req.query.q || req.query.search || '';
+  res.redirect(`/pages/collections.html?search=${encodeURIComponent(query)}`);
+});
+
 // Start Server
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`\n======================================================`);
