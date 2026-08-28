@@ -301,6 +301,26 @@
 
         const urlParams = new URLSearchParams(window.location.search);
         const redirectDestination = urlParams.get('redirect') || '../../index.html';
+        const noticeType = urlParams.get('notice');
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const alertBox = document.getElementById('loginAlertBox');
+            if (noticeType === 'checkout' && alertBox) {
+                alertBox.innerText = '🔒 Please sign in to proceed to Checkout';
+                alertBox.style.background = '#e8f5e9';
+                alertBox.style.borderColor = '#0f7139';
+                alertBox.style.color = '#0f7139';
+                alertBox.style.display = 'block';
+            }
+            
+            // Preserve redirect query param on register link
+            if (redirectDestination) {
+                const regLink = document.querySelector('.create-account-wrap a');
+                if (regLink) {
+                    regLink.href = `register.html?redirect=${encodeURIComponent(redirectDestination)}&notice=${encodeURIComponent(noticeType || '')}`;
+                }
+            }
+        });
 
         async function handleLoginForm(e) {
             e.preventDefault();

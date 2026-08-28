@@ -265,13 +265,15 @@ router.get('/profile/:id', async (req, res) => {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    // Fetch user's orders by user ID or customer email
-    const orders = await Order.find({
+    // Fetch user's orders by user ID or customer email (case-insensitive)
+    const emailFilter = user.email ? new RegExp(`^${user.email.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i') : null;
+    const query = {
       $or: [
         { user: user._id },
-        { customerEmail: user.email }
+        ...(emailFilter ? [{ customerEmail: emailFilter }, { customerEmail: user.email }] : [])
       ]
-    }).sort({ createdAt: -1 });
+    };
+    const orders = await Order.find(query).sort({ createdAt: -1 });
 
     res.json({
       user,

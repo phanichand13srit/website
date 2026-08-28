@@ -27,23 +27,55 @@ router.get('/:id', async (req, res) => {
   }
 });
 
+const mongoose = require('mongoose');
+
 // @route   POST /api/orders
 // @desc    Create a new order (Checkout)
 router.post('/', async (req, res) => {
   try {
-    const { orderItems, shippingAddress, paymentMethod, totalPrice, itemsPrice, shippingPrice } = req.body;
+    const {
+      user,
+      customerName,
+      customerEmail,
+      customerPhone,
+      orderItems,
+      shippingAddress,
+      billingAddress,
+      transactionId,
+      paymentMethod,
+      totalPrice,
+      itemsPrice,
+      shippingPrice,
+      isPaid
+    } = req.body;
 
     if (!orderItems || orderItems.length === 0) {
       return res.status(400).json({ message: 'No order items provided' });
     }
 
+    const validUser = (user && mongoose.Types.ObjectId.isValid(user)) ? user : undefined;
+
+    const sanitizedItems = orderItems.map(item => ({
+      ...item,
+      product: (item.product && mongoose.Types.ObjectId.isValid(item.product)) ? item.product : undefined,
+      qty: Number(item.qty || item.quantity || 1),
+      price: Number(item.price || 0)
+    }));
+
     const order = new Order({
-      orderItems,
+      user: validUser,
+      customerName: customerName || 'Customer',
+      customerEmail: customerEmail || '',
+      customerPhone: customerPhone || '',
+      orderItems: sanitizedItems,
       shippingAddress,
-      paymentMethod: paymentMethod || 'Cash on Delivery',
+      billingAddress: billingAddress || shippingAddress,
+      transactionId: transactionId || '',
+      paymentMethod: paymentMethod || 'Razorpay Secure',
       itemsPrice: itemsPrice || totalPrice,
       shippingPrice: shippingPrice || 0,
       totalPrice,
+      isPaid: isPaid || false,
       status: 'Confirmed',
     });
 

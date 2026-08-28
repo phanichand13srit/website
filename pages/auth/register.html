@@ -291,6 +291,26 @@
     <script>
         const urlParams = new URLSearchParams(window.location.search);
         const redirectDestination = urlParams.get('redirect') || '../../index.html';
+        const noticeType = urlParams.get('notice');
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const alertBox = document.getElementById('registerAlertBox');
+            if (noticeType === 'checkout' && alertBox) {
+                alertBox.innerText = '🔒 Create an account to proceed to Checkout';
+                alertBox.style.background = '#e8f5e9';
+                alertBox.style.borderColor = '#0f7139';
+                alertBox.style.color = '#0f7139';
+                alertBox.style.display = 'block';
+            }
+            
+            // Preserve redirect query param on login link
+            if (redirectDestination) {
+                const loginLink = document.querySelector('.login-redirect-wrap a');
+                if (loginLink) {
+                    loginLink.href = `login.html?redirect=${encodeURIComponent(redirectDestination)}&notice=${encodeURIComponent(noticeType || '')}`;
+                }
+            }
+        });
 
         async function handleRegisterForm(e) {
             e.preventDefault();

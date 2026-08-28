@@ -23,7 +23,7 @@ const orderSchema = new mongoose.Schema({
       product: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Product',
-        required: true,
+        required: false,
       },
       name: { type: String, required: true },
       qty: { type: Number, required: true, default: 1 },
@@ -34,13 +34,27 @@ const orderSchema = new mongoose.Schema({
   ],
   shippingAddress: {
     address: { type: String, required: true },
+    apartment: { type: String, default: '' },
     city: { type: String, required: true },
+    state: { type: String, default: 'Karnataka' },
     postalCode: { type: String, required: true },
     country: { type: String, default: 'India' },
   },
+  billingAddress: {
+    address: { type: String, default: '' },
+    apartment: { type: String, default: '' },
+    city: { type: String, default: '' },
+    state: { type: String, default: '' },
+    postalCode: { type: String, default: '' },
+    country: { type: String, default: 'India' },
+  },
+  transactionId: {
+    type: String,
+    default: '',
+  },
   paymentMethod: {
     type: String,
-    default: 'Cash on Delivery',
+    default: 'Razorpay Secure',
   },
   itemsPrice: {
     type: Number,

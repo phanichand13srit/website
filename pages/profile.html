@@ -239,6 +239,15 @@
             loadUserProfile();
         }
 
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const activeTab = urlParams.get('tab');
+            if (activeTab === 'orders') {
+                const orderBtn = document.querySelectorAll('.nav-tab-btn')[1];
+                switchTab('orders', orderBtn);
+            }
+        });
+
         async function loadUserProfile() {
             if (!currentUser) return;
 
@@ -259,28 +268,45 @@
             document.getElementById('profileCity').value = currentUser.city || '';
             document.getElementById('profilePostalCode').value = currentUser.postalCode || '';
 
-            // Fetch live profile & order history from MongoDB
+            // Fetch live profile & order history from MongoDB + combine with local cache
+            let apiOrders = [];
             try {
                 const res = await fetch(`http://localhost:5000/api/users/profile/${currentUser._id}`);
-                if (!res.ok) throw new Error('Could not load profile');
-                const data = await res.json();
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data && data.user) {
+                        const u = data.user;
+                        currentUser = { ...currentUser, ...u };
+                        localStorage.setItem('arshith_user', JSON.stringify(currentUser));
 
-                if (data && data.user) {
-                    const u = data.user;
-                    currentUser = { ...currentUser, ...u };
-                    localStorage.setItem('arshith_user', JSON.stringify(currentUser));
-
-                    document.getElementById('profileName').value = u.name || '';
-                    document.getElementById('profilePhone').value = u.phone || '';
-                    document.getElementById('profileStreet').value = u.street || '';
-                    document.getElementById('profileCity').value = u.city || '';
-                    document.getElementById('profilePostalCode').value = u.postalCode || '';
+                        document.getElementById('profileName').value = u.name || '';
+                        document.getElementById('profilePhone').value = u.phone || '';
+                        document.getElementById('profileStreet').value = u.street || '';
+                        document.getElementById('profileCity').value = u.city || '';
+                        document.getElementById('profilePostalCode').value = u.postalCode || '';
+                    }
+                    apiOrders = data.orders || [];
                 }
-
-                renderUserOrders(data.orders || []);
             } catch (err) {
                 console.log('Using cached profile data:', err);
             }
+
+            // Combine with local order storage cache for 100% reliable display
+            let localOrders = [];
+            try {
+                localOrders = JSON.parse(localStorage.getItem('arshith_user_orders')) || [];
+            } catch(e) {}
+
+            const mergedMap = new Map();
+            [...apiOrders, ...localOrders].forEach(o => {
+                const key = o._id || o.transactionId || JSON.stringify(o.createdAt);
+                if (key && !mergedMap.has(key)) {
+                    mergedMap.set(key, o);
+                }
+            });
+
+            const finalOrders = Array.from(mergedMap.values()).sort((a, b) => new Date(b.createdAt || Date.now()) - new Date(a.createdAt || Date.now()));
+            renderUserOrders(finalOrders);
         }
 
         function renderUserOrders(orders) {
@@ -300,23 +326,57 @@
             }
 
             container.innerHTML = `
-                <div style="display: flex; flex-direction: column; gap: 14px;">
-                    ${orders.map(o => `
-                        <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 12px; padding: 18px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.02);">
-                            <div>
-                                <div style="font-weight: 700; color: #0f7139; font-size: 15px;">Order #${String(o._id).substring(0, 8)}</div>
-                                <div style="font-size: 13px; color: #64748b; margin-top: 4px;">Placed on: ${new Date(o.createdAt).toLocaleDateString()}</div>
-                                <div style="font-size: 13px; color: #334155; margin-top: 4px;">${(o.orderItems || []).length} item(s)</div>
-                            </div>
-                            <div style="text-align: right;">
-                                <div style="font-size: 18px; font-weight: 700; color: #0f172a;">₹${o.totalPrice}</div>
-                                <div style="margin-top: 6px; display: flex; gap: 6px; justify-content: flex-end;">
-                                    <span style="font-size: 11px; padding: 3px 8px; border-radius: 6px; font-weight: 600; background: ${o.isPaid ? '#dcfce7; color: #166534;' : '#fef9c3; color: #854d0e;'}">${o.isPaid ? 'Paid' : 'Pending'}</span>
-                                    <span style="font-size: 11px; padding: 3px 8px; border-radius: 6px; font-weight: 600; background: ${o.isDelivered ? '#dcfce7; color: #166534;' : '#e0f2fe; color: #0369a1;'}">${o.isDelivered ? 'Delivered' : 'Processing'}</span>
+                <div style="display: flex; flex-direction: column; gap: 18px;">
+                    ${orders.map(o => {
+                        const orderId = String(o._id).substring(0, 8).toUpperCase();
+                        const dateStr = new Date(o.createdAt).toLocaleString();
+                        const addr = o.shippingAddress ? [o.shippingAddress.address, o.shippingAddress.city, o.shippingAddress.state, o.shippingAddress.postalCode].filter(Boolean).join(', ') : 'Standard Shipping';
+                        
+                        return `
+                            <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 14px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.03);">
+                                <div style="background: #f8fafc; padding: 14px 20px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                                    <div>
+                                        <span style="font-weight: 700; color: #0f7139; font-size: 16px;">Order #${orderId}</span>
+                                        <span style="font-size: 12px; color: #64748b; margin-left: 10px;">Placed on ${dateStr}</span>
+                                    </div>
+                                    <div style="display: flex; gap: 8px;">
+                                        <span style="font-size: 11px; padding: 4px 10px; border-radius: 12px; font-weight: 700; background: ${o.isPaid ? '#dcfce7; color: #15803d;' : '#fef9c3; color: #854d0e;'}">${o.isPaid ? '✓ PAID' : '⏳ PENDING'}</span>
+                                        <span style="font-size: 11px; padding: 4px 10px; border-radius: 12px; font-weight: 700; background: #e0f2fe; color: #0369a1;">${o.paymentMethod || 'Razorpay'}</span>
+                                    </div>
+                                </div>
+
+                                <div style="padding: 18px 20px;">
+                                    <div style="margin-bottom: 14px;">
+                                        <div style="font-size: 12px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">ITEMS ORDERED</div>
+                                        <div style="display: flex; flex-direction: column; gap: 10px;">
+                                            ${(o.orderItems || []).map(item => `
+                                                <div style="display: flex; justify-content: space-between; align-items: center; font-size: 14px;">
+                                                    <div style="display: flex; align-items: center; gap: 12px;">
+                                                        <img src="${item.image || 'https://arshithfresh.com/cdn/shop/collections/spice_200x200_crop_center.png?v=1746963495'}" style="width: 44px; height: 44px; border-radius: 6px; object-fit: cover; border: 1px solid #e2e8f0;">
+                                                        <div>
+                                                            <div style="font-weight: 600; color: #1e293b;">${item.name || item.title}</div>
+                                                            <div style="font-size: 12px; color: #64748b;">Qty: ${item.qty || item.quantity || 1} • ${item.unit || '1 kg'}</div>
+                                                        </div>
+                                                    </div>
+                                                    <div style="font-weight: 600; color: #0f172a;">₹${((item.price || 0) * (item.qty || item.quantity || 1)).toFixed(2)}</div>
+                                                </div>
+                                            `).join('')}
+                                        </div>
+                                    </div>
+
+                                    <div style="border-top: 1px dashed #e2e8f0; padding-top: 12px; display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 10px;">
+                                        <div style="font-size: 13px; color: #64748b;">
+                                            📍 <strong>Delivery Address:</strong> ${addr}
+                                        </div>
+                                        <div style="text-align: right;">
+                                            <span style="font-size: 13px; color: #64748b;">Total Amount:</span>
+                                            <strong style="font-size: 18px; color: #0f7139; margin-left: 6px;">₹${Number(o.totalPrice || 0).toFixed(2)}</strong>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    `).join('')}
+                        `;
+                    }).join('')}
                 </div>
             `;
         }
