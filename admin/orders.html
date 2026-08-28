@@ -96,6 +96,34 @@
       font-size: 12px;
       font-weight: 700;
     }
+    .status-change-dropdown {
+      background: #0f7139;
+      color: #ffffff;
+      border: none;
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 12.5px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(15, 113, 57, 0.2);
+      transition: all 0.2s ease;
+      appearance: none;
+      -webkit-appearance: none;
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      background-size: 14px;
+      padding-right: 30px;
+    }
+    .status-change-dropdown:hover {
+      background-color: #0b592c;
+    }
+    .status-change-dropdown option {
+      background: #ffffff;
+      color: #0f172a;
+      font-weight: 600;
+      padding: 8px;
+    }
   </style>
 </head>
 <body>
@@ -350,11 +378,12 @@
             </span>
           </td>
           <td style="text-align:right;">
-            <select class="form-control" style="width: 140px; display: inline-block; padding: 6px 10px; font-size: 12.5px; border-radius: 8px; border: 1.5px solid #cbd5e1; font-weight: 600;" onchange="updateOrderStatus('${order._id}', this.value)">
-              <option value="Confirmed" ${st === 'Confirmed' || st === 'Placed' || st === 'Pending' ? 'selected' : ''}>📋 Confirmed</option>
-              <option value="Dispatched" ${st === 'Dispatched' || st === 'Shipped' ? 'selected' : ''}>🚚 Dispatched</option>
-              <option value="Delivered" ${st === 'Delivered' ? 'selected' : ''}>✅ Delivered</option>
-              <option value="Cancelled" ${st === 'Cancelled' ? 'selected' : ''}>🚫 Cancelled</option>
+            <select class="status-change-dropdown" onchange="updateOrderStatus('${order._id}', this.value)">
+              <option value="" disabled selected hidden>⚡ Change Status ▾</option>
+              <option value="Confirmed">📋 Mark as Confirmed</option>
+              <option value="Dispatched">🚚 Mark as Dispatched</option>
+              <option value="Delivered">✅ Mark as Delivered</option>
+              <option value="Cancelled">🚫 Mark as Cancelled</option>
             </select>
           </td>
         `;
