@@ -153,7 +153,7 @@ router.post('/', async (req, res) => {
       price: Number(item.price || 0)
     }));
 
-    const orderStatus = status || 'Confirmed';
+    const orderStatus = status || 'Placed';
 
     const order = new Order({
       user: validUser,
@@ -171,13 +171,13 @@ router.post('/', async (req, res) => {
       shippingPrice: shippingPrice || 0,
       totalPrice,
       isPaid: isPaid || false,
-      status: status || 'Placed',
-      inventoryDeducted: true
+      status: orderStatus,
+      inventoryDeducted: orderStatus !== 'Cancelled'
     });
 
     const createdOrder = await order.save();
 
-    // Deduct stock for the ordered products if order is active
+    // Deduct stock for the ordered products if order is active (not cancelled)
     if (orderStatus !== 'Cancelled') {
       try {
         await deductInventoryForOrder(sanitizedItems);
