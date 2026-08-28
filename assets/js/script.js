@@ -972,6 +972,65 @@ function initLiveSearchAutocomplete() {
         return '';
     }
 
+    function getRecentSearches() {
+        try {
+            const data = localStorage.getItem('arshith_recent_searches');
+            return data ? JSON.parse(data) : ['spices', 'oils', 'dry fruits', 'ghee'];
+        } catch (e) {
+            return ['spices', 'oils', 'dry fruits', 'ghee'];
+        }
+    }
+
+    function saveRecentSearch(q) {
+        if (!q || q.trim().length === 0) return;
+        const query = q.trim();
+        let list = getRecentSearches();
+        list = list.filter(item => item.toLowerCase() !== query.toLowerCase());
+        list.unshift(query);
+        if (list.length > 6) list = list.slice(0, 6);
+        try {
+            localStorage.setItem('arshith_recent_searches', JSON.stringify(list));
+        } catch (e) {}
+    }
+
+    window.removeRecentSearchItem = function(event, itemText) {
+        if (event) {
+            event.stopPropagation();
+            event.preventDefault();
+        }
+        let list = getRecentSearches();
+        list = list.filter(item => item.toLowerCase() !== itemText.toLowerCase());
+        try {
+            localStorage.setItem('arshith_recent_searches', JSON.stringify(list));
+        } catch (e) {}
+        
+        document.querySelectorAll('.search-bar-container, .search-form').forEach(container => {
+            const input = container.querySelector('input');
+            const dropdown = container.querySelector('.search-suggestions-dropdown');
+            if (input && dropdown && dropdown.classList.contains('active')) {
+                renderSuggestions(input.value.trim(), dropdown);
+            }
+        });
+    };
+
+    window.clearAllRecentSearches = function(event) {
+        if (event) {
+            event.stopPropagation();
+            event.preventDefault();
+        }
+        try {
+            localStorage.setItem('arshith_recent_searches', JSON.stringify([]));
+        } catch (e) {}
+
+        document.querySelectorAll('.search-bar-container, .search-form').forEach(container => {
+            const input = container.querySelector('input');
+            const dropdown = container.querySelector('.search-suggestions-dropdown');
+            if (input && dropdown && dropdown.classList.contains('active')) {
+                renderSuggestions(input.value.trim(), dropdown);
+            }
+        });
+    };
+
     let allSearchProducts = [];
     let isFetchingProducts = false;
 
@@ -993,10 +1052,32 @@ function initLiveSearchAutocomplete() {
     }
 
     searchInputs.forEach(input => {
-        const container = input.closest('.search-bar-container') || input.parentElement;
+        input.setAttribute('autocomplete', 'off');
+        input.setAttribute('autocorrect', 'off');
+        input.setAttribute('spellcheck', 'false');
+
+        const form = input.closest('form');
+        const container = input.closest('.search-bar-container') || (form ? form.parentElement : input.parentElement);
         if (!container) return;
 
         container.style.position = 'relative';
+
+        if (form && !form.querySelector('.search-clear-btn')) {
+            const clearBtn = document.createElement('button');
+            clearBtn.type = 'button';
+            clearBtn.className = 'search-clear-btn';
+            clearBtn.innerHTML = '&times;';
+            clearBtn.style.display = 'none';
+            clearBtn.title = 'Clear search text';
+            clearBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                input.value = '';
+                clearBtn.style.display = 'none';
+                input.focus();
+                renderSuggestions('', dropdown);
+            });
+            form.appendChild(clearBtn);
+        }
 
         let dropdown = container.querySelector('.search-suggestions-dropdown');
         if (!dropdown) {
@@ -1005,31 +1086,33 @@ function initLiveSearchAutocomplete() {
             container.appendChild(dropdown);
         }
 
+        const updateClearBtnState = () => {
+            const clearBtn = form ? form.querySelector('.search-clear-btn') : null;
+            if (clearBtn) {
+                clearBtn.style.display = input.value.trim().length > 0 ? 'flex' : 'none';
+            }
+        };
+
         input.addEventListener('focus', () => {
             loadSearchProducts();
-            const val = input.value.trim();
-            if (val.length >= 1) {
-                renderSuggestions(val, dropdown);
-            }
+            updateClearBtnState();
+            renderSuggestions(input.value.trim(), dropdown);
         });
 
         input.addEventListener('input', (e) => {
             const query = e.target.value.trim();
-            if (query.length >= 1) {
-                loadSearchProducts().then(() => {
-                    renderSuggestions(query, dropdown);
-                });
-            } else {
-                dropdown.classList.remove('active');
-            }
+            updateClearBtnState();
+            loadSearchProducts().then(() => {
+                renderSuggestions(query, dropdown);
+            });
         });
 
-        const form = input.closest('form');
         if (form) {
             form.addEventListener('submit', (e) => {
                 e.preventDefault();
                 const q = input.value.trim();
                 if (!q) return;
+                saveRecentSearch(q);
                 const prefix = getPathPrefix();
                 window.location.href = `${prefix}pages/collections.html?search=${encodeURIComponent(q)}`;
             });
@@ -1039,78 +1122,104 @@ function initLiveSearchAutocomplete() {
     function renderSuggestions(query, dropdown) {
         const qLower = query.toLowerCase();
         const prefix = getPathPrefix();
-
-        // 1. Matching Products
-        const matchingProducts = allSearchProducts.filter(p => {
-            const title = (p.title || p.name || '').toLowerCase();
-            const cat = (p.category || '').toLowerCase();
-            const sub = (p.subcategory || '').toLowerCase();
-            const desc = (p.description || '').toLowerCase();
-            const brand = (p.brand || '').toLowerCase();
-            return title.includes(qLower) || cat.includes(qLower) || sub.includes(qLower) || desc.includes(qLower) || brand.includes(qLower);
-        }).slice(0, 5);
-
-        // 2. Matching Categories & Subcategories
-        const categories = [...new Set(allSearchProducts.map(p => p.category).filter(Boolean))];
-        const matchingCats = categories.filter(c => c.toLowerCase().includes(qLower)).slice(0, 3);
-
-        if (matchingProducts.length === 0 && matchingCats.length === 0) {
-            dropdown.innerHTML = `
-                <div class="search-suggestion-header">Suggestions</div>
-                <div style="padding: 14px; text-align: center; color: #64748b; font-size: 13px;">
-                    No products found for "<strong>${escapeHtml(query)}</strong>"
-                </div>
-                <div class="search-suggestion-footer" onclick="goToAllProducts('${escapeHtml(query)}')">
-                    Browse All Products Catalog →
-                </div>
-            `;
-            dropdown.classList.add('active');
-            return;
-        }
+        const recents = getRecentSearches();
 
         let html = '';
 
-        if (matchingCats.length > 0) {
-            html += `<div class="search-suggestion-header">Suggested Categories</div>`;
-            matchingCats.forEach(cat => {
+        // 1. Saved Info (Recent Searches) Section with Cross Mark
+        if (recents.length > 0) {
+            const filteredRecents = query.length > 0 ? recents.filter(r => r.toLowerCase().includes(qLower)) : recents;
+            if (filteredRecents.length > 0) {
                 html += `
-                    <div class="search-suggestion-word" onclick="goToCategory('${escapeHtml(cat)}')">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0f7139" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                        <span>${highlightMatch(cat, query)}</span>
+                    <div class="search-suggestion-header" style="display: flex; align-items: center; justify-content: space-between;">
+                        <span>Saved info</span>
+                        <button type="button" class="clear-all-searches-btn" onclick="clearAllRecentSearches(event)">Clear all</button>
                     </div>
                 `;
-            });
-        }
-
-        if (matchingProducts.length > 0) {
-            html += `<div class="search-suggestion-header">Matching Products</div>`;
-            matchingProducts.forEach(p => {
-                const prodTitle = p.title || p.name || 'Product';
-                const img = (p.images && p.images.length > 0) ? p.images[0].url : (p.image || 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=100');
-                const price = p.price ? `₹${p.price}` : '';
-                const catName = p.category || 'General';
-                const detailUrl = `${prefix}pages/product.html?id=${p._id}`;
-
-                html += `
-                    <a href="${detailUrl}" class="search-suggestion-item">
-                        <img src="${img}" class="search-suggestion-thumb" alt="${escapeHtml(prodTitle)}" onerror="this.src='https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=100';">
-                        <div class="search-suggestion-info">
-                            <div class="search-suggestion-title">${highlightMatch(prodTitle, query)}</div>
-                            <div class="search-suggestion-meta">
-                                <span>${escapeHtml(catName)}</span>
-                                ${price ? `<span class="search-suggestion-price">${price}</span>` : ''}
+                filteredRecents.forEach(item => {
+                    html += `
+                        <div class="search-saved-info-row" onclick="goToAllProducts('${escapeHtml(item)}')">
+                            <div class="saved-info-label">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2" style="flex-shrink:0;"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                                <span>${highlightMatch(item, query)}</span>
                             </div>
+                            <button type="button" class="delete-saved-item-btn" title="Delete saved item" onclick="removeRecentSearchItem(event, '${escapeHtml(item).replace(/'/g, "\\'")}')">&times;</button>
                         </div>
-                    </a>
-                `;
-            });
+                    `;
+                });
+            }
         }
 
-        html += `
-            <div class="search-suggestion-footer" onclick="goToAllProducts('${escapeHtml(query)}')">
-                See all results for "${escapeHtml(query)}" →
-            </div>
-        `;
+        // 2. Typing Search Suggestions (Categories & Products)
+        if (query.length > 0) {
+            const matchingProducts = allSearchProducts.filter(p => {
+                const title = (p.title || p.name || '').toLowerCase();
+                const cat = (p.category || '').toLowerCase();
+                const sub = (p.subcategory || '').toLowerCase();
+                const desc = (p.description || '').toLowerCase();
+                const brand = (p.brand || '').toLowerCase();
+                return title.includes(qLower) || cat.includes(qLower) || sub.includes(qLower) || desc.includes(qLower) || brand.includes(qLower);
+            }).slice(0, 5);
+
+            const categories = [...new Set(allSearchProducts.map(p => p.category).filter(Boolean))];
+            const matchingCats = categories.filter(c => c.toLowerCase().includes(qLower)).slice(0, 3);
+
+            if (matchingCats.length > 0) {
+                html += `<div class="search-suggestion-header">Suggested Categories</div>`;
+                matchingCats.forEach(cat => {
+                    html += `
+                        <div class="search-suggestion-word" onclick="goToCategory('${escapeHtml(cat)}')">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0f7139" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                            <span>${highlightMatch(cat, query)}</span>
+                        </div>
+                    `;
+                });
+            }
+
+            if (matchingProducts.length > 0) {
+                html += `<div class="search-suggestion-header">Matching Products</div>`;
+                matchingProducts.forEach(p => {
+                    const prodTitle = p.title || p.name || 'Product';
+                    const img = (p.images && p.images.length > 0) ? p.images[0].url : (p.image || 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=100');
+                    const price = p.price ? `₹${p.price}` : '';
+                    const catName = p.category || 'General';
+                    const detailUrl = `${prefix}pages/product.html?id=${p._id}`;
+
+                    html += `
+                        <a href="${detailUrl}" class="search-suggestion-item">
+                            <img src="${img}" class="search-suggestion-thumb" alt="${escapeHtml(prodTitle)}" onerror="this.src='https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=100';">
+                            <div class="search-suggestion-info">
+                                <div class="search-suggestion-title">${highlightMatch(prodTitle, query)}</div>
+                                <div class="search-suggestion-meta">
+                                    <span>${escapeHtml(catName)}</span>
+                                    ${price ? `<span class="search-suggestion-price">${price}</span>` : ''}
+                                </div>
+                            </div>
+                        </a>
+                    `;
+                });
+            }
+
+            if (matchingProducts.length === 0 && matchingCats.length === 0 && recents.length === 0) {
+                html += `
+                    <div class="search-suggestion-header">Suggestions</div>
+                    <div style="padding: 14px; text-align: center; color: #64748b; font-size: 13px;">
+                        No products found for "<strong>${escapeHtml(query)}</strong>"
+                    </div>
+                `;
+            }
+
+            html += `
+                <div class="search-suggestion-footer" onclick="goToAllProducts('${escapeHtml(query)}')">
+                    See all results for "${escapeHtml(query)}" →
+                </div>
+            `;
+        }
+
+        if (html.trim().length === 0) {
+            dropdown.classList.remove('active');
+            return;
+        }
 
         dropdown.innerHTML = html;
         dropdown.classList.add('active');
@@ -1131,13 +1240,15 @@ function initLiveSearchAutocomplete() {
     }
 
     window.goToCategory = function(catName) {
+        saveRecentSearch(catName);
         const prefix = getPathPrefix();
         window.location.href = `${prefix}pages/collections.html?search=${encodeURIComponent(catName)}`;
     };
 
     window.goToAllProducts = function(q) {
+        if (q) saveRecentSearch(q);
         const prefix = getPathPrefix();
-        window.location.href = `${prefix}pages/collections.html?search=${encodeURIComponent(q)}`;
+        window.location.href = `${prefix}pages/collections.html?search=${encodeURIComponent(q || '')}`;
     };
 
     document.addEventListener('click', (e) => {
