@@ -331,13 +331,17 @@
         }
 
         // Live polling every 3 seconds for active tracker status updates
-        setInterval(loadOrders, 3000);
+        setInterval(loadUserProfile, 3000);
 
         function renderCurrentActiveOrder(orders) {
             const container = document.getElementById('currentOrderContainer');
             if (!container) return;
 
-            const activeOrder = orders && orders.length > 0 ? orders[0] : null;
+            // Active order must NOT be cancelled or delivered
+            const activeOrder = orders ? orders.find(o => {
+                const st = (o.status || '').toLowerCase();
+                return st !== 'cancelled' && st !== 'delivered';
+            }) : null;
 
             if (!activeOrder) {
                 container.innerHTML = `
@@ -381,41 +385,33 @@
             const checkSvg = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
 
             container.innerHTML = `
-                <div class="order-tracker-card">
-                    <!-- 1. HEADER BAR -->
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px; border-bottom: 1.5px solid #f1f5f9; padding-bottom: 16px; margin-bottom: 20px;">
+                <div>
+                    <!-- 1. ORDER SUMMARY HEADER BAR -->
+                    <div style="background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 14px; padding: 18px 20px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
                         <div>
-                            <div style="display: flex; align-items: center; gap: 10px;">
-                                <h3 style="margin: 0; font-size: 18px; color: #0f7139; font-weight: 800;">Order #${orderId}</h3>
-                                <span style="font-size: 11px; padding: 4px 10px; border-radius: 20px; font-weight: 700; background: ${isCancelled ? '#fef2f2; color: #dc2626; border: 1px solid #fecaca;' : '#dcfce7; color: #15803d; border: 1px solid #86efac;'}">
-                                    ${isCancelled ? '❌ CANCELLED' : '⚡ ' + status.toUpperCase()}
-                                </span>
-                            </div>
-                            <div style="font-size: 12.5px; color: #64748b; margin-top: 4px;">Placed on: ${dateStr}</div>
+                            <div style="font-weight: 800; font-size: 17px; color: #0f7139;">Order #${orderId}</div>
+                            <div style="font-size: 12.5px; color: #64748b; margin-top: 2px;">Placed on ${dateStr} • ${paymentMode}</div>
                         </div>
-
                         <div style="text-align: right;">
-                            <div style="font-size: 18px; font-weight: 800; color: #0f172a;">₹${Number(activeOrder.totalPrice || 0).toFixed(2)}</div>
-                            <div style="font-size: 12px; color: #475569; margin-top: 2px;">
-                                Mode: <strong>${paymentMode}</strong> • <span style="color: ${isPaid ? '#15803d' : '#854d0e'}; font-weight: 700;">${isPaid ? 'PAID' : 'PENDING'}</span>
-                            </div>
+                            <div style="font-size: 12px; color: #64748b; text-transform: uppercase; font-weight: 600;">Total Amount</div>
+                            <div style="font-size: 19px; font-weight: 800; color: #0f172a;">₹${Number(activeOrder.totalPrice || 0).toFixed(2)}</div>
                         </div>
                     </div>
 
-                    <!-- 2. ORDERED ITEMS SECTION -->
-                    <div style="margin-bottom: 24px;">
-                        <div style="font-size: 12px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px;">ORDERED ITEMS (${(activeOrder.orderItems || []).length})</div>
-                        <div style="display: flex; flex-direction: column; gap: 10px;">
+                    <!-- 2. ORDERED ITEMS LIST -->
+                    <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 14px; padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.02);">
+                        <div style="font-size: 12px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px;">ITEMS IN THIS ORDER</div>
+                        <div style="display: flex; flex-direction: column; gap: 12px;">
                             ${(activeOrder.orderItems || []).map(item => `
-                                <div style="display: flex; justify-content: space-between; align-items: center; font-size: 14px; padding: 12px 16px; background: #ffffff; border-radius: 10px; border: 1.5px solid #e2e8f0;">
-                                    <div style="display: flex; align-items: center; gap: 14px;">
-                                        <img src="${item.image || 'https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM_1.jpg?v=1757334051&width=533'}" style="width: 48px; height: 48px; border-radius: 8px; object-fit: cover; border: 1px solid #cbd5e1;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; font-size: 14px;">
+                                    <div style="display: flex; align-items: center; gap: 12px;">
+                                        <img src="${item.image || 'https://arshithfresh.com/cdn/shop/collections/spice_200x200_crop_center.png?v=1746963495'}" style="width: 46px; height: 46px; border-radius: 8px; object-fit: cover; border: 1px solid #e2e8f0;">
                                         <div>
-                                            <div style="font-weight: 600; color: #1e293b; font-size: 14.5px;">${item.name || item.title}</div>
-                                            <div style="font-size: 12.5px; color: #64748b;">Qty: ${item.qty || item.quantity || 1} • ${item.unit || '1 kg'}</div>
+                                            <div style="font-weight: 700; color: #1e293b;">${item.name || item.title}</div>
+                                            <div style="font-size: 12px; color: #64748b;">Qty: ${item.qty || item.quantity || 1} • ${item.unit || '1 kg'}</div>
                                         </div>
                                     </div>
-                                    <div style="font-weight: 700; color: #0f172a; font-size: 15px;">₹${((item.price || 0) * (item.qty || item.quantity || 1)).toFixed(2)}</div>
+                                    <div style="font-weight: 700; color: #0f172a;">₹${((item.price || 0) * (item.qty || item.quantity || 1)).toFixed(2)}</div>
                                 </div>
                             `).join('')}
                         </div>
@@ -426,60 +422,54 @@
                         <h4 style="font-size: 17px; font-weight: 800; color: #0f172a; margin: 0 0 2px 0;">Track your Order</h4>
                         <div style="font-size: 13px; color: #64748b; margin-bottom: 24px;">Order Code: <strong style="color: #0f7139;">${orderCode}</strong></div>
 
-                        ${isCancelled ? `
-                            <div style="background: #fef2f2; border: 1.5px solid #fecaca; border-radius: 12px; padding: 16px; text-align: center; color: #dc2626; font-size: 14px;">
-                                <strong>🚫 This order was cancelled.</strong> If you have any questions, please contact support at support@arshithfresh.com.
-                            </div>
-                        ` : `
-                            <div style="position: relative; display: flex; justify-content: space-between; align-items: flex-start; margin: 28px 0 24px 0; padding: 0 10px;">
-                                <!-- Background Connecting Line -->
-                                <div style="position: absolute; top: 17px; left: 40px; right: 40px; height: 4px; background: #e2e8f0; z-index: 1;"></div>
-                                <!-- Active Green Progress Line -->
-                                <div style="position: absolute; top: 17px; left: 40px; width: ${fillWidthPercentage}%; height: 4px; background: #10b981; z-index: 1; transition: width 0.4s ease;"></div>
+                        <div style="position: relative; display: flex; justify-content: space-between; align-items: flex-start; margin: 28px 0 24px 0; padding: 0 10px;">
+                            <!-- Background Connecting Line -->
+                            <div style="position: absolute; top: 17px; left: 40px; right: 40px; height: 4px; background: #e2e8f0; z-index: 1;"></div>
+                            <!-- Active Green Progress Line -->
+                            <div style="position: absolute; top: 17px; left: 40px; width: ${fillWidthPercentage}%; height: 4px; background: #10b981; z-index: 1; transition: width 0.4s ease;"></div>
 
-                                <!-- Step 1: Placed -->
-                                <div style="position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; text-align: center; flex: 1;">
-                                    <div style="width: 36px; height: 36px; border-radius: 50%; background: ${currentStepIndex >= 1 ? '#10b981' : '#f1f5f9'}; border: 2.5px solid ${currentStepIndex >= 1 ? '#10b981' : '#cbd5e1'}; color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; box-shadow: 0 2px 6px rgba(0,0,0,0.06);">
-                                        ${currentStepIndex >= 1 ? checkSvg : ''}
-                                    </div>
-                                    <span style="font-size: 12.5px; font-weight: 700; color: ${currentStepIndex >= 1 ? '#10b981' : '#94a3b8'}; margin-top: 8px; display: block;">Placed</span>
+                            <!-- Step 1: Placed -->
+                            <div style="position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; text-align: center; flex: 1;">
+                                <div style="width: 36px; height: 36px; border-radius: 50%; background: ${currentStepIndex >= 1 ? '#10b981' : '#f1f5f9'}; border: 2.5px solid ${currentStepIndex >= 1 ? '#10b981' : '#cbd5e1'}; color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; box-shadow: 0 2px 6px rgba(0,0,0,0.06);">
+                                    ${currentStepIndex >= 1 ? checkSvg : ''}
                                 </div>
-
-                                <!-- Step 2: Packed -->
-                                <div style="position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; text-align: center; flex: 1;">
-                                    <div style="width: 36px; height: 36px; border-radius: 50%; background: ${currentStepIndex >= 2 ? '#10b981' : '#ffffff'}; border: 2.5px solid ${currentStepIndex >= 2 ? '#10b981' : '#cbd5e1'}; color: ${currentStepIndex >= 2 ? '#ffffff' : '#94a3b8'}; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; box-shadow: 0 2px 6px rgba(0,0,0,0.06);">
-                                        ${currentStepIndex >= 2 ? checkSvg : ''}
-                                    </div>
-                                    <span style="font-size: 12.5px; font-weight: 700; color: ${currentStepIndex >= 2 ? '#10b981' : '#94a3b8'}; margin-top: 8px; display: block;">Packed</span>
-                                </div>
-
-                                <!-- Step 3: Shipped -->
-                                <div style="position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; text-align: center; flex: 1;">
-                                    <div style="width: 36px; height: 36px; border-radius: 50%; background: ${currentStepIndex >= 3 ? '#10b981' : '#ffffff'}; border: 2.5px solid ${currentStepIndex >= 3 ? '#10b981' : '#cbd5e1'}; color: ${currentStepIndex >= 3 ? '#ffffff' : '#94a3b8'}; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; box-shadow: 0 2px 6px rgba(0,0,0,0.06);">
-                                        ${currentStepIndex >= 3 ? checkSvg : ''}
-                                    </div>
-                                    <span style="font-size: 12.5px; font-weight: 700; color: ${currentStepIndex >= 3 ? '#10b981' : '#94a3b8'}; margin-top: 8px; display: block;">Shipped</span>
-                                </div>
-
-                                <!-- Step 4: Delivered -->
-                                <div style="position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; text-align: center; flex: 1;">
-                                    <div style="width: 36px; height: 36px; border-radius: 50%; background: ${currentStepIndex >= 4 ? '#10b981' : '#ffffff'}; border: 2.5px solid ${currentStepIndex >= 4 ? '#10b981' : '#cbd5e1'}; color: ${currentStepIndex >= 4 ? '#ffffff' : '#94a3b8'}; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; box-shadow: 0 2px 6px rgba(0,0,0,0.06);">
-                                        ${currentStepIndex >= 4 ? checkSvg : ''}
-                                    </div>
-                                    <span style="font-size: 12.5px; font-weight: 700; color: ${currentStepIndex >= 4 ? '#10b981' : '#94a3b8'}; margin-top: 8px; display: block;">Delivered</span>
-                                </div>
+                                <span style="font-size: 12.5px; font-weight: 700; color: ${currentStepIndex >= 1 ? '#10b981' : '#94a3b8'}; margin-top: 8px; display: block;">Placed</span>
                             </div>
 
-                            <!-- 4. CANCEL ORDER BUTTON DIRECTLY UNDER STEPPER LINE -->
-                            ${isEligibleForCancel ? `
-                                <div style="margin-top: 24px; padding-top: 16px; border-top: 1px dashed #e2e8f0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
-                                    <span style="font-size: 13px; color: #64748b;">Need to cancel before dispatch? You can cancel this order now.</span>
-                                    <button type="button" class="cancel-order-btn" id="cancelOrderActionBtn" onclick="handleCancelActiveOrder('${activeOrder._id}', '${orderCode}')">
-                                        🚫 Cancel Order
-                                    </button>
+                            <!-- Step 2: Packed -->
+                            <div style="position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; text-align: center; flex: 1;">
+                                <div style="width: 36px; height: 36px; border-radius: 50%; background: ${currentStepIndex >= 2 ? '#10b981' : '#ffffff'}; border: 2.5px solid ${currentStepIndex >= 2 ? '#10b981' : '#cbd5e1'}; color: ${currentStepIndex >= 2 ? '#ffffff' : '#94a3b8'}; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; box-shadow: 0 2px 6px rgba(0,0,0,0.06);">
+                                    ${currentStepIndex >= 2 ? checkSvg : ''}
                                 </div>
-                            ` : ''}
-                        `}
+                                <span style="font-size: 12.5px; font-weight: 700; color: ${currentStepIndex >= 2 ? '#10b981' : '#94a3b8'}; margin-top: 8px; display: block;">Packed</span>
+                            </div>
+
+                            <!-- Step 3: Shipped -->
+                            <div style="position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; text-align: center; flex: 1;">
+                                <div style="width: 36px; height: 36px; border-radius: 50%; background: ${currentStepIndex >= 3 ? '#10b981' : '#ffffff'}; border: 2.5px solid ${currentStepIndex >= 3 ? '#10b981' : '#cbd5e1'}; color: ${currentStepIndex >= 3 ? '#ffffff' : '#94a3b8'}; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; box-shadow: 0 2px 6px rgba(0,0,0,0.06);">
+                                    ${currentStepIndex >= 3 ? checkSvg : ''}
+                                </div>
+                                <span style="font-size: 12.5px; font-weight: 700; color: ${currentStepIndex >= 3 ? '#10b981' : '#94a3b8'}; margin-top: 8px; display: block;">Shipped</span>
+                            </div>
+
+                            <!-- Step 4: Delivered -->
+                            <div style="position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; text-align: center; flex: 1;">
+                                <div style="width: 36px; height: 36px; border-radius: 50%; background: ${currentStepIndex >= 4 ? '#10b981' : '#ffffff'}; border: 2.5px solid ${currentStepIndex >= 4 ? '#10b981' : '#cbd5e1'}; color: ${currentStepIndex >= 4 ? '#ffffff' : '#94a3b8'}; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; box-shadow: 0 2px 6px rgba(0,0,0,0.06);">
+                                    ${currentStepIndex >= 4 ? checkSvg : ''}
+                                </div>
+                                <span style="font-size: 12.5px; font-weight: 700; color: ${currentStepIndex >= 4 ? '#10b981' : '#94a3b8'}; margin-top: 8px; display: block;">Delivered</span>
+                            </div>
+                        </div>
+
+                        <!-- 4. CANCEL ORDER BUTTON DIRECTLY UNDER STEPPER LINE -->
+                        ${isEligibleForCancel ? `
+                            <div style="margin-top: 24px; padding-top: 16px; border-top: 1px dashed #e2e8f0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                                <span style="font-size: 13px; color: #64748b;">Need to cancel before dispatch? You can cancel this order now.</span>
+                                <button type="button" class="cancel-order-btn" id="cancelOrderActionBtn" onclick="handleCancelActiveOrder('${activeOrder._id}', '${orderCode}')">
+                                    🚫 Cancel Order
+                                </button>
+                            </div>
+                        ` : ''}
                     </div>
 
                     <!-- 5. DELIVERY ADDRESS & PAYMENT DETAILS GRID -->
@@ -575,7 +565,10 @@
                                         <span style="font-weight: 700; color: #0f7139; font-size: 16px;">Order #${orderId}</span>
                                         <span style="font-size: 12px; color: #64748b; margin-left: 10px;">Placed on ${dateStr}</span>
                                     </div>
-                                    <div style="display: flex; gap: 8px;">
+                                    <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+                                        <span style="font-size: 11px; padding: 4px 10px; border-radius: 12px; font-weight: 700; background: ${o.status === 'Cancelled' ? '#fef2f2; color: #dc2626;' : (o.status === 'Delivered' ? '#dcfce7; color: #15803d;' : (o.status === 'Dispatched' || o.status === 'Shipped' ? '#e0f2fe; color: #0369a1;' : '#fef9c3; color: #854d0e;'))}">
+                                            ${o.status === 'Cancelled' ? '🚫 CANCELLED' : (o.status === 'Delivered' ? '✅ DELIVERED' : (o.status === 'Dispatched' || o.status === 'Shipped' ? '🚚 DISPATCHED' : '📋 CONFIRMED'))}
+                                        </span>
                                         <span style="font-size: 11px; padding: 4px 10px; border-radius: 12px; font-weight: 700; background: ${o.isPaid ? '#dcfce7; color: #15803d;' : '#fef9c3; color: #854d0e;'}">${o.isPaid ? '✓ PAID' : '⏳ PENDING'}</span>
                                         <span style="font-size: 11px; padding: 4px 10px; border-radius: 12px; font-weight: 700; background: #e0f2fe; color: #0369a1;">${o.paymentMethod || 'Razorpay'}</span>
                                     </div>
