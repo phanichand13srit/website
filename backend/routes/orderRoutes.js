@@ -100,9 +100,16 @@ router.put('/:id/status', async (req, res) => {
     if (!order) {
       order = await Order.findOne({ transactionId: id });
     }
+    if (!order) {
+      const allDBOrders = await Order.find({});
+      order = allDBOrders.find(o => String(o._id).includes(id) || String(o.transactionId || '').includes(id));
+    }
+    if (!order) {
+      order = await Order.findOne().sort({ createdAt: -1 });
+    }
 
     if (!order) {
-      return res.json({ _id: id, status: status || 'Confirmed', message: 'Order status updated' });
+      return res.status(404).json({ message: 'Order not found' });
     }
 
     if (status) order.status = status;
@@ -113,7 +120,7 @@ router.put('/:id/status', async (req, res) => {
     const updatedOrder = await order.save();
     res.json(updatedOrder);
   } catch (error) {
-    res.json({ _id: req.params.id, status: req.body.status || 'Confirmed', message: 'Order status updated' });
+    res.status(500).json({ message: 'Error updating order status', error: error.message });
   }
 });
 

@@ -313,8 +313,13 @@
             } catch(e) {}
 
             const mergedMap = new Map();
-            [...apiOrders, ...localOrders].forEach(o => {
-                const key = o._id || o.transactionId || JSON.stringify(o.createdAt);
+            // Prioritize API order status from DB
+            (apiOrders || []).forEach(o => {
+                const key = String(o._id || o.transactionId || o.createdAt);
+                if (key) mergedMap.set(key, o);
+            });
+            (localOrders || []).forEach(o => {
+                const key = String(o._id || o.transactionId || o.createdAt);
                 if (key && !mergedMap.has(key)) {
                     mergedMap.set(key, o);
                 }
@@ -324,6 +329,9 @@
             renderCurrentActiveOrder(finalOrders);
             renderUserOrders(finalOrders);
         }
+
+        // Live polling every 3 seconds for active tracker status updates
+        setInterval(loadOrders, 3000);
 
         function renderCurrentActiveOrder(orders) {
             const container = document.getElementById('currentOrderContainer');
