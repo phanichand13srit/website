@@ -396,6 +396,13 @@
     }
 
     async function updateOrderStatus(orderId, newStatus) {
+      if (newStatus === 'Cancelled') {
+        if (!confirm('Mark this order as Cancelled? All items will automatically be returned back into store inventory.')) {
+          fetchOrders();
+          return;
+        }
+      }
+
       const targetIdStr = String(orderId);
 
       // 1. Instantly update in-memory order status
@@ -429,11 +436,20 @@
       // 4. Send backend API update
       try {
         const isDelivered = newStatus === 'Delivered';
-        await fetch(`${API_BASE}/orders/${orderId}/status`, {
+        const res = await fetch(`${API_BASE}/orders/${orderId}/status`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json', 'x-admin-dev': 'true' },
           body: JSON.stringify({ status: newStatus, isDelivered })
         });
+        if (res.ok) {
+          if (newStatus === 'Cancelled') {
+            alert('Order set to Cancelled. Inventory has been restored into stock.');
+          }
+          fetchOrders();
+        } else {
+          const errData = await res.json().catch(() => ({}));
+          alert('Failed to update status: ' + (errData.message || 'Unknown error'));
+        }
       } catch (e) {
         console.warn('Backend sync warning:', e);
       }

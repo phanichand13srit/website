@@ -583,12 +583,27 @@
         const unit = product.unit || '1 unit';
         const price = product.price ? `₹${product.price}` : '₹0';
         const imgUrl = product.image || 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=100&auto=format&fit=crop&q=60';
-        const isInstock = stock > 0;
-        const statusClass = isInstock ? 'active' : 'draft';
-        const statusLabel = isInstock ? 'Active' : 'Out of stock';
+        
+        let statusClass = 'active';
+        let statusLabel = 'Active';
+        let stockHtml = `<span class="stock-badge-instock"><i class="fa-solid fa-check"></i> ${stock} in stock</span>`;
+        let rowBgStyle = '';
+
+        if (stock === 0) {
+          statusClass = 'out-of-stock';
+          statusLabel = '<i class="fa-solid fa-circle-xmark"></i> Out of stock (0)';
+          stockHtml = `<span class="stock-badge-out"><i class="fa-solid fa-circle-xmark"></i> 0 in stock</span>`;
+          rowBgStyle = 'background-color: #fef2f2;';
+        } else if (stock < 10) {
+          statusClass = 'low-stock';
+          statusLabel = `<i class="fa-solid fa-triangle-exclamation"></i> Low Stock (${stock})`;
+          stockHtml = `<span class="stock-badge-low"><i class="fa-solid fa-triangle-exclamation"></i> ${stock} in stock</span>`;
+          rowBgStyle = 'background-color: #fff8f8;';
+        }
 
         const tr = document.createElement('tr');
         tr.dataset.id = product._id;
+        if (rowBgStyle) tr.style.cssText = rowBgStyle;
 
         tr.innerHTML = `
           <td><input type="checkbox" class="custom-checkbox"></td>
@@ -602,7 +617,7 @@
             </div>
           </td>
           <td><span class="status-pill ${statusClass}">${statusLabel}</span></td>
-          <td><strong>${stock}</strong> in stock</td>
+          <td>${stockHtml}</td>
           <td><span class="badge-category">${category}</span></td>
           <td>${subcategory !== '-' ? `<span class="badge-subcategory">${subcategory}</span>` : '<span style="color:#94a3b8; font-size:12px;">-</span>'}</td>
           <td><strong>${price}</strong></td>
@@ -776,6 +791,18 @@
     const closeBtn = document.getElementById('closeAddProductModalBtn');
     const cancelBtn = document.getElementById('cancelModalBtn');
 
+    function updateProdStockModalColor() {
+      const stockInput = document.getElementById('prodStock');
+      if (!stockInput) return;
+      const val = Number(stockInput.value) || 0;
+      stockInput.classList.remove('stock-input-low', 'stock-input-out');
+      if (val === 0) {
+        stockInput.classList.add('stock-input-out');
+      } else if (val < 10) {
+        stockInput.classList.add('stock-input-low');
+      }
+    }
+
     function openAddModal() {
       document.getElementById('addProductForm').reset();
       document.getElementById('prodEditId').value = '';
@@ -783,6 +810,7 @@
       modalUploadedImages = [];
       renderModalImagesGrid();
       populateCategoryDropdown();
+      updateProdStockModalColor();
       modal.classList.add('active');
     }
 
@@ -799,6 +827,7 @@
       document.getElementById('prodBrand').value = prod.brand || 'Arshith Fresh';
       document.getElementById('prodDesc').value = prod.description || '';
       document.getElementById('prodIsFeatured').checked = !!prod.isFeatured;
+      updateProdStockModalColor();
 
       modalUploadedImages = [];
       if (Array.isArray(prod.images) && prod.images.length > 0) {
@@ -812,6 +841,9 @@
       document.getElementById('modalHeading').textContent = 'Edit Product';
       modal.classList.add('active');
     }
+
+    const prodStockEl = document.getElementById('prodStock');
+    if (prodStockEl) prodStockEl.addEventListener('input', updateProdStockModalColor);
 
     function closeModal() {
       modal.classList.remove('active');

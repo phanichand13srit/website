@@ -1136,6 +1136,30 @@ main {
     background-color: var(--color-dark-bg);
 }
 
+.add-to-cart-btn.disabled,
+.add-to-cart-btn:disabled {
+    background-color: #f1f5f9 !important;
+    color: #94a3b8 !important;
+    cursor: not-allowed !important;
+    border-color: #cbd5e1 !important;
+    opacity: 0.85;
+}
+
+.card-out-of-stock-tag {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #dc2626;
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 8px;
+    border-radius: 4px;
+    z-index: 2;
+    letter-spacing: 0.5px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
 /* WE BELIEVE IN Section */
 .believe-in-section {
     background-color: #094b3d;

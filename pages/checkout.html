@@ -182,6 +182,9 @@
                             </div>
                             <span style="font-size: 12px; color: #0f7139; font-weight: 600;">Pay at doorstep</span>
                         </div>
+                        <div class="payment-card-body" id="codCardBody" style="display: none;">
+                            Pay with cash or UPI when your order is delivered to your doorstep.
+                        </div>
                     </div>
                 </div>
 
@@ -419,6 +422,130 @@
         let appliedCouponCode = '';
         let appliedDiscountPercent = 0;
         let latestCreatedOrder = null;
+
+        function selectPaymentMethod(method) {
+            selectedPayment = method;
+            const razorpayOpt = document.getElementById('razorpayOption');
+            const codOpt = document.getElementById('codOption');
+            const razorpayDot = document.getElementById('razorpayRadioDot');
+            const codDot = document.getElementById('codRadioDot');
+            const payBtn = document.getElementById('payNowBtn');
+            const codBody = document.getElementById('codCardBody');
+            const razorpayBody = razorpayOpt ? razorpayOpt.querySelector('.payment-card-body') : null;
+
+            if (method === 'Razorpay') {
+                if (razorpayOpt) razorpayOpt.classList.add('selected');
+                if (codOpt) codOpt.classList.remove('selected');
+                if (razorpayDot) razorpayDot.className = 'radio-dot-active';
+                if (codDot) codDot.className = 'radio-dot-inactive';
+                if (razorpayBody) razorpayBody.style.display = 'block';
+                if (codBody) codBody.style.display = 'none';
+                if (payBtn) payBtn.textContent = 'Pay now';
+            } else if (method === 'COD') {
+                if (codOpt) codOpt.classList.add('selected');
+                if (razorpayOpt) razorpayOpt.classList.remove('selected');
+                if (codDot) codDot.className = 'radio-dot-active';
+                if (razorpayDot) razorpayDot.className = 'radio-dot-inactive';
+                if (codBody) codBody.style.display = 'block';
+                if (razorpayBody) razorpayBody.style.display = 'none';
+                if (payBtn) payBtn.textContent = 'Place order';
+            }
+        }
+
+        function selectBillingOption(isSame) {
+            useDifferentBilling = !isSame;
+            const sameRow = document.getElementById('sameBillingRow');
+            const diffRow = document.getElementById('diffBillingRow');
+            const sameDot = document.getElementById('sameBillingDot');
+            const diffDot = document.getElementById('diffBillingDot');
+            const customBillingBox = document.getElementById('customBillingFormBox');
+
+            if (isSame) {
+                if (sameRow) sameRow.classList.add('selected');
+                if (diffRow) diffRow.classList.remove('selected');
+                if (sameDot) sameDot.className = 'radio-dot-active';
+                if (diffDot) diffDot.className = 'radio-dot-inactive';
+                if (customBillingBox) customBillingBox.style.display = 'none';
+            } else {
+                if (diffRow) diffRow.classList.add('selected');
+                if (sameRow) sameRow.classList.remove('selected');
+                if (diffDot) diffDot.className = 'radio-dot-active';
+                if (sameDot) sameDot.className = 'radio-dot-inactive';
+                if (customBillingBox) customBillingBox.style.display = 'block';
+            }
+        }
+
+        function initUserProfileData() {
+            if (!currentUser) return;
+
+            const contactInput = document.getElementById('contactInput');
+            if (contactInput && (currentUser.email || currentUser.phone)) {
+                contactInput.value = currentUser.email || currentUser.phone || '';
+            }
+
+            const nameParts = (currentUser.name || '').trim().split(' ');
+            const firstNameInput = document.getElementById('firstNameInput');
+            const lastNameInput = document.getElementById('lastNameInput');
+            if (firstNameInput && nameParts.length > 0) firstNameInput.value = nameParts[0];
+            if (lastNameInput && nameParts.length > 1) lastNameInput.value = nameParts.slice(1).join(' ');
+
+            if (currentUser.street || currentUser.address) {
+                const addressInput = document.getElementById('addressInput');
+                if (addressInput) addressInput.value = currentUser.street || currentUser.address || '';
+            }
+            if (currentUser.city) {
+                const cityInput = document.getElementById('cityInput');
+                if (cityInput) cityInput.value = currentUser.city;
+            }
+            if (currentUser.state) {
+                const stateInput = document.getElementById('stateInput');
+                if (stateInput) stateInput.value = currentUser.state;
+            }
+            if (currentUser.postalCode) {
+                const postalCodeInput = document.getElementById('postalCodeInput');
+                if (postalCodeInput) postalCodeInput.value = currentUser.postalCode;
+            }
+            if (currentUser.phone) {
+                const phoneInput = document.getElementById('phoneInput');
+                if (phoneInput) phoneInput.value = currentUser.phone;
+            }
+
+            const hasAddress = Boolean(currentUser.street || currentUser.address);
+            if (hasAddress) {
+                const summary = document.getElementById('savedAddressSummary');
+                const card = document.getElementById('savedAddressCard');
+                const formFields = document.getElementById('deliveryFormFields');
+
+                if (summary) {
+                    summary.innerHTML = `
+                        <div style="font-weight: 700; color: #1e293b;">${currentUser.name || 'Saved Customer'}</div>
+                        <div style="font-size: 13.5px; color: #475569; margin-top: 2px;">
+                            ${currentUser.street || currentUser.address || ''}, ${currentUser.city || ''}, ${currentUser.state || ''} - ${currentUser.postalCode || ''}
+                        </div>
+                        <div style="font-size: 13px; color: #64748b; margin-top: 2px;">📞 ${currentUser.phone || ''}</div>
+                    `;
+                }
+                if (card) card.style.display = 'block';
+                if (formFields) formFields.style.display = 'none';
+            }
+        }
+
+        function toggleEditAddress(showEdit) {
+            const card = document.getElementById('savedAddressCard');
+            const formFields = document.getElementById('deliveryFormFields');
+            if (showEdit) {
+                if (card) card.style.display = 'none';
+                if (formFields) formFields.style.display = 'block';
+            } else {
+                if (card) card.style.display = 'block';
+                if (formFields) formFields.style.display = 'none';
+            }
+        }
+
+        window.selectPaymentMethod = selectPaymentMethod;
+        window.selectBillingOption = selectBillingOption;
+        window.initUserProfileData = initUserProfileData;
+        window.toggleEditAddress = toggleEditAddress;
 
         // Tiered Coupons Master Definition (Default + Dynamically synced from Backend)
         let STORE_COUPONS = [

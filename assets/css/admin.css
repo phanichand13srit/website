@@ -733,18 +733,91 @@ button, input, select, textarea {
 }
 
 .status-pill.active {
-  background-color: var(--badge-active-bg);
-  color: var(--badge-active-text);
+  background-color: var(--badge-active-bg, #dcfce7);
+  color: var(--badge-active-text, #166534);
 }
 
 .status-pill.draft {
-  background-color: var(--badge-draft-bg);
-  color: var(--badge-draft-text);
+  background-color: var(--badge-draft-bg, #f1f5f9);
+  color: var(--badge-draft-text, #475569);
 }
 
 .status-pill.archived {
-  background-color: var(--badge-archived-bg);
-  color: var(--badge-archived-text);
+  background-color: var(--badge-archived-bg, #fee2e2);
+  color: var(--badge-archived-text, #991b1b);
+}
+
+/* Light red for stock < 10 */
+.status-pill.low-stock {
+  background-color: #fee2e2 !important;
+  color: #b91c1c !important;
+  border: 1px solid #fca5a5 !important;
+  font-weight: 600;
+}
+
+/* More prominent red for out of stock (= 0) */
+.status-pill.out-of-stock {
+  background-color: #dc2626 !important;
+  color: #ffffff !important;
+  border: 1px solid #b91c1c !important;
+  font-weight: 700;
+  box-shadow: 0 1px 3px rgba(220, 38, 38, 0.25);
+}
+
+/* Stock Badges for Table Columns */
+.stock-badge-instock {
+  background-color: #e8f5e9;
+  color: #15803d;
+  border: 1px solid #bbf7d0;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.stock-badge-low {
+  background-color: #fee2e2;
+  color: #b91c1c;
+  border: 1px solid #fca5a5;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.stock-badge-out {
+  background-color: #dc2626;
+  color: #ffffff;
+  border: 1px solid #b91c1c;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  box-shadow: 0 1px 4px rgba(220, 38, 38, 0.3);
+}
+
+/* Stock Inputs in Inventory & Product forms */
+.stock-input-low {
+  background-color: #fee2e2 !important;
+  color: #991b1b !important;
+  border: 1.5px solid #f87171 !important;
+  font-weight: 700 !important;
+}
+
+.stock-input-out {
+  background-color: #f87171 !important;
+  color: #ffffff !important;
+  border: 1.5px solid #dc2626 !important;
+  font-weight: 800 !important;
 }
 
 /* Table Footer Pagination Controls (1-50) */

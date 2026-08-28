@@ -360,10 +360,25 @@
       }
 
       tbody.innerHTML = products.map(p => {
-        const inStock = (Number(p.countInStock) || 0) > 0;
+        const stock = Number(p.countInStock) || 0;
         const imgUrl = p.image || 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=80';
+        
+        let statusBadge = '<span class="status-pill active">Active</span>';
+        let stockBadge = `<span class="stock-badge-instock">${stock}</span>`;
+        let rowStyle = '';
+
+        if (stock === 0) {
+          statusBadge = '<span class="status-pill out-of-stock">Out of Stock (0)</span>';
+          stockBadge = '<span class="stock-badge-out">0</span>';
+          rowStyle = 'background-color: #fef2f2;';
+        } else if (stock < 10) {
+          statusBadge = `<span class="status-pill low-stock">Low Stock (${stock})</span>`;
+          stockBadge = `<span class="stock-badge-low">${stock}</span>`;
+          rowStyle = 'background-color: #fff8f8;';
+        }
+
         return `
-          <tr style="cursor: pointer;" onclick="window.location.href='product-detail.html?id=${p._id}'">
+          <tr style="cursor: pointer; ${rowStyle}" onclick="window.location.href='product-detail.html?id=${p._id}'">
             <td>
               <div class="table-product-item">
                 <img src="${imgUrl}" class="table-product-thumb" alt="${p.name}" onerror="this.src='https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=80';">
@@ -372,8 +387,8 @@
             </td>
             <td><span class="badge-category">${p.category || 'General'}</span></td>
             <td><strong>₹${p.price || 0}</strong></td>
-            <td>${p.countInStock ?? 0}</td>
-            <td><span class="status-pill ${inStock ? 'active' : 'draft'}">${inStock ? 'Active' : 'Out of Stock'}</span></td>
+            <td>${stockBadge}</td>
+            <td>${statusBadge}</td>
           </tr>
         `;
       }).join('');

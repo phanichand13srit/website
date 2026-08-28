@@ -347,20 +347,28 @@
           grid.innerHTML = "<p style='padding:20px; color:var(--text-secondary);'>No products found in this category.</p>";
         } else {
           grid.innerHTML = colProducts.map(p => {
-            const inStock = (Number(p.countInStock) || 0) > 0;
-            const statusClass = inStock ? 'col-card-active-badge' : 'col-card-draft-badge';
+            const stock = Number(p.countInStock) || 0;
+            let statusClass = 'status-pill active';
+            let statusText = `Active (${stock})`;
+            if (stock === 0) {
+              statusClass = 'status-pill out-of-stock';
+              statusText = 'Out of stock (0)';
+            } else if (stock < 10) {
+              statusClass = 'status-pill low-stock';
+              statusText = `Low Stock (${stock})`;
+            }
             const imgUrl = p.image || 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=300&auto=format&fit=crop&q=60';
             const title = p.name || 'Product';
             
             return `
             <a href="product-detail.html?id=${p._id}" class="col-product-card" title="Click to edit ${title}">
-              <div class="col-product-img-wrapper">
+              <div class="col-product-img-wrapper" style="position:relative;">
                 <img src="${imgUrl}" alt="${title}" onerror="this.src='https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=300';">
-                <span class="${statusClass}">${inStock ? 'Active' : 'Out of stock'}</span>
+                <span class="${statusClass}" style="position:absolute; top:8px; left:8px; font-size:11px; padding:2px 8px;">${statusText}</span>
               </div>
               <div class="col-product-info">
                 ${title}
-                <div style="font-size:11.5px; color:#64748b; margin-top:2px;">₹${p.price || 0} / ${p.unit || '1 kg'}</div>
+                <div style="font-size:11.5px; color:#64748b; margin-top:2px;">₹${p.price || 0} / ${p.unit || '1 kg'} • <strong>${stock} left</strong></div>
               </div>
             </a>
             `;

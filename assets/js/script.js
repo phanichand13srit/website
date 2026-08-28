@@ -812,12 +812,15 @@ document.addEventListener("DOMContentLoaded", () => {
                 productUrl += `?id=${id}`;
             }
 
+            const inStock = (p.countInStock === undefined || p.countInStock === null) ? true : (Number(p.countInStock) > 0);
+
             return `
-                <div class="product-card">
+                <div class="product-card ${inStock ? '' : 'product-card-out-of-stock'}">
                     <a href="${productUrl}" class="product-card-link" style="text-decoration: none; color: inherit; display: block; cursor: pointer;">
                         <div class="product-image-container ${hasSecondImage ? 'has-second-img' : ''}">
                             ${discount > 0 ? `<span class="card-discount-tag">${discount}% Off</span>` : ''}
-                            <img src="${image}" alt="${name}" class="primary-img" onerror="this.onerror=null; this.src='${fallbackImg}';">
+                            ${!inStock ? `<span class="card-out-of-stock-tag" style="position: absolute; top: 10px; right: 10px; background: #dc2626; color: #fff; font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 4px; z-index: 2; letter-spacing: 0.5px;">OUT OF STOCK</span>` : ''}
+                            <img src="${image}" alt="${name}" class="primary-img" style="${inStock ? '' : 'opacity: 0.7;'}" onerror="this.onerror=null; this.src='${fallbackImg}';">
                             ${hasSecondImage ? `<img src="${secondImage}" alt="${name}" class="hover-img" onerror="this.style.display='none';">` : ''}
                         </div>
                         <div class="product-info">
@@ -832,7 +835,11 @@ document.addEventListener("DOMContentLoaded", () => {
                             </div>
                         </div>
                     </a>
-                    <button class="add-to-cart-btn" onclick="addToStoreCart('${id}', '${safeNameForJs}', ${price}, '${safeImgForJs}')">ADD TO CART</button>
+                    ${inStock ? `
+                        <button class="add-to-cart-btn" onclick="addToStoreCart('${id}', '${safeNameForJs}', ${price}, '${safeImgForJs}')">ADD TO CART</button>
+                    ` : `
+                        <button class="add-to-cart-btn disabled" disabled style="background: #f1f5f9; color: #94a3b8; border: 1px solid #cbd5e1; cursor: not-allowed; opacity: 0.85;">OUT OF STOCK</button>
+                    `}
                 </div>
             `;
         } catch (err) {
@@ -1018,7 +1025,8 @@ document.addEventListener("DOMContentLoaded", () => {
                         </div>
                     </div>
 
-                    <!-- Quantity + Action Buttons -->
+                    <!-- Quantity + Action Buttons (Visible ONLY if In Stock) -->
+                    ${isInstock ? `
                     <div style="display: flex; gap: 14px; margin-bottom: 24px; flex-wrap: wrap;">
                         <div style="display: flex; align-items: center; border: 1.5px solid #cbd5e1; border-radius: 8px; overflow: hidden; background: #fff; height: 50px;">
                             <button type="button" onclick="const q = document.getElementById('detailQtyInput'); if (Number(q.value) > 1) q.value = Number(q.value) - 1;" style="width: 40px; height: 100%; border: none; background: transparent; font-size: 18px; cursor: pointer; color: #475569;">−</button>
@@ -1034,6 +1042,21 @@ document.addEventListener("DOMContentLoaded", () => {
                             ⚡ BUY NOW
                         </button>
                     </div>
+                    ` : `
+                    <!-- Out of Stock Message (No Buy Options) -->
+                    <div style="background: #fef2f2; border: 1.5px solid #fca5a5; border-radius: 12px; padding: 18px 22px; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap;">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <span style="font-size: 26px; line-height: 1;">🚫</span>
+                            <div>
+                                <div style="color: #991b1b; font-weight: 800; font-size: 16px;">Currently Out of Stock</div>
+                                <div style="font-size: 13px; color: #b91c1c; margin-top: 2px;">This product is temporarily sold out and not available for purchase.</div>
+                            </div>
+                        </div>
+                        <a href="collections.html?category=all" style="background: #ffffff; color: #991b1b; border: 1.5px solid #f87171; padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 700; text-decoration: none; display: inline-block; transition: all 0.2s;">
+                            Browse Other Products →
+                        </a>
+                    </div>
+                    `}
 
                     <!-- Description Card -->
                     <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; margin-bottom: 20px;">
@@ -1057,21 +1080,31 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     window.handleDetailAddToCart = function(isBuyNow = false) {
+        if (!window.CURRENT_DETAIL_PRODUCT) return;
+        const prod = window.CURRENT_DETAIL_PRODUCT;
+
+        const isStockAvailable = (prod.countInStock === undefined || prod.countInStock === null) ? true : (Number(prod.countInStock) > 0);
+        if (!isStockAvailable) {
+            if (typeof showToast === 'function') {
+                showToast('Sorry, this product is currently out of stock.');
+            } else {
+                alert('Sorry, this product is currently out of stock.');
+            }
+            return;
+        }
+
         const qInput = document.getElementById('detailQtyInput');
         const qty = qInput ? (Number(qInput.value) || 1) : 1;
-        if (window.CURRENT_DETAIL_PRODUCT) {
-            const prod = window.CURRENT_DETAIL_PRODUCT;
-            const pImg = prod.image || (prod.images && prod.images[0] ? (prod.images[0].url || prod.images[0]) : '') || "https://arshithfresh.com/cdn/shop/collections/spice_200x200_crop_center.png?v=1746963495";
-            addToStoreCart(
-                prod._id || '',
-                prod.name || prod.title || 'Arshith Fresh Product',
-                Number(prod.price) || 0,
-                pImg,
-                qty
-            );
-            if (isBuyNow) {
-                window.location.href = 'cart.html';
-            }
+        const pImg = prod.image || (prod.images && prod.images[0] ? (prod.images[0].url || prod.images[0]) : '') || "https://arshithfresh.com/cdn/shop/collections/spice_200x200_crop_center.png?v=1746963495";
+        addToStoreCart(
+            prod._id || '',
+            prod.name || prod.title || 'Arshith Fresh Product',
+            Number(prod.price) || 0,
+            pImg,
+            qty
+        );
+        if (isBuyNow) {
+            window.location.href = 'cart.html';
         }
     };
 

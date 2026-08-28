@@ -320,10 +320,14 @@
       document.getElementById('inputProductPrice').value = data.price || 0;
       document.getElementById('inputProductOriginalPrice').value = data.originalPrice || 0;
       document.getElementById('inputProductUnit').value = data.unit || '1 kg';
-      document.getElementById('inputProductStock').value = data.countInStock ?? 15;
+      const stockVal = Number(data.countInStock) || 0;
+      document.getElementById('inputProductStock').value = stockVal;
       document.getElementById('inputVendor').value = data.brand || 'Arshith Fresh';
       document.getElementById('inputIsFeatured').checked = !!data.isFeatured;
       
+      // Update Stock input color & top badge
+      updateDetailStockColor();
+
       // Load Multiple Images
       uploadedImages = [];
       if (Array.isArray(data.images) && data.images.length > 0) {
@@ -334,12 +338,6 @@
       
       renderImagesGrid();
 
-      // Status
-      const inStock = (Number(data.countInStock) || 0) > 0;
-      document.getElementById('topStatusBadge').textContent = inStock ? 'Active' : 'Out of stock';
-      document.getElementById('topStatusBadge').className = inStock ? 'status-pill status-active' : 'status-pill status-draft';
-      document.getElementById('selectProductStatus').value = inStock ? 'Active' : 'Draft';
-
       // Category & Subcategory
       populateCategoryDropdowns(data.category || '', data.subcategory || '');
 
@@ -348,6 +346,41 @@
       document.getElementById('seoUrl').textContent = `https://arshithfresh.com > products > ${data._id}`;
       document.getElementById('seoSnippet').textContent = data.description ? data.description.substring(0, 150) + '...' : `Buy authentic ${title} online from Arshith Fresh.`;
     }
+
+    function updateDetailStockColor() {
+      const stockInput = document.getElementById('inputProductStock');
+      const badge = document.getElementById('topStatusBadge');
+      const selectStatus = document.getElementById('selectProductStatus');
+      if (!stockInput) return;
+
+      const stock = Number(stockInput.value) || 0;
+      stockInput.classList.remove('stock-input-low', 'stock-input-out');
+
+      if (stock === 0) {
+        stockInput.classList.add('stock-input-out');
+        if (badge) {
+          badge.textContent = 'Out of Stock (0)';
+          badge.className = 'status-pill out-of-stock';
+        }
+        if (selectStatus) selectStatus.value = 'Draft';
+      } else if (stock < 10) {
+        stockInput.classList.add('stock-input-low');
+        if (badge) {
+          badge.textContent = `Low Stock (${stock} left)`;
+          badge.className = 'status-pill low-stock';
+        }
+        if (selectStatus) selectStatus.value = 'Active';
+      } else {
+        if (badge) {
+          badge.textContent = `Active (${stock})`;
+          badge.className = 'status-pill active';
+        }
+        if (selectStatus) selectStatus.value = 'Active';
+      }
+    }
+
+    const detailStockEl = document.getElementById('inputProductStock');
+    if (detailStockEl) detailStockEl.addEventListener('input', updateDetailStockColor);
 
     function renderImagesGrid() {
       const grid = document.getElementById('multipleImagesGrid');

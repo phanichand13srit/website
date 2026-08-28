@@ -1,6 +1,95 @@
 const express = require('express');
 const router = express.Router();
+const mongoose = require('mongoose');
 const Order = require('../models/Order');
+const Product = require('../models/Product');
+
+// Helper to escape regex special characters
+function escapeRegex(text) {
+  return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
+}
+
+// Deduct inventory when order is placed or un-cancelled
+async function deductInventoryForOrder(orderItems) {
+  if (!Array.isArray(orderItems) || orderItems.length === 0) return;
+  for (const item of orderItems) {
+    const qty = Math.max(1, Number(item.qty || item.quantity || 1));
+    let product = null;
+
+    // 1. Match by ObjectId
+    if (item.product && mongoose.Types.ObjectId.isValid(item.product)) {
+      product = await Product.findById(item.product);
+    }
+
+    // 2. Match by exact product name
+    if (!product && item.name) {
+      product = await Product.findOne({
+        name: { $regex: new RegExp(`^${escapeRegex(item.name.trim())}$`, 'i') }
+      });
+    }
+
+    // 3. Fallback: match by starting title words
+    if (!product && item.name) {
+      const firstWord = item.name.trim().split(' ')[0];
+      if (firstWord && firstWord.length >= 3) {
+        product = await Product.findOne({
+          name: { $regex: new RegExp(`^${escapeRegex(firstWord)}`, 'i') }
+        });
+      }
+    }
+
+    if (product) {
+      const oldStock = Number(product.countInStock) || 0;
+      const newStock = Math.max(0, oldStock - qty);
+      product.countInStock = newStock;
+      await product.save();
+      console.log(`📉 [Inventory Deducted] "${product.name}" stock: ${oldStock} -> ${newStock} (-${qty})`);
+    } else {
+      console.warn(`⚠️ [Inventory Warning] Could not find product to deduct stock: ${item.name || item.product}`);
+    }
+  }
+}
+
+// Restore inventory when order is cancelled
+async function restoreInventoryForOrder(orderItems) {
+  if (!Array.isArray(orderItems) || orderItems.length === 0) return;
+  for (const item of orderItems) {
+    const qty = Math.max(1, Number(item.qty || item.quantity || 1));
+    let product = null;
+
+    // 1. Match by ObjectId
+    if (item.product && mongoose.Types.ObjectId.isValid(item.product)) {
+      product = await Product.findById(item.product);
+    }
+
+    // 2. Match by exact product name
+    if (!product && item.name) {
+      product = await Product.findOne({
+        name: { $regex: new RegExp(`^${escapeRegex(item.name.trim())}$`, 'i') }
+      });
+    }
+
+    // 3. Fallback: match by starting title words
+    if (!product && item.name) {
+      const firstWord = item.name.trim().split(' ')[0];
+      if (firstWord && firstWord.length >= 3) {
+        product = await Product.findOne({
+          name: { $regex: new RegExp(`^${escapeRegex(firstWord)}`, 'i') }
+        });
+      }
+    }
+
+    if (product) {
+      const oldStock = Number(product.countInStock) || 0;
+      const newStock = oldStock + qty;
+      product.countInStock = newStock;
+      await product.save();
+      console.log(`📈 [Inventory Restored] "${product.name}" stock: ${oldStock} -> ${newStock} (+${qty})`);
+    } else {
+      console.warn(`⚠️ [Inventory Warning] Could not find product to restore stock: ${item.name || item.product}`);
+    }
+  }
+}
 
 // @route   GET /api/orders
 // @desc    Get all orders (Admin overview)
@@ -27,10 +116,8 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-const mongoose = require('mongoose');
-
 // @route   POST /api/orders
-// @desc    Create a new order (Checkout)
+// @desc    Create a new order (Checkout) & automatically decrement inventory
 router.post('/', async (req, res) => {
   try {
     const {
@@ -49,7 +136,8 @@ router.post('/', async (req, res) => {
       discountPrice,
       discountAmount,
       couponCode,
-      isPaid
+      isPaid,
+      status
     } = req.body;
 
     if (!orderItems || orderItems.length === 0) {
@@ -64,6 +152,8 @@ router.post('/', async (req, res) => {
       qty: Number(item.qty || item.quantity || 1),
       price: Number(item.price || 0)
     }));
+
+    const orderStatus = status || 'Confirmed';
 
     const order = new Order({
       user: validUser,
@@ -81,10 +171,21 @@ router.post('/', async (req, res) => {
       shippingPrice: shippingPrice || 0,
       totalPrice,
       isPaid: isPaid || false,
-      status: 'Confirmed',
+      status: orderStatus,
+      inventoryDeducted: orderStatus !== 'Cancelled'
     });
 
     const createdOrder = await order.save();
+
+    // Deduct stock for the ordered products if order is active
+    if (orderStatus !== 'Cancelled') {
+      try {
+        await deductInventoryForOrder(sanitizedItems);
+      } catch (stockErr) {
+        console.error('Error auto-deducting inventory on order creation:', stockErr);
+      }
+    }
+
     res.status(201).json(createdOrder);
   } catch (error) {
     res.status(400).json({ message: 'Error placing order', error: error.message });
@@ -92,7 +193,7 @@ router.post('/', async (req, res) => {
 });
 
 // @route   PUT /api/orders/:id/status
-// @desc    Update order status (e.g. Confirmed, Dispatched, Delivered, Cancelled)
+// @desc    Update order status (Confirmed, Dispatched, Delivered, Cancelled) & auto adjust stock
 router.put('/:id/status', async (req, res) => {
   try {
     const { status, isPaid, isDelivered } = req.body;
@@ -117,6 +218,29 @@ router.put('/:id/status', async (req, res) => {
       return res.status(404).json({ message: 'Order not found' });
     }
 
+    const oldStatus = order.status;
+    const newStatus = status || oldStatus;
+
+    // 1. Transitioning to Cancelled -> Restore inventory
+    if (newStatus === 'Cancelled' && oldStatus !== 'Cancelled' && order.inventoryDeducted !== false) {
+      try {
+        await restoreInventoryForOrder(order.orderItems);
+        order.inventoryDeducted = false;
+      } catch (restockErr) {
+        console.error('Error restoring inventory on order cancellation:', restockErr);
+      }
+    }
+
+    // 2. Transitioning from Cancelled back to Active status -> Re-deduct inventory
+    if (oldStatus === 'Cancelled' && newStatus !== 'Cancelled' && order.inventoryDeducted === false) {
+      try {
+        await deductInventoryForOrder(order.orderItems);
+        order.inventoryDeducted = true;
+      } catch (deductErr) {
+        console.error('Error re-deducting inventory on order status reactivation:', deductErr);
+      }
+    }
+
     if (status) order.status = status;
     if (typeof isPaid === 'boolean') order.isPaid = isPaid;
     if (typeof isDelivered === 'boolean') order.isDelivered = isDelivered;
@@ -129,28 +253,49 @@ router.put('/:id/status', async (req, res) => {
   }
 });
 
-// @route   PUT /api/orders/:id/cancel
-// @desc    Cancel order (Allowed when status is 'Order Placed', 'Pending', or 'Confirmed')
-router.put('/:id/cancel', async (req, res) => {
+
+// @route   PUT /api/orders/:id/cancel or POST /api/orders/:id/cancel
+// @desc    Cancel an order and return all items back into inventory
+const cancelOrderHandler = async (req, res) => {
   try {
     const order = await Order.findById(req.params.id);
+
     if (!order) {
       return res.status(404).json({ message: 'Order not found' });
     }
 
-    const uncancelableStatuses = ['Shipped', 'Dispatched', 'Delivered', 'Cancelled'];
-    if (uncancelableStatuses.includes(order.status)) {
-      return res.status(400).json({ 
-        message: `Order cannot be cancelled because it is already ${order.status.toLowerCase()}.` 
-      });
+    if (order.status === 'Cancelled') {
+      return res.json({ message: 'Order is already cancelled', order });
+    }
+
+    if (order.status === 'Delivered') {
+      return res.status(400).json({ message: 'Delivered orders cannot be cancelled.' });
+    }
+
+    // Restore stock
+    if (order.inventoryDeducted !== false) {
+      try {
+        await restoreInventoryForOrder(order.orderItems);
+        order.inventoryDeducted = false;
+      } catch (restockErr) {
+        console.error('Error restoring inventory during order cancellation:', restockErr);
+      }
     }
 
     order.status = 'Cancelled';
     const updatedOrder = await order.save();
-    res.json({ message: 'Order cancelled successfully', order: updatedOrder });
+
+    res.json({
+      success: true,
+      message: 'Order cancelled successfully and inventory was restored.',
+      order: updatedOrder
+    });
   } catch (error) {
-    res.status(400).json({ message: 'Error cancelling order', error: error.message });
+    res.status(500).json({ message: 'Error cancelling order', error: error.message });
   }
-});
+};
+
+router.put('/:id/cancel', cancelOrderHandler);
+router.post('/:id/cancel', cancelOrderHandler);
 
 module.exports = router;

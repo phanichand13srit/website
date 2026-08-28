@@ -278,9 +278,26 @@
         const title = p.name || 'Unnamed Product';
         const imgUrl = p.image || 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=80';
         const stock = Number(p.countInStock) || 0;
-        const inStock = stock > 0;
+        
+        let stockInputClass = 'stock-input';
+        let statusBadgeHtml = '';
+        let rowBgStyle = '';
+
+        if (stock === 0) {
+          stockInputClass = 'stock-input stock-input-out';
+          statusBadgeHtml = `<span class="status-pill out-of-stock"><i class="fa-solid fa-circle-xmark"></i> Out of Stock (0)</span>`;
+          rowBgStyle = 'background-color: #fef2f2;';
+        } else if (stock < 10) {
+          stockInputClass = 'stock-input stock-input-low';
+          statusBadgeHtml = `<span class="status-pill low-stock"><i class="fa-solid fa-triangle-exclamation"></i> Low Stock (${stock} left)</span>`;
+          rowBgStyle = 'background-color: #fff8f8;';
+        } else {
+          statusBadgeHtml = `<span class="status-pill active"><i class="fa-solid fa-circle-check"></i> In Stock (${stock})</span>`;
+        }
 
         const tr = document.createElement('tr');
+        if (rowBgStyle) tr.style.cssText = rowBgStyle;
+
         tr.innerHTML = `
           <td><input type="checkbox" class="custom-checkbox"></td>
           <td>
@@ -296,12 +313,10 @@
           <td>${p.unit || '1 kg'}</td>
           <td><strong>₹${p.price || 0}</strong></td>
           <td>
-            <input type="number" id="stock_${p._id}" class="stock-input" value="${stock}" min="0" style="width:70px; padding:4px 8px; border:1px solid #cbd5e1; border-radius:6px; font-weight:600;">
+            <input type="number" id="stock_${p._id}" class="${stockInputClass}" value="${stock}" min="0" oninput="handleStockInputColor(this)" style="width:70px; padding:4px 8px; border-radius:6px; font-weight:600;">
           </td>
           <td>
-            <span class="status-pill ${inStock ? 'active' : 'draft'}">
-              ${inStock ? 'In Stock' : 'Out of Stock'}
-            </span>
+            ${statusBadgeHtml}
           </td>
           <td style="text-align:right;">
             <button class="btn-pill btn-pill-primary" style="padding: 5px 12px; font-size: 12px;" onclick="saveStock('${p._id}')"><i class="fa-solid fa-check"></i> Update</button>
@@ -309,6 +324,16 @@
         `;
         tbody.appendChild(tr);
       });
+    }
+
+    function handleStockInputColor(input) {
+      const val = Number(input.value) || 0;
+      input.classList.remove('stock-input-low', 'stock-input-out');
+      if (val === 0) {
+        input.classList.add('stock-input-out');
+      } else if (val < 10) {
+        input.classList.add('stock-input-low');
+      }
     }
 
     async function saveStock(productId) {

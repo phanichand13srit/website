@@ -559,20 +559,27 @@
                         const orderId = String(o._id).substring(0, 8).toUpperCase();
                         const dateStr = new Date(o.createdAt).toLocaleString();
                         const addr = o.shippingAddress ? [o.shippingAddress.address, o.shippingAddress.city, o.shippingAddress.state, o.shippingAddress.postalCode].filter(Boolean).join(', ') : 'Standard Shipping';
+                        const status = o.status || 'Confirmed';
+                        const isCancelled = status === 'Cancelled';
+                        const isDelivered = status === 'Delivered';
                         
+                        let statusBadgeColor = '#e0f2fe; color: #0369a1;';
+                        if (status === 'Delivered') statusBadgeColor = '#dcfce7; color: #15803d;';
+                        else if (status === 'Cancelled') statusBadgeColor = '#fee2e2; color: #b91c1c;';
+                        else if (status === 'Processing' || status === 'Shipped') statusBadgeColor = '#fef3c7; color: #92400e;';
+
                         return `
-                            <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 14px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.03);">
-                                <div style="background: #f8fafc; padding: 14px 20px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                            <div style="background: #ffffff; border: 1.5px solid ${isCancelled ? '#fecaca' : '#e2e8f0'}; border-radius: 14px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.03);">
+                                <div style="background: ${isCancelled ? '#fff5f5' : '#f8fafc'}; padding: 14px 20px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
                                     <div>
                                         <span style="font-weight: 700; color: #0f7139; font-size: 16px;">Order #${orderId}</span>
                                         <span style="font-size: 12px; color: #64748b; margin-left: 10px;">Placed on ${dateStr}</span>
                                     </div>
                                     <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
-                                        <span style="font-size: 11px; padding: 4px 10px; border-radius: 12px; font-weight: 700; background: ${o.status === 'Cancelled' ? '#fef2f2; color: #dc2626;' : (o.status === 'Delivered' ? '#dcfce7; color: #15803d;' : (o.status === 'Dispatched' || o.status === 'Shipped' ? '#e0f2fe; color: #0369a1;' : '#fef9c3; color: #854d0e;'))}">
-                                            ${o.status === 'Cancelled' ? '🚫 CANCELLED' : (o.status === 'Delivered' ? '✅ DELIVERED' : (o.status === 'Dispatched' || o.status === 'Shipped' ? '🚚 DISPATCHED' : '📋 CONFIRMED'))}
-                                        </span>
+                                        <span style="font-size: 11px; padding: 4px 10px; border-radius: 12px; font-weight: 700; background: ${statusBadgeColor}">● ${status.toUpperCase()}</span>
+
                                         <span style="font-size: 11px; padding: 4px 10px; border-radius: 12px; font-weight: 700; background: ${o.isPaid ? '#dcfce7; color: #15803d;' : '#fef9c3; color: #854d0e;'}">${o.isPaid ? '✓ PAID' : '⏳ PENDING'}</span>
-                                        <span style="font-size: 11px; padding: 4px 10px; border-radius: 12px; font-weight: 700; background: #e0f2fe; color: #0369a1;">${o.paymentMethod || 'Razorpay'}</span>
+                                        <span style="font-size: 11px; padding: 4px 10px; border-radius: 12px; font-weight: 700; background: #f1f5f9; color: #475569;">${o.paymentMethod || 'Razorpay'}</span>
                                     </div>
                                 </div>
 
@@ -595,13 +602,24 @@
                                         </div>
                                     </div>
 
-                                    <div style="border-top: 1px dashed #e2e8f0; padding-top: 12px; display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 10px;">
+                                    <div style="border-top: 1px dashed #e2e8f0; padding-top: 12px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
                                         <div style="font-size: 13px; color: #64748b;">
                                             📍 <strong>Delivery Address:</strong> ${addr}
                                         </div>
-                                        <div style="text-align: right;">
-                                            <span style="font-size: 13px; color: #64748b;">Total Amount:</span>
-                                            <strong style="font-size: 18px; color: #0f7139; margin-left: 6px;">₹${Number(o.totalPrice || 0).toFixed(2)}</strong>
+                                        <div style="display: flex; align-items: center; gap: 16px;">
+                                            <div style="text-align: right;">
+                                                <span style="font-size: 13px; color: #64748b;">Total Amount:</span>
+                                                <strong style="font-size: 18px; color: #0f7139; margin-left: 6px;">₹${Number(o.totalPrice || 0).toFixed(2)}</strong>
+                                            </div>
+                                            ${!isCancelled && !isDelivered ? `
+                                                <button type="button" onclick="cancelUserOrder('${o._id}')" style="background: #fff; color: #dc2626; border: 1px solid #fca5a5; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='#fee2e2'" onmouseout="this.style.background='#fff'">
+                                                    <i class="fa-solid fa-ban"></i> Cancel Order
+                                                </button>
+                                            ` : (isCancelled ? `
+                                                <span style="font-size: 12px; color: #991b1b; background: #fee2e2; padding: 4px 8px; border-radius: 6px; font-weight: 600;">
+                                                    <i class="fa-solid fa-rotate-left"></i> Cancelled & Restocked
+                                                </span>
+                                            ` : '')}
                                         </div>
                                     </div>
                                 </div>
@@ -610,6 +628,38 @@
                     }).join('')}
                 </div>
             `;
+        }
+
+        async function cancelUserOrder(orderId) {
+            if (!confirm('Are you sure you want to cancel this order? All items in this order will be returned to store inventory.')) {
+                return;
+            }
+
+            try {
+                const res = await fetch(`http://localhost:5000/api/orders/${orderId}/cancel`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+
+                const data = await res.json();
+                if (res.ok) {
+                    alert('Order cancelled successfully! All items have been returned to store inventory.');
+                    // Update local storage cache
+                    try {
+                        const localOrders = JSON.parse(localStorage.getItem('arshith_user_orders')) || [];
+                        const idx = localOrders.findIndex(o => String(o._id) === String(orderId));
+                        if (idx !== -1) {
+                            localOrders[idx].status = 'Cancelled';
+                            localStorage.setItem('arshith_user_orders', JSON.stringify(localOrders));
+                        }
+                    } catch (e) {}
+                    loadUserProfile();
+                } else {
+                    alert(data.message || 'Failed to cancel order.');
+                }
+            } catch (err) {
+                alert('Error cancelling order: ' + err.message);
+            }
         }
 
         function switchTab(tabId, btn) {
