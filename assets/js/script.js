@@ -1365,18 +1365,37 @@ function initLiveSearchAutocomplete() {
     let allSearchProducts = [];
     let isFetchingProducts = false;
 
+    const STARTER_SEARCH_CATALOG = [
+        { _id: 's1', title: 'Granular Buffalo Ghee (Traditional Bilona)', category: 'Ghee and Honey', price: 699, image: 'https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-09-15_at_4.34.52_PM.jpg?v=1757934372&width=533' },
+        { _id: 's2', title: 'Cold Pressed Sunflower Oil (Premium Quality)', category: 'Oils', price: 499, image: 'https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM.jpg?v=1757334052&width=533' },
+        { _id: 's3', title: 'Groundnut Oil (Cold Pressed)', category: 'Oils', price: 349, image: 'https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM_1.jpg?v=1757334051&width=533' },
+        { _id: 's4', title: 'Flax Seeds (Organic & Premium)', category: 'Dry Seeds', price: 29, image: 'https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM_2.jpg?v=1757334051&width=533' },
+        { _id: 's5', title: 'Chia Seeds (High Fiber)', category: 'Dry Seeds', price: 49, image: 'https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM_3.jpg?v=1757334051&width=533' },
+        { _id: 's6', title: 'Raw Wild Forest Honey', category: 'Ghee and Honey', price: 399, image: 'https://arshithfresh.com/cdn/shop/files/4_6d56df69-1c9f-4f05-b1a7-ca631fc7b9aa.png?v=1757334051&width=533' },
+        { _id: 's7', title: 'Cashews (W240 Grade Premium)', category: 'Dry Fruits', price: 899, image: 'https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM.jpg?v=1757334052&width=533' },
+        { _id: 's8', title: 'California Almonds (Badam)', category: 'Dry Fruits', price: 799, image: 'https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM_1.jpg?v=1757334051&width=533' }
+    ];
+
     async function loadSearchProducts() {
-        if (allSearchProducts.length > 0 || isFetchingProducts) return;
+        if (allSearchProducts.length > 0) return;
+        if (isFetchingProducts) return;
         isFetchingProducts = true;
         try {
-            const apiHost = window.location.origin.includes('http') ? window.location.origin : 'http://localhost:5000';
-            const res = await fetch(`${apiHost}/api/products`);
+            let res = await fetch('http://localhost:5000/api/products');
+            if (!res.ok) res = await fetch('/api/products');
             if (res.ok) {
                 const data = await res.json();
-                allSearchProducts = Array.isArray(data) ? data : (data.data || []);
+                const fetched = Array.isArray(data) ? data : (data.data || []);
+                if (fetched.length > 0) {
+                    allSearchProducts = fetched;
+                } else {
+                    allSearchProducts = STARTER_SEARCH_CATALOG;
+                }
+            } else {
+                allSearchProducts = STARTER_SEARCH_CATALOG;
             }
         } catch (e) {
-            console.warn('Using local fallback for search products');
+            allSearchProducts = STARTER_SEARCH_CATALOG;
         } finally {
             isFetchingProducts = false;
         }
