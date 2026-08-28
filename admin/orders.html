@@ -378,13 +378,16 @@
             </span>
           </td>
           <td style="text-align:right;">
-            <select class="status-change-dropdown" onchange="updateOrderStatus('${order._id}', this.value)">
-              <option value="" disabled selected hidden>⚡ Change Status ▾</option>
-              <option value="Confirmed">📋 Mark as Confirmed</option>
-              <option value="Dispatched">🚚 Mark as Dispatched</option>
-              <option value="Delivered">✅ Mark as Delivered</option>
-              <option value="Cancelled">🚫 Mark as Cancelled</option>
-            </select>
+            ${st === 'Cancelled' ? `
+              <span class="badge-cancelled-done"><i class="fa-solid fa-ban"></i> Cancelled by Customer</span>
+            ` : `
+              <select class="status-change-dropdown" onchange="updateOrderStatus('${order._id}', this.value)">
+                <option value="" disabled selected hidden>⚡ Change Status ▾</option>
+                <option value="Confirmed">📋 Mark as Confirmed</option>
+                <option value="Dispatched">🚚 Mark as Dispatched</option>
+                <option value="Delivered">✅ Mark as Delivered</option>
+              </select>
+            `}
           </td>
         `;
         tbody.appendChild(tr);
