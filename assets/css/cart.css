@@ -1037,50 +1037,62 @@
             }
         }
 
-        /* Active Order Stepper & Status Tracker */
-        .order-stepper-box {
+        /* E-Commerce Order Tracker Styles (Matching Reference) */
+        .order-tracker-card {
             background: #ffffff;
             border: 1.5px solid #e2e8f0;
             border-radius: 16px;
-            padding: 24px;
+            padding: 28px;
             margin-bottom: 24px;
             box-shadow: 0 4px 14px rgba(0, 0, 0, 0.03);
         }
 
-        .stepper-progress-track {
-            display: flex !important;
-            flex-direction: row !important;
-            flex-wrap: nowrap !important;
-            align-items: flex-start !important;
-            justify-content: space-between !important;
-            position: relative;
-            margin: 28px 0 20px 0;
-            padding: 0 10px;
-            width: 100%;
-            box-sizing: border-border-box;
+        .tracker-main-title {
+            font-size: 20px;
+            font-weight: 800;
+            color: #0f172a;
+            margin: 0 0 4px 0;
         }
 
-        .stepper-track-line {
+        .tracker-order-code {
+            font-size: 13.5px;
+            color: #64748b;
+            margin-bottom: 24px;
+        }
+
+        .stepper-horizontal-container {
+            position: relative;
+            display: flex !important;
+            flex-direction: row !important;
+            justify-content: space-between !important;
+            align-items: flex-start !important;
+            margin: 32px 0 28px 0;
+            padding: 0 20px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .stepper-line-bg {
             position: absolute;
-            top: 18px;
+            top: 17px;
             left: 50px;
             right: 50px;
             height: 4px;
-            background: #cbd5e1;
+            background: #e2e8f0;
             z-index: 1;
         }
 
-        .stepper-track-fill {
+        .stepper-line-active {
             position: absolute;
-            top: 18px;
+            top: 17px;
             left: 50px;
             height: 4px;
-            background: #0f7139;
+            background: #10b981;
             z-index: 1;
             transition: width 0.4s ease;
         }
 
-        .stepper-step-node {
+        .stepper-step {
             position: relative;
             z-index: 2;
             display: flex !important;
@@ -1090,42 +1102,50 @@
             flex: 1;
         }
 
-        .stepper-circle {
-            width: 36px;
-            height: 36px;
+        .step-circle-icon {
+            width: 34px;
+            height: 34px;
             border-radius: 50%;
-            background: #ffffff;
-            border: 3px solid #cbd5e1;
-            color: #64748b;
+            background: #e2e8f0;
+            border: 2px solid #cbd5e1;
+            color: #ffffff;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 13px;
-            font-weight: 700;
+            font-size: 14px;
             transition: all 0.3s ease;
         }
 
-        .stepper-step-node.completed .stepper-circle {
-            background: #0f7139;
-            border-color: #0f7139;
+        .stepper-step.completed .step-circle-icon {
+            background: #10b981;
+            border-color: #10b981;
             color: #ffffff;
         }
 
-        .stepper-step-node.active .stepper-circle {
-            background: #ffffff;
-            border-color: #0f7139;
-            color: #0f7139;
-            box-shadow: 0 0 0 4px rgba(15, 113, 57, 0.2);
+        .stepper-step.active .step-circle-icon {
+            background: #10b981;
+            border-color: #10b981;
+            color: #ffffff;
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.25);
         }
 
-        .stepper-step-label {
-            font-size: 12px;
+        .step-title-text {
+            font-size: 13px;
             font-weight: 600;
-            color: #64748b;
-            margin-top: 8px;
-            line-height: 1.3;
-            white-space: normal;
-            word-break: break-word;
+            color: #94a3b8;
+            margin-top: 10px;
+        }
+
+        .stepper-step.completed .step-title-text,
+        .stepper-step.active .step-title-text {
+            color: #10b981;
+            font-weight: 700;
+        }
+
+        .tracker-cancel-wrapper {
+            margin: 20px 0 28px 0;
+            padding-bottom: 20px;
+            border-bottom: 1.5px solid #f1f5f9;
         }
 
         .stepper-step-node.completed .stepper-step-label,

@@ -343,8 +343,8 @@
                 return;
             }
 
-            const orderId = activeOrder._id ? 'AF-' + String(activeOrder._id).substring(0, 8).toUpperCase() : 'AF-RECORDER';
-            const dateStr = new Date(activeOrder.createdAt || Date.now()).toLocaleString();
+            const rawId = String(activeOrder._id || activeOrder.transactionId || '6A912941');
+            const orderCode = '365/' + (rawId.length > 10 ? rawId.substring(rawId.length - 10) : rawId);
             const status = activeOrder.status || 'Confirmed';
             const isCancelled = status.toLowerCase() === 'cancelled';
             const isDispatched = status.toLowerCase() === 'shipped' || status.toLowerCase() === 'dispatched' || status.toLowerCase() === 'delivered';
@@ -353,12 +353,13 @@
             const addrObj = activeOrder.shippingAddress || {};
             const addrStr = [addrObj.address, addrObj.apartment, addrObj.city, addrObj.state, addrObj.postalCode, addrObj.country || 'India'].filter(Boolean).join(', ');
             const phoneStr = activeOrder.customerPhone || currentUser.phone || 'N/A';
-            const paymentMode = activeOrder.paymentMethod || 'Razorpay Secure';
+            const paymentMode = activeOrder.paymentMethod || 'Cash on Delivery';
             const isPaid = activeOrder.isPaid;
 
+            // Map stages: 1: Placed, 2: Packed, 3: Shipped, 4: Delivered
             let currentStepIndex = 1;
             const statusLower = status.toLowerCase();
-            if (statusLower === 'confirmed' || statusLower === 'processing') {
+            if (statusLower === 'confirmed' || statusLower === 'packed' || statusLower === 'processing') {
                 currentStepIndex = 2;
             } else if (statusLower === 'shipped' || statusLower === 'dispatched') {
                 currentStepIndex = 3;
@@ -367,31 +368,73 @@
             }
 
             const fillWidthPercentage = isCancelled ? 0 : ((currentStepIndex - 1) / 3) * 100;
+            const checkSvg = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
 
             container.innerHTML = `
-                <div class="order-stepper-box">
-                    <!-- 1. HEADER SECTION -->
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px; border-bottom: 1.5px solid #f1f5f9; padding-bottom: 16px; margin-bottom: 20px;">
-                        <div>
-                            <div style="display: flex; align-items: center; gap: 10px;">
-                                <h3 style="margin: 0; font-size: 18px; color: #0f7139; font-weight: 800;">Order #${orderId}</h3>
-                                <span style="font-size: 11px; padding: 4px 10px; border-radius: 20px; font-weight: 700; background: ${isCancelled ? '#fef2f2; color: #dc2626; border: 1px solid #fecaca;' : '#dcfce7; color: #15803d; border: 1px solid #86efac;'}">
-                                    ${isCancelled ? '❌ CANCELLED' : '⚡ ' + status.toUpperCase()}
-                                </span>
-                            </div>
-                            <div style="font-size: 12.5px; color: #64748b; margin-top: 4px;">Placed on: ${dateStr}</div>
-                        </div>
+                <div class="order-tracker-card">
+                    <!-- Title & Order Code (Exact Match to Reference Image) -->
+                    <h3 class="tracker-main-title">Track your Order</h3>
+                    <div class="tracker-order-code">Order Code: <strong>${orderCode}</strong></div>
 
-                        <div style="text-align: right;">
-                            <div style="font-size: 18px; font-weight: 800; color: #0f172a;">₹${Number(activeOrder.totalPrice || 0).toFixed(2)}</div>
-                            <div style="font-size: 12px; color: #475569; margin-top: 2px;">
-                                Mode: <strong>${paymentMode}</strong> • <span style="color: ${isPaid ? '#15803d' : '#854d0e'}; font-weight: 700;">${isPaid ? 'PAID' : 'PENDING'}</span>
+                    <!-- Horizontal Progress Line with Checkmark Circles -->
+                    ${isCancelled ? `
+                        <div style="background: #fef2f2; border: 1.5px solid #fecaca; border-radius: 12px; padding: 16px; text-align: center; margin-bottom: 24px; color: #dc2626; font-size: 14px;">
+                            <strong>🚫 This order was cancelled.</strong> If you have any questions, please contact support at support@arshithfresh.com.
+                        </div>
+                    ` : `
+                        <div class="stepper-horizontal-container">
+                            <div class="stepper-line-bg"></div>
+                            <div class="stepper-line-active" style="width: ${fillWidthPercentage}%;"></div>
+
+                            <div class="stepper-step ${currentStepIndex >= 1 ? 'completed' : ''} ${currentStepIndex === 1 ? 'active' : ''}">
+                                <div class="step-circle-icon">${currentStepIndex >= 1 ? checkSvg : ''}</div>
+                                <div class="step-title-text">Placed</div>
                             </div>
+
+                            <div class="stepper-step ${currentStepIndex >= 2 ? 'completed' : ''} ${currentStepIndex === 2 ? 'active' : ''}">
+                                <div class="step-circle-icon">${currentStepIndex >= 2 ? checkSvg : ''}</div>
+                                <div class="step-title-text">Packed</div>
+                            </div>
+
+                            <div class="stepper-step ${currentStepIndex >= 3 ? 'completed' : ''} ${currentStepIndex === 3 ? 'active' : ''}">
+                                <div class="step-circle-icon">${currentStepIndex >= 3 ? checkSvg : ''}</div>
+                                <div class="step-title-text">Shipped</div>
+                            </div>
+
+                            <div class="stepper-step ${currentStepIndex >= 4 ? 'completed' : ''} ${currentStepIndex === 4 ? 'active' : ''}">
+                                <div class="step-circle-icon">${currentStepIndex >= 4 ? checkSvg : ''}</div>
+                                <div class="step-title-text">Delivered</div>
+                            </div>
+                        </div>
+                    `}
+
+                    <!-- Cancel Option Directly Under Progress Tracker -->
+                    ${isEligibleForCancel ? `
+                        <div class="tracker-cancel-wrapper">
+                            <button type="button" class="cancel-order-btn" id="cancelOrderActionBtn" onclick="handleCancelActiveOrder('${activeOrder._id}', '${orderCode}')">
+                                🚫 Cancel Order
+                            </button>
+                        </div>
+                    ` : ''}
+
+                    <!-- Delivery Address & Payment Mode -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 12px; padding: 18px; margin-bottom: 24px; font-size: 13.5px; color: #334155;">
+                        <div>
+                            <div style="font-weight: 700; color: #0f172a; margin-bottom: 6px; font-size: 14px;">📍 Delivery Address</div>
+                            <div><strong>${activeOrder.customerName || currentUser.name}</strong></div>
+                            <div style="color: #475569; margin-top: 2px;">${addrStr}</div>
+                            <div style="color: #64748b; margin-top: 4px;">📞 Phone: ${phoneStr}</div>
+                        </div>
+                        <div>
+                            <div style="font-weight: 700; color: #0f172a; margin-bottom: 6px; font-size: 14px;">💵 Payment Details</div>
+                            <div>Payment Method: <strong>${paymentMode}</strong></div>
+                            <div>Status: <strong style="color: ${isPaid ? '#15803d' : '#854d0e'};">${isPaid ? 'Paid' : 'Pay at Doorstep (COD)'}</strong></div>
+                            <div style="margin-top: 6px; font-weight: 800; font-size: 16px; color: #0f7139;">Total: ₹${Number(activeOrder.totalPrice || 0).toFixed(2)}</div>
                         </div>
                     </div>
 
-                    <!-- 2. ORDERED ITEMS SECTION -->
-                    <div style="margin-bottom: 24px;">
+                    <!-- Ordered Items -->
+                    <div>
                         <div style="font-size: 12px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px;">ORDERED ITEMS (${(activeOrder.orderItems || []).length})</div>
                         <div style="display: flex; flex-direction: column; gap: 10px;">
                             ${(activeOrder.orderItems || []).map(item => `
@@ -408,67 +451,6 @@
                             `).join('')}
                         </div>
                     </div>
-
-                    <!-- 3. ORDER PROGRESS PATH (HORIZONTAL STEPPER TIMELINE) -->
-                    ${isCancelled ? `
-                        <div style="background: #fef2f2; border: 1.5px solid #fecaca; border-radius: 12px; padding: 16px; text-align: center; margin-bottom: 24px; color: #dc2626; font-size: 14px;">
-                            <strong>🚫 This order was cancelled.</strong> If you have any questions, please contact support at support@arshithfresh.com.
-                        </div>
-                    ` : `
-                        <div style="background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 14px; padding: 20px; margin-bottom: 24px;">
-                            <div style="font-size: 12px; font-weight: 700; color: #0f7139; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 16px;">ORDER PROGRESS TRACKER</div>
-                            <div class="stepper-progress-track">
-                                <div class="stepper-track-line"></div>
-                                <div class="stepper-track-fill" style="width: ${fillWidthPercentage}%;"></div>
-
-                                <div class="stepper-step-node ${currentStepIndex >= 1 ? 'completed' : ''} ${currentStepIndex === 1 ? 'active' : ''}">
-                                    <div class="stepper-circle">1</div>
-                                    <div class="stepper-step-label">Order Placed</div>
-                                </div>
-
-                                <div class="stepper-step-node ${currentStepIndex >= 2 ? 'completed' : ''} ${currentStepIndex === 2 ? 'active' : ''}">
-                                    <div class="stepper-circle">2</div>
-                                    <div class="stepper-step-label">Order Confirmed</div>
-                                </div>
-
-                                <div class="stepper-step-node ${currentStepIndex >= 3 ? 'completed' : ''} ${currentStepIndex === 3 ? 'active' : ''}">
-                                    <div class="stepper-circle">3</div>
-                                    <div class="stepper-step-label">Order Dispatched</div>
-                                </div>
-
-                                <div class="stepper-step-node ${currentStepIndex >= 4 ? 'completed' : ''} ${currentStepIndex === 4 ? 'active' : ''}">
-                                    <div class="stepper-circle">4</div>
-                                    <div class="stepper-step-label">Delivered</div>
-                                </div>
-                            </div>
-                        </div>
-                    `}
-
-                    <!-- 4. DELIVERY ADDRESS & PAYMENT DETAILS GRID -->
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 12px; padding: 18px; margin-bottom: 20px; font-size: 13.5px; color: #334155;">
-                        <div>
-                            <div style="font-weight: 700; color: #0f172a; margin-bottom: 6px; font-size: 14px;">📍 Delivery Address</div>
-                            <div><strong>${activeOrder.customerName || currentUser.name}</strong></div>
-                            <div style="color: #475569; margin-top: 2px;">${addrStr}</div>
-                            <div style="color: #64748b; margin-top: 4px;">📞 Phone: ${phoneStr}</div>
-                        </div>
-                        <div>
-                            <div style="font-weight: 700; color: #0f172a; margin-bottom: 6px; font-size: 14px;">💵 Payment Details</div>
-                            <div>Payment Method: <strong>${paymentMode}</strong></div>
-                            <div>Status: <strong style="color: ${isPaid ? '#15803d' : '#854d0e'};">${isPaid ? 'Paid' : 'Pay at Doorstep (COD)'}</strong></div>
-                            ${activeOrder.transactionId ? `<div style="font-size: 12px; color: #64748b; margin-top: 4px;">Txn ID: ${activeOrder.transactionId}</div>` : ''}
-                        </div>
-                    </div>
-
-                    <!-- 5. CONDITIONAL CANCEL ORDER ACTION FOOTER -->
-                    ${isEligibleForCancel ? `
-                        <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1.5px solid #f1f5f9; padding-top: 16px;">
-                            <span style="font-size: 12.5px; color: #64748b;">Need to cancel before dispatch? You can cancel this order now.</span>
-                            <button type="button" class="cancel-order-btn" id="cancelOrderActionBtn" onclick="handleCancelActiveOrder('${activeOrder._id}', '${orderId}')">
-                                🚫 Cancel Order
-                            </button>
-                        </div>
-                    ` : ''}
                 </div>
             `;
         }
