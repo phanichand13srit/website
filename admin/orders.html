@@ -363,9 +363,13 @@
     }
 
     async function updateOrderStatus(orderId, newStatus) {
+      const targetIdStr = String(orderId);
+
       // 1. Instantly update in-memory order status
       allOrders = allOrders.map(o => {
-        if (o._id === orderId || String(o._id).includes(orderId) || o.transactionId === orderId) {
+        const oIdStr = String(o._id);
+        const transIdStr = o.transactionId ? String(o.transactionId) : '';
+        if (oIdStr === targetIdStr || transIdStr === targetIdStr || oIdStr.includes(targetIdStr)) {
           return { ...o, status: newStatus, isDelivered: newStatus === 'Delivered' };
         }
         return o;
@@ -375,7 +379,9 @@
       try {
         let localOrders = JSON.parse(localStorage.getItem('arshith_user_orders')) || [];
         localOrders = localOrders.map(o => {
-          if (o._id === orderId || String(o._id).includes(orderId) || o.transactionId === orderId) {
+          const oIdStr = String(o._id);
+          const transIdStr = o.transactionId ? String(o.transactionId) : '';
+          if (oIdStr === targetIdStr || transIdStr === targetIdStr || oIdStr.includes(targetIdStr)) {
             return { ...o, status: newStatus, isDelivered: newStatus === 'Delivered' };
           }
           return o;
