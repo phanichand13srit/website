@@ -399,15 +399,171 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     initCollectionSliders();
 
+    const FALLBACK_STOREFRONT_PRODUCTS = [
+        {
+            _id: "6a910cc273615f661cdfc429",
+            name: "Groundnut Oil (Premium Quality)",
+            category: "Oils",
+            price: 349,
+            originalPrice: 471,
+            unit: "1 Litre",
+            countInStock: 25,
+            brand: "Arshith Fresh",
+            image: "https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM_1.jpg?v=1757334051&width=533",
+            hoverImage: "https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-06-30_at_7.28.42_PM_1_3752719d-4e83-4d00-a8be-0c4d13076c23.jpg?v=1757334051&width=533",
+            description: "100% pure cold-pressed groundnut oil, ideal for healthy everyday cooking.",
+            rating: 4.9,
+            numReviews: 67,
+            isFeatured: true
+        },
+        {
+            _id: "6a910cc273615f661cdfc42a",
+            name: "Coconut Oil (Premium Quality)",
+            category: "Oils",
+            price: 165,
+            originalPrice: 214,
+            unit: "500 ml",
+            countInStock: 30,
+            brand: "Arshith Fresh",
+            image: "https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM_2.jpg?v=1757334050&width=533",
+            hoverImage: "https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-06-30_at_7.28.41_PM_887d3105-a7d1-45a3-b1b0-e0054291d902.jpg?v=1757334050&width=533",
+            description: "Unrefined, fragrant cold-pressed coconut oil from sun-dried copra.",
+            rating: 4.83,
+            numReviews: 54,
+            isFeatured: true
+        },
+        {
+            _id: "6a910cc273615f661cdfc42b",
+            name: "Pure Buffalo Ghee (Premium Quality)",
+            category: "Ghee & Honey",
+            price: 222,
+            originalPrice: 288,
+            unit: "250 ml",
+            countInStock: 20,
+            brand: "Arshith Fresh",
+            image: "https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-09-15_at_4.34.52_PM.jpg?v=1757934372&width=533",
+            hoverImage: "https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-06-30_at_7.32.29_PM_2_eb23ab0e-a49c-457d-9dad-00ce2758289c.jpg?v=1757934372&width=533",
+            description: "Traditional granular bilona buffalo ghee with rich aroma and taste.",
+            rating: 4.91,
+            numReviews: 32,
+            isFeatured: true
+        },
+        {
+            _id: "6a910cc273615f661cdfc42c",
+            name: "Sunflower Oil (Premium Quality)",
+            category: "Oils",
+            price: 499,
+            originalPrice: 608,
+            unit: "1 Litre",
+            countInStock: 18,
+            brand: "Arshith Fresh",
+            image: "https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM.jpg?v=1757334052&width=533",
+            description: "Light, nutrient-dense cold-pressed sunflower oil for light frying and baking.",
+            rating: 4.91,
+            numReviews: 54,
+            isFeatured: true
+        },
+        {
+            _id: "6a910cc273615f661cdfc42d",
+            name: "Flax Seeds (Premium Quality)",
+            category: "Seeds",
+            price: 29,
+            originalPrice: 36,
+            unit: "100 g",
+            countInStock: 50,
+            brand: "Arshith Fresh",
+            image: "https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-07-08_at_4.04.02_PM_2_ce2dcb8e-81dc-46c5-b343-1a14dff25208.jpg?v=1757334052&width=533",
+            description: "Omega-3 rich golden brown flax seeds for everyday smoothies and bowls.",
+            rating: 4.9,
+            numReviews: 31,
+            isFeatured: false
+        },
+        {
+            _id: "6a910cc273615f661cdfc42e",
+            name: "Chia Seeds (Premium Quality)",
+            category: "Seeds",
+            price: 49,
+            originalPrice: 53,
+            unit: "100 g",
+            countInStock: 45,
+            brand: "Arshith Fresh",
+            image: "https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-07-08_at_4.04.01_PM_6b2e5750-03f7-4a0a-b4e3-9ef639891875.jpg?v=1757333987&width=533",
+            description: "High-fiber superfood chia seeds, 100% natural and clean.",
+            rating: 4.91,
+            numReviews: 35,
+            isFeatured: false
+        },
+        {
+            _id: "6a910cc273615f661cdfc42f",
+            name: "Chana Dal Spice Powder (Pappula Podi)",
+            category: "Spice Powders",
+            price: 59,
+            originalPrice: 80,
+            unit: "100 g",
+            countInStock: 40,
+            brand: "Arshith Fresh",
+            image: "https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-07-08_at_4.19.01_PM_2_717030b8-c8a8-40a4-bdf0-7e516dec3029.jpg?v=1757334045&width=533",
+            description: "Authentic Andhra style homemade roasted chana dal podi with ghee flavor.",
+            rating: 5,
+            numReviews: 31,
+            isFeatured: true
+        },
+        {
+            _id: "6a910cc273615f661cdfc430",
+            name: "Garlic Powder (Velluli Karam)",
+            category: "Spice Powders",
+            price: 59,
+            originalPrice: 80,
+            unit: "100 g",
+            countInStock: 35,
+            brand: "Arshith Fresh",
+            image: "https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-07-08_at_4.19.01_PM_3_6262e177-7c59-4137-afc4-5d486daa9175.jpg?v=1757334046&width=533",
+            description: "Spicy, pungent country garlic podi blended with red chillies and cumin.",
+            rating: 4.97,
+            numReviews: 38,
+            isFeatured: true
+        },
+        {
+            _id: "6a910cc273615f661cdfc431",
+            name: "Fresh Malai Paneer (Pure & Soft)",
+            category: "Dairy",
+            subcategory: "Fresh Paneer",
+            price: 95,
+            originalPrice: 120,
+            unit: "200 g",
+            countInStock: 25,
+            brand: "Arshith Fresh",
+            image: "https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=500&auto=format&fit=crop&q=80",
+            description: "100% natural, soft, rich cottage cheese made from fresh cow milk.",
+            rating: 4.95,
+            numReviews: 42,
+            isFeatured: true
+        },
+        {
+            _id: "6a910cc273615f661cdfc432",
+            name: "Pure Organic Cow Milk (Pasteurized)",
+            category: "Dairy",
+            subcategory: "Pure Cow Milk",
+            price: 42,
+            originalPrice: 50,
+            unit: "500 ml",
+            countInStock: 40,
+            brand: "Arshith Fresh",
+            image: "https://images.unsplash.com/photo-1550583724-b2692b85b150?w=500&auto=format&fit=crop&q=80",
+            description: "Farm fresh, unadulterated pure cow milk delivered daily.",
+            rating: 4.88,
+            numReviews: 58,
+            isFeatured: true
+        }
+    ];
+
     // 9. Dynamic Live API & Collection Product Sync
     async function syncStorefrontProducts() {
         try {
             let apiProducts = [];
             try {
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 2000); // 2 second timeout for local backend API
-                const res = await fetch("http://localhost:5000/api/products", { signal: controller.signal });
-                clearTimeout(timeoutId);
+                const apiHost = window.location.origin.includes('http') ? window.location.origin : 'http://localhost:5000';
+                const res = await fetch(`${apiHost}/api/products`);
                 if (res && res.ok) {
                     const data = await res.json();
                     if (Array.isArray(data) && data.length > 0) {
@@ -417,6 +573,11 @@ document.addEventListener("DOMContentLoaded", () => {
             } catch (err) {
                 // API offline or empty
             }
+
+            if (!apiProducts || apiProducts.length === 0) {
+                apiProducts = FALLBACK_STOREFRONT_PRODUCTS;
+            }
+
             const homeGrids = document.querySelectorAll(".products-carousel-section .products-grid");
             homeGrids.forEach(grid => {
                 if (apiProducts && apiProducts.length > 0) {
@@ -429,9 +590,10 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!colGrid) return;
 
             // 1. On All Products page (collections.html)
-            if (path.endsWith("collections") || path.endsWith("collections.html")) {
+            if (path.includes("collections")) {
                 const urlParams = new URLSearchParams(window.location.search);
                 const searchQ = (urlParams.get("search") || urlParams.get("q") || "").trim().toLowerCase();
+                const categoryQ = (urlParams.get("category") || urlParams.get("cat") || "").trim().toLowerCase();
 
                 let displayProducts = apiProducts || [];
                 if (searchQ) {
@@ -443,14 +605,21 @@ document.addEventListener("DOMContentLoaded", () => {
                         const brand = (p.brand || "").toLowerCase();
                         return title.includes(searchQ) || cat.includes(searchQ) || sub.includes(searchQ) || desc.includes(searchQ) || brand.includes(searchQ);
                     });
+                } else if (categoryQ && categoryQ !== "all" && categoryQ !== "all products") {
+                    displayProducts = displayProducts.filter(p => {
+                        const cat = (p.category || "").toLowerCase();
+                        const title = (p.title || p.name || "").toLowerCase();
+                        return cat.includes(categoryQ) || title.includes(categoryQ);
+                    });
                 }
 
                 if (displayProducts.length > 0) {
                     colGrid.innerHTML = displayProducts.map(p => createProductCardHTML(p)).join('');
                     const countElem = document.getElementById("collectionProductCount");
                     if (countElem) {
-                        countElem.textContent = searchQ 
-                            ? `${displayProducts.length} product(s) found for "${urlParams.get("search") || urlParams.get("q")}"`
+                        const searchLabel = urlParams.get("search") || urlParams.get("q") || urlParams.get("category") || urlParams.get("cat");
+                        countElem.textContent = searchLabel 
+                            ? `${displayProducts.length} product(s) found for "${searchLabel}"`
                             : `${displayProducts.length} products`;
                     }
                 } else {
@@ -458,7 +627,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         <div class="empty-collection-state" style="grid-column: 1 / -1; padding: 60px 20px; text-align: center; background: #ffffff; border: 1.5px dashed #cbd5e1; border-radius: 16px; margin: 20px 0;">
                             <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#0f7139" stroke-width="1.5" style="margin-bottom: 12px;"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                             <h3 style="font-family:'Playfair Display', serif; font-size:20px; color:#0f7139; margin:0 0 8px 0;">No matching products found</h3>
-                            <p style="color:#64748b; font-size:14px; margin:0;">${searchQ ? `No products match "${urlParams.get("search") || urlParams.get("q")}". Try searching another word like Oils, Ghee, or Honey.` : 'Products added by Admin will appear here automatically.'}</p>
+                            <p style="color:#64748b; font-size:14px; margin:0;">No products match your selection. Try searching another category like Oils, Ghee, or Honey.</p>
                         </div>
                     `;
                     const countElem = document.getElementById("collectionProductCount");
@@ -472,17 +641,17 @@ document.addEventListener("DOMContentLoaded", () => {
             // 2. On Subcollection pages (oils, ghee, dry fruits, seeds, spices, powders, cooking essentials)
             let categoryProducts = [];
             if (apiProducts && apiProducts.length > 0) {
-                if (path.includes("oils-natural-extracts")) {
+                if (path.includes("oils-natural-extracts") || path.includes("oils")) {
                     categoryProducts = apiProducts.filter(p => (p.category && p.category.toLowerCase().includes("oil")) || (p.name && p.name.toLowerCase().includes("oil")));
-                } else if (path.includes("ghee-and-honey")) {
+                } else if (path.includes("ghee-and-honey") || path.includes("ghee")) {
                     categoryProducts = apiProducts.filter(p => (p.category && (p.category.toLowerCase().includes("ghee") || p.category.toLowerCase().includes("honey"))) || (p.name && (p.name.toLowerCase().includes("ghee") || p.name.toLowerCase().includes("honey"))));
-                } else if (path.includes("dry-fruits-nuts")) {
+                } else if (path.includes("dry-fruits-nuts") || path.includes("dry-fruits")) {
                     categoryProducts = apiProducts.filter(p => (p.category && p.category.toLowerCase().includes("dry")) || (p.name && (p.name.toLowerCase().includes("almond") || p.name.toLowerCase().includes("cashew") || p.name.toLowerCase().includes("pista") || p.name.toLowerCase().includes("walnut") || p.name.toLowerCase().includes("anjeer") || p.name.toLowerCase().includes("date"))));
-                } else if (path.includes("dry-seeds")) {
+                } else if (path.includes("dry-seeds") || path.includes("seeds")) {
                     categoryProducts = apiProducts.filter(p => (p.category && p.category.toLowerCase().includes("seed")) || (p.name && p.name.toLowerCase().includes("seed")));
-                } else if (path.includes("cooking-essentials")) {
+                } else if (path.includes("cooking-essentials") || path.includes("essentials")) {
                     categoryProducts = apiProducts.filter(p => (p.category && p.category.toLowerCase().includes("cooking")) || (p.name && (p.name.toLowerCase().includes("rice") || p.name.toLowerCase().includes("dal") || p.name.toLowerCase().includes("salt"))));
-                } else if (path.includes("spice-powders")) {
+                } else if (path.includes("spice-powders") || path.includes("powders")) {
                     categoryProducts = apiProducts.filter(p => (p.category && p.category.toLowerCase().includes("powder")) || (p.name && (p.name.toLowerCase().includes("powder") || p.name.toLowerCase().includes("podi"))));
                 } else if (path.includes("spices")) {
                     categoryProducts = apiProducts.filter(p => (p.category && p.category.toLowerCase().includes("spice")) || (p.name && (p.name.toLowerCase().includes("clove") || p.name.toLowerCase().includes("cardamom") || p.name.toLowerCase().includes("cinnamon") || p.name.toLowerCase().includes("pepper") || p.name.toLowerCase().includes("ajwain"))));
@@ -498,7 +667,7 @@ document.addEventListener("DOMContentLoaded", () => {
             } else {
                 colGrid.innerHTML = `
                     <div class="empty-collection-state" style="grid-column: 1 / -1; padding: 60px 20px; text-align: center; background: #ffffff; border: 1.5px dashed #cbd5e1; border-radius: 16px; margin: 20px 0;">
-                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#0f7139" stroke-width="1.5" style="margin-bottom: 12px;"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#0f7139" stroke-width="1.5" style="margin-bottom: 12px;"><path d="M20 7l-8-4-8 4m16 0l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
                         <h3 style="font-family:'Playfair Display', serif; font-size:20px; color:#0f7139; margin:0 0 8px 0;">No products in this collection yet</h3>
                         <p style="color:#64748b; font-size:14px; margin:0;">Products added by Admin will appear here automatically.</p>
                     </div>
@@ -609,60 +778,67 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function createProductCardHTML(p) {
         if (!p) return "";
-        const name = p.name || p.title || p.productName || "Arshith Fresh Product";
-        const price = Number(p.price || p.salePrice || p.currentPrice || 30);
-        const originalPrice = Number(p.originalPrice || p.regularPrice || p.mrp || Math.round(price * 1.25));
-        const image = p.image || (p.images && p.images[0] ? (typeof p.images[0] === 'object' ? p.images[0].url : p.images[0]) : '') || p.img || p.imageUrl || "https://arshithfresh.com/cdn/shop/collections/spice_200x200_crop_center.png?v=1746963495";
-        
-        let secondImage = '';
-        if (Array.isArray(p.images) && p.images.length > 1) {
-            secondImage = typeof p.images[1] === 'object' ? (p.images[1].url || '') : p.images[1];
-        }
-        if (!secondImage && p.hoverImage) {
-            secondImage = p.hoverImage;
-        }
-        const hasSecondImage = Boolean(secondImage && secondImage !== image);
+        try {
+            const rawName = p.name || p.title || p.productName || "Arshith Fresh Product";
+            const name = rawName.replace(/"/g, '&quot;');
+            const safeNameForJs = rawName.replace(/['"\\]/g, "\\$&");
+            const price = Number(p.price || p.salePrice || p.currentPrice || 30);
+            const originalPrice = Number(p.originalPrice || p.regularPrice || p.mrp || Math.round(price * 1.25));
+            const image = p.image || (p.images && p.images[0] ? (typeof p.images[0] === 'object' ? p.images[0].url : p.images[0]) : '') || p.img || p.imageUrl || "https://arshithfresh.com/cdn/shop/collections/spice_200x200_crop_center.png?v=1746963495";
+            const safeImgForJs = image.replace(/['"\\]/g, "\\$&");
+            
+            let secondImage = '';
+            if (Array.isArray(p.images) && p.images.length > 1) {
+                secondImage = typeof p.images[1] === 'object' ? (p.images[1].url || '') : p.images[1];
+            }
+            if (!secondImage && p.hoverImage) {
+                secondImage = p.hoverImage;
+            }
+            const hasSecondImage = Boolean(secondImage && secondImage !== image);
 
-        const discount = originalPrice > price ? Math.round(((originalPrice - price) / originalPrice) * 100) : 0;
-        const reviewsCount = p.reviewsCount || Math.floor(Math.random() * 20) + 25;
-        const fallbackImg = "https://arshithfresh.com/cdn/shop/collections/spice_200x200_crop_center.png?v=1746963495";
-        const id = p._id || "";
+            const discount = originalPrice > price ? Math.round(((originalPrice - price) / originalPrice) * 100) : 0;
+            const reviewsCount = p.reviewsCount || Math.floor(Math.random() * 20) + 25;
+            const fallbackImg = "https://arshithfresh.com/cdn/shop/collections/spice_200x200_crop_center.png?v=1746963495";
+            const id = p._id || p.id || "";
 
-        // Calculate correct relative path to pages/product.html
-        const path = window.location.pathname.toLowerCase();
-        let productUrl = "pages/product.html";
-        if (path.includes("/pages/categories/") || path.includes("/pages/auth/") || path.includes("/pages/policies/")) {
-            productUrl = "../product.html";
-        } else if (path.includes("/pages/")) {
-            productUrl = "product.html";
-        }
-        if (id) {
-            productUrl += `?id=${id}`;
-        }
+            const path = window.location.pathname.toLowerCase();
+            let productUrl = "pages/product.html";
+            if (path.includes("/pages/categories/") || path.includes("/pages/auth/") || path.includes("/pages/policies/")) {
+                productUrl = "../product.html";
+            } else if (path.includes("/pages/")) {
+                productUrl = "product.html";
+            }
+            if (id) {
+                productUrl += `?id=${id}`;
+            }
 
-        return `
-            <div class="product-card">
-                <a href="${productUrl}" class="product-card-link" style="text-decoration: none; color: inherit; display: block; cursor: pointer;">
-                    <div class="product-image-container ${hasSecondImage ? 'has-second-img' : ''}">
-                        ${discount > 0 ? `<span class="card-discount-tag">${discount}% Off</span>` : ''}
-                        <img src="${image}" alt="${name}" class="primary-img" onerror="this.onerror=null; this.src='${fallbackImg}';">
-                        ${hasSecondImage ? `<img src="${secondImage}" alt="${name}" class="hover-img" onerror="this.style.display='none';">` : ''}
-                    </div>
-                    <div class="product-info">
-                        <h3 class="card__heading" title="${name}">${name}</h3>
-                        <div class="rating-box">
-                            <span class="rating-stars">★★★★★</span>
-                            <span class="rating-text">(${reviewsCount})</span>
+            return `
+                <div class="product-card">
+                    <a href="${productUrl}" class="product-card-link" style="text-decoration: none; color: inherit; display: block; cursor: pointer;">
+                        <div class="product-image-container ${hasSecondImage ? 'has-second-img' : ''}">
+                            ${discount > 0 ? `<span class="card-discount-tag">${discount}% Off</span>` : ''}
+                            <img src="${image}" alt="${name}" class="primary-img" onerror="this.onerror=null; this.src='${fallbackImg}';">
+                            ${hasSecondImage ? `<img src="${secondImage}" alt="${name}" class="hover-img" onerror="this.style.display='none';">` : ''}
                         </div>
-                        <div class="price-box">
-                            ${originalPrice > price ? `<span class="regular-price">Rs. ${originalPrice.toFixed(2)}</span>` : ''}
-                            <span class="sale-price">From Rs. ${price.toFixed(2)}</span>
+                        <div class="product-info">
+                            <h3 class="card__heading" title="${name}">${name}</h3>
+                            <div class="rating-box">
+                                <span class="rating-stars">★★★★★</span>
+                                <span class="rating-text">(${reviewsCount})</span>
+                            </div>
+                            <div class="price-box">
+                                ${originalPrice > price ? `<span class="regular-price">Rs. ${originalPrice.toFixed(2)}</span>` : ''}
+                                <span class="sale-price">From Rs. ${price.toFixed(2)}</span>
+                            </div>
                         </div>
-                    </div>
-                </a>
-                <button class="add-to-cart-btn" onclick="addToStoreCart('${id}', '${name.replace(/'/g, "\\'")}', ${price}, '${image.replace(/'/g, "\\'")}')">ADD TO CART</button>
-            </div>
-        `;
+                    </a>
+                    <button class="add-to-cart-btn" onclick="addToStoreCart('${id}', '${safeNameForJs}', ${price}, '${safeImgForJs}')">ADD TO CART</button>
+                </div>
+            `;
+        } catch (err) {
+            console.error("Error creating product card HTML:", err);
+            return "";
+        }
     }
 
     // 3. Sync Storefront Homepage Collections from Database
@@ -964,7 +1140,11 @@ window.switchDetailImage = function(url, thumbElem) {
     });
     if (thumbElem) {
         thumbElem.style.borderColor = '#0f7139';
-   // Auto Signup Lead Capture Popup Modal for Unauthenticated Visitors
+        thumbElem.classList.add('active');
+    }
+};
+
+// Auto Signup Lead Capture Popup Modal for Unauthenticated Visitors
 function initAutoSignupPopup() {
     let currentUser = null;
     try {
