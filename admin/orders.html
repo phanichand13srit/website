@@ -332,21 +332,6 @@
 
         const st = order.status || 'Confirmed';
 
-        let quickBtnHtml = '';
-        if (st === 'Confirmed' || st === 'Processing' || st === 'Placed' || st === 'Pending') {
-          quickBtnHtml = `
-            <button class="btn-dispatch" onclick="updateOrderStatus('${order._id}', 'Dispatched')">
-              <i class="fa-solid fa-truck"></i> Mark as Dispatched
-            </button>
-          `;
-        } else if (st === 'Dispatched' || st === 'Shipped') {
-          quickBtnHtml = `
-            <button class="btn-deliver" onclick="updateOrderStatus('${order._id}', 'Delivered')">
-              <i class="fa-solid fa-circle-check"></i> Mark as Delivered
-            </button>
-          `;
-        }
-
         const tr = document.createElement('tr');
         tr.innerHTML = `
           <td><input type="checkbox" class="custom-checkbox"></td>
@@ -365,15 +350,12 @@
             </span>
           </td>
           <td style="text-align:right;">
-            <div style="display: flex; align-items: center; justify-content: flex-end; gap: 8px;">
-              ${quickBtnHtml}
-              <select class="form-control" style="width: auto; padding: 4px 6px; font-size: 11.5px; border-radius: 6px;" onchange="updateOrderStatus('${order._id}', this.value)">
-                <option value="Confirmed" ${st === 'Confirmed' || st === 'Placed' ? 'selected' : ''}>Confirmed</option>
-                <option value="Dispatched" ${st === 'Dispatched' || st === 'Shipped' ? 'selected' : ''}>Dispatched</option>
-                <option value="Delivered" ${st === 'Delivered' ? 'selected' : ''}>Delivered</option>
-                <option value="Cancelled" ${st === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
-              </select>
-            </div>
+            <select class="form-control" style="width: 140px; display: inline-block; padding: 6px 10px; font-size: 12.5px; border-radius: 8px; border: 1.5px solid #cbd5e1; font-weight: 600;" onchange="updateOrderStatus('${order._id}', this.value)">
+              <option value="Confirmed" ${st === 'Confirmed' || st === 'Placed' || st === 'Pending' ? 'selected' : ''}>📋 Confirmed</option>
+              <option value="Dispatched" ${st === 'Dispatched' || st === 'Shipped' ? 'selected' : ''}>🚚 Dispatched</option>
+              <option value="Delivered" ${st === 'Delivered' ? 'selected' : ''}>✅ Delivered</option>
+              <option value="Cancelled" ${st === 'Cancelled' ? 'selected' : ''}>🚫 Cancelled</option>
+            </select>
           </td>
         `;
         tbody.appendChild(tr);
@@ -381,20 +363,40 @@
     }
 
     async function updateOrderStatus(orderId, newStatus) {
+      // 1. Instantly update in-memory order status
+      allOrders = allOrders.map(o => {
+        if (o._id === orderId || String(o._id).includes(orderId) || o.transactionId === orderId) {
+          return { ...o, status: newStatus, isDelivered: newStatus === 'Delivered' };
+        }
+        return o;
+      });
+
+      // 2. Update local storage cache for 100% storefront sync
+      try {
+        let localOrders = JSON.parse(localStorage.getItem('arshith_user_orders')) || [];
+        localOrders = localOrders.map(o => {
+          if (o._id === orderId || String(o._id).includes(orderId) || o.transactionId === orderId) {
+            return { ...o, status: newStatus, isDelivered: newStatus === 'Delivered' };
+          }
+          return o;
+        });
+        localStorage.setItem('arshith_user_orders', JSON.stringify(localOrders));
+      } catch(e) {}
+
+      // 3. Immediately re-render counts and filtered sub-module
+      updateSubModuleCounts();
+      applyFilterAndRender();
+
+      // 4. Send backend API update
       try {
         const isDelivered = newStatus === 'Delivered';
-        const res = await fetch(`${API_BASE}/orders/${orderId}/status`, {
+        await fetch(`${API_BASE}/orders/${orderId}/status`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json', 'x-admin-dev': 'true' },
           body: JSON.stringify({ status: newStatus, isDelivered })
         });
-        if (res.ok) {
-          fetchOrders();
-        } else {
-          alert('Failed to update status.');
-        }
       } catch (e) {
-        alert('Error updating order status.');
+        console.warn('Backend sync warning:', e);
       }
     }
 
