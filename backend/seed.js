@@ -122,6 +122,36 @@ const sampleProducts = [
     rating: 4.97,
     numReviews: 38,
     isFeatured: true,
+  },
+  {
+    name: 'Fresh Malai Paneer (Pure & Soft)',
+    category: 'Dairy',
+    subcategory: 'Fresh Paneer',
+    price: 95,
+    originalPrice: 120,
+    unit: '200 g',
+    countInStock: 25,
+    brand: 'Arshith Fresh',
+    image: 'https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=500&auto=format&fit=crop&q=80',
+    description: '100% natural, soft, rich cottage cheese made from fresh cow milk.',
+    rating: 4.95,
+    numReviews: 42,
+    isFeatured: true,
+  },
+  {
+    name: 'Pure Organic Cow Milk (Pasteurized)',
+    category: 'Dairy',
+    subcategory: 'Pure Cow Milk',
+    price: 42,
+    originalPrice: 50,
+    unit: '500 ml',
+    countInStock: 40,
+    brand: 'Arshith Fresh',
+    image: 'https://images.unsplash.com/photo-1550583724-b2692b85b150?w=500&auto=format&fit=crop&q=80',
+    description: 'Farm fresh, unadulterated pure cow milk delivered daily.',
+    rating: 4.88,
+    numReviews: 58,
+    isFeatured: true,
   }
 ];
 
@@ -181,6 +211,13 @@ const sampleCollections = [
     image: 'https://images.unsplash.com/photo-1540420773420-3366772f4999?w=500&auto=format&fit=crop&q=80',
     conditionsSummary: 'Tag includes Vegetables',
     subcategories: ['Tomatoes', 'Onions', 'Potatoes', 'Green Leafy Vegetables', 'Carrots & Beetroots', 'Organic Chillies']
+  },
+  { 
+    title: 'Dairy', 
+    description: 'Farm-fresh milk, paneer, curd, butter & cheese', 
+    image: 'https://images.unsplash.com/photo-1550583724-b2692b85b150?w=500&auto=format&fit=crop&q=80',
+    conditionsSummary: 'Tag includes Dairy',
+    subcategories: ['Pure Cow Milk', 'Buffalo Milk', 'Fresh Paneer', 'Thick Curd / Yogurt', 'Desi Butter (White Butter)', 'Buttermilk (Majjiga)', 'Cheese']
   }
 ];
 
