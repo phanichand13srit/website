@@ -414,44 +414,58 @@
                     </div>
 
                     <!-- 3. TRACK YOUR ORDER (HORIZONTAL STEPPER TIMELINE WITH GREEN CHECKMARKS) -->
-                    <div style="background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 14px; padding: 20px; margin-bottom: 24px;">
-                        <h4 class="tracker-main-title" style="font-size: 16px; margin-bottom: 2px;">Track your Order</h4>
-                        <div class="tracker-order-code" style="margin-bottom: 16px;">Order Code: <strong>${orderCode}</strong></div>
+                    <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 14px; padding: 24px 20px; margin-bottom: 24px; box-shadow: 0 4px 12px rgba(0,0,0,0.02);">
+                        <h4 style="font-size: 17px; font-weight: 800; color: #0f172a; margin: 0 0 2px 0;">Track your Order</h4>
+                        <div style="font-size: 13px; color: #64748b; margin-bottom: 24px;">Order Code: <strong style="color: #0f7139;">${orderCode}</strong></div>
 
                         ${isCancelled ? `
                             <div style="background: #fef2f2; border: 1.5px solid #fecaca; border-radius: 12px; padding: 16px; text-align: center; color: #dc2626; font-size: 14px;">
                                 <strong>🚫 This order was cancelled.</strong> If you have any questions, please contact support at support@arshithfresh.com.
                             </div>
                         ` : `
-                            <div class="stepper-horizontal-container">
-                                <div class="stepper-line-bg"></div>
-                                <div class="stepper-line-active" style="width: ${fillWidthPercentage}%;"></div>
+                            <div style="position: relative; display: flex; justify-content: space-between; align-items: flex-start; margin: 28px 0 24px 0; padding: 0 10px;">
+                                <!-- Background Connecting Line -->
+                                <div style="position: absolute; top: 17px; left: 40px; right: 40px; height: 4px; background: #e2e8f0; z-index: 1;"></div>
+                                <!-- Active Green Progress Line -->
+                                <div style="position: absolute; top: 17px; left: 40px; width: ${fillWidthPercentage}%; height: 4px; background: #10b981; z-index: 1; transition: width 0.4s ease;"></div>
 
-                                <div class="stepper-step ${currentStepIndex >= 1 ? 'completed' : ''} ${currentStepIndex === 1 ? 'active' : ''}">
-                                    <div class="step-circle-icon">${currentStepIndex >= 1 ? checkSvg : ''}</div>
-                                    <div class="step-title-text">Placed</div>
+                                <!-- Step 1: Placed -->
+                                <div style="position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; text-align: center; flex: 1;">
+                                    <div style="width: 36px; height: 36px; border-radius: 50%; background: ${currentStepIndex >= 1 ? '#10b981' : '#f1f5f9'}; border: 2.5px solid ${currentStepIndex >= 1 ? '#10b981' : '#cbd5e1'}; color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; box-shadow: 0 2px 6px rgba(0,0,0,0.06);">
+                                        ${currentStepIndex >= 1 ? checkSvg : ''}
+                                    </div>
+                                    <span style="font-size: 12.5px; font-weight: 700; color: ${currentStepIndex >= 1 ? '#10b981' : '#94a3b8'}; margin-top: 8px; display: block;">Placed</span>
                                 </div>
 
-                                <div class="stepper-step ${currentStepIndex >= 2 ? 'completed' : ''} ${currentStepIndex === 2 ? 'active' : ''}">
-                                    <div class="step-circle-icon">${currentStepIndex >= 2 ? checkSvg : ''}</div>
-                                    <div class="step-title-text">Packed</div>
+                                <!-- Step 2: Packed -->
+                                <div style="position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; text-align: center; flex: 1;">
+                                    <div style="width: 36px; height: 36px; border-radius: 50%; background: ${currentStepIndex >= 2 ? '#10b981' : '#ffffff'}; border: 2.5px solid ${currentStepIndex >= 2 ? '#10b981' : '#cbd5e1'}; color: ${currentStepIndex >= 2 ? '#ffffff' : '#94a3b8'}; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; box-shadow: 0 2px 6px rgba(0,0,0,0.06);">
+                                        ${currentStepIndex >= 2 ? checkSvg : ''}
+                                    </div>
+                                    <span style="font-size: 12.5px; font-weight: 700; color: ${currentStepIndex >= 2 ? '#10b981' : '#94a3b8'}; margin-top: 8px; display: block;">Packed</span>
                                 </div>
 
-                                <div class="stepper-step ${currentStepIndex >= 3 ? 'completed' : ''} ${currentStepIndex === 3 ? 'active' : ''}">
-                                    <div class="step-circle-icon">${currentStepIndex >= 3 ? checkSvg : ''}</div>
-                                    <div class="step-title-text">Shipped</div>
+                                <!-- Step 3: Shipped -->
+                                <div style="position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; text-align: center; flex: 1;">
+                                    <div style="width: 36px; height: 36px; border-radius: 50%; background: ${currentStepIndex >= 3 ? '#10b981' : '#ffffff'}; border: 2.5px solid ${currentStepIndex >= 3 ? '#10b981' : '#cbd5e1'}; color: ${currentStepIndex >= 3 ? '#ffffff' : '#94a3b8'}; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; box-shadow: 0 2px 6px rgba(0,0,0,0.06);">
+                                        ${currentStepIndex >= 3 ? checkSvg : ''}
+                                    </div>
+                                    <span style="font-size: 12.5px; font-weight: 700; color: ${currentStepIndex >= 3 ? '#10b981' : '#94a3b8'}; margin-top: 8px; display: block;">Shipped</span>
                                 </div>
 
-                                <div class="stepper-step ${currentStepIndex >= 4 ? 'completed' : ''} ${currentStepIndex === 4 ? 'active' : ''}">
-                                    <div class="step-circle-icon">${currentStepIndex >= 4 ? checkSvg : ''}</div>
-                                    <div class="step-title-text">Delivered</div>
+                                <!-- Step 4: Delivered -->
+                                <div style="position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; text-align: center; flex: 1;">
+                                    <div style="width: 36px; height: 36px; border-radius: 50%; background: ${currentStepIndex >= 4 ? '#10b981' : '#ffffff'}; border: 2.5px solid ${currentStepIndex >= 4 ? '#10b981' : '#cbd5e1'}; color: ${currentStepIndex >= 4 ? '#ffffff' : '#94a3b8'}; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; box-shadow: 0 2px 6px rgba(0,0,0,0.06);">
+                                        ${currentStepIndex >= 4 ? checkSvg : ''}
+                                    </div>
+                                    <span style="font-size: 12.5px; font-weight: 700; color: ${currentStepIndex >= 4 ? '#10b981' : '#94a3b8'}; margin-top: 8px; display: block;">Delivered</span>
                                 </div>
                             </div>
 
                             <!-- 4. CANCEL ORDER BUTTON DIRECTLY UNDER STEPPER LINE -->
                             ${isEligibleForCancel ? `
-                                <div style="margin-top: 20px; padding-top: 16px; border-top: 1px dashed #cbd5e1; display: flex; justify-content: space-between; align-items: center;">
-                                    <span style="font-size: 12.5px; color: #64748b;">Need to cancel before dispatch? You can cancel this order now.</span>
+                                <div style="margin-top: 24px; padding-top: 16px; border-top: 1px dashed #e2e8f0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                                    <span style="font-size: 13px; color: #64748b;">Need to cancel before dispatch? You can cancel this order now.</span>
                                     <button type="button" class="cancel-order-btn" id="cancelOrderActionBtn" onclick="handleCancelActiveOrder('${activeOrder._id}', '${orderCode}')">
                                         🚫 Cancel Order
                                     </button>
