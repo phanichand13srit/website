@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Orders - Arshith Fresh Admin</title>
+  <title>Orders Management - Arshith Fresh Admin</title>
   
   <link rel="stylesheet" href="../assets/css/admin.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -11,6 +11,75 @@
     .status-badge-paid { background: #dcfce7; color: #166534; padding: 3px 8px; border-radius: 12px; font-size: 11.5px; font-weight: 600; }
     .status-badge-pending { background: #fef9c3; color: #854d0e; padding: 3px 8px; border-radius: 12px; font-size: 11.5px; font-weight: 600; }
     .status-badge-delivered { background: #dbeafe; color: #1e40af; padding: 3px 8px; border-radius: 12px; font-size: 11.5px; font-weight: 600; }
+    
+    .tab-pill-btn {
+      background: #f1f5f9;
+      border: 1.5px solid #cbd5e1;
+      color: #475569;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 6px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .tab-pill-btn.active {
+      background: #0f7139;
+      border-color: #0f7139;
+      color: #ffffff;
+      box-shadow: 0 2px 6px rgba(15, 113, 57, 0.25);
+    }
+    .btn-dispatch {
+      background: #0284c7;
+      color: #ffffff;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .btn-dispatch:hover { background: #0369a1; }
+    
+    .btn-deliver {
+      background: #16a34a;
+      color: #ffffff;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .btn-deliver:hover { background: #15803d; }
+    
+    .badge-delivered-done {
+      background: #dcfce7;
+      color: #15803d;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .badge-cancelled-done {
+      background: #fef2f2;
+      color: #dc2626;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 700;
+    }
   </style>
 </head>
 <body>
@@ -52,7 +121,17 @@
       <div class="sidebar-menu">
         <a href="dashboard.html" class="menu-item"><div class="menu-item-left"><i class="fa-solid fa-house"></i><span>Dashboard</span></div></a>
         <a href="orders.html" class="menu-item active"><div class="menu-item-left"><i class="fa-solid fa-bag-shopping"></i><span>Orders</span></div></a>
-        <a href="products.html" class="menu-item"><div class="menu-item-left"><i class="fa-solid fa-tag"></i><span>Products</span></div></a>
+        
+        <!-- SUB-MODULES NAV UNDER ORDERS -->
+        <div class="submenu-list" style="margin-left: 15px; border-left: 2px solid #0f7139; padding-left: 8px;">
+          <a href="#" class="submenu-item active" id="sideNavAll" onclick="switchFilterTab('all', event)">All Orders</a>
+          <a href="#" class="submenu-item" id="sideNavConfirmed" onclick="switchFilterTab('confirmed', event)">📋 Confirmed Orders</a>
+          <a href="#" class="submenu-item" id="sideNavDispatched" onclick="switchFilterTab('dispatched', event)">🚚 Dispatched Orders</a>
+          <a href="#" class="submenu-item" id="sideNavDelivered" onclick="switchFilterTab('delivered', event)">✅ Delivered Orders</a>
+          <a href="#" class="submenu-item" id="sideNavCancelled" onclick="switchFilterTab('cancelled', event)">🚫 Cancelled Orders</a>
+        </div>
+
+        <a href="products.html" class="menu-item" style="margin-top: 10px;"><div class="menu-item-left"><i class="fa-solid fa-tag"></i><span>Products</span></div></a>
         <div class="submenu-list">
           <a href="collections.html" class="submenu-item">Collections / Categories</a>
           <a href="inventory.html" class="submenu-item">Inventory</a>
@@ -64,7 +143,7 @@
     <main class="main-viewport">
       <div class="page-top-header">
         <div class="page-title-row">
-          <h1>Orders <span id="ordersTotalCount" style="font-size: 16px; font-weight: normal; color: #6d7175;">(0)</span></h1>
+          <h1 id="pageHeadingTitle">Orders Management <span id="ordersTotalCount" style="font-size: 16px; font-weight: normal; color: #6d7175;">(0)</span></h1>
         </div>
         <div class="page-action-buttons">
           <button class="btn-pill" onclick="fetchOrders()"><i class="fa-solid fa-rotate"></i> Refresh</button>
@@ -72,9 +151,17 @@
       </div>
 
       <div class="data-card">
-        <div class="card-filter-bar">
-          <span class="tab-all-pill" style="font-weight: 600;">All Orders</span>
-          <div class="table-search-input-box" style="max-width: 400px;">
+        <!-- Sub-Module Tabs Bar -->
+        <div class="card-filter-bar" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; padding: 14px 18px; border-bottom: 1px solid #e1e3e5; background: #ffffff;">
+          <div class="filter-tabs-wrapper" style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <button type="button" class="tab-pill-btn active" data-filter="all" onclick="switchFilterTab('all')">All <span id="cntAll">(0)</span></button>
+            <button type="button" class="tab-pill-btn" data-filter="confirmed" onclick="switchFilterTab('confirmed')">📋 Confirmed <span id="cntConfirmed">(0)</span></button>
+            <button type="button" class="tab-pill-btn" data-filter="dispatched" onclick="switchFilterTab('dispatched')">🚚 Dispatched <span id="cntDispatched">(0)</span></button>
+            <button type="button" class="tab-pill-btn" data-filter="delivered" onclick="switchFilterTab('delivered')">✅ Delivered <span id="cntDelivered">(0)</span></button>
+            <button type="button" class="tab-pill-btn" data-filter="cancelled" onclick="switchFilterTab('cancelled')">🚫 Cancelled <span id="cntCancelled">(0)</span></button>
+          </div>
+
+          <div class="table-search-input-box" style="max-width: 320px;">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
             <input type="text" id="orderSearchInput" placeholder="Search by Order ID or Customer Name...">
           </div>
@@ -85,14 +172,14 @@
             <thead>
               <tr>
                 <th style="width: 36px;"><input type="checkbox" class="custom-checkbox"></th>
-                <th>Order</th>
+                <th>Order ID</th>
                 <th>Date</th>
-                <th>Customer</th>
+                <th>Customer Details</th>
                 <th>Items</th>
                 <th>Total</th>
                 <th>Payment</th>
                 <th>Fulfillment Status</th>
-                <th style="text-align:right;">Update Status</th>
+                <th style="text-align:right;">Action / Update Status</th>
               </tr>
             </thead>
             <tbody id="ordersTableBody">
@@ -110,10 +197,11 @@
     const searchInput = document.getElementById('orderSearchInput');
 
     let allOrders = [];
+    let currentFilter = 'all';
 
     async function fetchOrders() {
       try {
-        tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; padding: 25px;"><i class="fa-solid fa-spinner fa-spin"></i> Loading...</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; padding: 25px;"><i class="fa-solid fa-spinner fa-spin"></i> Loading orders...</td></tr>';
         
         const res = await fetch(`${API_BASE}/orders`, {
           headers: { 'x-admin-dev': 'true' }
@@ -121,25 +209,101 @@
         
         if (!res.ok) throw new Error();
         allOrders = await res.json();
-        
-        document.getElementById('ordersTotalCount').textContent = `(${allOrders.length})`;
-        renderOrders(allOrders);
+
+        updateSubModuleCounts();
+        applyFilterAndRender();
       } catch (err) {
         console.error('Error fetching orders:', err);
         tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; padding: 25px; color: #ef4444;">Failed to load orders.</td></tr>';
       }
     }
 
+    function updateSubModuleCounts() {
+      const cntAll = allOrders.length;
+      const cntConfirmed = allOrders.filter(o => !o.status || o.status === 'Confirmed' || o.status === 'Processing').length;
+      const cntDispatched = allOrders.filter(o => o.status === 'Dispatched' || o.status === 'Shipped').length;
+      const cntDelivered = allOrders.filter(o => o.status === 'Delivered').length;
+      const cntCancelled = allOrders.filter(o => o.status === 'Cancelled').length;
+
+      document.getElementById('ordersTotalCount').textContent = `(${cntAll})`;
+      document.getElementById('cntAll').textContent = `(${cntAll})`;
+      document.getElementById('cntConfirmed').textContent = `(${cntConfirmed})`;
+      document.getElementById('cntDispatched').textContent = `(${cntDispatched})`;
+      document.getElementById('cntDelivered').textContent = `(${cntDelivered})`;
+      document.getElementById('cntCancelled').textContent = `(${cntCancelled})`;
+    }
+
+    function switchFilterTab(filter, event) {
+      if (event) event.preventDefault();
+      currentFilter = filter;
+
+      // Update Pill Tab UI
+      document.querySelectorAll('.tab-pill-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-filter') === filter);
+      });
+
+      // Update Sidebar Nav UI
+      const sideNavMap = {
+        'all': 'sideNavAll',
+        'confirmed': 'sideNavConfirmed',
+        'dispatched': 'sideNavDispatched',
+        'delivered': 'sideNavDelivered',
+        'cancelled': 'sideNavCancelled'
+      };
+      document.querySelectorAll('.submenu-item').forEach(el => el.classList.remove('active'));
+      const activeSide = document.getElementById(sideNavMap[filter]);
+      if (activeSide) activeSide.classList.add('active');
+
+      // Update Page Heading Title
+      const titleMap = {
+        'all': 'All Orders Management',
+        'confirmed': '📋 Confirmed Orders',
+        'dispatched': '🚚 Dispatched Orders',
+        'delivered': '✅ Delivered Orders',
+        'cancelled': '🚫 Cancelled Orders'
+      };
+      document.getElementById('pageHeadingTitle').firstChild.nodeValue = (titleMap[filter] || 'Orders Management') + ' ';
+
+      applyFilterAndRender();
+    }
+
+    function applyFilterAndRender() {
+      let filtered = [...allOrders];
+
+      if (currentFilter === 'confirmed') {
+        filtered = filtered.filter(o => !o.status || o.status === 'Confirmed' || o.status === 'Processing');
+      } else if (currentFilter === 'dispatched') {
+        filtered = filtered.filter(o => o.status === 'Dispatched' || o.status === 'Shipped');
+      } else if (currentFilter === 'delivered') {
+        filtered = filtered.filter(o => o.status === 'Delivered');
+      } else if (currentFilter === 'cancelled') {
+        filtered = filtered.filter(o => o.status === 'Cancelled');
+      }
+
+      const q = searchInput ? searchInput.value.toLowerCase().trim() : '';
+      if (q) {
+        filtered = filtered.filter(o => {
+          const id = String(o._id).toLowerCase();
+          const cust = (o.customerName || '').toLowerCase();
+          return id.includes(q) || cust.includes(q);
+        });
+      }
+
+      renderOrders(filtered);
+    }
+
     function renderOrders(orders) {
       tbody.innerHTML = '';
 
       if (!orders || orders.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; padding: 30px; color: #6d7175;">No orders placed yet. Place an order on the storefront website to see it here!</td></tr>';
+        tbody.innerHTML = `<tr><td colspan="9" style="text-align: center; padding: 35px; color: #6d7175;">
+          No orders found in <strong>${currentFilter.toUpperCase()}</strong> section.
+        </td></tr>`;
         return;
       }
 
       orders.forEach(order => {
-        const orderIdShort = String(order._id).substring(0, 8);
+        const orderIdShort = String(order._id).substring(0, 8).toUpperCase();
         const date = new Date(order.createdAt).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' });
         const customer = order.customerName || (order.shippingAddress ? `${order.shippingAddress.address}, ${order.shippingAddress.city}` : 'Customer');
         const total = `₹${order.totalPrice || 0}`;
@@ -150,31 +314,48 @@
           ? '<span class="status-badge-paid">Paid</span>'
           : `<span class="status-badge-pending">${order.paymentMethod || 'COD'}</span>`;
 
+        const st = order.status || 'Confirmed';
+
+        let actionCellHtml = '';
+        if (st === 'Confirmed' || st === 'Processing') {
+          actionCellHtml = `
+            <button class="btn-dispatch" onclick="updateOrderStatus('${order._id}', 'Dispatched')">
+              <i class="fa-solid fa-truck"></i> Mark as Dispatched
+            </button>
+          `;
+        } else if (st === 'Dispatched' || st === 'Shipped') {
+          actionCellHtml = `
+            <button class="btn-deliver" onclick="updateOrderStatus('${order._id}', 'Delivered')">
+              <i class="fa-solid fa-circle-check"></i> Mark as Delivered
+            </button>
+          `;
+        } else if (st === 'Delivered') {
+          actionCellHtml = `<span class="badge-delivered-done"><i class="fa-solid fa-circle-check"></i> Delivered</span>`;
+        } else if (st === 'Cancelled') {
+          actionCellHtml = `<span class="badge-cancelled-done"><i class="fa-solid fa-ban"></i> Cancelled</span>`;
+        } else {
+          actionCellHtml = `<span style="font-size:12px; color:#64748b;">${st}</span>`;
+        }
+
         const tr = document.createElement('tr');
         tr.innerHTML = `
           <td><input type="checkbox" class="custom-checkbox"></td>
-          <td><strong>#${orderIdShort}</strong></td>
+          <td><strong>#AF-${orderIdShort}</strong></td>
           <td><span style="font-size: 12px; color: #475569;">${date}</span></td>
           <td>
             <strong>${customer}</strong>
-            ${order.customerPhone ? `<div style="font-size:11px; color:#64748b;">${order.customerPhone}</div>` : ''}
+            ${order.customerPhone ? `<div style="font-size:11px; color:#64748b;">📞 ${order.customerPhone}</div>` : ''}
           </td>
           <td>${itemsCount} items</td>
           <td><strong>${total}</strong></td>
           <td>${payBadge}</td>
           <td>
-            <span class="status-pill ${order.status === 'Delivered' ? 'active' : (order.status === 'Cancelled' ? 'archived' : 'draft')}">
-              ${order.status || 'Confirmed'}
+            <span class="status-pill ${st === 'Delivered' ? 'active' : (st === 'Cancelled' ? 'archived' : 'draft')}">
+              ${st}
             </span>
           </td>
           <td style="text-align:right;">
-            <select class="form-control" style="width: auto; display: inline-block; padding: 4px 8px; font-size: 12px;" onchange="updateOrderStatus('${order._id}', this.value)">
-              <option value="Confirmed" ${order.status === 'Confirmed' ? 'selected' : ''}>Confirmed</option>
-              <option value="Processing" ${order.status === 'Processing' ? 'selected' : ''}>Processing</option>
-              <option value="Shipped" ${order.status === 'Shipped' ? 'selected' : ''}>Shipped</option>
-              <option value="Delivered" ${order.status === 'Delivered' ? 'selected' : ''}>Delivered</option>
-              <option value="Cancelled" ${order.status === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
-            </select>
+            ${actionCellHtml}
           </td>
         `;
         tbody.appendChild(tr);
@@ -200,23 +381,19 @@
     }
 
     if (searchInput) {
-      searchInput.addEventListener('input', function(e) {
-        const q = e.target.value.toLowerCase().trim();
-        if (!q) {
-          renderOrders(allOrders);
-          return;
-        }
-        const filtered = allOrders.filter(o => {
-          const id = String(o._id).toLowerCase();
-          const cust = (o.customerName || '').toLowerCase();
-          return id.includes(q) || cust.includes(q);
-        });
-        renderOrders(filtered);
-      });
+      searchInput.addEventListener('input', applyFilterAndRender);
     }
 
+    window.switchFilterTab = switchFilterTab;
     window.updateOrderStatus = updateOrderStatus;
-    document.addEventListener('DOMContentLoaded', fetchOrders);
+    document.addEventListener('DOMContentLoaded', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const filterParam = urlParams.get('filter');
+      if (filterParam) {
+        currentFilter = filterParam;
+      }
+      fetchOrders();
+    });
   </script>
 </body>
 </html>
