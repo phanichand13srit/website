@@ -76,7 +76,7 @@ router.post('/', async (req, res) => {
       shippingPrice: shippingPrice || 0,
       totalPrice,
       isPaid: isPaid || false,
-      status: 'Confirmed',
+      status: 'Placed',
     });
 
     const createdOrder = await order.save();
