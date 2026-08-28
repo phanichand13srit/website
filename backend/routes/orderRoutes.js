@@ -171,8 +171,8 @@ router.post('/', async (req, res) => {
       shippingPrice: shippingPrice || 0,
       totalPrice,
       isPaid: isPaid || false,
-      status: orderStatus,
-      inventoryDeducted: orderStatus !== 'Cancelled'
+      status: status || 'Placed',
+      inventoryDeducted: true
     });
 
     const createdOrder = await order.save();

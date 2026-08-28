@@ -118,12 +118,28 @@
     .status-change-dropdown:hover {
       background-color: #0b592c;
     }
-    .status-change-dropdown option {
-      background: #ffffff;
-      color: #0f172a;
-      font-weight: 600;
-      padding: 8px;
+    .btn-stage {
+      color: #ffffff;
+      border: none;
+      padding: 7px 14px;
+      border-radius: 8px;
+      font-size: 12.5px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
     }
+    .btn-stage-confirm { background: #ea580c; }
+    .btn-stage-confirm:hover { background: #c2410c; }
+
+    .btn-stage-dispatch { background: #0284c7; }
+    .btn-stage-dispatch:hover { background: #0369a1; }
+
+    .btn-stage-deliver { background: #16a34a; }
+    .btn-stage-deliver:hover { background: #15803d; }
   </style>
 </head>
 <body>
@@ -169,6 +185,7 @@
         <!-- SUB-MODULES NAV UNDER ORDERS -->
         <div class="submenu-list" style="margin-left: 15px; border-left: 2px solid #0f7139; padding-left: 8px;">
           <a href="#" class="submenu-item active" id="sideNavAll" onclick="switchFilterTab('all', event)">All Orders</a>
+          <a href="#" class="submenu-item" id="sideNavPlaced" onclick="switchFilterTab('placed', event)">📥 Placed Orders</a>
           <a href="#" class="submenu-item" id="sideNavConfirmed" onclick="switchFilterTab('confirmed', event)">📋 Confirmed Orders</a>
           <a href="#" class="submenu-item" id="sideNavDispatched" onclick="switchFilterTab('dispatched', event)">🚚 Dispatched Orders</a>
           <a href="#" class="submenu-item" id="sideNavDelivered" onclick="switchFilterTab('delivered', event)">✅ Delivered Orders</a>
@@ -200,6 +217,7 @@
         <div class="card-filter-bar" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; padding: 14px 18px; border-bottom: 1px solid #e1e3e5; background: #ffffff;">
           <div class="filter-tabs-wrapper" style="display: flex; gap: 8px; flex-wrap: wrap;">
             <button type="button" class="tab-pill-btn active" data-filter="all" onclick="switchFilterTab('all')">All <span id="cntAll">(0)</span></button>
+            <button type="button" class="tab-pill-btn" data-filter="placed" onclick="switchFilterTab('placed')">📥 Placed <span id="cntPlaced">(0)</span></button>
             <button type="button" class="tab-pill-btn" data-filter="confirmed" onclick="switchFilterTab('confirmed')">📋 Confirmed <span id="cntConfirmed">(0)</span></button>
             <button type="button" class="tab-pill-btn" data-filter="dispatched" onclick="switchFilterTab('dispatched')">🚚 Dispatched <span id="cntDispatched">(0)</span></button>
             <button type="button" class="tab-pill-btn" data-filter="delivered" onclick="switchFilterTab('delivered')">✅ Delivered <span id="cntDelivered">(0)</span></button>
@@ -224,7 +242,7 @@
                 <th>Total</th>
                 <th>Payment</th>
                 <th>Fulfillment Status</th>
-                <th style="text-align:right;">Action / Update Status</th>
+                <th style="text-align:right;">Action / Stage Transition</th>
               </tr>
             </thead>
             <tbody id="ordersTableBody">
@@ -265,13 +283,15 @@
 
     function updateSubModuleCounts() {
       const cntAll = allOrders.length;
-      const cntConfirmed = allOrders.filter(o => !o.status || o.status === 'Confirmed' || o.status === 'Processing' || o.status === 'Placed' || o.status === 'Pending').length;
+      const cntPlaced = allOrders.filter(o => o.status === 'Placed' || o.status === 'Pending').length;
+      const cntConfirmed = allOrders.filter(o => o.status === 'Confirmed' || o.status === 'Processing').length;
       const cntDispatched = allOrders.filter(o => o.status === 'Dispatched' || o.status === 'Shipped').length;
       const cntDelivered = allOrders.filter(o => o.status === 'Delivered').length;
       const cntCancelled = allOrders.filter(o => o.status === 'Cancelled').length;
 
       document.getElementById('ordersTotalCount').textContent = `(${cntAll})`;
       document.getElementById('cntAll').textContent = `(${cntAll})`;
+      document.getElementById('cntPlaced').textContent = `(${cntPlaced})`;
       document.getElementById('cntConfirmed').textContent = `(${cntConfirmed})`;
       document.getElementById('cntDispatched').textContent = `(${cntDispatched})`;
       document.getElementById('cntDelivered').textContent = `(${cntDelivered})`;
@@ -290,6 +310,7 @@
       // Update Sidebar Nav UI
       const sideNavMap = {
         'all': 'sideNavAll',
+        'placed': 'sideNavPlaced',
         'confirmed': 'sideNavConfirmed',
         'dispatched': 'sideNavDispatched',
         'delivered': 'sideNavDelivered',
@@ -302,6 +323,7 @@
       // Update Page Heading Title
       const titleMap = {
         'all': 'All Orders Management',
+        'placed': '📥 Placed Orders',
         'confirmed': '📋 Confirmed Orders',
         'dispatched': '🚚 Dispatched Orders',
         'delivered': '✅ Delivered Orders',
@@ -315,8 +337,10 @@
     function applyFilterAndRender() {
       let filtered = [...allOrders];
 
-      if (currentFilter === 'confirmed') {
-        filtered = filtered.filter(o => !o.status || o.status === 'Confirmed' || o.status === 'Processing' || o.status === 'Placed' || o.status === 'Pending');
+      if (currentFilter === 'placed') {
+        filtered = filtered.filter(o => o.status === 'Placed' || o.status === 'Pending');
+      } else if (currentFilter === 'confirmed') {
+        filtered = filtered.filter(o => o.status === 'Confirmed' || o.status === 'Processing');
       } else if (currentFilter === 'dispatched') {
         filtered = filtered.filter(o => o.status === 'Dispatched' || o.status === 'Shipped');
       } else if (currentFilter === 'delivered') {
@@ -359,7 +383,34 @@
           ? '<span class="status-badge-paid">Paid</span>'
           : `<span class="status-badge-pending">${order.paymentMethod || 'COD'}</span>`;
 
-        const st = order.status || 'Confirmed';
+        const st = order.status || 'Placed';
+
+        let actionCellHtml = '';
+        if (st === 'Placed' || st === 'Pending') {
+          actionCellHtml = `
+            <button class="btn-stage btn-stage-confirm" onclick="updateOrderStatus('${order._id}', 'Confirmed')">
+              <i class="fa-solid fa-clipboard-check"></i> Confirm Order
+            </button>
+          `;
+        } else if (st === 'Confirmed' || st === 'Processing') {
+          actionCellHtml = `
+            <button class="btn-stage btn-stage-dispatch" onclick="updateOrderStatus('${order._id}', 'Dispatched')">
+              <i class="fa-solid fa-truck"></i> Dispatch Order
+            </button>
+          `;
+        } else if (st === 'Dispatched' || st === 'Shipped') {
+          actionCellHtml = `
+            <button class="btn-stage btn-stage-deliver" onclick="updateOrderStatus('${order._id}', 'Delivered')">
+              <i class="fa-solid fa-circle-check"></i> Deliver Order
+            </button>
+          `;
+        } else if (st === 'Delivered') {
+          actionCellHtml = `<span class="badge-delivered-done"><i class="fa-solid fa-circle-check"></i> Delivered</span>`;
+        } else if (st === 'Cancelled') {
+          actionCellHtml = `<span class="badge-cancelled-done"><i class="fa-solid fa-ban"></i> Cancelled by Customer</span>`;
+        } else {
+          actionCellHtml = `<span style="font-size:12px; color:#64748b;">${st}</span>`;
+        }
 
         const tr = document.createElement('tr');
         tr.innerHTML = `
@@ -379,16 +430,7 @@
             </span>
           </td>
           <td style="text-align:right;">
-            ${st === 'Cancelled' ? `
-              <span class="badge-cancelled-done"><i class="fa-solid fa-ban"></i> Cancelled by Customer</span>
-            ` : `
-              <select class="status-change-dropdown" onchange="updateOrderStatus('${order._id}', this.value)">
-                <option value="" disabled selected hidden>⚡ Change Status ▾</option>
-                <option value="Confirmed">📋 Mark as Confirmed</option>
-                <option value="Dispatched">🚚 Mark as Dispatched</option>
-                <option value="Delivered">✅ Mark as Delivered</option>
-              </select>
-            `}
+            ${actionCellHtml}
           </td>
         `;
         tbody.appendChild(tr);
