@@ -108,4 +108,28 @@ router.put('/:id/status', async (req, res) => {
   }
 });
 
+// @route   PUT /api/orders/:id/cancel
+// @desc    Cancel order (Allowed when status is 'Order Placed', 'Pending', or 'Confirmed')
+router.put('/:id/cancel', async (req, res) => {
+  try {
+    const order = await Order.findById(req.params.id);
+    if (!order) {
+      return res.status(404).json({ message: 'Order not found' });
+    }
+
+    const uncancelableStatuses = ['Shipped', 'Dispatched', 'Delivered', 'Cancelled'];
+    if (uncancelableStatuses.includes(order.status)) {
+      return res.status(400).json({ 
+        message: `Order cannot be cancelled because it is already ${order.status.toLowerCase()}.` 
+      });
+    }
+
+    order.status = 'Cancelled';
+    const updatedOrder = await order.save();
+    res.json({ message: 'Order cancelled successfully', order: updatedOrder });
+  } catch (error) {
+    res.status(400).json({ message: 'Error cancelling order', error: error.message });
+  }
+});
+
 module.exports = router;
