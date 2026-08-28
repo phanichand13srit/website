@@ -242,6 +242,11 @@
           </div>
         </div>
 
+        <!-- Quick Category Filter Chips Bar -->
+        <div id="prodCategoryChipsBar" style="display: flex; gap: 8px; padding: 10px 16px; background: #f8fafc; border-bottom: 1px solid #edf2f7; overflow-x: auto; flex-wrap: wrap; align-items: center;">
+          <!-- Dynamically populated category chips -->
+        </div>
+
         <!-- Bulk Actions Floating Bar -->
         <div id="bulkActionsBar" style="display: none; align-items: center; justify-content: space-between; padding: 10px 16px; background: #0f172a; color: #ffffff; border-bottom: 1px solid #1e293b;">
           <div style="display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 13px;">
@@ -937,7 +942,10 @@
     window.closeImageLightbox = closeImageLightbox;
     window.deleteProduct = deleteProduct;
     window.onCategorySelectChange = onCategorySelectChange;
-    window.updateImagePreview = updateImagePreview;
+    window.renderModalImagesGrid = renderModalImagesGrid;
+    window.handleModalMultipleFileSelect = handleModalMultipleFileSelect;
+    window.addModalImageUrl = addModalImageUrl;
+    window.removeModalImage = removeModalImage;
     window.fetchProducts = fetchProducts;
 
     // Initialize
