@@ -440,19 +440,35 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // 1. On All Products page (collections.html)
             if (path.endsWith("collections") || path.endsWith("collections.html")) {
-                const displayProducts = apiProducts || [];
+                const urlParams = new URLSearchParams(window.location.search);
+                const searchQ = (urlParams.get("search") || urlParams.get("q") || "").trim().toLowerCase();
+
+                let displayProducts = apiProducts || [];
+                if (searchQ) {
+                    displayProducts = displayProducts.filter(p => {
+                        const title = (p.title || p.name || "").toLowerCase();
+                        const cat = (p.category || "").toLowerCase();
+                        const sub = (p.subcategory || "").toLowerCase();
+                        const desc = (p.description || "").toLowerCase();
+                        const brand = (p.brand || "").toLowerCase();
+                        return title.includes(searchQ) || cat.includes(searchQ) || sub.includes(searchQ) || desc.includes(searchQ) || brand.includes(searchQ);
+                    });
+                }
+
                 if (displayProducts.length > 0) {
                     colGrid.innerHTML = displayProducts.map(p => createProductCardHTML(p)).join('');
                     const countElem = document.getElementById("collectionProductCount");
                     if (countElem) {
-                        countElem.textContent = `${displayProducts.length} products`;
+                        countElem.textContent = searchQ 
+                            ? `${displayProducts.length} product(s) found for "${urlParams.get("search") || urlParams.get("q")}"`
+                            : `${displayProducts.length} products`;
                     }
                 } else {
                     colGrid.innerHTML = `
                         <div class="empty-collection-state" style="grid-column: 1 / -1; padding: 60px 20px; text-align: center; background: #ffffff; border: 1.5px dashed #cbd5e1; border-radius: 16px; margin: 20px 0;">
-                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#0f7139" stroke-width="1.5" style="margin-bottom: 12px;"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
-                            <h3 style="font-family:'Playfair Display', serif; font-size:20px; color:#0f7139; margin:0 0 8px 0;">No products in this collection yet</h3>
-                            <p style="color:#64748b; font-size:14px; margin:0;">Products added by Admin will appear here automatically.</p>
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#0f7139" stroke-width="1.5" style="margin-bottom: 12px;"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                            <h3 style="font-family:'Playfair Display', serif; font-size:20px; color:#0f7139; margin:0 0 8px 0;">No matching products found</h3>
+                            <p style="color:#64748b; font-size:14px; margin:0;">${searchQ ? `No products match "${urlParams.get("search") || urlParams.get("q")}". Try searching another word like Oils, Ghee, or Honey.` : 'Products added by Admin will appear here automatically.'}</p>
                         </div>
                     `;
                     const countElem = document.getElementById("collectionProductCount");
@@ -918,6 +934,7 @@ document.addEventListener("DOMContentLoaded", () => {
     syncStorefrontProducts();
     syncSingleProductView();
     syncAuthHeader();
+    initLiveSearchAutocomplete();
 });
 
 // Global Image Thumbnail Switcher for Product Detail
@@ -937,6 +954,204 @@ window.switchDetailImage = function(url, thumbElem) {
         thumbElem.classList.add('active');
     }
 };
+
+/* ==========================================================================
+   LIVE SEARCH BAR WITH AUTO-COMPLETE WORDS & PRODUCTS DROPDOWN
+   ========================================================================== */
+function initLiveSearchAutocomplete() {
+    const searchInputs = document.querySelectorAll('.search-form input[name="q"], .search-form input[type="text"], .search-bar-container input, #searchQueryInput');
+    if (searchInputs.length === 0) return;
+
+    function getPathPrefix() {
+        const loc = window.location.pathname;
+        if (loc.includes('/pages/auth/') || loc.includes('/pages/categories/') || loc.includes('/pages/policies/')) {
+            return '../../';
+        } else if (loc.includes('/pages/')) {
+            return '../';
+        }
+        return '';
+    }
+
+    let allSearchProducts = [];
+    let isFetchingProducts = false;
+
+    async function loadSearchProducts() {
+        if (allSearchProducts.length > 0 || isFetchingProducts) return;
+        isFetchingProducts = true;
+        try {
+            const apiHost = window.location.origin.includes('http') ? window.location.origin : 'http://localhost:5000';
+            const res = await fetch(`${apiHost}/api/products`);
+            if (res.ok) {
+                const data = await res.json();
+                allSearchProducts = Array.isArray(data) ? data : (data.data || []);
+            }
+        } catch (e) {
+            console.warn('Using local fallback for search products');
+        } finally {
+            isFetchingProducts = false;
+        }
+    }
+
+    searchInputs.forEach(input => {
+        const container = input.closest('.search-bar-container') || input.parentElement;
+        if (!container) return;
+
+        container.style.position = 'relative';
+
+        let dropdown = container.querySelector('.search-suggestions-dropdown');
+        if (!dropdown) {
+            dropdown = document.createElement('div');
+            dropdown.className = 'search-suggestions-dropdown';
+            container.appendChild(dropdown);
+        }
+
+        input.addEventListener('focus', () => {
+            loadSearchProducts();
+            const val = input.value.trim();
+            if (val.length >= 1) {
+                renderSuggestions(val, dropdown);
+            }
+        });
+
+        input.addEventListener('input', (e) => {
+            const query = e.target.value.trim();
+            if (query.length >= 1) {
+                loadSearchProducts().then(() => {
+                    renderSuggestions(query, dropdown);
+                });
+            } else {
+                dropdown.classList.remove('active');
+            }
+        });
+
+        const form = input.closest('form');
+        if (form) {
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const q = input.value.trim();
+                if (!q) return;
+                const prefix = getPathPrefix();
+                window.location.href = `${prefix}pages/collections.html?search=${encodeURIComponent(q)}`;
+            });
+        }
+    });
+
+    function renderSuggestions(query, dropdown) {
+        const qLower = query.toLowerCase();
+        const prefix = getPathPrefix();
+
+        // 1. Matching Products
+        const matchingProducts = allSearchProducts.filter(p => {
+            const title = (p.title || p.name || '').toLowerCase();
+            const cat = (p.category || '').toLowerCase();
+            const sub = (p.subcategory || '').toLowerCase();
+            const desc = (p.description || '').toLowerCase();
+            const brand = (p.brand || '').toLowerCase();
+            return title.includes(qLower) || cat.includes(qLower) || sub.includes(qLower) || desc.includes(qLower) || brand.includes(qLower);
+        }).slice(0, 5);
+
+        // 2. Matching Categories & Subcategories
+        const categories = [...new Set(allSearchProducts.map(p => p.category).filter(Boolean))];
+        const matchingCats = categories.filter(c => c.toLowerCase().includes(qLower)).slice(0, 3);
+
+        if (matchingProducts.length === 0 && matchingCats.length === 0) {
+            dropdown.innerHTML = `
+                <div class="search-suggestion-header">Suggestions</div>
+                <div style="padding: 14px; text-align: center; color: #64748b; font-size: 13px;">
+                    No products found for "<strong>${escapeHtml(query)}</strong>"
+                </div>
+                <div class="search-suggestion-footer" onclick="goToAllProducts('${escapeHtml(query)}')">
+                    Browse All Products Catalog →
+                </div>
+            `;
+            dropdown.classList.add('active');
+            return;
+        }
+
+        let html = '';
+
+        if (matchingCats.length > 0) {
+            html += `<div class="search-suggestion-header">Suggested Categories</div>`;
+            matchingCats.forEach(cat => {
+                html += `
+                    <div class="search-suggestion-word" onclick="goToCategory('${escapeHtml(cat)}')">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0f7139" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                        <span>${highlightMatch(cat, query)}</span>
+                    </div>
+                `;
+            });
+        }
+
+        if (matchingProducts.length > 0) {
+            html += `<div class="search-suggestion-header">Matching Products</div>`;
+            matchingProducts.forEach(p => {
+                const prodTitle = p.title || p.name || 'Product';
+                const img = (p.images && p.images.length > 0) ? p.images[0].url : (p.image || 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=100');
+                const price = p.price ? `₹${p.price}` : '';
+                const catName = p.category || 'General';
+                const detailUrl = `${prefix}pages/product.html?id=${p._id}`;
+
+                html += `
+                    <a href="${detailUrl}" class="search-suggestion-item">
+                        <img src="${img}" class="search-suggestion-thumb" alt="${escapeHtml(prodTitle)}" onerror="this.src='https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=100';">
+                        <div class="search-suggestion-info">
+                            <div class="search-suggestion-title">${highlightMatch(prodTitle, query)}</div>
+                            <div class="search-suggestion-meta">
+                                <span>${escapeHtml(catName)}</span>
+                                ${price ? `<span class="search-suggestion-price">${price}</span>` : ''}
+                            </div>
+                        </div>
+                    </a>
+                `;
+            });
+        }
+
+        html += `
+            <div class="search-suggestion-footer" onclick="goToAllProducts('${escapeHtml(query)}')">
+                See all results for "${escapeHtml(query)}" →
+            </div>
+        `;
+
+        dropdown.innerHTML = html;
+        dropdown.classList.add('active');
+    }
+
+    function highlightMatch(text, query) {
+        if (!text || !query) return escapeHtml(text);
+        const idx = text.toLowerCase().indexOf(query.toLowerCase());
+        if (idx === -1) return escapeHtml(text);
+        const match = text.substring(idx, idx + query.length);
+        const before = text.substring(0, idx);
+        const after = text.substring(idx + query.length);
+        return `${escapeHtml(before)}<strong style="color:#0f7139; background: #eef7f2; padding: 0 2px; border-radius: 2px;">${escapeHtml(match)}</strong>${escapeHtml(after)}`;
+    }
+
+    function escapeHtml(str) {
+        return (str || '').replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+    }
+
+    window.goToCategory = function(catName) {
+        const prefix = getPathPrefix();
+        window.location.href = `${prefix}pages/collections.html?search=${encodeURIComponent(catName)}`;
+    };
+
+    window.goToAllProducts = function(q) {
+        const prefix = getPathPrefix();
+        window.location.href = `${prefix}pages/collections.html?search=${encodeURIComponent(q)}`;
+    };
+
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.search-bar-container') && !e.target.closest('.search-form')) {
+            document.querySelectorAll('.search-suggestions-dropdown').forEach(d => d.classList.remove('active'));
+        }
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            document.querySelectorAll('.search-suggestions-dropdown').forEach(d => d.classList.remove('active'));
+        }
+    });
+}
 
 
 
