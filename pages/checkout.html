@@ -15,13 +15,12 @@
 
     <!-- Stylesheet -->
     <link rel="stylesheet" href="../assets/css/style.css?v=3.0">
-
-        <link rel="stylesheet" href="../assets/css/cart.css">
+    <link rel="stylesheet" href="../assets/css/cart.css">
 </head>
 
 <body>
 
-    <!-- TOP HEADER BAR MATCHING PIC 2 -->
+    <!-- TOP HEADER BAR MATCHING REFERENCE DESIGN -->
     <header class="checkout-top-bar">
         <a href="../index.html">
             <img src="https://arshithfresh.com/cdn/shop/files/Arshithlogo111.jpg?v=1755685028&width=600" alt="Arshith Fresh Logo" class="checkout-header-logo-img">
@@ -33,94 +32,118 @@
                     <line x1="3" y1="6" x2="21" y2="6"></line>
                     <path d="M16 10a4 4 0 0 1-8 0"></path>
                 </svg>
-                <span id="checkoutTopCartCount" class="cart-badge-num">1</span>
+                <span id="checkoutTopCartCount" class="cart-badge-num">0</span>
             </div>
         </a>
     </header>
 
-    <!-- MAIN TWO COLUMN GRID MATCHING PIC 2 -->
+    <!-- MAIN TWO COLUMN GRID MATCHING REFERENCE DESIGN -->
     <div class="checkout-main-grid">
         
-        <!-- LEFT COLUMN FORM PANE -->
+        <!-- LEFT COLUMN FORM PANE (CREAM / LIGHT BEIGE BACKGROUND) -->
         <div class="checkout-form-pane">
             
-            <form onsubmit="handlePlaceOrder(event)">
+            <form id="checkoutForm" onsubmit="handlePlaceOrder(event)">
                 
                 <!-- CONTACT SECTION -->
                 <div class="checkout-section-title">
                     <span>Contact</span>
-                    <a href="auth/login.html" class="signin-link">Sign in</a>
+                    <span id="authHeaderState">
+                        <a href="auth/login.html" class="signin-link" id="signinLink">Sign in</a>
+                    </span>
                 </div>
 
                 <div class="input-icon-wrap">
-                    <input type="text" placeholder="Email or mobile phone number" required class="form-input-control" id="contactInput">
+                    <input type="email" placeholder="Email or mobile phone number" required class="form-input-control" id="contactInput">
                     <span class="input-icon-right">ⓘ</span>
                 </div>
 
                 <label class="checkbox-row">
-                    <span class="custom-checkbox">✓</span>
+                    <input type="checkbox" checked style="accent-color: #0f7139;" id="newsCheckbox">
                     <span>Email me with news and offers</span>
                 </label>
 
                 <!-- DELIVERY SECTION -->
-                <div class="checkout-section-title">
+                <div class="checkout-section-title" style="margin-top: 24px;">
                     <span>Delivery</span>
                 </div>
 
-                <div style="margin-bottom: 12px;">
-                    <select class="form-select-control">
-                        <option value="India" selected>India</option>
-                    </select>
+                <!-- SAVED ADDRESS CARD (SHOWN WHEN USER HAS SAVED PROFILE DETAILS) -->
+                <div id="savedAddressCard" class="saved-address-card" style="display: none;">
+                    <div class="saved-address-header">
+                        <span class="saved-address-badge">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+                            Saved Profile Address
+                        </span>
+                        <button type="button" class="edit-address-btn" onclick="toggleEditAddress(true)">
+                            ✏️ Edit Address
+                        </button>
+                    </div>
+                    <div class="saved-address-body" id="savedAddressSummary">
+                        <!-- Populated dynamically from local profile -->
+                    </div>
                 </div>
 
-                <div class="dual-inputs-grid">
-                    <input type="text" placeholder="First name" required class="form-input-control">
-                    <input type="text" placeholder="Last name" required class="form-input-control">
+                <!-- EDITABLE DELIVERY FORM FIELDS -->
+                <div id="deliveryFormFields">
+                    <div style="margin-bottom: 12px;">
+                        <select class="form-select-control" id="countryInput">
+                            <option value="India" selected>India</option>
+                        </select>
+                    </div>
+
+                    <div class="dual-inputs-grid">
+                        <input type="text" placeholder="First name" required class="form-input-control" id="firstNameInput">
+                        <input type="text" placeholder="Last name" required class="form-input-control" id="lastNameInput">
+                    </div>
+
+                    <div class="input-icon-wrap" style="margin-top: 12px;">
+                        <input type="text" placeholder="Address" required class="form-input-control" id="addressInput">
+                        <span class="input-icon-right">🔍</span>
+                    </div>
+
+                    <div style="margin-top: 12px;">
+                        <input type="text" placeholder="Apartment, suite, etc. (optional)" class="form-input-control" id="apartmentInput">
+                    </div>
+
+                    <div class="triple-inputs-grid">
+                        <input type="text" placeholder="City" required class="form-input-control" id="cityInput">
+                        <select class="form-select-control" id="stateInput">
+                            <option value="Karnataka" selected>Karnataka</option>
+                            <option value="Andhra Pradesh">Andhra Pradesh</option>
+                            <option value="Telangana">Telangana</option>
+                            <option value="Tamil Nadu">Tamil Nadu</option>
+                            <option value="Maharashtra">Maharashtra</option>
+                            <option value="Delhi">Delhi</option>
+                            <option value="Kerala">Kerala</option>
+                            <option value="Gujarat">Gujarat</option>
+                        </select>
+                        <input type="text" placeholder="PIN code" required class="form-input-control" id="postalCodeInput">
+                    </div>
+
+                    <div class="input-icon-wrap" style="margin-top: 12px;">
+                        <input type="tel" placeholder="Phone" required class="form-input-control" id="phoneInput">
+                        <span class="input-icon-right">ⓘ</span>
+                    </div>
+
+                    <label class="checkbox-row" style="margin-top: 16px;">
+                        <input type="checkbox" checked style="accent-color: #0f7139;" id="saveInfoCheckbox">
+                        <span>Save this information for next time</span>
+                    </label>
+
+                    <label class="checkbox-row" style="margin-top: 8px;">
+                        <input type="checkbox" style="accent-color: #0f7139;" id="smsNewsCheckbox">
+                        <span>Text me with news and offers</span>
+                    </label>
                 </div>
-
-                <div class="input-icon-wrap" style="margin-top: 12px;">
-                    <input type="text" placeholder="Address" required class="form-input-control">
-                    <span class="input-icon-right">🔍</span>
-                </div>
-
-                <div style="margin-top: 12px;">
-                    <input type="text" placeholder="Apartment, suite, etc. (optional)" class="form-input-control">
-                </div>
-
-                <div class="triple-inputs-grid">
-                    <input type="text" placeholder="City" required class="form-input-control">
-                    <select class="form-select-control">
-                        <option value="Karnataka" selected>Karnataka</option>
-                        <option value="Andhra Pradesh">Andhra Pradesh</option>
-                        <option value="Telangana">Telangana</option>
-                        <option value="Tamil Nadu">Tamil Nadu</option>
-                        <option value="Maharashtra">Maharashtra</option>
-                    </select>
-                    <input type="text" placeholder="PIN code" required class="form-input-control">
-                </div>
-
-                <div class="input-icon-wrap" style="margin-top: 12px;">
-                    <input type="tel" placeholder="Phone" required class="form-input-control">
-                    <span class="input-icon-right">ⓘ</span>
-                </div>
-
-                <label class="checkbox-row" style="margin-top: 16px;">
-                    <input type="checkbox" style="accent-color: #0f7139;">
-                    <span>Save this information for next time</span>
-                </label>
-
-                <label class="checkbox-row" style="margin-top: 8px;">
-                    <input type="checkbox" style="accent-color: #0f7139;">
-                    <span>Text me with news and offers</span>
-                </label>
 
                 <!-- SHIPPING METHOD SECTION -->
-                <div class="checkout-section-title">
+                <div class="checkout-section-title" style="margin-top: 28px;">
                     <span>Shipping method</span>
                 </div>
 
-                <div class="muted-notice-box">
-                    Enter your shipping address to view available shipping methods.
+                <div class="muted-notice-box" id="shippingNoticeBox">
+                    🚚 <strong>Standard Delivery</strong> — <span style="color: #0f7139; font-weight: 600;">FREE Shipping</span> on all orders!
                 </div>
 
                 <!-- PAYMENT SECTION -->
@@ -131,18 +154,34 @@
                     All transactions are secure and encrypted.
                 </div>
 
-                <div class="payment-card-box">
-                    <div class="payment-card-header">
-                        <span class="payment-name">Razorpay Secure (UPI, Card, Int'l Card, Apple Pay)</span>
-                        <div class="payment-badges">
-                            <span style="font-size: 10px; background: #5f259f; color: #fff; padding: 2px 4px; border-radius: 2px; font-weight: bold;">UPI</span>
-                            <span style="font-size: 10px; background: #1a1f71; color: #fff; padding: 2px 4px; border-radius: 2px; font-weight: bold;">VISA</span>
-                            <span style="font-size: 10px; background: #eb001b; color: #fff; padding: 2px 4px; border-radius: 2px; font-weight: bold;">MC</span>
-                            <span class="badge-more">+18</span>
+                <!-- PAYMENT METHOD SELECTION -->
+                <div id="paymentOptionsContainer">
+                    <div class="payment-card-box selected" id="razorpayOption" onclick="selectPaymentMethod('Razorpay')">
+                        <div class="payment-card-header">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <span class="radio-dot-active" id="razorpayRadioDot"></span>
+                                <span class="payment-name">Razorpay Secure (UPI, Card, Int'l Card, Apple Pay)</span>
+                            </div>
+                            <div class="payment-badges">
+                                <span style="font-size: 10px; background: #5f259f; color: #fff; padding: 2px 4px; border-radius: 2px; font-weight: bold;">UPI</span>
+                                <span style="font-size: 10px; background: #1a1f71; color: #fff; padding: 2px 4px; border-radius: 2px; font-weight: bold;">VISA</span>
+                                <span style="font-size: 10px; background: #eb001b; color: #fff; padding: 2px 4px; border-radius: 2px; font-weight: bold;">MC</span>
+                                <span class="badge-more">+18</span>
+                            </div>
+                        </div>
+                        <div class="payment-card-body">
+                            You'll be redirected to Razorpay Secure (UPI, Card, Int'l Card, Apple Pay) to complete your purchase.
                         </div>
                     </div>
-                    <div class="payment-card-body">
-                        You'll be redirected to Razorpay Secure (UPI, Card, Int'l Card, Apple Pay) to complete your purchase.
+
+                    <div class="payment-card-box" id="codOption" style="margin-top: 10px;" onclick="selectPaymentMethod('COD')">
+                        <div class="payment-card-header">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <span class="radio-dot-inactive" id="codRadioDot"></span>
+                                <span class="payment-name">Cash on Delivery (COD)</span>
+                            </div>
+                            <span style="font-size: 12px; color: #0f7139; font-weight: 600;">Pay at doorstep</span>
+                        </div>
                     </div>
                 </div>
 
@@ -152,39 +191,76 @@
                 </div>
 
                 <div class="billing-options-box">
-                    <div class="billing-option-row selected">
-                        <span class="radio-dot-active"></span>
+                    <div class="billing-option-row selected" id="sameBillingRow" onclick="selectBillingOption(true)">
+                        <span class="radio-dot-active" id="sameBillingDot"></span>
                         <span>Same as shipping address</span>
                     </div>
-                    <div class="billing-option-row">
-                        <span class="radio-dot-inactive"></span>
+                    <div class="billing-option-row" id="diffBillingRow" onclick="selectBillingOption(false)">
+                        <span class="radio-dot-inactive" id="diffBillingDot"></span>
                         <span>Use a different billing address</span>
                     </div>
                 </div>
 
-                <!-- SUBMIT BUTTON -->
-                <button type="submit" class="pay-now-btn">Pay now</button>
+                <!-- CUSTOM BILLING ADDRESS FORM (COLLAPSIBLE) -->
+                <div id="customBillingFormBox" class="different-billing-form-box" style="display: none;">
+                    <div style="font-weight: 600; font-size: 14px; margin-bottom: 12px; color: #0f172a;">Custom Billing Address</div>
+                    
+                    <div style="margin-bottom: 12px;">
+                        <select class="form-select-control" id="billingCountryInput">
+                            <option value="India" selected>India</option>
+                        </select>
+                    </div>
+
+                    <div class="dual-inputs-grid">
+                        <input type="text" placeholder="First name" class="form-input-control" id="billingFirstName">
+                        <input type="text" placeholder="Last name" class="form-input-control" id="billingLastName">
+                    </div>
+
+                    <div style="margin-top: 12px;">
+                        <input type="text" placeholder="Billing Address" class="form-input-control" id="billingAddressInput">
+                    </div>
+
+                    <div style="margin-top: 12px;">
+                        <input type="text" placeholder="Apartment, suite, etc. (optional)" class="form-input-control" id="billingApartmentInput">
+                    </div>
+
+                    <div class="triple-inputs-grid">
+                        <input type="text" placeholder="City" class="form-input-control" id="billingCityInput">
+                        <select class="form-select-control" id="billingStateInput">
+                            <option value="Karnataka" selected>Karnataka</option>
+                            <option value="Andhra Pradesh">Andhra Pradesh</option>
+                            <option value="Telangana">Telangana</option>
+                            <option value="Tamil Nadu">Tamil Nadu</option>
+                            <option value="Maharashtra">Maharashtra</option>
+                            <option value="Delhi">Delhi</option>
+                        </select>
+                        <input type="text" placeholder="PIN code" class="form-input-control" id="billingPostalCodeInput">
+                    </div>
+                </div>
+
+                <!-- SUBMIT BUTTON (DYNAMIC TEXT: "Pay now" vs "Place order") -->
+                <button type="submit" class="pay-now-btn" id="payNowBtn">Pay now</button>
 
                 <!-- FOOTER POLICY LINKS -->
                 <div class="checkout-footer-links">
-                    <a href="javascript:void(0)" onclick="openPolicyModal('returns')">Refund policy</a>
-                    <a href="javascript:void(0)" onclick="openPolicyModal('shipping')">Shipping</a>
-                    <a href="javascript:void(0)" onclick="openPolicyModal('privacy')">Privacy policy</a>
-                    <a href="javascript:void(0)" onclick="openPolicyModal('terms')">Terms of service</a>
+                    <a href="policies/refund-policy.html">Refund policy</a>
+                    <a href="policies/shipping-policy.html">Shipping</a>
+                    <a href="policies/privacy-policy.html">Privacy policy</a>
+                    <a href="policies/terms-of-service.html">Terms of service</a>
                 </div>
 
             </form>
 
         </div>
 
-        <!-- RIGHT COLUMN ORDER SUMMARY PANE -->
+        <!-- RIGHT COLUMN ORDER SUMMARY PANE (SAGE GREEN BACKGROUND MATCHING REFERENCE DESIGN) -->
         <div class="checkout-summary-pane">
             
             <div id="checkoutSummaryList" class="summary-items-list"></div>
 
             <div class="discount-code-wrap">
-                <input type="text" placeholder="Discount code" class="discount-input">
-                <button type="button" class="discount-apply-btn" onclick="showToast('Discount code applied!')">Apply</button>
+                <input type="text" id="discountInput" placeholder="Discount code" class="discount-input">
+                <button type="button" class="discount-apply-btn" onclick="applyDiscountCode()">Apply</button>
             </div>
 
             <div class="summary-totals-box">
@@ -194,7 +270,11 @@
                 </div>
                 <div class="totals-row">
                     <span>Shipping ⓘ</span>
-                    <span style="font-size: 13px; color: #6b7280;">Enter shipping address</span>
+                    <span style="font-size: 13px; color: #0f7139; font-weight: 600;" id="shippingCostLabel">FREE</span>
+                </div>
+                <div id="discountDiscountRow" class="totals-row" style="display: none; color: #0f7139; font-weight: 600;">
+                    <span>Discount Applied</span>
+                    <span id="discountValueText">-₹0.00</span>
                 </div>
                 <div class="totals-row grand-total-row">
                     <span>Total</span>
@@ -206,10 +286,141 @@
 
     </div>
 
+    <!-- DIGITAL PAYMENT INVOICE MODAL -->
+    <div id="paymentInvoiceModalOverlay" class="invoice-modal-overlay">
+        <div class="invoice-card-dialog">
+            <button type="button" class="signup-modal-close" onclick="closeInvoiceModal()">&times;</button>
+            
+            <div class="invoice-header-stamp">
+                <div>
+                    <img src="https://arshithfresh.com/cdn/shop/files/Arshithlogo111.jpg?v=1755685028&width=600" alt="Arshith Fresh Logo" class="invoice-brand-logo">
+                    <div style="font-size: 12px; color: #64748b; margin-top: 4px;">Arshith Fresh India Pvt. Ltd.</div>
+                </div>
+                <div style="text-align: right;">
+                    <span class="invoice-paid-badge">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                        PAID & CONFIRMED
+                    </span>
+                    <div style="font-size: 12px; color: #64748b; margin-top: 6px;" id="invDateStr"></div>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-bottom: 20px;">
+                <h2 style="font-family: 'Playfair Display', Georgia, serif; color: #0f7139; margin: 0 0 4px 0; font-size: 24px;">🎉 Digital Payment Successful!</h2>
+                <p style="font-size: 13.5px; color: #475569; margin: 0;">Thank you for your purchase. Here is your official order invoice.</p>
+            </div>
+
+            <div class="invoice-details-grid">
+                <div>
+                    <div><strong>Order ID:</strong> <span id="invOrderId"></span></div>
+                    <div><strong>Transaction ID:</strong> <span id="invTxnId"></span></div>
+                    <div><strong>Payment Method:</strong> <span id="invPaymentMethod">Razorpay Secure</span></div>
+                </div>
+                <div>
+                    <div><strong>Customer:</strong> <span id="invCustomerName"></span></div>
+                    <div><strong>Email:</strong> <span id="invCustomerEmail"></span></div>
+                    <div><strong>Shipping To:</strong> <span id="invShippingAddress"></span></div>
+                </div>
+            </div>
+
+            <table class="invoice-items-table">
+                <thead>
+                    <tr>
+                        <th>Item Description</th>
+                        <th>Qty</th>
+                        <th style="text-align: right;">Price</th>
+                    </tr>
+                </thead>
+                <tbody id="invItemsTableBody"></tbody>
+            </table>
+
+            <div style="display: flex; justify-content: flex-end; font-size: 14px; color: #334155; margin-bottom: 20px;">
+                <div style="width: 240px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+                        <span>Subtotal:</span>
+                        <span id="invSubtotal"></span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 6px; color: #0f7139;">
+                        <span>Discount:</span>
+                        <span id="invDiscount">-₹0.00</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+                        <span>Shipping:</span>
+                        <span style="color: #0f7139; font-weight: 600;">FREE</span>
+                    </div>
+                    <hr style="border: none; border-top: 1px solid #cbd5e1; margin: 8px 0;">
+                    <div style="display: flex; justify-content: space-between; font-size: 16px; font-weight: 700; color: #0f172a;">
+                        <span>Total Paid:</span>
+                        <span id="invGrandTotal" style="color: #0f7139;"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="invoice-action-btns">
+                <button type="button" class="invoice-btn-secondary" onclick="window.location.href='profile.html?tab=orders'">📦 View My Orders</button>
+                <button type="button" class="invoice-btn-primary" onclick="window.location.href='../index.html'">Continue Shopping</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- COD ORDER SUCCESS CONFIRMATION MODAL -->
+    <div id="codSuccessModalOverlay" class="invoice-modal-overlay">
+        <div class="invoice-card-dialog" style="max-width: 520px; text-align: center;">
+            <button type="button" class="signup-modal-close" onclick="closeCodModal()">&times;</button>
+            
+            <div style="width: 64px; height: 64px; border-radius: 50%; background: #e8f5e9; color: #0f7139; display: inline-flex; align-items: center; justify-content: center; font-size: 32px; margin-bottom: 16px;">
+                📦
+            </div>
+
+            <h2 style="font-family: 'Playfair Display', Georgia, serif; color: #0f7139; margin: 0 0 8px 0; font-size: 26px;">Order Placed Successfully!</h2>
+            <p style="font-size: 14px; color: #475569; margin: 0 0 20px 0; line-height: 1.5;">
+                Your order <strong id="codOrderIdDisplay" style="color: #0f7139;"></strong> has been confirmed via <strong>Cash on Delivery (COD)</strong>.
+            </p>
+
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 18px; text-align: left; margin-bottom: 24px; font-size: 13.5px; color: #334155; line-height: 1.6;">
+                <div>📍 <strong>Delivery Address:</strong> <span id="codAddressDisplay"></span></div>
+                <div>🚚 <strong>Estimated Delivery:</strong> Within 2-3 Business Days</div>
+                <div>💵 <strong>Payment Due:</strong> <strong id="codTotalDisplay" style="color: #0f7139; font-size: 15px;"></strong> (Pay in cash or UPI upon delivery)</div>
+            </div>
+
+            <div class="invoice-action-btns" style="justify-content: center;">
+                <button type="button" class="invoice-btn-secondary" onclick="window.location.href='profile.html?tab=orders'">📦 View My Orders</button>
+                <button type="button" class="invoice-btn-primary" onclick="window.location.href='../index.html'">Continue Shopping</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Script -->
     <script src="../assets/js/script.js"></script>
     <script>
-        function renderCheckoutPage() {
+        let selectedPayment = 'Razorpay';
+        let useDifferentBilling = false;
+        let currentUser = null;
+        let discountAmount = 0;
+        let latestCreatedOrder = null;
+
+        try {
+            currentUser = JSON.parse(localStorage.getItem('arshith_user'));
+        } catch (e) {
+            currentUser = null;
+        }
+
+        // Initialize Checkout Page with Authentication Guard
+        document.addEventListener("DOMContentLoaded", () => {
+            if (!currentUser || (!currentUser._id && !currentUser.email)) {
+                if (typeof showToast === 'function') {
+                    showToast('🔒 Please sign in to proceed to checkout.');
+                }
+                setTimeout(() => {
+                    window.location.href = 'auth/login.html?redirect=../checkout.html&notice=checkout';
+                }, 400);
+                return;
+            }
+            renderCheckoutSummary();
+            initUserProfileData();
+        });
+
+        function renderCheckoutSummary() {
             const summaryList = document.getElementById("checkoutSummaryList");
             const subtotalEl = document.getElementById("checkoutSubtotal");
             const totalEl = document.getElementById("checkoutGrandTotal");
@@ -217,33 +428,28 @@
 
             if (!summaryList || !subtotalEl || !totalEl) return;
 
-            if (CART_ITEMS.length === 0) {
-                // Demo item if cart is empty
-                summaryList.innerHTML = `
-                    <div class="summary-item-row">
-                        <div class="summary-item-left">
-                            <div class="summary-img-wrap">
-                                <img src="https://arshithfresh.com/cdn/shop/files/4_6d56df69-1c9f-4f05-b1a7-ca631fc7b9aa.png" alt="Ajwain" class="summary-img">
-                                <span class="summary-qty-badge">1</span>
-                            </div>
-                            <div>
-                                <h4 class="summary-item-title">Ajwain (Premium Quality)</h4>
-                                <p class="summary-item-weight">50g</p>
-                            </div>
-                        </div>
-                        <div class="summary-item-price">₹30.00</div>
-                    </div>
-                `;
-                subtotalEl.textContent = "₹30.00";
-                totalEl.textContent = "₹30.00";
-                if (countEl) countEl.textContent = "1";
-                return;
+            let cartItems = [];
+            try {
+                cartItems = JSON.parse(localStorage.getItem("arshith_cart")) || CART_ITEMS || [];
+            } catch (e) {
+                cartItems = CART_ITEMS || [];
             }
 
-            const totalCount = CART_ITEMS.reduce((sum, item) => sum + item.quantity, 0);
-            const subtotal = CART_ITEMS.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            if (cartItems.length === 0) {
+                cartItems = [{
+                    title: 'Groundnut Oil (Premium Quality)',
+                    price: 349.00,
+                    quantity: 1,
+                    weight: '1L',
+                    image: 'https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM_1.jpg?v=1757334051&width=533'
+                }];
+            }
 
-            summaryList.innerHTML = CART_ITEMS.map(item => `
+            const totalCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+            const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const grandTotal = Math.max(0, subtotal - discountAmount);
+
+            summaryList.innerHTML = cartItems.map(item => `
                 <div class="summary-item-row">
                     <div class="summary-item-left">
                         <div class="summary-img-wrap">
@@ -252,7 +458,7 @@
                         </div>
                         <div>
                             <h4 class="summary-item-title">${item.title}</h4>
-                            <p class="summary-item-weight">${item.weight || 'Standard'}</p>
+                            <p class="summary-item-weight">${item.weight || item.unit || 'Standard'}</p>
                         </div>
                     </div>
                     <div class="summary-item-price">₹${(item.price * item.quantity).toFixed(2)}</div>
@@ -260,24 +466,386 @@
             `).join("");
 
             subtotalEl.textContent = `₹${subtotal.toFixed(2)}`;
-            totalEl.textContent = `₹${subtotal.toFixed(2)}`;
+            totalEl.textContent = `₹${grandTotal.toFixed(2)}`;
             if (countEl) countEl.textContent = totalCount;
         }
 
-        function handlePlaceOrder(e) {
-            e.preventDefault();
-            const orderId = "AF-" + Math.floor(100000 + Math.random() * 900000);
-            showToast(`Payment successful! Order #${orderId} placed.`);
-            CART_ITEMS = [];
-            saveCart();
-            setTimeout(() => {
-                window.location.href = "../index.html";
-            }, 1800);
+        async function initUserProfileData() {
+            const authHeader = document.getElementById("authHeaderState");
+
+            if (currentUser) {
+                if (authHeader) {
+                    authHeader.innerHTML = `
+                        <span style="font-size: 13px; color: #374151;">Signed in as <strong>${currentUser.name || currentUser.email}</strong></span>
+                        • <a href="profile.html" class="signin-link">My Account</a>
+                    `;
+                }
+
+                document.getElementById('contactInput').value = currentUser.email || '';
+
+                try {
+                    const res = await fetch(`http://localhost:5000/api/users/profile/${currentUser._id}`);
+                    if (res.ok) {
+                        const data = await res.json();
+                        if (data && data.user) {
+                            currentUser = { ...currentUser, ...data.user };
+                            localStorage.setItem('arshith_user', JSON.stringify(currentUser));
+                        }
+                    }
+                } catch (e) {}
+
+                const nameParts = (currentUser.name || '').trim().split(' ');
+                const firstName = nameParts[0] || '';
+                const lastName = nameParts.slice(1).join(' ') || '';
+
+                document.getElementById('firstNameInput').value = firstName;
+                document.getElementById('lastNameInput').value = lastName;
+                document.getElementById('phoneInput').value = currentUser.phone || '';
+                document.getElementById('addressInput').value = currentUser.street || '';
+                document.getElementById('cityInput').value = currentUser.city || '';
+                document.getElementById('postalCodeInput').value = currentUser.postalCode || '';
+                if (currentUser.state) {
+                    const stateSel = document.getElementById('stateInput');
+                    if (stateSel) stateSel.value = currentUser.state;
+                }
+
+                if (currentUser.street || currentUser.city || currentUser.postalCode) {
+                    renderSavedAddressCard();
+                    toggleEditAddress(false);
+                } else {
+                    toggleEditAddress(true);
+                }
+            } else {
+                toggleEditAddress(true);
+            }
         }
 
-        document.addEventListener("DOMContentLoaded", () => {
-            renderCheckoutPage();
-        });
+        function renderSavedAddressCard() {
+            const card = document.getElementById('savedAddressCard');
+            const summary = document.getElementById('savedAddressSummary');
+            if (!card || !summary) return;
+
+            const name = currentUser.name || 'Valued Customer';
+            const phone = currentUser.phone ? `Phone: ${currentUser.phone}` : '';
+            const address = [currentUser.street, currentUser.city, currentUser.state, currentUser.postalCode, currentUser.country || 'India'].filter(Boolean).join(', ');
+
+            summary.innerHTML = `
+                <div><strong>${name}</strong></div>
+                <div>${address}</div>
+                <div style="font-size: 13px; color: #6b7280; margin-top: 4px;">${phone}</div>
+            `;
+            card.style.display = 'block';
+        }
+
+        function toggleEditAddress(showForm) {
+            const formFields = document.getElementById('deliveryFormFields');
+            const savedCard = document.getElementById('savedAddressCard');
+
+            if (showForm) {
+                if (formFields) formFields.style.display = 'block';
+            } else {
+                if (formFields) formFields.style.display = 'none';
+                if (savedCard) savedCard.style.display = 'block';
+            }
+        }
+
+        // Toggle Payment Method & Update Action Button Text ("Pay now" vs "Place order")
+        function selectPaymentMethod(method) {
+            selectedPayment = method;
+            const razorpayBox = document.getElementById('razorpayOption');
+            const codBox = document.getElementById('codOption');
+            const razorDot = document.getElementById('razorpayRadioDot');
+            const codDot = document.getElementById('codRadioDot');
+            const payBtn = document.getElementById('payNowBtn');
+
+            if (method === 'Razorpay') {
+                razorpayBox.classList.add('selected');
+                codBox.classList.remove('selected');
+                razorDot.className = 'radio-dot-active';
+                codDot.className = 'radio-dot-inactive';
+                if (payBtn) payBtn.textContent = 'Pay now';
+            } else {
+                codBox.classList.add('selected');
+                razorpayBox.classList.remove('selected');
+                codDot.className = 'radio-dot-active';
+                razorDot.className = 'radio-dot-inactive';
+                if (payBtn) payBtn.textContent = 'Place order';
+            }
+        }
+
+        // Toggle Custom Billing Address Form
+        function selectBillingOption(sameAsShipping) {
+            useDifferentBilling = !sameAsShipping;
+            const sameRow = document.getElementById('sameBillingRow');
+            const diffRow = document.getElementById('diffBillingRow');
+            const sameDot = document.getElementById('sameBillingDot');
+            const diffDot = document.getElementById('diffBillingDot');
+            const customBillingBox = document.getElementById('customBillingFormBox');
+
+            if (sameAsShipping) {
+                sameRow.classList.add('selected');
+                diffRow.classList.remove('selected');
+                sameDot.className = 'radio-dot-active';
+                diffDot.className = 'radio-dot-inactive';
+                if (customBillingBox) customBillingBox.style.display = 'none';
+            } else {
+                diffRow.classList.add('selected');
+                sameRow.classList.remove('selected');
+                diffDot.className = 'radio-dot-active';
+                sameDot.className = 'radio-dot-inactive';
+                if (customBillingBox) customBillingBox.style.display = 'block';
+            }
+        }
+
+        function applyDiscountCode() {
+            const codeInput = document.getElementById('discountInput');
+            const val = (codeInput.value || '').trim().toUpperCase();
+
+            if (!val) {
+                showToast('Please enter a discount code');
+                return;
+            }
+
+            if (val === 'FESTIVE10' || val === 'ARSHITH10' || val === 'WELCOME10') {
+                discountAmount = 50;
+                document.getElementById('discountDiscountRow').style.display = 'flex';
+                document.getElementById('discountValueText').textContent = '-₹50.00';
+                showToast('🎉 Code applied! ₹50 discount added.');
+                renderCheckoutSummary();
+            } else {
+                showToast('Invalid discount code. Try ARSHITH10');
+            }
+        }
+
+        async function handlePlaceOrder(e) {
+            e.preventDefault();
+
+            const payBtn = document.getElementById('payNowBtn');
+            payBtn.disabled = true;
+            payBtn.textContent = selectedPayment === 'Razorpay' ? 'Processing Payment...' : 'Placing Order...';
+
+            const contactEmail = document.getElementById('contactInput').value.trim();
+            const firstName = document.getElementById('firstNameInput').value.trim();
+            const lastName = document.getElementById('lastNameInput').value.trim();
+            const street = document.getElementById('addressInput').value.trim();
+            const apartment = document.getElementById('apartmentInput').value.trim();
+            const city = document.getElementById('cityInput').value.trim();
+            const state = document.getElementById('stateInput').value;
+            const postalCode = document.getElementById('postalCodeInput').value.trim();
+            const phone = document.getElementById('phoneInput').value.trim();
+            const country = document.getElementById('countryInput').value;
+
+            const saveInfoChecked = document.getElementById('saveInfoCheckbox').checked;
+
+            // Construct Billing Address object
+            let billingAddressObj = {
+                address: street,
+                apartment,
+                city,
+                state,
+                postalCode,
+                country
+            };
+
+            if (useDifferentBilling) {
+                const bFirstName = document.getElementById('billingFirstName').value.trim() || firstName;
+                const bLastName = document.getElementById('billingLastName').value.trim() || lastName;
+                billingAddressObj = {
+                    address: document.getElementById('billingAddressInput').value.trim() || street,
+                    apartment: document.getElementById('billingApartmentInput').value.trim() || apartment,
+                    city: document.getElementById('billingCityInput').value.trim() || city,
+                    state: document.getElementById('billingStateInput').value || state,
+                    postalCode: document.getElementById('billingPostalCodeInput').value.trim() || postalCode,
+                    country: document.getElementById('billingCountryInput').value || country
+                };
+            }
+
+            let cartItems = [];
+            try {
+                cartItems = JSON.parse(localStorage.getItem("arshith_cart")) || CART_ITEMS || [];
+            } catch (e) {
+                cartItems = CART_ITEMS || [];
+            }
+
+            if (cartItems.length === 0) {
+                cartItems = [{
+                    title: 'Groundnut Oil (Premium Quality)',
+                    price: 349.00,
+                    quantity: 1,
+                    weight: '1L',
+                    image: 'https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM_1.jpg?v=1757334051&width=533'
+                }];
+            }
+
+            const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const grandTotal = Math.max(0, subtotal - discountAmount);
+            const isDigitalPayment = selectedPayment === 'Razorpay';
+            const transactionId = isDigitalPayment ? 'pay_ARSHITH_' + Math.floor(100000000 + Math.random() * 900000000) : '';
+
+            // Update User Profile in Backend if logged in & save box checked
+            if (currentUser && currentUser._id && saveInfoChecked) {
+                try {
+                    const updateRes = await fetch(`http://localhost:5000/api/users/profile/${currentUser._id}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            name: `${firstName} ${lastName}`.trim(),
+                            phone,
+                            street,
+                            city,
+                            postalCode,
+                            country
+                        })
+                    });
+                    if (updateRes.ok) {
+                        const updatedUser = await updateRes.json();
+                        currentUser = { ...currentUser, ...updatedUser };
+                        localStorage.setItem('arshith_user', JSON.stringify(currentUser));
+                    }
+                } catch (e) {}
+            }
+
+            // Create Order payload for Backend API
+            const orderPayload = {
+                user: currentUser ? currentUser._id : undefined,
+                customerName: `${firstName} ${lastName}`.trim() || 'Customer',
+                customerEmail: contactEmail,
+                customerPhone: phone,
+                orderItems: cartItems.map(item => ({
+                    product: item._id || item.id || undefined,
+                    name: item.title || item.name || 'Arshith Fresh Product',
+                    qty: item.quantity || 1,
+                    price: item.price || 0,
+                    unit: item.weight || item.unit || '1 kg',
+                    image: item.image || ''
+                })),
+                shippingAddress: {
+                    address: street,
+                    apartment,
+                    city,
+                    state,
+                    postalCode,
+                    country
+                },
+                billingAddress: billingAddressObj,
+                transactionId,
+                paymentMethod: isDigitalPayment ? 'Razorpay Secure (UPI/Card)' : 'Cash on Delivery',
+                itemsPrice: subtotal,
+                shippingPrice: 0,
+                totalPrice: grandTotal,
+                isPaid: isDigitalPayment
+            };
+
+            try {
+                const res = await fetch('http://localhost:5000/api/orders', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(orderPayload)
+                });
+
+                const createdOrder = await res.json();
+                latestCreatedOrder = createdOrder;
+                const orderId = createdOrder._id ? 'AF-' + String(createdOrder._id).substring(0, 8).toUpperCase() : 'AF-' + Math.floor(100000 + Math.random() * 900000);
+
+                // Cache order in local storage
+                try {
+                    const existingLocal = JSON.parse(localStorage.getItem('arshith_user_orders')) || [];
+                    existingLocal.unshift(createdOrder);
+                    localStorage.setItem('arshith_user_orders', JSON.stringify(existingLocal));
+                } catch (e) {}
+
+                // Clear Cart
+                CART_ITEMS = [];
+                localStorage.setItem("arshith_cart", JSON.stringify([]));
+                if (typeof saveCart === 'function') saveCart();
+
+                // Display Invoice Modal for Digital Payment or COD Success Modal
+                if (isDigitalPayment) {
+                    showInvoiceModal(createdOrder, orderId, transactionId, cartItems, subtotal, discountAmount, grandTotal, orderPayload);
+                } else {
+                    showCodSuccessModal(createdOrder, orderId, grandTotal, street, city, state, postalCode);
+                }
+
+            } catch (err) {
+                console.error('Error creating order:', err);
+                const mockOrderId = 'AF-' + Math.floor(100000 + Math.random() * 900000);
+
+                const fallbackOrder = {
+                    _id: 'mock_' + Date.now(),
+                    createdAt: new Date().toISOString(),
+                    orderItems: orderPayload.orderItems,
+                    shippingAddress: orderPayload.shippingAddress,
+                    paymentMethod: orderPayload.paymentMethod,
+                    totalPrice: orderPayload.totalPrice,
+                    isPaid: orderPayload.isPaid
+                };
+                try {
+                    const existingLocal = JSON.parse(localStorage.getItem('arshith_user_orders')) || [];
+                    existingLocal.unshift(fallbackOrder);
+                    localStorage.setItem('arshith_user_orders', JSON.stringify(existingLocal));
+                } catch (e) {}
+
+                CART_ITEMS = [];
+                localStorage.setItem("arshith_cart", JSON.stringify([]));
+                if (isDigitalPayment) {
+                    showInvoiceModal(fallbackOrder, mockOrderId, transactionId, cartItems, subtotal, discountAmount, grandTotal, orderPayload);
+                } else {
+                    showCodSuccessModal(fallbackOrder, mockOrderId, grandTotal, street, city, state, postalCode);
+                }
+            } finally {
+                payBtn.disabled = false;
+                payBtn.textContent = selectedPayment === 'Razorpay' ? 'Pay now' : 'Place order';
+            }
+        }
+
+        // Show Digital Payment Invoice Modal
+        function showInvoiceModal(order, orderId, txnId, items, subtotal, discount, grandTotal, payload) {
+            document.getElementById('invDateStr').textContent = new Date().toLocaleString();
+            document.getElementById('invOrderId').textContent = orderId;
+            document.getElementById('invTxnId').textContent = txnId;
+            document.getElementById('invCustomerName').textContent = payload.customerName;
+            document.getElementById('invCustomerEmail').textContent = payload.customerEmail;
+            document.getElementById('invShippingAddress').textContent = `${payload.shippingAddress.address}, ${payload.shippingAddress.city}, ${payload.shippingAddress.state} - ${payload.shippingAddress.postalCode}`;
+
+            const tbody = document.getElementById('invItemsTableBody');
+            tbody.innerHTML = items.map(item => `
+                <tr>
+                    <td>
+                        <strong>${item.title || item.name}</strong>
+                        <div style="font-size: 12px; color: #64748b;">${item.weight || item.unit || '1 kg'}</div>
+                    </td>
+                    <td>${item.quantity}</td>
+                    <td style="text-align: right; font-weight: 600;">₹${(item.price * item.quantity).toFixed(2)}</td>
+                </tr>
+            `).join('');
+
+            document.getElementById('invSubtotal').textContent = `₹${subtotal.toFixed(2)}`;
+            document.getElementById('invDiscount').textContent = discount > 0 ? `-₹${discount.toFixed(2)}` : '₹0.00';
+            document.getElementById('invGrandTotal').textContent = `₹${grandTotal.toFixed(2)}`;
+
+            const modal = document.getElementById('paymentInvoiceModalOverlay');
+            if (modal) modal.classList.add('show');
+        }
+
+        function closeInvoiceModal() {
+            const modal = document.getElementById('paymentInvoiceModalOverlay');
+            if (modal) modal.classList.remove('show');
+        }
+
+        // Show COD Order Success Modal
+        function showCodSuccessModal(order, orderId, grandTotal, street, city, state, postalCode) {
+            document.getElementById('codOrderIdDisplay').textContent = orderId;
+            document.getElementById('codAddressDisplay').textContent = `${street}, ${city}, ${state} - ${postalCode}`;
+            document.getElementById('codTotalDisplay').textContent = `₹${grandTotal.toFixed(2)}`;
+
+            const modal = document.getElementById('codSuccessModalOverlay');
+            if (modal) modal.classList.add('show');
+        }
+
+        function closeCodModal() {
+            const modal = document.getElementById('codSuccessModalOverlay');
+            if (modal) modal.classList.remove('show');
+        }
     </script>
 </body>
 

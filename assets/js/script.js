@@ -216,44 +216,34 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    // 6. Interactive add-to-cart feedback (mock)
-    const cartCountElement = document.querySelector(".cart-count");
-    const cartBarCount = document.getElementById("cartBarCount");
-    const cartBarTotal = document.getElementById("cartBarTotal");
-
-    let cartCount = 0;
-    let totalPrice = 0;
-
+    // 6. Interactive add-to-cart feedback for static cards
     const addToCartBtns = document.querySelectorAll(".add-to-cart-btn");
     addToCartBtns.forEach(btn => {
         btn.addEventListener("click", () => {
-            cartCount++;
-
-            // Extract price from card
-            const card = btn.closest(".product-card");
+            const card = btn.closest(".product-card") || btn.closest(".product-detail-info");
             if (card) {
-                const salePriceElem = card.querySelector(".sale-price");
+                let name = "Arshith Fresh Product";
+                let price = 30;
+                let image = "";
+                let id = card.getAttribute("data-product-id") || String(Date.now());
+
+                const titleElem = card.querySelector(".product-title, h1, h3, h4");
+                if (titleElem) name = titleElem.textContent.trim();
+
+                const salePriceElem = card.querySelector(".sale-price, .price, .product-price");
                 if (salePriceElem) {
-                    const priceText = salePriceElem.textContent; // e.g. "Rs. 349.00"
-                    const priceNum = parseFloat(priceText.replace('Rs.', '').replace(/,/g, '').trim()) || 0;
-                    totalPrice += priceNum;
+                    const priceText = salePriceElem.textContent;
+                    price = parseFloat(priceText.replace(/[^0-9.]/g, '')) || price;
                 }
-            }
 
-            if (cartCountElement) {
-                cartCountElement.textContent = cartCount;
-                cartCountElement.style.transform = "scale(1.3)";
-                setTimeout(() => {
-                    cartCountElement.style.transform = "scale(1)";
-                }, 200);
-            }
+                const imgElem = card.querySelector("img");
+                if (imgElem) image = imgElem.src;
 
-            // Update bottom sticky cart bar
-            if (cartBarCount) {
-                cartBarCount.textContent = `${cartCount} Item${cartCount !== 1 ? 's' : ''}`;
-            }
-            if (cartBarTotal) {
-                cartBarTotal.textContent = `₹${totalPrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+                if (typeof addToStoreCart === "function") {
+                    addToStoreCart(id, name, price, image, 1);
+                }
+            } else if (typeof updateCartCountBadge === "function") {
+                updateCartCountBadge();
             }
 
             // Button feedback
@@ -576,17 +566,40 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function updateCartCountBadge() {
-        const totalCount = CART_ITEMS.reduce((sum, item) => sum + (item.quantity || 1), 0);
-        const badges = document.querySelectorAll(".cart-count");
-        badges.forEach(b => b.textContent = totalCount);
+        let items = CART_ITEMS || [];
+        try {
+            const saved = localStorage.getItem("arshith_cart");
+            if (saved) {
+                items = JSON.parse(saved);
+                CART_ITEMS = items;
+                window.CART_ITEMS = items;
+            }
+        } catch (e) {}
+
+        const totalCount = items.reduce((sum, item) => sum + (Number(item.quantity) || 1), 0);
+        const subtotal = items.reduce((sum, item) => sum + ((Number(item.price) || 0) * (Number(item.quantity) || 1)), 0);
+
+        // Update all badge elements across pages
+        const badges = document.querySelectorAll(".cart-count, .cart-badge-num, #checkoutTopCartCount, .cart-count-badge");
+        badges.forEach(b => {
+            b.textContent = totalCount;
+        });
+
         const barCount = document.getElementById("cartBarCount");
-        if (barCount) barCount.textContent = `${totalCount} items`;
+        if (barCount) barCount.textContent = `${totalCount} item${totalCount !== 1 ? 's' : ''}`;
+
         const barTotal = document.getElementById("cartBarTotal");
         if (barTotal) {
-            const subtotal = CART_ITEMS.reduce((sum, item) => sum + (item.price * item.quantity), 0);
             barTotal.textContent = `₹${subtotal.toFixed(2)}`;
         }
     }
+
+    // Auto-update badges on page load, history navigation, and cross-tab storage changes
+    document.addEventListener("DOMContentLoaded", updateCartCountBadge);
+    window.addEventListener("pageshow", updateCartCountBadge);
+    window.addEventListener("storage", updateCartCountBadge);
+    try { updateCartCountBadge(); } catch (e) {}
+
     window.CART_ITEMS = CART_ITEMS;
     window.addToStoreCart = addToStoreCart;
     window.updateCartQuantity = updateCartQuantity;
@@ -951,9 +964,147 @@ window.switchDetailImage = function(url, thumbElem) {
     });
     if (thumbElem) {
         thumbElem.style.borderColor = '#0f7139';
-        thumbElem.classList.add('active');
+   // Auto Signup Lead Capture Popup Modal for Unauthenticated Visitors
+function initAutoSignupPopup() {
+    let currentUser = null;
+    try {
+        currentUser = JSON.parse(localStorage.getItem('arshith_user'));
+    } catch (e) {}
+
+    if (currentUser && (currentUser._id || currentUser.email)) return;
+    try {
+        if (sessionStorage.getItem('arshith_signup_popup_dismissed') === 'true') return;
+    } catch (e) {}
+
+    const path = window.location.pathname.toLowerCase();
+    if (path.includes('/auth/') || path.includes('login.html') || path.includes('register.html') || path.includes('checkout.html') || path.includes('/admin/')) {
+        return;
     }
-};
+
+    const isSubpage = path.includes('/pages/');
+    const isDeep = path.includes('/categories/') || path.includes('/policies/');
+    const logoUrl = 'https://arshithfresh.com/cdn/shop/files/Arshithlogo111.jpg?v=1755685028&width=600';
+    const loginUrl = isDeep ? '../auth/login.html' : (isSubpage ? 'auth/login.html' : 'pages/auth/login.html');
+
+    setTimeout(() => {
+        if (document.getElementById('arshithSignupModalOverlay')) return;
+
+        const modalHTML = `
+            <div id="arshithSignupModalOverlay" class="signup-modal-overlay">
+                <div class="signup-modal-container">
+                    <button type="button" class="signup-modal-close" onclick="closeSignupModal()">&times;</button>
+                    
+                    <div class="signup-modal-header">
+                        <img src="${logoUrl}" alt="Arshith Fresh Logo" class="signup-modal-logo">
+                        <br>
+                        <span class="signup-offer-badge">🎁 SPECIAL WELCOME OFFER</span>
+                        <h2 class="signup-modal-title">Get 10% OFF Your First Order!</h2>
+                        <p class="signup-modal-sub">Create your account today to unlock instant discount code <strong>ARSHITH10</strong>, track live orders, and enjoy faster checkout.</p>
+                    </div>
+
+                    <form id="autoSignupModalForm" onsubmit="handleModalSignup(event)">
+                        <div class="signup-form-group">
+                            <input type="text" id="modalSignupName" placeholder="Full Name" required class="signup-modal-input">
+                        </div>
+                        <div class="signup-form-group">
+                            <input type="email" id="modalSignupEmail" placeholder="Email Address" required class="signup-modal-input">
+                        </div>
+                        <div class="signup-form-group">
+                            <input type="password" id="modalSignupPassword" placeholder="Create Password (min 6 characters)" minlength="6" required class="signup-modal-input">
+                        </div>
+
+                        <button type="submit" id="modalSignupBtn" class="signup-modal-submit-btn">
+                            Claim 10% OFF & Create Account
+                        </button>
+                    </form>
+
+                    <div class="signup-modal-footer">
+                        <p>Already have an account? <a href="${loginUrl}" class="signup-login-link">Log In</a></p>
+                        <button type="button" class="signup-skip-link" onclick="closeSignupModal()">No thanks, continue browsing</button>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
+        setTimeout(() => {
+            const overlay = document.getElementById('arshithSignupModalOverlay');
+            if (overlay) overlay.classList.add('show');
+        }, 50);
+    }, 3000);
+}
+
+function closeSignupModal() {
+    const overlay = document.getElementById('arshithSignupModalOverlay');
+    if (overlay) {
+        overlay.classList.remove('show');
+        setTimeout(() => overlay.remove(), 350);
+    }
+    try {
+        sessionStorage.setItem('arshith_signup_popup_dismissed', 'true');
+    } catch (e) {}
+}
+
+async function handleModalSignup(e) {
+    e.preventDefault();
+    const btn = document.getElementById('modalSignupBtn');
+    const name = document.getElementById('modalSignupName').value.trim();
+    const email = document.getElementById('modalSignupEmail').value.trim();
+    const password = document.getElementById('modalSignupPassword').value;
+
+    if (!name || !email || !password) return;
+
+    btn.disabled = true;
+    btn.textContent = 'Creating Account...';
+
+    try {
+        const res = await fetch('http://localhost:5000/api/users/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, email, password })
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+            throw new Error(data.message || 'Registration failed');
+        }
+
+        localStorage.setItem('arshith_user', JSON.stringify(data));
+        try {
+            sessionStorage.setItem('arshith_signup_popup_dismissed', 'true');
+        } catch (e) {}
+
+        if (typeof showToast === 'function') {
+            showToast('🎉 Account created! Discount code ARSHITH10 unlocked.');
+        }
+
+        closeSignupModal();
+
+        setTimeout(() => {
+            window.location.reload();
+        }, 1200);
+
+    } catch (err) {
+        if (typeof showToast === 'function') {
+            showToast(err.message || 'Registration error');
+        } else {
+            alert(err.message || 'Registration error');
+        }
+    } finally {
+        btn.disabled = false;
+        btn.textContent = 'Claim 10% OFF & Create Account';
+    }
+}
+
+window.closeSignupModal = closeSignupModal;
+window.handleModalSignup = handleModalSignup;
+window.initAutoSignupPopup = initAutoSignupPopup;
+
+document.addEventListener("DOMContentLoaded", () => {
+    initAutoSignupPopup();
+    initLiveSearchAutocomplete();
+});
 
 /* ==========================================================================
    LIVE SEARCH BAR WITH AUTO-COMPLETE WORDS & PRODUCTS DROPDOWN
@@ -1263,6 +1414,5 @@ function initLiveSearchAutocomplete() {
         }
     });
 }
-
 
 

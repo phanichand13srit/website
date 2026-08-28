@@ -326,10 +326,28 @@
                             <span class="val-estimated">Rs. ${subtotal.toFixed(2)}</span>
                         </div>
                         <p class="cart-tax-notice">Taxes included. Discounts and <a href="../index.html" class="shipping-policy-link">shipping</a> calculated at checkout.</p>
-                        <button class="cart-checkout-btn" onclick="openCheckoutModal()">Check out</button>
+                        <button class="cart-checkout-btn" onclick="handleCartCheckout()">Check out</button>
                     </div>
                 </div>
             `;
+        }
+
+        function handleCartCheckout() {
+            let currentUser = null;
+            try {
+                currentUser = JSON.parse(localStorage.getItem('arshith_user'));
+            } catch (e) {}
+
+            if (currentUser && (currentUser._id || currentUser.email)) {
+                window.location.href = 'checkout.html';
+            } else {
+                if (typeof showToast === 'function') {
+                    showToast('Please sign in or create an account to proceed to checkout.');
+                }
+                setTimeout(() => {
+                    window.location.href = 'auth/login.html?redirect=../checkout.html&notice=checkout';
+                }, 400);
+            }
         }
 
         document.addEventListener("DOMContentLoaded", () => {

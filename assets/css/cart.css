@@ -792,3 +792,247 @@
                 order: 1;
             }
         }
+
+        /* Saved Address & Profile Integration Styles */
+        .saved-address-card {
+            background: #ffffff;
+            border: 1.5px solid #0f7139;
+            border-radius: 10px;
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(15, 113, 57, 0.08);
+            position: relative;
+        }
+
+        .saved-address-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .saved-address-badge {
+            background: #e8f5e9;
+            color: #0f7139;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 12px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .edit-address-btn {
+            background: none;
+            border: 1px solid #0f7139;
+            color: #0f7139;
+            font-size: 13px;
+            font-weight: 600;
+            padding: 6px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .edit-address-btn:hover {
+            background: #0f7139;
+            color: #ffffff;
+        }
+
+        .saved-address-body {
+            font-size: 14px;
+            color: #374151;
+            line-height: 1.6;
+        }
+
+        .saved-address-body strong {
+            color: #111827;
+        }
+
+        .payment-card-box.selected {
+            border-color: #0f7139;
+            box-shadow: 0 0 0 1px #0f7139;
+        }
+
+        .payment-option-radio {
+            cursor: pointer;
+        }
+
+        /* Custom Billing Address Collapsible Form */
+        .different-billing-form-box {
+            background: #ffffff;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            padding: 18px;
+            margin-top: 10px;
+        }
+
+        /* Printable Payment Invoice Modal */
+        .invoice-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(6px);
+            z-index: 20000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            padding: 20px;
+        }
+
+        .invoice-modal-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .invoice-card-dialog {
+            background: #ffffff;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 680px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3);
+            position: relative;
+            padding: 36px 32px;
+            border: 1px solid #e2e8f0;
+            animation: modalPopIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .invoice-header-stamp {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e2e8f0;
+            margin-bottom: 24px;
+        }
+
+        .invoice-brand-logo {
+            height: 44px;
+            object-fit: contain;
+        }
+
+        .invoice-paid-badge {
+            background: #dcfce7;
+            color: #15803d;
+            border: 1px solid #86efac;
+            font-size: 13px;
+            font-weight: 700;
+            padding: 6px 16px;
+            border-radius: 20px;
+            letter-spacing: 0.5px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .invoice-details-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 16px 20px;
+            margin-bottom: 24px;
+            font-size: 13.5px;
+            color: #475569;
+        }
+
+        .invoice-details-grid strong {
+            color: #0f172a;
+        }
+
+        .invoice-items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 24px;
+            font-size: 14px;
+        }
+
+        .invoice-items-table th {
+            background: #f1f5f9;
+            color: #475569;
+            font-weight: 600;
+            text-align: left;
+            padding: 10px 14px;
+            border-bottom: 1px solid #cbd5e1;
+        }
+
+        .invoice-items-table td {
+            padding: 12px 14px;
+            border-bottom: 1px solid #e2e8f0;
+            color: #1e293b;
+        }
+
+        .invoice-action-btns {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 24px;
+            padding-top: 16px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .invoice-btn-primary {
+            background: #0f7139;
+            color: #ffffff;
+            border: none;
+            padding: 12px 22px;
+            font-size: 14px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: background 0.2s ease;
+        }
+
+        .invoice-btn-primary:hover {
+            background: #0b3718;
+        }
+
+        .invoice-btn-secondary {
+            background: #f1f5f9;
+            color: #334155;
+            border: 1px solid #cbd5e1;
+            padding: 12px 20px;
+            font-size: 14px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .invoice-btn-secondary:hover {
+            background: #e2e8f0;
+        }
+
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            .invoice-modal-overlay, .invoice-card-dialog, .invoice-card-dialog * {
+                visibility: visible;
+            }
+            .invoice-modal-overlay {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                background: #ffffff;
+            }
+            .invoice-action-btns {
+                display: none !important;
+            }
+        }
