@@ -1179,3 +1179,211 @@
             opacity: 0.6;
             cursor: not-allowed;
         }
+
+        /* ====================================================
+           TIERED COUPONS & PROMO CODE STYLING (ARSHITH FRESH)
+           ==================================================== */
+        .discount-code-wrap {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .discount-input {
+            flex: 1;
+            padding: 11px 14px;
+            border: 1.5px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 13.5px;
+            font-family: inherit;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            background: #ffffff;
+            color: #0f172a;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .discount-input:focus {
+            border-color: #0f7139;
+            box-shadow: 0 0 0 3px rgba(15, 113, 57, 0.12);
+        }
+
+        .discount-apply-btn {
+            background: #0f7139;
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            padding: 0 18px;
+            font-size: 13.5px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .discount-apply-btn:hover {
+            background: #0b542a;
+            transform: translateY(-1px);
+        }
+
+        /* Applied Coupon Tag */
+        .applied-coupon-tag {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #ecfdf5;
+            border: 1px solid #a7f3d0;
+            border-radius: 8px;
+            padding: 10px 14px;
+            margin-bottom: 14px;
+            animation: fadeInCoupon 0.25s ease-in-out;
+        }
+
+        @keyframes fadeInCoupon {
+            from { opacity: 0; transform: translateY(-4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .coupon-tag-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13.5px;
+            font-weight: 700;
+            color: #0f7139;
+        }
+
+        .coupon-tag-icon {
+            font-size: 16px;
+        }
+
+        .remove-coupon-btn {
+            background: none;
+            border: none;
+            color: #64748b;
+            font-size: 18px;
+            cursor: pointer;
+            padding: 0 4px;
+            line-height: 1;
+            transition: color 0.15s;
+        }
+
+        .remove-coupon-btn:hover {
+            color: #dc2626;
+        }
+
+        /* Available Coupons Box in Checkout Pane */
+        .available-coupons-box {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 14px;
+            margin-bottom: 18px;
+        }
+
+        .available-coupons-header {
+            font-size: 12.5px;
+            font-weight: 700;
+            color: #334155;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .coupons-chips-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .coupon-chip-card {
+            background: #ffffff;
+            border: 1px dashed #cbd5e1;
+            border-radius: 8px;
+            padding: 10px 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.2s ease;
+        }
+
+        .coupon-chip-card.eligible {
+            border-color: #86efac;
+            background: #f0fdf4;
+        }
+
+        .coupon-chip-card.active-applied {
+            border-color: #0f7139;
+            background: #ecfdf5;
+            box-shadow: 0 0 0 2px rgba(15, 113, 57, 0.15);
+        }
+
+        .coupon-chip-left {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .coupon-chip-code-row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .coupon-chip-badge {
+            font-family: 'Courier New', monospace;
+            background: #475569;
+            color: #ffffff;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 2px 7px;
+            border-radius: 4px;
+            letter-spacing: 0.5px;
+            display: inline-block;
+        }
+
+        .coupon-chip-desc {
+            font-size: 12px;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .coupon-chip-sub {
+            font-size: 11px;
+            color: #64748b;
+        }
+
+        .coupon-chip-sub.unlocked {
+            color: #16a34a;
+            font-weight: 600;
+        }
+
+        .coupon-chip-apply-btn {
+            background: #ffffff;
+            color: #0f7139;
+            border: 1px solid #0f7139;
+            border-radius: 6px;
+            padding: 5px 12px;
+            font-size: 11.5px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            white-space: nowrap;
+        }
+
+        .coupon-chip-apply-btn:hover {
+            background: #0f7139;
+            color: #ffffff;
+        }
+
+        .coupon-chip-apply-btn.applied {
+            background: #0f7139;
+            color: #ffffff;
+            border-color: #0f7139;
+            cursor: default;
+        }

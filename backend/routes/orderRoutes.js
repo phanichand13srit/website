@@ -46,6 +46,9 @@ router.post('/', async (req, res) => {
       totalPrice,
       itemsPrice,
       shippingPrice,
+      discountPrice,
+      discountAmount,
+      couponCode,
       isPaid
     } = req.body;
 
@@ -73,6 +76,8 @@ router.post('/', async (req, res) => {
       transactionId: transactionId || '',
       paymentMethod: paymentMethod || 'Razorpay Secure',
       itemsPrice: itemsPrice || totalPrice,
+      discountPrice: discountPrice || discountAmount || 0,
+      couponCode: couponCode || '',
       shippingPrice: shippingPrice || 0,
       totalPrice,
       isPaid: isPaid || false,

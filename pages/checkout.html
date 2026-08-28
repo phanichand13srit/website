@@ -259,8 +259,27 @@
             <div id="checkoutSummaryList" class="summary-items-list"></div>
 
             <div class="discount-code-wrap">
-                <input type="text" id="discountInput" placeholder="Discount code" class="discount-input">
+                <input type="text" id="discountInput" placeholder="Discount code (e.g. SAVE10, SAVE20)" class="discount-input" autocomplete="off" autocorrect="off" spellcheck="false">
                 <button type="button" class="discount-apply-btn" onclick="applyDiscountCode()">Apply</button>
+            </div>
+
+            <!-- APPLIED COUPON BADGE -->
+            <div id="appliedCouponTag" class="applied-coupon-tag" style="display: none;">
+                <div class="coupon-tag-info">
+                    <span class="coupon-tag-icon">🏷️</span>
+                    <span id="appliedCouponText">SAVE20 (20% OFF)</span>
+                </div>
+                <button type="button" class="remove-coupon-btn" onclick="removeDiscountCode()" title="Remove Coupon">&times;</button>
+            </div>
+
+            <!-- AVAILABLE TIERED COUPONS CARD -->
+            <div class="available-coupons-box">
+                <div class="available-coupons-header">
+                    <span>✨ Special Offers & Coupons</span>
+                </div>
+                <div class="coupons-chips-grid" id="couponsChipsGrid">
+                    <!-- Populated dynamically based on cart subtotal -->
+                </div>
             </div>
 
             <div class="summary-totals-box">
@@ -273,7 +292,7 @@
                     <span style="font-size: 13px; color: #0f7139; font-weight: 600;" id="shippingCostLabel">FREE</span>
                 </div>
                 <div id="discountDiscountRow" class="totals-row" style="display: none; color: #0f7139; font-weight: 600;">
-                    <span>Discount Applied</span>
+                    <span id="discountLabelText">Discount Applied</span>
                     <span id="discountValueText">-₹0.00</span>
                 </div>
                 <div class="totals-row grand-total-row">
@@ -397,7 +416,35 @@
         let useDifferentBilling = false;
         let currentUser = null;
         let discountAmount = 0;
+        let appliedCouponCode = '';
+        let appliedDiscountPercent = 0;
         let latestCreatedOrder = null;
+
+        // Tiered Coupons Master Definition (Default + Dynamically synced from Backend)
+        let STORE_COUPONS = [
+            { code: 'SAVE10', percent: 10, minOrder: 1000, desc: '10% OFF on orders above ₹1,000' },
+            { code: 'SAVE15', percent: 15, minOrder: 3000, desc: '15% OFF on orders above ₹3,000' },
+            { code: 'SAVE20', percent: 20, minOrder: 5000, desc: '20% OFF on orders above ₹5,000' },
+            { code: 'SAVE50', percent: 50, minOrder: 10000, desc: '50% MEGA DISCOUNT on orders above ₹10,000' }
+        ];
+
+        async function loadStoreCouponsFromApi() {
+            try {
+                const res = await fetch('http://localhost:5000/api/coupons');
+                if (res.ok) {
+                    const data = await res.json();
+                    if (Array.isArray(data) && data.length > 0) {
+                        STORE_COUPONS = data.map(c => ({
+                            code: c.code,
+                            percent: c.discountPercent,
+                            minOrder: c.minOrderAmount || 0,
+                            desc: c.description || `${c.discountPercent}% OFF`
+                        }));
+                        renderCheckoutSummary();
+                    }
+                }
+            } catch (e) {}
+        }
 
         try {
             currentUser = JSON.parse(localStorage.getItem('arshith_user'));
@@ -416,9 +463,39 @@
                 }, 400);
                 return;
             }
+
+            // Restore any coupon saved in session
+            try {
+                const savedCoupon = JSON.parse(sessionStorage.getItem('arshith_applied_coupon'));
+                if (savedCoupon && savedCoupon.code) {
+                    appliedCouponCode = savedCoupon.code;
+                    appliedDiscountPercent = savedCoupon.percent || 0;
+                }
+            } catch (e) {}
+
+            loadStoreCouponsFromApi();
             renderCheckoutSummary();
             initUserProfileData();
         });
+
+        function getCartSubtotal() {
+            let cartItems = [];
+            try {
+                cartItems = JSON.parse(localStorage.getItem("arshith_cart")) || CART_ITEMS || [];
+            } catch (e) {
+                cartItems = CART_ITEMS || [];
+            }
+            if (cartItems.length === 0) {
+                cartItems = [{
+                    title: 'Groundnut Oil (Premium Quality)',
+                    price: 349.00,
+                    quantity: 1,
+                    weight: '1L',
+                    image: 'https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM_1.jpg?v=1757334051&width=533'
+                }];
+            }
+            return cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        }
 
         function renderCheckoutSummary() {
             const summaryList = document.getElementById("checkoutSummaryList");
@@ -447,6 +524,30 @@
 
             const totalCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
             const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+            // Recalculate discount if coupon is applied
+            if (appliedCouponCode && appliedDiscountPercent > 0) {
+                discountAmount = Math.round((subtotal * appliedDiscountPercent) / 100 * 100) / 100;
+                
+                const appliedTag = document.getElementById('appliedCouponTag');
+                const appliedText = document.getElementById('appliedCouponText');
+                const discountRow = document.getElementById('discountDiscountRow');
+                const discountLabel = document.getElementById('discountLabelText');
+                const discountVal = document.getElementById('discountValueText');
+
+                if (appliedTag) appliedTag.style.display = 'flex';
+                if (appliedText) appliedText.textContent = `${appliedCouponCode} (${appliedDiscountPercent}% OFF Applied)`;
+                if (discountRow) discountRow.style.display = 'flex';
+                if (discountLabel) discountLabel.textContent = `Discount (${appliedCouponCode} - ${appliedDiscountPercent}%)`;
+                if (discountVal) discountVal.textContent = `-₹${discountAmount.toFixed(2)}`;
+            } else {
+                discountAmount = 0;
+                const appliedTag = document.getElementById('appliedCouponTag');
+                const discountRow = document.getElementById('discountDiscountRow');
+                if (appliedTag) appliedTag.style.display = 'none';
+                if (discountRow) discountRow.style.display = 'none';
+            }
+
             const grandTotal = Math.max(0, subtotal - discountAmount);
 
             summaryList.innerHTML = cartItems.map(item => `
@@ -468,153 +569,146 @@
             subtotalEl.textContent = `₹${subtotal.toFixed(2)}`;
             totalEl.textContent = `₹${grandTotal.toFixed(2)}`;
             if (countEl) countEl.textContent = totalCount;
+
+            renderAvailableCoupons(subtotal);
         }
 
-        async function initUserProfileData() {
-            const authHeader = document.getElementById("authHeaderState");
+        // Render Available Offers & Tier Coupons
+        function renderAvailableCoupons(subtotal) {
+            const container = document.getElementById('couponsChipsGrid');
+            if (!container) return;
 
-            if (currentUser) {
-                if (authHeader) {
-                    authHeader.innerHTML = `
-                        <span style="font-size: 13px; color: #374151;">Signed in as <strong>${currentUser.name || currentUser.email}</strong></span>
-                        • <a href="profile.html" class="signin-link">My Account</a>
-                    `;
-                }
+            container.innerHTML = STORE_COUPONS.map(c => {
+                const isEligible = subtotal >= c.minOrder;
+                const isApplied = (appliedCouponCode === c.code);
+                const remaining = c.minOrder - subtotal;
 
-                document.getElementById('contactInput').value = currentUser.email || '';
-
-                try {
-                    const res = await fetch(`http://localhost:5000/api/users/profile/${currentUser._id}`);
-                    if (res.ok) {
-                        const data = await res.json();
-                        if (data && data.user) {
-                            currentUser = { ...currentUser, ...data.user };
-                            localStorage.setItem('arshith_user', JSON.stringify(currentUser));
-                        }
-                    }
-                } catch (e) {}
-
-                const nameParts = (currentUser.name || '').trim().split(' ');
-                const firstName = nameParts[0] || '';
-                const lastName = nameParts.slice(1).join(' ') || '';
-
-                document.getElementById('firstNameInput').value = firstName;
-                document.getElementById('lastNameInput').value = lastName;
-                document.getElementById('phoneInput').value = currentUser.phone || '';
-                document.getElementById('addressInput').value = currentUser.street || '';
-                document.getElementById('cityInput').value = currentUser.city || '';
-                document.getElementById('postalCodeInput').value = currentUser.postalCode || '';
-                if (currentUser.state) {
-                    const stateSel = document.getElementById('stateInput');
-                    if (stateSel) stateSel.value = currentUser.state;
-                }
-
-                if (currentUser.street || currentUser.city || currentUser.postalCode) {
-                    renderSavedAddressCard();
-                    toggleEditAddress(false);
+                let statusText = '';
+                if (isApplied) {
+                    statusText = '<span class="coupon-chip-sub unlocked">✓ Currently Applied</span>';
+                } else if (isEligible) {
+                    statusText = `<span class="coupon-chip-sub unlocked">✓ Unlocked! Min order ₹${c.minOrder.toLocaleString('en-IN')} met</span>`;
                 } else {
-                    toggleEditAddress(true);
+                    statusText = `<span class="coupon-chip-sub">Add ₹${remaining.toLocaleString('en-IN')} more to unlock ${c.percent}% OFF</span>`;
                 }
-            } else {
-                toggleEditAddress(true);
-            }
+
+                return `
+                    <div class="coupon-chip-card ${isEligible ? 'eligible' : ''} ${isApplied ? 'active-applied' : ''}">
+                        <div class="coupon-chip-left">
+                            <div class="coupon-chip-code-row">
+                                <span class="coupon-chip-badge">${c.code}</span>
+                                <span class="coupon-chip-desc">${c.percent}% OFF</span>
+                            </div>
+                            ${statusText}
+                        </div>
+                        <button type="button" class="coupon-chip-apply-btn ${isApplied ? 'applied' : ''}" 
+                            onclick="applyDiscountCode('${c.code}')">
+                            ${isApplied ? 'Applied' : 'Apply'}
+                        </button>
+                    </div>
+                `;
+            }).join('');
         }
 
-        function renderSavedAddressCard() {
-            const card = document.getElementById('savedAddressCard');
-            const summary = document.getElementById('savedAddressSummary');
-            if (!card || !summary) return;
-
-            const name = currentUser.name || 'Valued Customer';
-            const phone = currentUser.phone ? `Phone: ${currentUser.phone}` : '';
-            const address = [currentUser.street, currentUser.city, currentUser.state, currentUser.postalCode, currentUser.country || 'India'].filter(Boolean).join(', ');
-
-            summary.innerHTML = `
-                <div><strong>${name}</strong></div>
-                <div>${address}</div>
-                <div style="font-size: 13px; color: #6b7280; margin-top: 4px;">${phone}</div>
-            `;
-            card.style.display = 'block';
-        }
-
-        function toggleEditAddress(showForm) {
-            const formFields = document.getElementById('deliveryFormFields');
-            const savedCard = document.getElementById('savedAddressCard');
-
-            if (showForm) {
-                if (formFields) formFields.style.display = 'block';
-            } else {
-                if (formFields) formFields.style.display = 'none';
-                if (savedCard) savedCard.style.display = 'block';
-            }
-        }
-
-        // Toggle Payment Method & Update Action Button Text ("Pay now" vs "Place order")
-        function selectPaymentMethod(method) {
-            selectedPayment = method;
-            const razorpayBox = document.getElementById('razorpayOption');
-            const codBox = document.getElementById('codOption');
-            const razorDot = document.getElementById('razorpayRadioDot');
-            const codDot = document.getElementById('codRadioDot');
-            const payBtn = document.getElementById('payNowBtn');
-
-            if (method === 'Razorpay') {
-                razorpayBox.classList.add('selected');
-                codBox.classList.remove('selected');
-                razorDot.className = 'radio-dot-active';
-                codDot.className = 'radio-dot-inactive';
-                if (payBtn) payBtn.textContent = 'Pay now';
-            } else {
-                codBox.classList.add('selected');
-                razorpayBox.classList.remove('selected');
-                codDot.className = 'radio-dot-active';
-                razorDot.className = 'radio-dot-inactive';
-                if (payBtn) payBtn.textContent = 'Place order';
-            }
-        }
-
-        // Toggle Custom Billing Address Form
-        function selectBillingOption(sameAsShipping) {
-            useDifferentBilling = !sameAsShipping;
-            const sameRow = document.getElementById('sameBillingRow');
-            const diffRow = document.getElementById('diffBillingRow');
-            const sameDot = document.getElementById('sameBillingDot');
-            const diffDot = document.getElementById('diffBillingDot');
-            const customBillingBox = document.getElementById('customBillingFormBox');
-
-            if (sameAsShipping) {
-                sameRow.classList.add('selected');
-                diffRow.classList.remove('selected');
-                sameDot.className = 'radio-dot-active';
-                diffDot.className = 'radio-dot-inactive';
-                if (customBillingBox) customBillingBox.style.display = 'none';
-            } else {
-                diffRow.classList.add('selected');
-                sameRow.classList.remove('selected');
-                diffDot.className = 'radio-dot-active';
-                sameDot.className = 'radio-dot-inactive';
-                if (customBillingBox) customBillingBox.style.display = 'block';
-            }
-        }
-
-        function applyDiscountCode() {
+        // Apply coupon function
+        async function applyDiscountCode(customCode) {
             const codeInput = document.getElementById('discountInput');
-            const val = (codeInput.value || '').trim().toUpperCase();
+            const rawCode = customCode || (codeInput ? codeInput.value : '');
+            const val = (rawCode || '').trim().toUpperCase();
 
             if (!val) {
-                showToast('Please enter a discount code');
+                if (typeof showToast === 'function') showToast('Please enter a discount code');
                 return;
             }
 
-            if (val === 'FESTIVE10' || val === 'ARSHITH10' || val === 'WELCOME10') {
-                discountAmount = 50;
-                document.getElementById('discountDiscountRow').style.display = 'flex';
-                document.getElementById('discountValueText').textContent = '-₹50.00';
-                showToast('🎉 Code applied! ₹50 discount added.');
-                renderCheckoutSummary();
-            } else {
-                showToast('Invalid discount code. Try ARSHITH10');
+            const subtotal = getCartSubtotal();
+
+            // Try backend validation API first
+            try {
+                const res = await fetch('http://localhost:5000/api/coupons/validate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ code: val, subtotal })
+                });
+                const data = await res.json();
+
+                if (res.ok && data.success) {
+                    appliedCouponCode = data.code;
+                    appliedDiscountPercent = data.discountPercent;
+                    discountAmount = data.discountAmount;
+
+                    sessionStorage.setItem('arshith_applied_coupon', JSON.stringify({
+                        code: appliedCouponCode,
+                        percent: appliedDiscountPercent,
+                        discountAmount
+                    }));
+
+                    if (codeInput) codeInput.value = '';
+                    if (typeof showToast === 'function') showToast(data.message || `🎉 Code ${appliedCouponCode} applied!`);
+                    renderCheckoutSummary();
+                    return;
+                } else if (!res.ok && data.message) {
+                    if (typeof showToast === 'function') showToast(data.message);
+                    return;
+                }
+            } catch (err) {
+                // Fallback to local client-side validation
             }
+
+            // Local Fallback Validation for all 4 discount tiers
+            let percent = 0;
+            let minOrder = 0;
+
+            if (['SAVE50', 'ARSHITH50', 'BILL10000', 'MEGA50', '50OFF', 'DISCOUNT50'].includes(val)) {
+                percent = 50;
+                minOrder = 10000;
+            } else if (['SAVE20', 'ARSHITH20', 'BILL5000', 'SUPER20', '20OFF', 'DISCOUNT20'].includes(val)) {
+                percent = 20;
+                minOrder = 5000;
+            } else if (['SAVE15', 'ARSHITH15', 'BILL3000', '15OFF', 'DISCOUNT15'].includes(val)) {
+                percent = 15;
+                minOrder = 3000;
+            } else if (['SAVE10', 'ARSHITH10', 'BILL1000', 'FESTIVE10', 'WELCOME10', '10OFF', 'DISCOUNT10'].includes(val)) {
+                percent = 10;
+                minOrder = 1000;
+            } else {
+                if (typeof showToast === 'function') showToast('Invalid discount code. Try SAVE10, SAVE15, SAVE20, or SAVE50!');
+                return;
+            }
+
+            if (subtotal < minOrder) {
+                const diff = minOrder - subtotal;
+                if (typeof showToast === 'function') {
+                    showToast(`Coupon "${val}" requires minimum cart value of ₹${minOrder.toLocaleString('en-IN')}. Add ₹${diff.toLocaleString('en-IN')} more to unlock ${percent}% OFF!`);
+                }
+                return;
+            }
+
+            appliedCouponCode = val;
+            appliedDiscountPercent = percent;
+            discountAmount = Math.round((subtotal * percent) / 100 * 100) / 100;
+
+            sessionStorage.setItem('arshith_applied_coupon', JSON.stringify({
+                code: appliedCouponCode,
+                percent: appliedDiscountPercent,
+                discountAmount
+            }));
+
+            if (codeInput) codeInput.value = '';
+            if (typeof showToast === 'function') {
+                showToast(`🎉 Coupon "${appliedCouponCode}" applied! Saved ${percent}% (-₹${discountAmount.toFixed(2)}).`);
+            }
+            renderCheckoutSummary();
+        }
+
+        // Remove applied coupon
+        function removeDiscountCode() {
+            appliedCouponCode = '';
+            appliedDiscountPercent = 0;
+            discountAmount = 0;
+            sessionStorage.removeItem('arshith_applied_coupon');
+            if (typeof showToast === 'function') showToast('Coupon removed.');
+            renderCheckoutSummary();
         }
 
         async function handlePlaceOrder(e) {
@@ -731,6 +825,9 @@
                 transactionId,
                 paymentMethod: isDigitalPayment ? 'Razorpay Secure (UPI/Card)' : 'Cash on Delivery',
                 itemsPrice: subtotal,
+                discountPrice: discountAmount,
+                discountAmount: discountAmount,
+                couponCode: appliedCouponCode,
                 shippingPrice: 0,
                 totalPrice: grandTotal,
                 isPaid: isDigitalPayment
