@@ -141,7 +141,6 @@
         <!-- SUB-MODULES NAV UNDER ORDERS -->
         <div class="submenu-list" style="margin-left: 15px; border-left: 2px solid #0f7139; padding-left: 8px;">
           <a href="#" class="submenu-item active" id="sideNavAll" onclick="switchFilterTab('all', event)">All Orders</a>
-          <a href="#" class="submenu-item" id="sideNavPlaced" onclick="switchFilterTab('placed', event)">📥 Placed Orders</a>
           <a href="#" class="submenu-item" id="sideNavConfirmed" onclick="switchFilterTab('confirmed', event)">📋 Confirmed Orders</a>
           <a href="#" class="submenu-item" id="sideNavDispatched" onclick="switchFilterTab('dispatched', event)">🚚 Dispatched Orders</a>
           <a href="#" class="submenu-item" id="sideNavDelivered" onclick="switchFilterTab('delivered', event)">✅ Delivered Orders</a>
@@ -172,7 +171,6 @@
         <div class="card-filter-bar" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; padding: 14px 18px; border-bottom: 1px solid #e1e3e5; background: #ffffff;">
           <div class="filter-tabs-wrapper" style="display: flex; gap: 8px; flex-wrap: wrap;">
             <button type="button" class="tab-pill-btn active" data-filter="all" onclick="switchFilterTab('all')">All <span id="cntAll">(0)</span></button>
-            <button type="button" class="tab-pill-btn" data-filter="placed" onclick="switchFilterTab('placed')">📥 Placed <span id="cntPlaced">(0)</span></button>
             <button type="button" class="tab-pill-btn" data-filter="confirmed" onclick="switchFilterTab('confirmed')">📋 Confirmed <span id="cntConfirmed">(0)</span></button>
             <button type="button" class="tab-pill-btn" data-filter="dispatched" onclick="switchFilterTab('dispatched')">🚚 Dispatched <span id="cntDispatched">(0)</span></button>
             <button type="button" class="tab-pill-btn" data-filter="delivered" onclick="switchFilterTab('delivered')">✅ Delivered <span id="cntDelivered">(0)</span></button>
@@ -238,15 +236,13 @@
 
     function updateSubModuleCounts() {
       const cntAll = allOrders.length;
-      const cntPlaced = allOrders.filter(o => o.status === 'Placed' || o.status === 'Pending').length;
-      const cntConfirmed = allOrders.filter(o => o.status === 'Confirmed' || o.status === 'Processing').length;
+      const cntConfirmed = allOrders.filter(o => !o.status || o.status === 'Confirmed' || o.status === 'Processing' || o.status === 'Placed' || o.status === 'Pending').length;
       const cntDispatched = allOrders.filter(o => o.status === 'Dispatched' || o.status === 'Shipped').length;
       const cntDelivered = allOrders.filter(o => o.status === 'Delivered').length;
       const cntCancelled = allOrders.filter(o => o.status === 'Cancelled').length;
 
       document.getElementById('ordersTotalCount').textContent = `(${cntAll})`;
       document.getElementById('cntAll').textContent = `(${cntAll})`;
-      document.getElementById('cntPlaced').textContent = `(${cntPlaced})`;
       document.getElementById('cntConfirmed').textContent = `(${cntConfirmed})`;
       document.getElementById('cntDispatched').textContent = `(${cntDispatched})`;
       document.getElementById('cntDelivered').textContent = `(${cntDelivered})`;
@@ -265,7 +261,6 @@
       // Update Sidebar Nav UI
       const sideNavMap = {
         'all': 'sideNavAll',
-        'placed': 'sideNavPlaced',
         'confirmed': 'sideNavConfirmed',
         'dispatched': 'sideNavDispatched',
         'delivered': 'sideNavDelivered',
@@ -278,7 +273,6 @@
       // Update Page Heading Title
       const titleMap = {
         'all': 'All Orders Management',
-        'placed': '📥 Placed Orders',
         'confirmed': '📋 Confirmed Orders',
         'dispatched': '🚚 Dispatched Orders',
         'delivered': '✅ Delivered Orders',
@@ -292,10 +286,8 @@
     function applyFilterAndRender() {
       let filtered = [...allOrders];
 
-      if (currentFilter === 'placed') {
-        filtered = filtered.filter(o => o.status === 'Placed' || o.status === 'Pending');
-      } else if (currentFilter === 'confirmed') {
-        filtered = filtered.filter(o => o.status === 'Confirmed' || o.status === 'Processing');
+      if (currentFilter === 'confirmed') {
+        filtered = filtered.filter(o => !o.status || o.status === 'Confirmed' || o.status === 'Processing' || o.status === 'Placed' || o.status === 'Pending');
       } else if (currentFilter === 'dispatched') {
         filtered = filtered.filter(o => o.status === 'Dispatched' || o.status === 'Shipped');
       } else if (currentFilter === 'delivered') {
@@ -338,33 +330,21 @@
           ? '<span class="status-badge-paid">Paid</span>'
           : `<span class="status-badge-pending">${order.paymentMethod || 'COD'}</span>`;
 
-        const st = order.status || 'Placed';
+        const st = order.status || 'Confirmed';
 
-        let actionCellHtml = '';
-        if (st === 'Placed' || st === 'Pending') {
-          actionCellHtml = `
-            <button class="btn-confirm" onclick="updateOrderStatus('${order._id}', 'Confirmed')">
-              <i class="fa-solid fa-clipboard-check"></i> Confirm Order
-            </button>
-          `;
-        } else if (st === 'Confirmed' || st === 'Processing') {
-          actionCellHtml = `
+        let quickBtnHtml = '';
+        if (st === 'Confirmed' || st === 'Processing' || st === 'Placed' || st === 'Pending') {
+          quickBtnHtml = `
             <button class="btn-dispatch" onclick="updateOrderStatus('${order._id}', 'Dispatched')">
               <i class="fa-solid fa-truck"></i> Mark as Dispatched
             </button>
           `;
         } else if (st === 'Dispatched' || st === 'Shipped') {
-          actionCellHtml = `
+          quickBtnHtml = `
             <button class="btn-deliver" onclick="updateOrderStatus('${order._id}', 'Delivered')">
               <i class="fa-solid fa-circle-check"></i> Mark as Delivered
             </button>
           `;
-        } else if (st === 'Delivered') {
-          actionCellHtml = `<span class="badge-delivered-done"><i class="fa-solid fa-circle-check"></i> Delivered</span>`;
-        } else if (st === 'Cancelled') {
-          actionCellHtml = `<span class="badge-cancelled-done"><i class="fa-solid fa-ban"></i> Cancelled</span>`;
-        } else {
-          actionCellHtml = `<span style="font-size:12px; color:#64748b;">${st}</span>`;
         }
 
         const tr = document.createElement('tr');
@@ -385,7 +365,15 @@
             </span>
           </td>
           <td style="text-align:right;">
-            ${actionCellHtml}
+            <div style="display: flex; align-items: center; justify-content: flex-end; gap: 8px;">
+              ${quickBtnHtml}
+              <select class="form-control" style="width: auto; padding: 4px 6px; font-size: 11.5px; border-radius: 6px;" onchange="updateOrderStatus('${order._id}', this.value)">
+                <option value="Confirmed" ${st === 'Confirmed' || st === 'Placed' ? 'selected' : ''}>Confirmed</option>
+                <option value="Dispatched" ${st === 'Dispatched' || st === 'Shipped' ? 'selected' : ''}>Dispatched</option>
+                <option value="Delivered" ${st === 'Delivered' ? 'selected' : ''}>Delivered</option>
+                <option value="Cancelled" ${st === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
+              </select>
+            </div>
           </td>
         `;
         tbody.appendChild(tr);
