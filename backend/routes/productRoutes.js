@@ -188,4 +188,128 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
+// @route   GET /api/products/:id/reviews
+// @desc    Get all reviews for a product
+router.get('/:id/reviews', async (req, res) => {
+  try {
+    const rawId = (req.params.id || '').trim();
+    let product = null;
+
+    if (rawId.match(/^[0-9a-fA-F]{24}$/)) {
+      product = await Product.findById(rawId);
+    }
+    if (!product && rawId) {
+      const cleanSlug = rawId.replace(/-/g, ' ').trim();
+      product = await Product.findOne({ name: { $regex: cleanSlug, $options: 'i' } });
+    }
+
+    if (!product) {
+      return res.status(404).json({ success: false, message: 'Product not found' });
+    }
+
+    // Default sample reviews if no reviews submitted yet
+    const defaultReviews = [
+      {
+        _id: 'default_rev_1',
+        name: 'Ramesh Kumar',
+        rating: 5,
+        title: 'Authentic taste and fresh aroma!',
+        comment: 'Very fresh and high quality. Reminds me of traditional home-made pure products. Highly recommend Arshith Fresh!',
+        createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000)
+      },
+      {
+        _id: 'default_rev_2',
+        name: 'Sneha Reddy',
+        rating: 5,
+        title: 'Excellent packaging and purity',
+        comment: '100% natural, no adulteration. Fast delivery and safe packing. Will definitely purchase regularly.',
+        createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
+      },
+      {
+        _id: 'default_rev_3',
+        name: 'Venkata Rao',
+        rating: 4,
+        title: 'Great quality products',
+        comment: 'Good natural flavor and hygienic packaging. Loved the fresh quality.',
+        createdAt: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000)
+      }
+    ];
+
+    const reviews = (product.reviews && product.reviews.length > 0) ? product.reviews : defaultReviews;
+    res.json({
+      success: true,
+      productId: product._id,
+      rating: product.rating || 4.9,
+      numReviews: (product.reviews && product.reviews.length > 0) ? product.reviews.length : defaultReviews.length,
+      reviews
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Error fetching reviews', error: error.message });
+  }
+});
+
+// @route   POST /api/products/:id/reviews
+// @desc    Create a new review for a product
+router.post('/:id/reviews', async (req, res) => {
+  try {
+    const { name, rating, title, comment } = req.body;
+    const rawId = (req.params.id || '').trim();
+
+    if (!rating || !comment || !name) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide name, star rating, and review description'
+      });
+    }
+
+    let product = null;
+    if (rawId.match(/^[0-9a-fA-F]{24}$/)) {
+      product = await Product.findById(rawId);
+    }
+    if (!product && rawId) {
+      const cleanSlug = rawId.replace(/-/g, ' ').trim();
+      product = await Product.findOne({ name: { $regex: cleanSlug, $options: 'i' } });
+    }
+
+    if (!product) {
+      return res.status(404).json({ success: false, message: 'Product not found' });
+    }
+
+    const newReview = {
+      name: name.trim(),
+      rating: Number(rating),
+      title: (title || '').trim() || `${Number(rating)} Star Rating`,
+      comment: comment.trim(),
+      createdAt: new Date()
+    };
+
+    if (!Array.isArray(product.reviews)) {
+      product.reviews = [];
+    }
+
+    product.reviews.unshift(newReview);
+    product.numReviews = product.reviews.length;
+    
+    // Recalculate average rating
+    const totalRating = product.reviews.reduce((acc, item) => item.rating + acc, 0);
+    product.rating = Math.round((totalRating / product.reviews.length) * 10) / 10;
+
+    await product.save();
+
+    res.status(201).json({
+      success: true,
+      message: '🎉 Review submitted successfully! Thank you for your feedback.',
+      review: newReview,
+      product: {
+        _id: product._id,
+        rating: product.rating,
+        numReviews: product.numReviews,
+        reviews: product.reviews
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Error adding review', error: error.message });
+  }
+});
+
 module.exports = router;

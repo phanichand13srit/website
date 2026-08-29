@@ -590,20 +590,51 @@
 
                                 <div style="padding: 18px 20px;">
                                     <div style="margin-bottom: 14px;">
-                                        <div style="font-size: 12px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">ITEMS ORDERED</div>
-                                        <div style="display: flex; flex-direction: column; gap: 10px;">
-                                            ${(o.orderItems || []).map(item => `
-                                                <div style="display: flex; justify-content: space-between; align-items: center; font-size: 14px;">
-                                                    <div style="display: flex; align-items: center; gap: 12px;">
-                                                        <img src="${item.image || 'https://arshithfresh.com/cdn/shop/collections/spice_200x200_crop_center.png?v=1746963495'}" style="width: 44px; height: 44px; border-radius: 6px; object-fit: cover; border: 1px solid #e2e8f0;">
-                                                        <div>
-                                                            <div style="font-weight: 600; color: #1e293b;">${item.name || item.title}</div>
-                                                            <div style="font-size: 12px; color: #64748b;">Qty: ${item.qty || item.quantity || 1} • ${item.unit || '1 kg'}</div>
+                                        <div style="font-size: 12px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px;">ITEMS ORDERED</div>
+                                        <div style="display: flex; flex-direction: column; gap: 12px;">
+                                            ${(o.orderItems || []).map((item, itemIdx) => {
+                                                const itemKey = `rating_${o._id}_${itemIdx}`;
+                                                const itemProductId = item.product || item._id || item.productId || '';
+                                                let savedRating = null;
+                                                try {
+                                                    const stored = JSON.parse(localStorage.getItem('arshith_product_ratings') || '{}');
+                                                    savedRating = stored[itemKey] || null;
+                                                } catch(e) {}
+
+                                                const itemNameEscaped = (item.name || item.title || 'Fresh Product').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+                                                const itemImgEscaped = (item.image || 'https://arshithfresh.com/cdn/shop/collections/spice_200x200_crop_center.png?v=1746963495').replace(/'/g, "\\'");
+                                                const itemTotalMoney = ((item.price || 0) * (item.qty || item.quantity || 1)).toFixed(2);
+
+                                                return `
+                                                    <div style="display: flex; justify-content: space-between; align-items: center; font-size: 14px; padding-bottom: 10px; border-bottom: 1px dashed #f1f5f9;">
+                                                        <div style="display: flex; align-items: center; gap: 12px;">
+                                                            <img src="${item.image || 'https://arshithfresh.com/cdn/shop/collections/spice_200x200_crop_center.png?v=1746963495'}" style="width: 46px; height: 46px; border-radius: 8px; object-fit: cover; border: 1px solid #e2e8f0;">
+                                                            <div>
+                                                                <div style="font-weight: 600; color: #1e293b;">${item.name || item.title}</div>
+                                                                <div style="font-size: 12px; color: #64748b; margin-top: 2px;">Qty: ${item.qty || item.quantity || 1} • ${item.unit || '1 kg'}</div>
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- RIGHT SIDE: Above the money, Live Rating & Description Popup Trigger (only for Delivered orders) -->
+                                                        <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px;">
+                                                            <!-- ⭐ ABOVE THE MONEY: Rating Trigger Button (Delivered orders only) -->
+                                                            ${isDelivered ? `
+                                                            <button type="button" 
+                                                                    id="rateBtn_${itemKey}"
+                                                                    onclick="openLiveRatingPopup('${o._id}', '${itemIdx}', '${itemNameEscaped}', '${itemImgEscaped}', '${itemTotalMoney}', '${itemProductId}')" 
+                                                                    style="background: ${savedRating ? '#ecfdf5' : '#f0fdf4'}; color: ${savedRating ? '#047857' : '#0f7139'}; border: 1.5px solid ${savedRating ? '#86efac' : '#bbf7d0'}; border-radius: 6px; padding: 4px 10px; font-size: 11.5px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; transition: all 0.15s ease;"
+                                                                    onmouseover="this.style.background='#dcfce7'" 
+                                                                    onmouseout="this.style.background='${savedRating ? '#ecfdf5' : '#f0fdf4'}'">
+                                                                ${savedRating ? '⭐ Rated ' + savedRating.rating + '★' : '⭐ Rate & Review'}
+                                                            </button>
+                                                            ` : ''}
+
+                                                            <!-- MONEY AMOUNT -->
+                                                            <div style="font-weight: 700; color: #0f172a; font-size: 15px;">₹${itemTotalMoney}</div>
                                                         </div>
                                                     </div>
-                                                    <div style="font-weight: 600; color: #0f172a;">₹${((item.price || 0) * (item.qty || item.quantity || 1)).toFixed(2)}</div>
-                                                </div>
-                                            `).join('')}
+                                                `;
+                                            }).join('')}
                                         </div>
                                     </div>
 
@@ -774,6 +805,198 @@
             }
         }
 
+        // Live Rating & Description Popup Modal Logic (Above the Money)
+        let currentRatingOrderId = '';
+        let currentRatingItemIdx = '';
+        let currentRatingProductName = '';
+        let currentRatingProductId = '';
+        let currentSelectedLiveStars = 5;
+
+        const starLabels = {
+            5: '⭐⭐⭐⭐⭐ 5 Stars — Excellent / Loved it!',
+            4: '⭐⭐⭐⭐ 4 Stars — Very Good / High Quality',
+            3: '⭐⭐⭐ 3 Stars — Good / Average Quality',
+            2: '⭐⭐ 2 Stars — Below Average',
+            1: '⭐ 1 Star — Poor / Disappointed'
+        };
+
+        window.openLiveRatingPopup = function(orderId, itemIdx, productName, productImg, productPrice, productId) {
+            currentRatingOrderId = orderId;
+            currentRatingItemIdx = itemIdx;
+            currentRatingProductName = productName || 'Fresh Product';
+            currentRatingProductId = productId || '';
+            currentSelectedLiveStars = 5;
+
+            const modal = document.getElementById('liveRatingPopupModal');
+            const titleEl = document.getElementById('popupProdTitle');
+            const imgEl = document.getElementById('popupProdImg');
+            const priceEl = document.getElementById('popupProdPrice');
+            const authorInput = document.getElementById('popupReviewerName');
+
+            if (titleEl) titleEl.textContent = currentRatingProductName;
+            if (imgEl && productImg) imgEl.src = productImg;
+            if (priceEl) priceEl.textContent = '\u20b9' + productPrice;
+
+            if (authorInput && currentUser && currentUser.name) {
+                authorInput.value = currentUser.name;
+            }
+
+            // Check if already rated before
+            const itemKey = `rating_${orderId}_${itemIdx}`;
+            try {
+                const stored = JSON.parse(localStorage.getItem('arshith_product_ratings') || '{}');
+                if (stored[itemKey]) {
+                    currentSelectedLiveStars = stored[itemKey].rating || 5;
+                    const descEl = document.getElementById('popupReviewDescription');
+                    if (descEl && stored[itemKey].comment) descEl.value = stored[itemKey].comment;
+                }
+            } catch(e) {}
+
+            updateLiveStarDisplay(currentSelectedLiveStars);
+
+            if (modal) {
+                modal.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+            }
+        };
+
+        window.closeLiveRatingPopup = function() {
+            const modal = document.getElementById('liveRatingPopupModal');
+            if (modal) {
+                modal.style.display = 'none';
+                document.body.style.overflow = '';
+            }
+        };
+
+        window.setLiveStarRating = function(starVal) {
+            currentSelectedLiveStars = Number(starVal);
+            updateLiveStarDisplay(currentSelectedLiveStars);
+        };
+
+        function updateLiveStarDisplay(stars) {
+            const starBtns = document.querySelectorAll('.interactive-star-btn');
+            starBtns.forEach((btn, idx) => {
+                const val = idx + 1;
+                if (val <= stars) {
+                    btn.style.color = '#f59e0b';
+                    btn.textContent = '★';
+                } else {
+                    btn.style.color = '#cbd5e1';
+                    btn.textContent = '☆';
+                }
+            });
+
+            const lbl = document.getElementById('liveStarSelectedLabel');
+            if (lbl) lbl.textContent = starLabels[stars] || `${stars} Stars`;
+
+            const dropdown = document.getElementById('popupRatingDropdown');
+            if (dropdown) dropdown.value = String(stars);
+        }
+
+        window.handleLiveRatingSubmit = async function(e) {
+            e.preventDefault();
+            const btn = document.getElementById('submitLiveRatingBtn');
+            if (btn) {
+                btn.disabled = true;
+                btn.textContent = 'Saving Rating...';
+            }
+
+            const rating = currentSelectedLiveStars || Number(document.getElementById('popupRatingDropdown').value) || 5;
+            const name = (document.getElementById('popupReviewerName').value || '').trim();
+            const comment = (document.getElementById('popupReviewDescription').value || '').trim();
+            const email = (currentUser && currentUser.email) ? currentUser.email : 'customer@arshithfresh.com';
+
+            if (!comment) {
+                if (typeof showToast === 'function') showToast('Please write a short feedback before submitting.');
+                if (btn) { btn.disabled = false; btn.textContent = 'Submit Rating ✨'; }
+                return;
+            }
+
+            const itemKey = `rating_${currentRatingOrderId}_${currentRatingItemIdx}`;
+
+            try {
+                // 1. Save locally (keyed by itemKey AND by productId for cross-page sync)
+                const stored = JSON.parse(localStorage.getItem('arshith_product_ratings') || '{}');
+                const reviewData = {
+                    orderId: currentRatingOrderId,
+                    productId: currentRatingProductId,
+                    productName: currentRatingProductName,
+                    rating,
+                    title: name ? `Review by ${name}` : 'Customer Review',
+                    comment,
+                    name,
+                    email,
+                    verifiedPurchase: true,
+                    date: new Date().toISOString()
+                };
+                stored[itemKey] = reviewData;
+                // Also key by productId so product page can look it up
+                if (currentRatingProductId) {
+                    stored[`pid_${currentRatingProductId}`] = reviewData;
+                }
+                localStorage.setItem('arshith_product_ratings', JSON.stringify(stored));
+
+                // 2. POST to real /api/reviews backend endpoint
+                try {
+                    const payload = {
+                        productId: currentRatingProductId || currentRatingProductName,
+                        productName: currentRatingProductName,
+                        customerName: name || 'Verified Customer',
+                        customerEmail: email,
+                        rating: Number(rating),
+                        title: name ? `Review by ${name}` : 'Customer Review',
+                        comment,
+                        verifiedPurchase: true,
+                        images: []
+                    };
+                    const apiRes = await fetch('http://localhost:5000/api/reviews', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    // If backend saved successfully, store the returned _id for editing later
+                    if (apiRes.ok) {
+                        const saved = await apiRes.json();
+                        if (saved && saved._id && stored[itemKey]) {
+                            stored[itemKey].backendId = saved._id;
+                            if (currentRatingProductId && stored[`pid_${currentRatingProductId}`]) {
+                                stored[`pid_${currentRatingProductId}`].backendId = saved._id;
+                            }
+                            localStorage.setItem('arshith_product_ratings', JSON.stringify(stored));
+                        }
+                    }
+                } catch(apiErr) {
+                    console.warn('Backend review save failed, review saved locally:', apiErr);
+                }
+
+                if (typeof showToast === 'function') {
+                    showToast('\u2728 Thank you! Your ' + rating + '-star review has been submitted and will appear on the product page.');
+                } else {
+                    alert('Thank you for your review! It will appear on the product page.');
+                }
+
+                // 3. Update the trigger button above the money in real time
+                const rateTriggerBtn = document.getElementById(`rateBtn_${itemKey}`);
+                if (rateTriggerBtn) {
+                    rateTriggerBtn.innerHTML = '\u2b50 Rated ' + rating + '\u2605';
+                    rateTriggerBtn.style.background = '#ecfdf5';
+                    rateTriggerBtn.style.color = '#047857';
+                    rateTriggerBtn.style.borderColor = '#86efac';
+                }
+
+                closeLiveRatingPopup();
+            } catch (err) {
+                if (typeof showToast === 'function') {
+                    showToast('Could not save rating. Please try again.');
+                }
+            } finally {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.textContent = 'Submit Rating \u2728';
+                }
+            }
+        };
+
         function handleLogout() {
             localStorage.removeItem('arshith_user');
             sessionStorage.clear();
@@ -792,6 +1015,72 @@
             }, 400);
         }
     </script>
+
+    <!-- LIVE RATING & DESCRIPTION POPUP MODAL (ABOVE MONEY TRIGGER) -->
+    <div id="liveRatingPopupModal" style="display: none; position: fixed; inset: 0; background: rgba(15,23,42,0.65); backdrop-filter: blur(6px); z-index: 99999; align-items: center; justify-content: center; padding: 20px;">
+        <div style="background: #ffffff; border-radius: 18px; width: 100%; max-width: 500px; padding: 28px 32px; box-shadow: 0 24px 48px rgba(0,0,0,0.25); position: relative; animation: fadeInModal 0.25s ease-out; border: 1px solid #e2e8f0;">
+            
+            <!-- Modal Header -->
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 18px;">
+                <div style="display: flex; align-items: center; gap: 14px;">
+                    <img id="popupProdImg" src="https://arshithfresh.com/cdn/shop/collections/spice_200x200_crop_center.png?v=1746963495" style="width: 52px; height: 52px; border-radius: 10px; object-fit: cover; border: 1.5px solid #e2e8f0; background: #fafbfc;">
+                    <div>
+                        <h3 id="popupProdTitle" style="margin: 0 0 3px 0; font-size: 16.5px; color: #0f172a; font-weight: 800; line-height: 1.3;">Product Name</h3>
+                        <span id="popupProdPrice" style="font-size: 14px; font-weight: 700; color: #0f7139;">₹0.00</span>
+                    </div>
+                </div>
+                <button type="button" onclick="closeLiveRatingPopup()" style="background: #f1f5f9; border: none; width: 32px; height: 32px; border-radius: 50%; font-size: 20px; cursor: pointer; color: #64748b; display: flex; align-items: center; justify-content: center; transition: all 0.15s;" onmouseover="this.style.background='#e2e8f0'" onmouseout="this.style.background='#f1f5f9'">&times;</button>
+            </div>
+
+            <form onsubmit="handleLiveRatingSubmit(event)">
+                
+                <!-- Live Interactive Star Rating Row -->
+                <div style="background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 14px; padding: 16px; margin-bottom: 18px; text-align: center;">
+                    <div style="font-size: 12.5px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Tap to Rate Product</div>
+                    
+                    <div style="display: flex; justify-content: center; gap: 8px; font-size: 32px; cursor: pointer; margin-bottom: 6px;">
+                        <span class="interactive-star-btn" onclick="setLiveStarRating(1)" style="color: #f59e0b; transition: transform 0.15s ease;" onmouseover="this.style.transform='scale(1.25)'" onmouseout="this.style.transform='scale(1)'">★</span>
+                        <span class="interactive-star-btn" onclick="setLiveStarRating(2)" style="color: #f59e0b; transition: transform 0.15s ease;" onmouseover="this.style.transform='scale(1.25)'" onmouseout="this.style.transform='scale(1)'">★</span>
+                        <span class="interactive-star-btn" onclick="setLiveStarRating(3)" style="color: #f59e0b; transition: transform 0.15s ease;" onmouseover="this.style.transform='scale(1.25)'" onmouseout="this.style.transform='scale(1)'">★</span>
+                        <span class="interactive-star-btn" onclick="setLiveStarRating(4)" style="color: #f59e0b; transition: transform 0.15s ease;" onmouseover="this.style.transform='scale(1.25)'" onmouseout="this.style.transform='scale(1)'">★</span>
+                        <span class="interactive-star-btn" onclick="setLiveStarRating(5)" style="color: #f59e0b; transition: transform 0.15s ease;" onmouseover="this.style.transform='scale(1.25)'" onmouseout="this.style.transform='scale(1)'">★</span>
+                    </div>
+
+                    <div id="liveStarSelectedLabel" style="font-size: 13.5px; font-weight: 700; color: #0f7139;">⭐⭐⭐⭐⭐ 5 Stars — Excellent / Loved it!</div>
+                </div>
+
+                <!-- Star Rating Dropdown -->
+                <div style="margin-bottom: 16px;">
+                    <label style="display: block; font-size: 13px; font-weight: 700; color: #334155; margin-bottom: 6px;">Or Choose Rating from Dropdown *</label>
+                    <select id="popupRatingDropdown" onchange="setLiveStarRating(this.value)" required style="width: 100%; padding: 10px 14px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 13.5px; font-weight: 600; color: #1e293b; background: #ffffff; cursor: pointer; outline: none;">
+                        <option value="5" selected>⭐⭐⭐⭐⭐ — 5 Stars (Excellent / Highly Recommended)</option>
+                        <option value="4">⭐⭐⭐⭐ — 4 Stars (Very Good / High Quality)</option>
+                        <option value="3">⭐⭐⭐ — 3 Stars (Good / Average Quality)</option>
+                        <option value="2">⭐⭐ — 2 Stars (Below Average)</option>
+                        <option value="1">⭐ — 1 Star (Poor / Disappointed)</option>
+                    </select>
+                </div>
+
+                <!-- Customer Name -->
+                <div style="margin-bottom: 16px;">
+                    <label style="display: block; font-size: 13px; font-weight: 700; color: #334155; margin-bottom: 6px;">Your Name *</label>
+                    <input type="text" id="popupReviewerName" required placeholder="e.g. Ramesh Kumar" style="width: 100%; padding: 10px 14px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 13.5px; box-sizing: border-box; outline: none;">
+                </div>
+
+                <!-- Product Description & Feedback -->
+                <div style="margin-bottom: 22px;">
+                    <label style="display: block; font-size: 13px; font-weight: 700; color: #334155; margin-bottom: 6px;">Product Description & Feedback *</label>
+                    <textarea id="popupReviewDescription" required placeholder="Write your live feedback about the product freshness, taste, aroma, purity, and delivery experience..." rows="3" style="width: 100%; padding: 10px 14px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 13.5px; font-family: inherit; box-sizing: border-box; outline: none; resize: vertical; line-height: 1.5;"></textarea>
+                </div>
+
+                <!-- Action Buttons -->
+                <div style="display: flex; justify-content: flex-end; gap: 12px;">
+                    <button type="button" onclick="closeLiveRatingPopup()" style="background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; padding: 10px 20px; border-radius: 8px; font-size: 13.5px; font-weight: 600; cursor: pointer; transition: background 0.15s;" onmouseover="this.style.background='#e2e8f0'" onmouseout="this.style.background='#f1f5f9'">Cancel</button>
+                    <button type="submit" id="submitLiveRatingBtn" style="background: #0f7139; color: #ffffff; border: none; padding: 10px 26px; border-radius: 8px; font-size: 13.5px; font-weight: 700; cursor: pointer; transition: background 0.15s;" onmouseover="this.style.background='#0b542a'" onmouseout="this.style.background='#0f7139'">Submit Live Rating ✨</button>
+                </div>
+            </form>
+        </div>
+    </div>
 </body>
 
 </html>

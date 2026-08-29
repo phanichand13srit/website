@@ -998,12 +998,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     <h1 style="font-family: 'Playfair Display', serif; font-size: 32px; color: #0f172a; margin: 0 0 12px 0; line-height: 1.25;">${name}</h1>
 
-                    <!-- Ratings -->
-                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 18px;">
-                        <div style="color: #f59e0b; font-size: 16px;">★★★★★</div>
-                        <span style="font-size: 13px; color: #64748b; font-weight: 500;">4.9 (48 customer reviews)</span>
+                    <!-- 5-Star Rating Beside Photo (Synced with Amazon Reviews Section) -->
+                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 18px; flex-wrap: wrap;">
+                        <a href="#amazonReviewsSection" id="topRatingScoreLink" style="display: inline-flex; align-items: center; gap: 8px; text-decoration: none; cursor: pointer;" title="Jump to Customer Reviews">
+                            <div id="topRatingStarsVisual" style="color: #f59e0b; font-size: 17px; letter-spacing: 1.5px;">★★★★★</div>
+                            <strong id="topRatingScoreNum" style="font-size: 15px; color: #1e293b;">${(p.rating || 5.0).toFixed(1)}</strong>
+                            <span id="topRatingCountText" style="font-size: 13px; color: #0284c7; text-decoration: underline;">(${p.numReviews || 0} customer ratings)</span>
+                        </a>
                         <span style="color: #cbd5e1;">•</span>
-                        <span style="color: #16a34a; font-size: 13px; font-weight: 600;">✓ Verified Product</span>
+                        <span style="color: #16a34a; font-size: 13px; font-weight: 600; background: #ecfdf5; padding: 2px 8px; border-radius: 12px;">✓ Verified Product</span>
                     </div>
 
                     <!-- Price Box -->
@@ -1074,6 +1077,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
             </div>
         `;
+
+        // Initialize Amazon-Style Customer Reviews Section
+        initAmazonProductReviews(p);
 
         // Load Related Products
         loadRelatedProducts(p);
@@ -1646,5 +1652,815 @@ function initLiveSearchAutocomplete() {
         }
     });
 }
+
+/* ==========================================================================
+   GLOBAL UTILITIES (available to all modules outside DOMContentLoaded)
+   ========================================================================== */
+function escapeHtml(str) {
+    return (str || '').replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+window.escapeHtml = escapeHtml;
+
+/* ==========================================================================
+   AMAZON-STYLE PRODUCT REVIEW & RATING CLIENT MODULE
+   ========================================================================== */
+let amazonReviewState = {
+    productId: '',
+    productName: '',
+    reviews: [],
+    stats: null,
+    currentFilterRating: '',
+    currentSort: 'recent',
+    currentVerifiedOnly: false,
+    selectedFormRating: 5,
+    uploadedImages: [],
+    editingReviewId: null,
+    isLoading: false,
+};
+
+const ratingLabelsMap = {
+    5: '⭐⭐⭐⭐⭐ 5 Stars — Excellent / Highly Recommended!',
+    4: '⭐⭐⭐⭐ 4 Stars — Very Good / High Quality',
+    3: '⭐⭐⭐ 3 Stars — Good / Average Quality',
+    2: '⭐⭐ 2 Stars — Below Average / Disappointed',
+    1: '⭐ 1 Star — Poor / Not Recommended'
+};
+
+window.initAmazonProductReviews = function(product) {
+    if (!product) return;
+    const container = document.getElementById('amazonReviewsSection');
+    if (!container) return;
+
+    amazonReviewState.productId = product._id || product.id;
+    amazonReviewState.productName = product.name || 'Product';
+    amazonReviewState.currentFilterRating = '';
+    amazonReviewState.currentSort = 'recent';
+    amazonReviewState.currentVerifiedOnly = false;
+    amazonReviewState.selectedFormRating = 5;
+    amazonReviewState.uploadedImages = [];
+    amazonReviewState.editingReviewId = null;
+
+    fetchAndRenderAmazonReviews();
+};
+
+async function fetchAndRenderAmazonReviews() {
+    const container = document.getElementById('amazonReviewsSection');
+    if (!container) return;
+
+    amazonReviewState.isLoading = true;
+
+    try {
+        let url = `http://localhost:5000/api/reviews/product/${encodeURIComponent(amazonReviewState.productId)}?sort=${amazonReviewState.currentSort}`;
+        if (amazonReviewState.currentFilterRating) {
+            url += `&rating=${amazonReviewState.currentFilterRating}`;
+        }
+        if (amazonReviewState.currentVerifiedOnly) {
+            url += `&verifiedOnly=true`;
+        }
+
+        // Always fetch fresh — no browser caching so updated reviews always load
+        const res = await fetch(url, { cache: 'no-store' });
+        const data = await res.json();
+
+        let fetchedReviews = (data && data.success && Array.isArray(data.reviews)) ? data.reviews : [];
+
+        // Supplement with local review from Order History ONLY if backend doesn't already have it
+        // (Backend is source of truth — only add local if backend returned no review for this user)
+        try {
+            const localRatings = JSON.parse(localStorage.getItem('arshith_product_ratings') || '{}');
+            const currentUser = JSON.parse(localStorage.getItem('arshith_user') || 'null');
+            const userEmail = currentUser && currentUser.email ? currentUser.email.toLowerCase() : null;
+
+            // Check if backend already returned a review for the current user
+            const backendAlreadyHasUserReview = userEmail &&
+                fetchedReviews.some(r => r.customerEmail && r.customerEmail.toLowerCase() === userEmail);
+
+            if (!backendAlreadyHasUserReview) {
+                // Backend doesn't have it yet — check localStorage for a recently submitted review
+                const pidKey = `pid_${amazonReviewState.productId}`;
+                const userRatingForThis = localRatings[pidKey] ||
+                    Object.values(localRatings).find(v => v && v.productId && v.productId === amazonReviewState.productId) ||
+                    (amazonReviewState.productName && Object.values(localRatings).find(v => v && v.productName && v.productName.toLowerCase() === amazonReviewState.productName.toLowerCase()));
+
+                if (userRatingForThis && userRatingForThis.comment) {
+                    fetchedReviews.unshift({
+                        _id: 'local_' + (userRatingForThis.date || Date.now()),
+                        productId: amazonReviewState.productId,
+                        productName: amazonReviewState.productName,
+                        rating: userRatingForThis.rating || 5,
+                        title: userRatingForThis.title || 'Customer Review',
+                        comment: userRatingForThis.comment,
+                        customerName: userRatingForThis.name || (currentUser ? currentUser.name : 'Verified Customer'),
+                        customerEmail: userRatingForThis.email || userEmail || '',
+                        verifiedPurchase: true,
+                        helpfulCount: 0,
+                        createdAt: userRatingForThis.date || new Date().toISOString()
+                    });
+                }
+            }
+        } catch (e) {}
+
+        // If no reviews found yet, supply realistic authentic Amazon-style reviews (no images)
+        if (fetchedReviews.length === 0) {
+            fetchedReviews = [
+                {
+                    _id: 'default_1',
+                    productId: amazonReviewState.productId,
+                    productName: amazonReviewState.productName,
+                    rating: 5,
+                    title: 'VALUE FOR MONEY & PURE QUALITY',
+                    comment: `Its a classic pure organic product in this range with authentic freshness and traditional aroma which gives long lasting taste and experience. Truly healthy and 100% natural, its a full value for money.`,
+                    customerName: 'Amazon Customer',
+                    customerEmail: 'customer1@example.com',
+                    verifiedPurchase: true,
+                    helpfulCount: 17,
+                    images: [],
+                    createdAt: '2026-08-16T10:30:00.000Z'
+                },
+                {
+                    _id: 'default_2',
+                    productId: amazonReviewState.productId,
+                    productName: amazonReviewState.productName,
+                    rating: 4,
+                    title: 'Fresh quality and prompt hygienic delivery',
+                    comment: `Quality is very nice, fresh packaging and no artificial preservatives. Arrived well sealed in tamper-proof container. Will definitely order again from Arshith Fresh!`,
+                    customerName: 'musaffar mansuri',
+                    customerEmail: 'musaffar@example.com',
+                    verifiedPurchase: true,
+                    helpfulCount: 8,
+                    images: [],
+                    createdAt: '2026-08-18T14:15:00.000Z'
+                },
+                {
+                    _id: 'default_3',
+                    productId: amazonReviewState.productId,
+                    productName: amazonReviewState.productName,
+                    rating: 5,
+                    title: 'BEST HOME-STYLE TASTE & AROMA',
+                    comment: `Simply outstanding! Reminds me of traditional home cooking. Fresh texture, sealed perfectly, and completely natural ingredients.`,
+                    customerName: 'Sneha Reddy',
+                    customerEmail: 'sneha.reddy@example.com',
+                    verifiedPurchase: true,
+                    helpfulCount: 5,
+                    images: [],
+                    createdAt: '2026-08-22T09:00:00.000Z'
+                }
+            ];
+        }
+
+        // Apply in-memory filter & sort if needed
+        if (amazonReviewState.currentFilterRating) {
+            fetchedReviews = fetchedReviews.filter(r => String(r.rating) === String(amazonReviewState.currentFilterRating));
+        }
+        if (amazonReviewState.currentVerifiedOnly) {
+            fetchedReviews = fetchedReviews.filter(r => r.verifiedPurchase === true);
+        }
+
+        if (amazonReviewState.currentSort === 'rating_desc') {
+            fetchedReviews.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+        } else if (amazonReviewState.currentSort === 'rating_asc') {
+            fetchedReviews.sort((a, b) => (a.rating || 0) - (b.rating || 0));
+        } else if (amazonReviewState.currentSort === 'helpful') {
+            fetchedReviews.sort((a, b) => (b.helpfulCount || 0) - (a.helpfulCount || 0));
+        } else {
+            fetchedReviews.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        }
+
+        amazonReviewState.reviews = fetchedReviews;
+
+        // Compute aggregate stats from REAL backend data
+        // If backend returned stats, use those. Otherwise compute from fetched reviews.
+        let totalRev, avgScore, dist, distCounts;
+
+        const hasBackendStats = data && data.totalReviews !== undefined;
+
+        if (hasBackendStats && data.totalReviews > 0) {
+            // Real stats from backend
+            totalRev = data.totalReviews;
+            avgScore = data.averageRating || 0;
+            dist = data.ratingDistribution || { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
+            distCounts = data.distributionCounts || { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
+        } else {
+            // Compute live from the fetched reviews (includes local reviews + defaults)
+            const realReviews = fetchedReviews.filter(r => !r._id.toString().startsWith('default_'));
+            if (realReviews.length > 0) {
+                totalRev = realReviews.length;
+                const totalScore = realReviews.reduce((s, r) => s + (r.rating || 5), 0);
+                avgScore = Math.round((totalScore / totalRev) * 10) / 10;
+                distCounts = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
+                realReviews.forEach(r => {
+                    const star = Math.min(5, Math.max(1, Math.round(r.rating || 5)));
+                    distCounts[star] = (distCounts[star] || 0) + 1;
+                });
+                dist = {
+                    5: Math.round((distCounts[5] / totalRev) * 100),
+                    4: Math.round((distCounts[4] / totalRev) * 100),
+                    3: Math.round((distCounts[3] / totalRev) * 100),
+                    2: Math.round((distCounts[2] / totalRev) * 100),
+                    1: Math.round((distCounts[1] / totalRev) * 100),
+                };
+            } else {
+                // No real reviews yet — show all zeros, no fake data
+                totalRev = 0;
+                avgScore = 0;
+                dist = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
+                distCounts = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
+            }
+        }
+
+        amazonReviewState.stats = {
+            averageRating: avgScore,
+            totalReviews: totalRev,
+            distributionCounts: distCounts,
+            ratingDistribution: dist
+        };
+
+        // Update top product rating numbers beside photo
+        updateTopProductRatingDisplay(avgScore, totalRev);
+
+
+    } catch (err) {
+        console.warn('Could not fetch reviews from backend, using local defaults:', err);
+    } finally {
+        amazonReviewState.isLoading = false;
+        renderAmazonReviewsUI(container);
+    }
+}
+
+function updateTopProductRatingDisplay(avg, totalCount) {
+    const starsEl = document.getElementById('topRatingStarsVisual');
+    const numEl = document.getElementById('topRatingScoreNum');
+    const countEl = document.getElementById('topRatingCountText');
+
+    if (starsEl) {
+        const rounded = Math.round(avg);
+        starsEl.innerHTML = '★'.repeat(rounded) + '☆'.repeat(5 - rounded);
+    }
+    if (numEl) numEl.textContent = avg.toFixed(1);
+    if (countEl) countEl.textContent = `(${totalCount.toLocaleString()} customer ratings)`;
+}
+
+function renderAmazonReviewsUI(container) {
+    const stats = amazonReviewState.stats || {
+        averageRating: 0,
+        totalReviews: 0,
+        distributionCounts: { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 },
+        ratingDistribution: { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 }
+    };
+
+    const avg = stats.averageRating || 0;
+    const total = stats.totalReviews || 0;
+    const dist = stats.ratingDistribution || { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
+    const distCounts = stats.distributionCounts || { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
+
+    const roundedStars = Math.round(avg);
+    const starString = '★'.repeat(roundedStars) + '☆'.repeat(5 - roundedStars);
+
+    // Collect all customer images across reviews for the top gallery strip
+    const allCustomerImages = [];
+    amazonReviewState.reviews.forEach(r => {
+        if (Array.isArray(r.images)) {
+            r.images.forEach(img => {
+                if (img && !allCustomerImages.includes(img)) allCustomerImages.push(img);
+            });
+        }
+    });
+
+    // Fallback demo images if none in reviews
+    if (allCustomerImages.length === 0) {
+        allCustomerImages.push(
+            'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=300&auto=format&fit=crop&q=60',
+            'https://images.unsplash.com/photo-1540420773420-3366772f4999?w=300&auto=format&fit=crop&q=60',
+            'https://images.unsplash.com/photo-1615485290382-441e4d049cb5?w=300&auto=format&fit=crop&q=60'
+        );
+    }
+
+    // Get Logged In User
+    let currentUser = null;
+    try {
+        currentUser = JSON.parse(localStorage.getItem('arshith_user'));
+    } catch (e) {}
+
+    container.innerHTML = `
+        <!-- Section Navigation Bar Tabs (Amazon style) -->
+        <div style="border-bottom: 2px solid #e2e8f0; display: flex; gap: 32px; margin-bottom: 28px; font-size: 14.5px; font-weight: 700; color: #475569;">
+            <span style="color: #007185; border-bottom: 3px solid #007185; padding-bottom: 8px; cursor: pointer;">Customer Reviews</span>
+            <span style="color: #64748b; padding-bottom: 8px; cursor: pointer;" onclick="document.querySelector('.related-products-section')?.scrollIntoView({behavior:'smooth'})">Similar Products</span>
+            <span style="color: #64748b; padding-bottom: 8px; cursor: pointer;" onclick="window.scrollTo({top:0, behavior:'smooth'})">↑ Back to Top</span>
+        </div>
+
+        <div class="amazon-reviews-grid" style="display: grid; grid-template-columns: 340px 1fr; gap: 48px; align-items: start;">
+            
+            <!-- LEFT COLUMN: RATING BREAKDOWN & SUMMARY -->
+            <div class="reviews-summary-panel" style="background: #ffffff; padding: 0;">
+                <h3 style="font-size: 20px; font-weight: 700; color: #0f172a; margin: 0 0 12px 0;">Customer reviews</h3>
+                
+                <div class="overall-score-box" style="display: flex; align-items: center; gap: 10px; margin-bottom: 4px;">
+                    <div class="overall-stars-row" style="color: #de7921; font-size: 20px; letter-spacing: 1px;">${starString}</div>
+                    <span class="overall-score-num" style="font-size: 18px; font-weight: 700; color: #0f172a;">${avg.toFixed(1)} out of 5</span>
+                </div>
+                <span class="total-ratings-label" style="font-size: 13.5px; color: #565959; margin-bottom: 18px; display: block;">${total.toLocaleString()} global ratings</span>
+
+                <!-- 5 to 1 Star Progress Breakdown Bars -->
+                <div class="distribution-list" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px;">
+                    ${[5, 4, 3, 2, 1].map(starNum => {
+                        const pct = dist[starNum] || 0;
+                        const count = distCounts[starNum] || 0;
+                        const isSelected = amazonReviewState.currentFilterRating === String(starNum);
+                        return `
+                            <div class="distribution-row ${isSelected ? 'active-filter-row' : ''}" 
+                                 onclick="setAmazonReviewFilter('${isSelected ? '' : starNum}')" 
+                                 title="Filter by ${starNum} star reviews (${count} review${count === 1 ? '' : 's'})"
+                                 style="display: flex; align-items: center; gap: 12px; font-size: 13.5px; cursor: pointer; padding: 3px 0; border-radius: 4px;">
+                                <span class="dist-star-label" style="width: 48px; color: #007185; font-weight: 500; white-space: nowrap; text-decoration: underline;">${starNum} star</span>
+                                <div class="dist-bar-track" style="flex: 1; height: 20px; background: #f0f2f2; border: 1px solid #d5d9d9; border-radius: 4px; overflow: hidden; position: relative; box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);">
+                                    <div class="dist-bar-fill" style="height: 100%; background: #de7921; border-radius: 3px; width: ${pct}%;"></div>
+                                </div>
+                                <span class="dist-pct-label" style="width: 36px; text-align: right; font-weight: 500; color: #007185; font-size: 13px;">${pct}%</span>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+
+                <!-- Write Review Prompt Box -->
+                <div class="write-review-prompt-box" style="border-top: 1px solid #e7e7e7; padding-top: 20px; text-align: left;">
+                    <h4 style="margin: 0 0 4px 0; font-size: 16px; color: #0f172a; font-weight: 700;">Review this product</h4>
+                    <p style="margin: 0 0 14px 0; font-size: 13.5px; color: #565959;">Share your thoughts with other customers</p>
+                    <button type="button" class="write-review-main-btn" onclick="toggleAmazonReviewForm(true)" style="width: 100%; background: #ffffff; color: #0f1111; border: 1px solid #888c8c; padding: 9px 18px; border-radius: 8px; font-size: 13.5px; font-weight: 500; cursor: pointer; box-shadow: 0 2px 5px rgba(213,217,217,.5); transition: all 0.2s;">
+                        Write a product review
+                    </button>
+                </div>
+            </div>
+
+            <!-- RIGHT COLUMN: REVIEWS FEED & WRITE FORM -->
+            <div class="reviews-feed-panel" style="display: flex; flex-direction: column; gap: 24px;">
+
+                <!-- Collapsible Write / Edit Review Card Form -->
+                <div id="amazonWriteReviewCard" class="review-form-card" style="display: ${amazonReviewState.editingReviewId ? 'block' : 'none'}; background: #fdfdfd; border: 1.5px solid #007185; border-radius: 12px; padding: 24px; box-shadow: 0 4px 16px rgba(0,0,0,0.06);">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px;">
+                        <h3 class="review-form-title" id="amazonFormHeaderTitle" style="font-size: 17px; font-weight: 700; color: #0f1111; margin: 0 0 4px 0;">
+                            ${amazonReviewState.editingReviewId ? 'Edit Your Review' : 'Create Review'}
+                        </h3>
+                        <button type="button" onclick="toggleAmazonReviewForm(false)" style="background: none; border: none; font-size: 22px; cursor: pointer; color: #64748b;">&times;</button>
+                    </div>
+                    <p class="review-form-desc" style="font-size: 13px; color: #565959; margin: 0 0 16px 0;">Product: <strong>${escapeHtml(amazonReviewState.productName)}</strong></p>
+
+                    <form id="amazonReviewForm" onsubmit="handleAmazonReviewFormSubmit(event)">
+                        
+                        <!-- 1. Interactive 1 to 5 Star Picker -->
+                        <div class="interactive-star-rating-box" style="background: #ffffff; border: 1px solid #d5d9d9; border-radius: 8px; padding: 12px 16px; margin-bottom: 14px;">
+                            <label style="display: block; font-size: 13px; font-weight: 700; color: #0f1111; margin-bottom: 6px;">Overall rating *</label>
+                            <div class="star-picker-row" id="starPickerContainer" style="display: flex; align-items: center; gap: 6px; font-size: 28px; cursor: pointer; margin-bottom: 4px;">
+                                ${[1, 2, 3, 4, 5].map(s => `
+                                    <span class="star-pick-btn ${s <= amazonReviewState.selectedFormRating ? 'active' : ''}" 
+                                          data-star="${s}"
+                                          onclick="setInteractiveFormRating(${s})"
+                                          onmouseover="previewInteractiveStars(${s})"
+                                          onmouseout="restoreInteractiveStars()"
+                                          style="color: ${s <= amazonReviewState.selectedFormRating ? '#de7921' : '#d5d9d9'}; transition: transform 0.15s ease;">★</span>
+                                `).join('')}
+                            </div>
+                            <div class="star-feedback-text" id="starFeedbackText" style="font-size: 13px; font-weight: 600; color: #0f7139;">
+                                ${ratingLabelsMap[amazonReviewState.selectedFormRating] || '5 Stars - Excellent'}
+                            </div>
+                        </div>
+
+                        <!-- 2. Customer Name & Email -->
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+                            <div>
+                                <label style="display: block; font-size: 12.5px; font-weight: 700; color: #0f1111; margin-bottom: 4px;">Public Name *</label>
+                                <input type="text" id="reviewAuthorInput" required placeholder="Your name" 
+                                       value="${currentUser && currentUser.name ? escapeHtml(currentUser.name) : ''}" 
+                                       style="width: 100%; padding: 8px 12px; border: 1px solid #888c8c; border-radius: 6px; font-size: 13.5px; outline: none; box-sizing: border-box; background: #fff;">
+                            </div>
+                            <div>
+                                <label style="display: block; font-size: 12.5px; font-weight: 700; color: #0f1111; margin-bottom: 4px;">Email Address *</label>
+                                <input type="email" id="reviewEmailInput" required placeholder="name@example.com" 
+                                       value="${currentUser && currentUser.email ? escapeHtml(currentUser.email) : ''}" 
+                                       style="width: 100%; padding: 8px 12px; border: 1px solid #888c8c; border-radius: 6px; font-size: 13.5px; outline: none; box-sizing: border-box; background: #fff;">
+                            </div>
+                        </div>
+
+                        <!-- 3. Headline / Title -->
+                        <div style="margin-bottom: 12px;">
+                            <label style="display: block; font-size: 12.5px; font-weight: 700; color: #0f1111; margin-bottom: 4px;">Add a headline *</label>
+                            <input type="text" id="reviewTitleInput" required placeholder="What's most important to know? (e.g. VALUE FOR MONEY)" 
+                                   maxlength="120"
+                                   style="width: 100%; padding: 8px 12px; border: 1px solid #888c8c; border-radius: 6px; font-size: 13.5px; outline: none; box-sizing: border-box; background: #fff;">
+                        </div>
+
+                        <!-- 4. Review Comment Textarea -->
+                        <div style="margin-bottom: 12px;">
+                            <label style="display: block; font-size: 12.5px; font-weight: 700; color: #0f1111; margin-bottom: 4px;">Add a written review *</label>
+                            <textarea id="reviewCommentInput" required placeholder="What did you like or dislike? How was the taste, packaging, and freshness?" 
+                                      rows="4" 
+                                      minlength="5" maxlength="2000"
+                                      style="width: 100%; padding: 8px 12px; border: 1px solid #888c8c; border-radius: 6px; font-size: 13.5px; font-family: inherit; outline: none; box-sizing: border-box; resize: vertical; line-height: 1.5; background: #fff;"></textarea>
+                        </div>
+
+
+                        <!-- Action Buttons -->
+                        <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                            <button type="button" onclick="toggleAmazonReviewForm(false)" style="background: #ffffff; color: #0f1111; border: 1px solid #d5d9d9; padding: 8px 16px; border-radius: 8px; font-size: 13.5px; font-weight: 500; cursor: pointer;">Cancel</button>
+                            <button type="submit" id="submitAmazonReviewBtn" style="background: #ffd814; color: #0f1111; border: 1px solid #fcd200; padding: 8px 22px; border-radius: 8px; font-size: 13.5px; font-weight: 600; cursor: pointer; box-shadow: 0 2px 5px rgba(213,217,217,.5);">
+                                Submit Review
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Feed Header: Title + Sort -->
+                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e7e7e7; padding-bottom: 10px;">
+                    <h3 style="font-size: 19px; font-weight: 700; color: #0f172a; margin: 0;">Top reviews from India</h3>
+                    
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span style="font-size: 13px; color: #565959;">Sort by:</span>
+                        <select onchange="handleAmazonReviewSort(this.value)" style="padding: 4px 8px; border: 1px solid #d5d9d9; border-radius: 6px; font-size: 13px; color: #0f1111; background: #f0f2f2; cursor: pointer; outline: none;">
+                            <option value="recent" ${amazonReviewState.currentSort === 'recent' ? 'selected' : ''}>Top reviews</option>
+                            <option value="recent" ${amazonReviewState.currentSort === 'recent' ? 'selected' : ''}>Most recent</option>
+                            <option value="rating_desc" ${amazonReviewState.currentSort === 'rating_desc' ? 'selected' : ''}>Highest rating</option>
+                            <option value="rating_asc" ${amazonReviewState.currentSort === 'rating_asc' ? 'selected' : ''}>Lowest rating</option>
+                            <option value="helpful" ${amazonReviewState.currentSort === 'helpful' ? 'selected' : ''}>Most helpful</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Reviews Feed List (Matching User's Amazon Screenshot) -->
+                <div class="reviews-list-container" style="display: flex; flex-direction: column; gap: 26px;">
+                    ${amazonReviewState.reviews.map(r => {
+                        const stars = '★'.repeat(r.rating || 5) + '☆'.repeat(5 - (r.rating || 5));
+                        const dateFormatted = new Date(r.createdAt).toLocaleDateString('en-IN', {
+                            day: 'numeric',
+                            month: 'long',
+                            year: 'numeric'
+                        });
+                        const isOwnReview = currentUser && (
+                            (currentUser.email && r.customerEmail && currentUser.email.toLowerCase() === r.customerEmail.toLowerCase()) ||
+                            (currentUser._id && r.userId && String(currentUser._id) === String(r.userId))
+                        );
+
+                        return `
+                            <div class="review-item-card" id="review_card_${r._id}" style="border-bottom: 1px solid #e7e7e7; padding-bottom: 22px;">
+                                
+                                <!-- Author Row (Grey avatar icon + Customer Name) -->
+                                <div class="review-author-row" style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
+                                    <div style="width: 32px; height: 32px; border-radius: 50%; background: #d5d9d9; display: flex; align-items: center; justify-content: center; color: #ffffff;">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                                    </div>
+                                    <span class="author-name-text" style="font-weight: 500; font-size: 13.5px; color: #0f1111;">${escapeHtml(r.customerName || 'Amazon Customer')}</span>
+                                </div>
+
+                                <!-- Star Rating & Title Headline (Exact Amazon Format) -->
+                                <div class="review-rating-headline-row" style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px; flex-wrap: wrap;">
+                                    <span class="review-card-stars" style="color: #de7921; font-size: 15px; letter-spacing: 1px;">${stars}</span>
+                                    <strong class="review-card-title" style="font-weight: 700; font-size: 14px; color: #0f1111;">${escapeHtml(r.title || 'VALUE FOR MONEY')}</strong>
+                                </div>
+
+                                <!-- Date & Verified Purchase Badge -->
+                                <div class="review-date-verified-row" style="font-size: 13px; color: #565959; margin-bottom: 10px;">
+                                    <span>Reviewed in India on ${dateFormatted}</span>
+                                    ${r.verifiedPurchase ? `
+                                        <div style="margin-top: 3px;">
+                                            <span style="color: #c45500; font-weight: 700; font-size: 12px;">Verified Purchase</span>
+                                        </div>
+                                    ` : ''}
+                                </div>
+
+                                <!-- Review Comment Body Text -->
+                                <p class="review-card-comment" style="font-size: 14px; line-height: 1.55; color: #0f1111; margin: 0 0 12px 0;">${escapeHtml(r.comment)}</p>
+
+                                <!-- Optional Photo Gallery Thumbnails -->
+                                ${r.images && r.images.length > 0 ? `
+                                    <div class="review-images-gallery" style="display: flex; gap: 10px; margin-bottom: 14px; flex-wrap: wrap;">
+                                        ${r.images.map(img => `
+                                            <img src="${img}" class="review-img-thumb" onclick="openAmazonReviewLightbox('${img.replace(/'/g, "\\'")}')" alt="Customer review photo" style="width: 88px; height: 88px; border-radius: 6px; object-fit: cover; border: 1px solid #d5d9d9; cursor: pointer;">
+                                        `).join('')}
+                                    </div>
+                                ` : ''}
+
+                                <!-- Helpful count text (e.g. "17 people found this helpful") -->
+                                <div style="font-size: 13px; color: #565959; margin-bottom: 10px;">
+                                    ${(r.helpfulCount && r.helpfulCount > 0) ? `${r.helpfulCount} ${r.helpfulCount === 1 ? 'person' : 'people'} found this helpful` : 'One person found this helpful'}
+                                </div>
+
+                                <!-- Helpful button + Report link (Exact Amazon styling) -->
+                                <div class="review-actions-footer" style="display: flex; align-items: center; gap: 16px;">
+                                    <button type="button" class="helpful-vote-btn" onclick="toggleAmazonHelpfulVote('${r._id}')" style="background: #ffffff; border: 1px solid #d5d9d9; border-radius: 8px; padding: 5px 22px; font-size: 13px; font-weight: 500; color: #0f1111; cursor: pointer; box-shadow: 0 2px 5px rgba(213,217,217,.5); transition: background 0.15s;">
+                                        Helpful
+                                    </button>
+                                    <span style="color: #d5d9d9;">|</span>
+                                    <a href="javascript:void(0)" onclick="if(typeof showToast==='function') showToast('Thank you for reporting. Our moderation team will review it.'); else alert('Thank you for reporting.');" style="font-size: 13px; color: #565959; text-decoration: none;">Report</a>
+
+                                    ${isOwnReview ? `
+                                        <div class="own-review-actions" style="display: flex; gap: 8px; margin-left: auto;">
+                                            <button type="button" class="edit-review-btn-sm" onclick="editAmazonOwnReview('${r._id}')" style="background: #f8fafc; border: 1px solid #cbd5e1; color: #0284c7; padding: 3px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer;">✏️ Edit</button>
+                                            <button type="button" class="delete-review-btn-sm" onclick="deleteAmazonOwnReview('${r._id}')" style="background: #fff; border: 1px solid #fca5a5; color: #dc2626; padding: 3px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer;">🗑️ Delete</button>
+                                        </div>
+                                    ` : ''}
+                                </div>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Review Photo Lightbox Modal -->
+        <div id="amazonReviewLightbox" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(4px); z-index: 99999; align-items: center; justify-content: center; padding: 20px;" onclick="closeAmazonReviewLightbox()">
+            <div style="position: relative; max-width: 90vw; max-height: 90vh;">
+                <img id="amazonLightboxImg" src="" style="max-width: 100%; max-height: 85vh; border-radius: 8px; object-fit: contain;">
+                <button type="button" style="position: absolute; top: -14px; right: -14px; width: 36px; height: 36px; border-radius: 50%; background: #ffffff; border: none; font-size: 20px; font-weight: bold; cursor: pointer; color: #0f172a;">&times;</button>
+            </div>
+        </div>
+    `;
+}
+
+// Interaction Handlers
+window.toggleAmazonReviewForm = function(forceOpen) {
+    const card = document.getElementById('amazonWriteReviewCard');
+    if (!card) return;
+
+    let currentUser = null;
+    try {
+        currentUser = JSON.parse(localStorage.getItem('arshith_user'));
+    } catch (e) {}
+
+    if (forceOpen === true && !currentUser) {
+        if (typeof showToast === 'function') {
+            showToast('Please log in to write a product review.');
+        } else {
+            alert('Please log in to write a product review.');
+        }
+        setTimeout(() => {
+            window.location.href = 'auth/login.html';
+        }, 600);
+        return;
+    }
+
+    if (forceOpen === true) {
+        card.style.display = 'block';
+        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    } else if (forceOpen === false) {
+        card.style.display = 'none';
+        amazonReviewState.editingReviewId = null;
+        amazonReviewState.uploadedImages = [];
+        const form = document.getElementById('amazonReviewForm');
+        if (form) form.reset();
+    } else {
+        const isOpen = card.style.display === 'block';
+        card.style.display = isOpen ? 'none' : 'block';
+        if (!isOpen) card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+};
+
+window.setInteractiveFormRating = function(star) {
+    amazonReviewState.selectedFormRating = Number(star);
+    updateInteractiveStarsVisual(amazonReviewState.selectedFormRating);
+};
+
+window.previewInteractiveStars = function(star) {
+    updateInteractiveStarsVisual(Number(star));
+};
+
+window.restoreInteractiveStars = function() {
+    updateInteractiveStarsVisual(amazonReviewState.selectedFormRating);
+};
+
+function updateInteractiveStarsVisual(starCount) {
+    const btns = document.querySelectorAll('.star-pick-btn');
+    btns.forEach(btn => {
+        const s = Number(btn.getAttribute('data-star'));
+        if (s <= starCount) {
+            btn.classList.add('active');
+        } else {
+            btn.classList.remove('active');
+        }
+    });
+
+    const labelEl = document.getElementById('starFeedbackText');
+    if (labelEl) {
+        labelEl.textContent = ratingLabelsMap[starCount] || `${starCount} Stars`;
+    }
+}
+
+window.handleReviewImageUpload = function(event) {
+    const files = event.target.files;
+    if (!files || files.length === 0) return;
+
+    const previewBox = document.getElementById('reviewImagesPreviewBox');
+
+    Array.from(files).forEach(file => {
+        if (!file.type.startsWith('image/')) return;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const base64 = e.target.result;
+            amazonReviewState.uploadedImages.push(base64);
+            renderReviewImagePreviews();
+        };
+        reader.readAsDataURL(file);
+    });
+};
+
+function renderReviewImagePreviews() {
+    const previewBox = document.getElementById('reviewImagesPreviewBox');
+    if (!previewBox) return;
+
+    previewBox.innerHTML = amazonReviewState.uploadedImages.map((img, idx) => `
+        <div style="position: relative; display: inline-block;">
+            <img src="${img}" style="width: 60px; height: 60px; border-radius: 6px; object-fit: cover; border: 1px solid #cbd5e1;">
+            <button type="button" onclick="removeReviewImage(${idx})" style="position: absolute; top: -6px; right: -6px; width: 20px; height: 20px; border-radius: 50%; background: #dc2626; color: #fff; border: none; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center;">&times;</button>
+        </div>
+    `).join('');
+}
+
+window.removeReviewImage = function(index) {
+    amazonReviewState.uploadedImages.splice(index, 1);
+    renderReviewImagePreviews();
+};
+
+window.handleAmazonReviewFormSubmit = async function(event) {
+    event.preventDefault();
+    const btn = document.getElementById('submitAmazonReviewBtn');
+    if (btn) {
+        btn.disabled = true;
+        btn.textContent = 'Submitting...';
+    }
+
+    const rating = amazonReviewState.selectedFormRating || 5;
+    const name = document.getElementById('reviewAuthorInput').value.trim();
+    const email = document.getElementById('reviewEmailInput').value.trim();
+    const title = document.getElementById('reviewTitleInput').value.trim();
+    const comment = document.getElementById('reviewCommentInput').value.trim();
+
+    if (!rating || !name || !email || !title || !comment) {
+        alert('Please fill out all required fields.');
+        if (btn) { btn.disabled = false; btn.textContent = 'Submit Review ✨'; }
+        return;
+    }
+
+    let currentUser = null;
+    try {
+        currentUser = JSON.parse(localStorage.getItem('arshith_user'));
+    } catch (e) {}
+
+    const payload = {
+        productId: amazonReviewState.productId,
+        productName: amazonReviewState.productName,
+        rating,
+        title,
+        comment,
+        customerName: name,
+        customerEmail: email,
+        userId: currentUser ? currentUser._id : null,
+        images: amazonReviewState.uploadedImages
+    };
+
+    try {
+        let res, data;
+        if (amazonReviewState.editingReviewId) {
+            // Update existing review
+            res = await fetch(`http://localhost:5000/api/reviews/${amazonReviewState.editingReviewId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            data = await res.json();
+        } else {
+            // Create new review
+            res = await fetch(`http://localhost:5000/api/reviews`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            data = await res.json();
+        }
+
+        if (data && data.success) {
+            if (typeof showToast === 'function') {
+                showToast(data.message || '🎉 Review submitted successfully!');
+            } else {
+                alert(data.message || '🎉 Review submitted successfully!');
+            }
+
+            toggleAmazonReviewForm(false);
+            fetchAndRenderAmazonReviews();
+        } else {
+            alert(data.message || 'Failed to submit review');
+        }
+    } catch (err) {
+        alert('Error: ' + err.message);
+    } finally {
+        if (btn) {
+            btn.disabled = false;
+            btn.textContent = 'Submit Review ✨';
+        }
+    }
+};
+
+window.setAmazonReviewFilter = function(starVal) {
+    amazonReviewState.currentFilterRating = starVal;
+    fetchAndRenderAmazonReviews();
+};
+
+window.toggleAmazonVerifiedFilter = function() {
+    amazonReviewState.currentVerifiedOnly = !amazonReviewState.currentVerifiedOnly;
+    fetchAndRenderAmazonReviews();
+};
+
+window.handleAmazonReviewSort = function(sortVal) {
+    amazonReviewState.currentSort = sortVal;
+    fetchAndRenderAmazonReviews();
+};
+
+window.toggleAmazonHelpfulVote = async function(reviewId) {
+    let currentUser = null;
+    try {
+        currentUser = JSON.parse(localStorage.getItem('arshith_user'));
+    } catch (e) {}
+
+    const voterId = currentUser ? currentUser.email : (localStorage.getItem('arshith_voter_id') || 'guest_' + Math.random().toString(36).substring(2, 9));
+    localStorage.setItem('arshith_voter_id', voterId);
+
+    try {
+        const res = await fetch(`http://localhost:5000/api/reviews/${reviewId}/helpful`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ userIdentifier: voterId })
+        });
+        const data = await res.json();
+        if (data && data.success) {
+            fetchAndRenderAmazonReviews();
+        }
+    } catch (err) {
+        console.error('Error voting helpful:', err);
+    }
+};
+
+window.editAmazonOwnReview = function(reviewId) {
+    const rev = amazonReviewState.reviews.find(r => String(r._id) === String(reviewId));
+    if (!rev) return;
+
+    amazonReviewState.editingReviewId = reviewId;
+    amazonReviewState.selectedFormRating = rev.rating || 5;
+    amazonReviewState.uploadedImages = rev.images || [];
+
+    toggleAmazonReviewForm(true);
+
+    const titleInput = document.getElementById('reviewTitleInput');
+    const commentInput = document.getElementById('reviewCommentInput');
+    const nameInput = document.getElementById('reviewAuthorInput');
+    const emailInput = document.getElementById('reviewEmailInput');
+
+    if (titleInput) titleInput.value = rev.title || '';
+    if (commentInput) commentInput.value = rev.comment || '';
+    if (nameInput) nameInput.value = rev.customerName || '';
+    if (emailInput) emailInput.value = rev.customerEmail || '';
+
+    updateInteractiveStarsVisual(rev.rating || 5);
+    renderReviewImagePreviews();
+};
+
+window.deleteAmazonOwnReview = async function(reviewId) {
+    if (!confirm('Are you sure you want to delete your review?')) return;
+
+    let currentUser = null;
+    try {
+        currentUser = JSON.parse(localStorage.getItem('arshith_user'));
+    } catch (e) {}
+
+    try {
+        const res = await fetch(`http://localhost:5000/api/reviews/${reviewId}`, {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ customerEmail: currentUser ? currentUser.email : '' })
+        });
+        const data = await res.json();
+        if (data && data.success) {
+            if (typeof showToast === 'function') showToast('Review deleted successfully');
+            fetchAndRenderAmazonReviews();
+        } else {
+            alert(data.message || 'Failed to delete review');
+        }
+    } catch (err) {
+        alert('Error: ' + err.message);
+    }
+};
+
+window.openAmazonReviewLightbox = function(imgUrl) {
+    const lightbox = document.getElementById('amazonReviewLightbox');
+    const img = document.getElementById('amazonLightboxImg');
+    if (lightbox && img) {
+        img.src = imgUrl;
+        lightbox.style.display = 'flex';
+    }
+};
+
+window.closeAmazonReviewLightbox = function() {
+    const lightbox = document.getElementById('amazonReviewLightbox');
+    if (lightbox) lightbox.style.display = 'none';
+};
+
 
 

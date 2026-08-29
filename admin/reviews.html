@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Customer Reviews Management | Arshith Fresh Admin</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Playfair+Display:ital,wght@0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/admin.css">
+
+  <style>
+    .kpi-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    @media (max-width: 1024px) {
+      .kpi-row { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 600px) {
+      .kpi-row { grid-template-columns: 1fr; }
+    }
+
+    .kpi-card {
+      background: #ffffff;
+      border: 1px solid var(--border-color, #e1e3e5);
+      border-radius: var(--radius-md, 8px);
+      padding: 18px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+    .kpi-title {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #64748b;
+      margin-bottom: 6px;
+    }
+    .kpi-val {
+      font-size: 24px;
+      font-weight: 800;
+      color: #1e293b;
+    }
+    .kpi-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+    .icon-green { background: #e8f5e9; color: #0f7139; }
+    .icon-amber { background: #fef3c7; color: #d97706; }
+    .icon-blue { background: #e0f2fe; color: #0284c7; }
+    .icon-purple { background: #f3e8ff; color: #9333ea; }
+
+    .verified-pill {
+      background: #ecfdf5;
+      color: #047857;
+      border: 1px solid #a7f3d0;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .unverified-pill {
+      background: #f1f5f9;
+      color: #64748b;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .star-gold {
+      color: #f59e0b;
+      font-size: 13px;
+      letter-spacing: 1px;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Top Navigation Bar -->
+  <header class="app-topbar">
+    <div class="topbar-left">
+      <button class="mobile-menu-btn" id="mobileMenuBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+      </button>
+      <a href="dashboard.html" class="brand-logo">
+        <span class="logo-leaf">🌿</span>
+        <span class="brand-name">Arshith <span>Fresh</span></span>
+        <span class="admin-tag">ADMIN</span>
+      </a>
+    </div>
+    <div class="topbar-right">
+      <a href="../index.html" target="_blank" class="store-preview-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+        <span>View Storefront</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <div class="app-container">
+    
+    <!-- Left Sidebar -->
+    <aside class="app-sidebar">
+      <div class="sidebar-menu">
+        <a href="dashboard.html" class="menu-item">
+          <div class="menu-item-left">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
+            <span>Dashboard</span>
+          </div>
+        </a>
+
+        <a href="orders.html" class="menu-item">
+          <div class="menu-item-left">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+            <span>Orders</span>
+          </div>
+        </a>
+
+        <a href="products.html" class="menu-item">
+          <div class="menu-item-left">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16.5 9.4 7.55 4.24a1.78 1.78 0 0 0-2.5 1.55v12.42a1.78 1.78 0 0 0 2.5 1.55L16.5 14.6a1.78 1.78 0 0 0 0-3.2z"></path></svg>
+            <span>Products</span>
+          </div>
+        </a>
+
+        <div class="submenu-list">
+          <a href="collections.html" class="submenu-item">Collections / Categories</a>
+          <a href="inventory.html" class="submenu-item">Inventory</a>
+        </div>
+
+        <a href="customers.html" class="menu-item">
+          <div class="menu-item-left">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>
+            <span>Customers</span>
+          </div>
+        </a>
+
+        <a href="discounts.html" class="menu-item">
+          <div class="menu-item-left">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+            <span>Discounts</span>
+          </div>
+        </a>
+
+        <!-- Reviews (Active) -->
+        <a href="reviews.html" class="menu-item active">
+          <div class="menu-item-left">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+            <span>Reviews</span>
+          </div>
+        </a>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="app-main">
+      <div class="page-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
+        <div>
+          <h1 class="page-title" style="margin: 0 0 4px 0; font-size: 22px; font-weight: 700; color: #1e293b;">Product Reviews & Ratings</h1>
+          <p style="margin: 0; font-size: 13.5px; color: #64748b;">Manage customer ratings, verified purchase reviews, and moderate product feedback.</p>
+        </div>
+        <button class="btn btn-secondary" onclick="loadAdminReviews()" style="display: inline-flex; align-items: center; gap: 6px;">
+          <i class="fa-solid fa-rotate"></i> Refresh
+        </button>
+      </div>
+
+      <!-- KPI Summary Row -->
+      <div class="kpi-row">
+        <div class="kpi-card">
+          <div>
+            <div class="kpi-title">Total Reviews</div>
+            <div class="kpi-val" id="kpiTotalReviews">0</div>
+          </div>
+          <div class="kpi-icon icon-blue"><i class="fa-solid fa-comments"></i></div>
+        </div>
+        <div class="kpi-card">
+          <div>
+            <div class="kpi-title">Average Store Rating</div>
+            <div class="kpi-val" id="kpiAvgRating">5.0 ★</div>
+          </div>
+          <div class="kpi-icon icon-amber"><i class="fa-solid fa-star"></i></div>
+        </div>
+        <div class="kpi-card">
+          <div>
+            <div class="kpi-title">5-Star Reviews</div>
+            <div class="kpi-val" id="kpiFiveStar">0</div>
+          </div>
+          <div class="kpi-icon icon-green"><i class="fa-solid fa-thumbs-up"></i></div>
+        </div>
+        <div class="kpi-card">
+          <div>
+            <div class="kpi-title">Verified Buyer Reviews</div>
+            <div class="kpi-val" id="kpiVerified">0</div>
+          </div>
+          <div class="kpi-icon icon-purple"><i class="fa-solid fa-shield-check"></i></div>
+        </div>
+      </div>
+
+      <!-- Reviews Table Card -->
+      <div class="data-card" style="background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+        
+        <!-- Filter and Search Toolbar -->
+        <div style="padding: 16px 20px; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; background: #fafbfc;">
+          <div style="display: flex; align-items: center; gap: 10px; flex: 1; max-width: 450px;">
+            <input type="text" id="reviewSearchInput" onkeyup="handleSearchKey(event)" placeholder="Search by product, customer, title, comment..." style="width: 100%; padding: 8px 14px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13.5px; outline: none;">
+            <button class="btn btn-secondary" onclick="loadAdminReviews()" style="padding: 8px 14px; font-size: 13px;">Search</button>
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <label style="font-size: 13px; font-weight: 600; color: #475569;">Filter Rating:</label>
+            <select id="ratingFilterSelect" onchange="loadAdminReviews()" style="padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; font-weight: 600; background: #fff; outline: none; cursor: pointer;">
+              <option value="">All Ratings (1–5 ★)</option>
+              <option value="5">⭐⭐⭐⭐⭐ 5 Stars</option>
+              <option value="4">⭐⭐⭐⭐ 4 Stars</option>
+              <option value="3">⭐⭐⭐ 3 Stars</option>
+              <option value="2">⭐⭐ 2 Stars</option>
+              <option value="1">⭐ 1 Star</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Table -->
+        <div class="table-scroll-container">
+          <table class="admin-table" style="width: 100%; border-collapse: collapse; font-size: 13.5px;">
+            <thead>
+              <tr style="background: #f8fafc; border-bottom: 1px solid #e2e8f0; text-align: left; color: #64748b; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;">
+                <th style="padding: 12px 18px;">Product</th>
+                <th style="padding: 12px 18px;">Customer</th>
+                <th style="padding: 12px 18px;">Rating & Headline</th>
+                <th style="padding: 12px 18px;">Comment Excerpt</th>
+                <th style="padding: 12px 18px;">Helpful</th>
+                <th style="padding: 12px 18px;">Date</th>
+                <th style="padding: 12px 18px; text-align: right;">Action</th>
+              </tr>
+            </thead>
+            <tbody id="reviewsTableBody">
+              <tr>
+                <td colspan="7" style="text-align: center; padding: 40px; color: #64748b;">Loading customer reviews...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      loadAdminReviews();
+    });
+
+    function handleSearchKey(e) {
+      if (e.key === 'Enter') {
+        loadAdminReviews();
+      }
+    }
+
+    async function loadAdminReviews() {
+      const tbody = document.getElementById('reviewsTableBody');
+      const search = document.getElementById('reviewSearchInput').value.trim();
+      const rating = document.getElementById('ratingFilterSelect').value;
+
+      tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 40px; color: #64748b;"><i class="fa-solid fa-spinner fa-spin"></i> Loading reviews...</td></tr>`;
+
+      try {
+        let url = `http://localhost:5000/api/reviews/admin/all?limit=100`;
+        if (search) url += `&search=${encodeURIComponent(search)}`;
+        if (rating) url += `&rating=${encodeURIComponent(rating)}`;
+
+        const res = await fetch(url);
+        const data = await res.json();
+
+        if (!data.success) {
+          throw new Error(data.message || 'Failed to load reviews');
+        }
+
+        // Update KPIs
+        if (data.stats) {
+          document.getElementById('kpiTotalReviews').textContent = data.stats.totalAll || 0;
+          document.getElementById('kpiAvgRating').textContent = (data.stats.avgStoreRating || 5.0) + ' ★';
+          document.getElementById('kpiFiveStar').textContent = data.stats.fiveStarCount || 0;
+          document.getElementById('kpiVerified').textContent = data.stats.verifiedCount || 0;
+        }
+
+        const reviews = data.reviews || [];
+        if (reviews.length === 0) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="7" style="text-align: center; padding: 50px 20px; color: #64748b;">
+                <div style="font-size: 32px; margin-bottom: 8px;">💬</div>
+                <strong style="color: #1e293b; font-size: 15px;">No reviews found</strong>
+                <p style="margin: 4px 0 0 0; font-size: 13px;">No customer reviews match your search or filter criteria.</p>
+              </td>
+            </tr>
+          `;
+          return;
+        }
+
+        tbody.innerHTML = reviews.map(r => {
+          const prodName = (r.productId && r.productId.name) ? r.productId.name : (r.productName || 'Product');
+          const prodImg = (r.productId && r.productId.image) ? r.productId.image : 'https://arshithfresh.com/cdn/shop/collections/spice_200x200_crop_center.png?v=1746963495';
+          const stars = '★'.repeat(r.rating || 5) + '☆'.repeat(5 - (r.rating || 5));
+          const dateStr = new Date(r.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+
+          return `
+            <tr style="border-bottom: 1px solid #f1f5f9; transition: background 0.15s;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='#fff'">
+              <!-- Product -->
+              <td style="padding: 14px 18px;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                  <img src="${prodImg}" style="width: 40px; height: 40px; border-radius: 6px; object-fit: cover; border: 1px solid #e2e8f0;">
+                  <div>
+                    <strong style="color: #1e293b; font-size: 13.5px; display: block;">${prodName}</strong>
+                    <span style="font-size: 11px; color: #64748b;">ID: ${r.productId ? (r.productId._id || r.productId) : 'N/A'}</span>
+                  </div>
+                </div>
+              </td>
+
+              <!-- Customer -->
+              <td style="padding: 14px 18px;">
+                <div style="font-weight: 600; color: #1e293b;">${r.customerName}</div>
+                <div style="font-size: 12px; color: #64748b;">${r.customerEmail}</div>
+                <div style="margin-top: 4px;">
+                  ${r.verifiedPurchase ? '<span class="verified-pill">✓ Verified Purchase</span>' : '<span class="unverified-pill">Unverified</span>'}
+                </div>
+              </td>
+
+              <!-- Rating & Headline -->
+              <td style="padding: 14px 18px;">
+                <div class="star-gold">${stars} <strong style="color: #1e293b; font-size: 12.5px; margin-left: 2px;">${r.rating}.0</strong></div>
+                <div style="font-weight: 700; color: #0f172a; font-size: 13px; margin-top: 3px;">${r.title || 'Review Headline'}</div>
+              </td>
+
+              <!-- Comment Excerpt -->
+              <td style="padding: 14px 18px; max-width: 280px;">
+                <p style="margin: 0; font-size: 13px; color: #475569; line-height: 1.4; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">
+                  ${r.comment}
+                </p>
+                ${r.images && r.images.length > 0 ? `
+                  <div style="margin-top: 6px; display: flex; gap: 6px;">
+                    ${r.images.map(img => `<img src="${img}" style="width: 28px; height: 28px; border-radius: 4px; object-fit: cover; border: 1px solid #cbd5e1;">`).join('')}
+                  </div>
+                ` : ''}
+              </td>
+
+              <!-- Helpful -->
+              <td style="padding: 14px 18px;">
+                <span style="font-size: 12.5px; color: #475569; font-weight: 600;">👍 ${r.helpfulCount || 0}</span>
+              </td>
+
+              <!-- Date -->
+              <td style="padding: 14px 18px; font-size: 12.5px; color: #64748b;">
+                ${dateStr}
+              </td>
+
+              <!-- Action -->
+              <td style="padding: 14px 18px; text-align: right;">
+                <button type="button" onclick="deleteReviewByAdmin('${r._id}')" class="btn" style="background: #fee2e2; color: #dc2626; border: 1px solid #fca5a5; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.15s;" onmouseover="this.style.background='#fecaca'" onmouseout="this.style.background='#fee2e2'">
+                  <i class="fa-solid fa-trash"></i> Delete
+                </button>
+              </td>
+            </tr>
+          `;
+        }).join('');
+
+      } catch (err) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 40px; color: #dc2626;">Error: ${err.message}</td></tr>`;
+      }
+    }
+
+    async function deleteReviewByAdmin(reviewId) {
+      if (!confirm('Are you sure you want to permanently delete this customer review?')) return;
+
+      try {
+        const res = await fetch(`http://localhost:5000/api/reviews/admin/${reviewId}`, {
+          method: 'DELETE'
+        });
+        const data = await res.json();
+        if (data.success) {
+          loadAdminReviews();
+        } else {
+          alert(data.message || 'Failed to delete review');
+        }
+      } catch (err) {
+        alert('Error: ' + err.message);
+      }
+    }
+  </script>
+</body>
+
+</html>

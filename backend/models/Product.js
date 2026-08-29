@@ -1,5 +1,33 @@
 const mongoose = require('mongoose');
 
+const reviewSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: [true, 'Please enter your name'],
+    trim: true,
+  },
+  rating: {
+    type: Number,
+    required: [true, 'Please select a star rating'],
+    min: 1,
+    max: 5,
+  },
+  title: {
+    type: String,
+    default: '',
+    trim: true,
+  },
+  comment: {
+    type: String,
+    required: [true, 'Please enter review description'],
+    trim: true,
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  }
+});
+
 const productSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -66,6 +94,7 @@ const productSchema = new mongoose.Schema({
     type: Number,
     default: 12,
   },
+  reviews: [reviewSchema],
   isFeatured: {
     type: Boolean,
     default: false,
