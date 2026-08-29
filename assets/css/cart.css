@@ -1155,29 +1155,51 @@
         }
 
         .cancel-order-btn {
-            background: #fef2f2;
-            color: #dc2626;
-            border: 1.5px solid #fecaca;
-            font-size: 13.5px;
+            background: #ffffff;
+            color: #e11d48;
+            border: 1.5px solid #fecdd3;
+            font-size: 13px;
             font-weight: 700;
-            padding: 10px 20px;
+            padding: 8px 18px;
             border-radius: 8px;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
-            gap: 6px;
-            transition: all 0.2s ease;
+            gap: 7px;
+            box-shadow: 0 1px 3px rgba(225, 29, 72, 0.08);
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .cancel-order-btn i {
+            font-size: 13px;
+            transition: transform 0.2s ease;
         }
 
         .cancel-order-btn:hover {
-            background: #dc2626;
+            background: linear-gradient(135deg, #e11d48 0%, #be123c 100%);
             color: #ffffff;
-            border-color: #dc2626;
+            border-color: #be123c;
+            box-shadow: 0 4px 14px rgba(225, 29, 72, 0.28);
+            transform: translateY(-1px);
+        }
+
+        .cancel-order-btn:hover i {
+            transform: scale(1.15);
+        }
+
+        .cancel-order-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 6px rgba(225, 29, 72, 0.2);
         }
 
         .cancel-order-btn:disabled {
-            opacity: 0.6;
+            opacity: 0.55;
             cursor: not-allowed;
+            background: #f1f5f9;
+            color: #94a3b8;
+            border-color: #cbd5e1;
+            box-shadow: none;
+            transform: none;
         }
 
         /* ====================================================
