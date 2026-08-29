@@ -186,7 +186,7 @@
             <div class="finance-kpi-icon-box kpi-blue"><i class="fa-solid fa-bag-shopping"></i></div>
           </div>
           <div class="finance-kpi-value" id="kOrders">—</div>
-          <div class="finance-kpi-sub"><span id="kDeliveryRate" style="font-weight:700;color:#0f7139;">—</span>&nbsp;fulfilled</div>
+          <div class="finance-kpi-sub"><span id="kDelivered" style="font-weight:700;color:#0f7139;">—</span>&nbsp;delivered &nbsp;·&nbsp; <span id="kDeliveryRate" style="color:#64748b;">—</span> rate</div>
         </div>
 
         <div class="finance-kpi-card">
@@ -195,7 +195,7 @@
             <div class="finance-kpi-icon-box kpi-purple"><i class="fa-solid fa-calculator"></i></div>
           </div>
           <div class="finance-kpi-value" id="kAOV">—</div>
-          <div class="finance-kpi-sub"><span id="kUnits" style="font-weight:700;color:#7c3aed;">—</span>&nbsp;units sold</div>
+          <div class="finance-kpi-sub">Total <span id="kUnits" style="font-weight:700;color:#7c3aed;">—</span>&nbsp;product units shipped across all orders</div>
         </div>
 
         <div class="finance-kpi-card">
@@ -381,6 +381,7 @@
 
       document.getElementById('kRevenue').textContent   = fmt(kpis.totalRevenue);
       document.getElementById('kOrders').textContent    = kpis.totalOrders;
+      document.getElementById('kDelivered').textContent = kpis.deliveredOrders + ' orders';
       document.getElementById('kDeliveryRate').textContent = kpis.deliveryRate + '%';
       document.getElementById('kAOV').textContent       = fmt(kpis.aov);
       document.getElementById('kUnits').textContent     = kpis.totalUnitsSold;
