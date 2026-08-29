@@ -253,13 +253,18 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             const urlParams = new URLSearchParams(window.location.search);
-            const activeTab = urlParams.get('tab');
+            const hashTab = window.location.hash ? window.location.hash.replace('#', '') : '';
+            const activeTab = urlParams.get('tab') || hashTab;
+            
             if (activeTab === 'current-order') {
                 const navBtns = document.querySelectorAll('.nav-tab-btn');
                 if (navBtns[1]) switchTab('current-order', navBtns[1]);
             } else if (activeTab === 'orders') {
                 const navBtns = document.querySelectorAll('.nav-tab-btn');
                 if (navBtns[2]) switchTab('orders', navBtns[2]);
+            } else if (activeTab === 'security') {
+                const navBtns = document.querySelectorAll('.nav-tab-btn');
+                if (navBtns[3]) switchTab('security', navBtns[3]);
             }
         });
 

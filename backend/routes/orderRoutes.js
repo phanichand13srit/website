@@ -3,6 +3,7 @@ const router = express.Router();
 const mongoose = require('mongoose');
 const Order = require('../models/Order');
 const Product = require('../models/Product');
+const { sendOrderPlacedNotification, sendOrderCancelledNotification } = require('../utils/notificationService');
 
 // Helper to escape regex special characters
 function escapeRegex(text) {
@@ -186,6 +187,13 @@ router.post('/', async (req, res) => {
       }
     }
 
+    // Trigger non-blocking email notification (Payment Invoice)
+    if (orderStatus !== 'Cancelled') {
+      sendOrderPlacedNotification({ order: createdOrder }).catch(err => {
+        console.error('Error dispatching order placement email:', err.message);
+      });
+    }
+
     res.status(201).json(createdOrder);
   } catch (error) {
     res.status(400).json({ message: 'Error placing order', error: error.message });
@@ -247,6 +255,14 @@ router.put('/:id/status', async (req, res) => {
     if (status === 'Delivered') order.isDelivered = true;
 
     const updatedOrder = await order.save();
+
+    // Trigger non-blocking cancellation notification if status was changed to Cancelled
+    if (newStatus === 'Cancelled' && oldStatus !== 'Cancelled') {
+      sendOrderCancelledNotification({ order: updatedOrder }).catch(err => {
+        console.error('Error dispatching order cancellation notifications:', err.message);
+      });
+    }
+
     res.json(updatedOrder);
   } catch (error) {
     res.status(500).json({ message: 'Error updating order status', error: error.message });
@@ -258,7 +274,30 @@ router.put('/:id/status', async (req, res) => {
 // @desc    Cancel an order and return all items back into inventory
 const cancelOrderHandler = async (req, res) => {
   try {
-    const order = await Order.findById(req.params.id);
+    const rawId = (req.params.id || '').trim();
+    const cleanId = rawId.replace(/^AF-/, '');
+
+    let order = null;
+
+    // 1. Try finding by MongoDB ObjectId
+    if (mongoose.Types.ObjectId.isValid(cleanId)) {
+      order = await Order.findById(cleanId);
+    }
+
+    // 2. Try finding by transactionId
+    if (!order) {
+      order = await Order.findOne({ transactionId: rawId });
+    }
+
+    // 3. Try finding by partial ID match
+    if (!order) {
+      const allOrders = await Order.find({}).sort({ createdAt: -1 });
+      order = allOrders.find(o => 
+        String(o._id).includes(cleanId) || 
+        String(o._id).toLowerCase().includes(cleanId.toLowerCase()) ||
+        String(o.transactionId || '').includes(rawId)
+      );
+    }
 
     if (!order) {
       return res.status(404).json({ message: 'Order not found' });
@@ -284,6 +323,11 @@ const cancelOrderHandler = async (req, res) => {
 
     order.status = 'Cancelled';
     const updatedOrder = await order.save();
+
+    // Trigger non-blocking Email cancellation notification to registered user
+    sendOrderCancelledNotification({ order: updatedOrder }).catch(err => {
+      console.error('Error dispatching order cancellation email:', err.message);
+    });
 
     res.json({
       success: true,
