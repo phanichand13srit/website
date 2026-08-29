@@ -80,6 +80,25 @@ async function checkVerifiedPurchase(userEmail, userId, productId, productName) 
   }
 }
 
+// @route   GET /api/reviews/latest
+// @desc    Get latest real customer reviews across all products for homepage showcase
+router.get('/latest', async (req, res) => {
+  try {
+    const limit = Number(req.query.limit) || 12;
+    const reviews = await Review.find({})
+      .populate('productId', 'name image price category')
+      .sort({ createdAt: -1 })
+      .limit(limit);
+
+    res.json({
+      success: true,
+      reviews
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Error fetching latest reviews', error: error.message });
+  }
+});
+
 // @route   GET /api/reviews/product/:productId
 // @desc    Get all reviews for a product with filtering, sorting, and summary stats
 router.get('/product/:productId', async (req, res) => {

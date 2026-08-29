@@ -2455,5 +2455,139 @@ window.closeAmazonReviewLightbox = function() {
     if (lightbox) lightbox.style.display = 'none';
 };
 
+// ============================================================
+// 🌟 REAL REVIEWS & RATINGS SYNC (HOMEPAGE & STOREFRONT)
+// Replaces hardcoded/fake review numbers with 100% real MongoDB data
+// ============================================================
+async function syncHomepageRealRatingsAndReviews() {
+    // 1. Fetch Real Products from Backend
+    try {
+        const prodRes = await fetch('http://localhost:5000/api/products');
+        if (prodRes.ok) {
+            const products = await prodRes.json();
+            if (Array.isArray(products) && products.length > 0) {
+                // Map products by name and slug for fast lookup
+                const prodMap = {};
+                products.forEach(p => {
+                    if (p.name) prodMap[p.name.toLowerCase().trim()] = p;
+                    if (p.title) prodMap[p.title.toLowerCase().trim()] = p;
+                });
 
+                // Update all product cards on the current page
+                const cards = document.querySelectorAll('.product-card');
+                cards.forEach(card => {
+                    const headingEl = card.querySelector('.card__heading');
+                    const ratingBox = card.querySelector('.rating-box');
+                    if (!headingEl || !ratingBox) return;
 
+                    const title = headingEl.textContent.trim().toLowerCase();
+                    const matched = prodMap[title] || Object.values(prodMap).find(p => title.includes(p.name.toLowerCase()) || p.name.toLowerCase().includes(title));
+
+                    if (matched) {
+                        const count = Number(matched.numReviews || 0);
+                        const rate = Number(matched.rating || 5.0).toFixed(1);
+                        const starsFilled = Math.round(matched.rating || 5);
+                        const starsStr = '★'.repeat(starsFilled) + '☆'.repeat(5 - starsFilled);
+
+                        const starsEl = ratingBox.querySelector('.rating-stars');
+                        const textEl = ratingBox.querySelector('.rating-text');
+
+                        if (starsEl) starsEl.textContent = starsStr;
+                        if (textEl) {
+                            textEl.textContent = count > 0 ? `${rate} / 5.0 (${count})` : 'No reviews yet';
+                        }
+                    } else {
+                        // Product without DB match -> show clean no reviews yet
+                        const textEl = ratingBox.querySelector('.rating-text');
+                        if (textEl) textEl.textContent = 'No reviews yet';
+                    }
+                });
+            }
+        }
+    } catch (err) {
+        console.debug('[Reviews Sync] Products fetch error:', err);
+    }
+
+    // 2. Fetch Real Reviews for Homepage Showcase
+    const reviewsGrid = document.getElementById('homepageRealReviewsGrid');
+    if (!reviewsGrid) return;
+
+    try {
+        const revRes = await fetch('http://localhost:5000/api/reviews/latest?limit=8');
+        if (!revRes.ok) throw new Error('API ' + revRes.status);
+        const revData = await revRes.json();
+        const reviews = revData.reviews || [];
+
+        if (reviews.length === 0) {
+            reviewsGrid.innerHTML = `
+                <div style="grid-column: 1 / -1; text-align: center; padding: 40px 20px; background: #ffffff; border: 1px dashed #cbd5e1; border-radius: 12px; color: #64748b;">
+                    <div style="font-size: 32px; margin-bottom: 8px;">🌿</div>
+                    <h4 style="margin: 0 0 6px 0; color: #1e293b; font-size: 16px;">Be the First to Leave a Review!</h4>
+                    <p style="margin: 0 0 16px 0; font-size: 13.5px;">Order our farm-fresh products and share your authentic feedback with our community.</p>
+                    <a href="pages/collections.html?category=all" style="display: inline-block; background: #0f7139; color: #fff; padding: 8px 20px; border-radius: 20px; text-decoration: none; font-weight: 600; font-size: 13px;">Shop Our Products &rarr;</a>
+                </div>
+            `;
+            return;
+        }
+
+        reviewsGrid.innerHTML = reviews.map(r => {
+            const stars = '★'.repeat(r.rating || 5) + '☆'.repeat(5 - (r.rating || 5));
+            const dateStr = r.createdAt ? new Date(r.createdAt).toLocaleDateString('en-IN', {
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric'
+            }) : 'Recent';
+
+            const prodName = r.productName || (r.productId && r.productId.name) || 'Arshith Fresh Product';
+            const prodImg = (r.productId && r.productId.image) || 'https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM_1.jpg?v=1757334051&width=120';
+            const customerInitial = (r.customerName || 'C').charAt(0).toUpperCase();
+
+            return `
+                <div class="homepage-real-review-card" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 22px; display: flex; flex-direction: column; box-shadow: 0 2px 6px rgba(0,0,0,0.03); transition: transform 0.2s ease, box-shadow 0.2s ease;">
+                    <!-- Top Author Row -->
+                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 14px;">
+                        <div style="width: 38px; height: 38px; border-radius: 50%; background: #e8f5e9; color: #0f7139; font-weight: 700; font-size: 15px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                            ${customerInitial}
+                        </div>
+                        <div style="flex: 1; min-width: 0;">
+                            <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+                                <strong style="font-size: 13.5px; color: #1e293b;">${escapeHtml(r.customerName || 'Customer')}</strong>
+                                ${r.verifiedPurchase ? '<span style="background: #dcfce7; color: #15803d; font-size: 10.5px; font-weight: 700; padding: 1px 6px; border-radius: 10px;">✓ Verified</span>' : ''}
+                            </div>
+                            <span style="font-size: 11.5px; color: #94a3b8;">${dateStr}</span>
+                        </div>
+                    </div>
+
+                    <!-- Star Rating & Title -->
+                    <div style="margin-bottom: 10px;">
+                        <div style="color: #de7921; font-size: 14px; letter-spacing: 1px; margin-bottom: 2px;">${stars}</div>
+                        <strong style="font-size: 14px; color: #0f172a;">${escapeHtml(r.title || 'Customer Review')}</strong>
+                    </div>
+
+                    <!-- Review Comment Body -->
+                    <p style="font-size: 13px; line-height: 1.5; color: #334155; margin: 0 0 16px 0; flex: 1; word-break: break-word;">
+                        "${escapeHtml(r.comment)}"
+                    </p>
+
+                    <!-- Product Tag Footer -->
+                    <div style="margin-top: auto; padding-top: 12px; border-top: 1px solid #f1f5f9; display: flex; align-items: center; gap: 8px;">
+                        <img src="${prodImg}" alt="${escapeHtml(prodName)}" style="width: 28px; height: 28px; border-radius: 4px; object-fit: cover; border: 1px solid #e2e8f0;">
+                        <span style="font-size: 11.5px; font-weight: 600; color: #0284c7; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                            ${escapeHtml(prodName)}
+                        </span>
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+    } catch (err) {
+        console.debug('[Reviews Sync] Latest reviews fetch error:', err);
+    }
+}
+
+// Automatically trigger on page load
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', syncHomepageRealRatingsAndReviews);
+} else {
+    syncHomepageRealRatingsAndReviews();
+}
