@@ -2150,13 +2150,6 @@ function renderAmazonReviewsUI(container) {
                                     </button>
                                     <span style="color: #d5d9d9;">|</span>
                                     <a href="javascript:void(0)" onclick="if(typeof showToast==='function') showToast('Thank you for reporting. Our moderation team will review it.'); else alert('Thank you for reporting.');" style="font-size: 13px; color: #565959; text-decoration: none;">Report</a>
-
-                                    ${isOwnReview ? `
-                                        <div class="own-review-actions" style="display: flex; gap: 8px; margin-left: auto;">
-                                            <button type="button" class="edit-review-btn-sm" onclick="editAmazonOwnReview('${r._id}')" style="background: #f8fafc; border: 1px solid #cbd5e1; color: #0284c7; padding: 3px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer;">✏️ Edit</button>
-                                            <button type="button" class="delete-review-btn-sm" onclick="deleteAmazonOwnReview('${r._id}')" style="background: #fff; border: 1px solid #fca5a5; color: #dc2626; padding: 3px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer;">🗑️ Delete</button>
-                                        </div>
-                                    ` : ''}
                                 </div>
                             </div>
                         `;

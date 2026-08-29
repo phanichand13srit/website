@@ -206,31 +206,6 @@ router.post('/', async (req, res) => {
       sanitizedImages = images.filter(img => typeof img === 'string' && img.trim().length > 0);
     }
 
-    // Check duplicate review — if exists, UPDATE it instead of blocking
-    const existingReview = await Review.findOne({
-      productId: targetProductId,
-      customerEmail: customerEmail.toLowerCase().trim()
-    });
-
-    if (existingReview) {
-      // Customer bought the same product again and wants to update their review
-      existingReview.rating = numRating;
-      existingReview.title = title.trim();
-      existingReview.comment = comment.trim();
-      existingReview.images = sanitizedImages;
-      existingReview.updatedAt = new Date();
-
-      await existingReview.save();
-      await updateProductRatingStats(targetProductId);
-
-      return res.status(200).json({
-        success: true,
-        message: '✅ Your review has been updated successfully!',
-        review: existingReview,
-        updated: true
-      });
-    }
-
     // Check verified purchase
     const isVerified = await checkVerifiedPurchase(
       customerEmail,
