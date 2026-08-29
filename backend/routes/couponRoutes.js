@@ -2,79 +2,61 @@ const express = require('express');
 const router = express.Router();
 const Coupon = require('../models/Coupon');
 
-// Default Tiered Coupons list
+// Default starter coupons
 const DEFAULT_COUPONS = [
   {
     code: 'SAVE10',
     discountPercent: 10,
     minOrderAmount: 1000,
-    description: '10% OFF on orders above ₹1,000',
-    isActive: true,
+    description: '10% OFF on organic orders above ₹1,000',
+    isActive: true
   },
   {
     code: 'SAVE15',
     discountPercent: 15,
     minOrderAmount: 3000,
-    description: '15% OFF on orders above ₹3,000',
-    isActive: true,
+    description: '15% OFF on organic orders above ₹3,000',
+    isActive: true
   },
   {
     code: 'SAVE20',
     discountPercent: 20,
     minOrderAmount: 5000,
-    description: '20% OFF on orders above ₹5,000',
-    isActive: true,
+    description: '20% Mega Saver Discount on orders above ₹5,000',
+    isActive: true
   },
   {
     code: 'SAVE50',
     discountPercent: 50,
     minOrderAmount: 10000,
-    description: '50% MEGA DISCOUNT on orders above ₹10,000',
-    isActive: true,
+    description: '50% VIP Wholesale Discount on bulk orders above ₹10,000',
+    isActive: true
   },
   {
-    code: 'ARSHITH10',
+    code: 'FESTIVE10',
     discountPercent: 10,
     minOrderAmount: 1000,
-    description: '10% Welcome Discount above ₹1,000',
-    isActive: true,
+    description: '10% Festive special on orders above ₹1,000',
+    isActive: true
   },
   {
-    code: 'ARSHITH15',
-    discountPercent: 15,
-    minOrderAmount: 3000,
-    description: '15% Special Discount above ₹3,000',
-    isActive: true,
-  },
-  {
-    code: 'ARSHITH20',
-    discountPercent: 20,
-    minOrderAmount: 5000,
-    description: '20% Festive Discount above ₹5,000',
-    isActive: true,
-  },
-  {
-    code: 'ARSHITH50',
-    discountPercent: 50,
-    minOrderAmount: 10000,
-    description: '50% Royal Discount above ₹10,000',
-    isActive: true,
-  },
-  {
-    code: 'MEGA50',
-    discountPercent: 50,
-    minOrderAmount: 10000,
-    description: '50% Super Saver on orders above ₹10,000',
-    isActive: true,
+    code: 'WELCOME10',
+    discountPercent: 10,
+    minOrderAmount: 500,
+    description: '10% Welcome gift for new customers',
+    isActive: true
   }
 ];
 
-// Helper to seed if database has no coupons
+// Helper to auto-seed default coupons into database if empty
 async function ensureDefaultCoupons() {
   try {
-    const count = await Coupon.countDocuments({});
+    const count = await Coupon.countDocuments();
     if (count === 0) {
-      await Coupon.insertMany(DEFAULT_COUPONS);
+      for (const c of DEFAULT_COUPONS) {
+        await Coupon.create(c);
+      }
+      console.log('✅ Default coupons seeded into MongoDB.');
     }
   } catch (err) {
     // If DB fails, in-memory fallback will handle it
@@ -111,93 +93,9 @@ router.get('/all', async (req, res) => {
   }
 });
 
-// @route   GET /api/coupons/:id
-// @desc    Get single coupon by ID
-router.get('/:id', async (req, res) => {
-  try {
-    const coupon = await Coupon.findById(req.params.id);
-    if (!coupon) {
-      return res.status(404).json({ success: false, message: 'Coupon not found' });
-    }
-    res.json({ success: true, data: coupon, ...coupon.toObject() });
-  } catch (error) {
-    res.status(500).json({ success: false, message: 'Error retrieving coupon', error: error.message });
-  }
-});
-
-// @route   POST /api/coupons
-// @desc    Create a new coupon (Admin)
-router.post('/', async (req, res) => {
-  try {
-    const { code, discountPercent, minOrderAmount, description, isActive } = req.body;
-    const cleanCode = (code || '').trim().toUpperCase();
-
-    if (!cleanCode) {
-      return res.status(400).json({ success: false, message: 'Coupon code is required' });
-    }
-
-    if (!discountPercent || Number(discountPercent) <= 0 || Number(discountPercent) > 100) {
-      return res.status(400).json({ success: false, message: 'Discount percentage must be between 1 and 100' });
-    }
-
-    // Check if code already exists
-    const existing = await Coupon.findOne({ code: cleanCode });
-    if (existing) {
-      return res.status(400).json({ success: false, message: `Coupon code "${cleanCode}" already exists` });
-    }
-
-    const newCoupon = new Coupon({
-      code: cleanCode,
-      discountPercent: Number(discountPercent),
-      minOrderAmount: Number(minOrderAmount) || 0,
-      description: description || `${discountPercent}% OFF on orders above ₹${Number(minOrderAmount) || 0}`,
-      isActive: isActive !== undefined ? Boolean(isActive) : true
-    });
-
-    const saved = await newCoupon.save();
-    res.status(201).json({ success: true, message: 'Coupon created successfully!', data: saved, ...saved.toObject() });
-  } catch (error) {
-    res.status(500).json({ success: false, message: 'Error creating coupon', error: error.message });
-  }
-});
-
-// @route   PUT /api/coupons/:id
-// @desc    Update a coupon (Admin)
-router.put('/:id', async (req, res) => {
-  try {
-    const { code, discountPercent, minOrderAmount, description, isActive } = req.body;
-    const coupon = await Coupon.findById(req.params.id);
-
-    if (!coupon) {
-      return res.status(404).json({ success: false, message: 'Coupon not found' });
-    }
-
-    if (code) coupon.code = code.trim().toUpperCase();
-    if (discountPercent !== undefined) coupon.discountPercent = Number(discountPercent);
-    if (minOrderAmount !== undefined) coupon.minOrderAmount = Number(minOrderAmount);
-    if (description !== undefined) coupon.description = description;
-    if (isActive !== undefined) coupon.isActive = Boolean(isActive);
-
-    const updated = await coupon.save();
-    res.json({ success: true, message: 'Coupon updated successfully!', data: updated, ...updated.toObject() });
-  } catch (error) {
-    res.status(500).json({ success: false, message: 'Error updating coupon', error: error.message });
-  }
-});
-
-// @route   DELETE /api/coupons/:id
-// @desc    Delete a coupon (Admin)
-router.delete('/:id', async (req, res) => {
-  try {
-    const deleted = await Coupon.findByIdAndDelete(req.params.id);
-    if (!deleted) {
-      return res.status(404).json({ success: false, message: 'Coupon not found' });
-    }
-    res.json({ success: true, message: 'Coupon deleted successfully!' });
-  } catch (error) {
-    res.status(500).json({ success: false, message: 'Error deleting coupon', error: error.message });
-  }
-});
+// =========================================================================
+// VALIDATION & BULK OPERATIONS (MUST BE DEFINED BEFORE /:id ROUTES)
+// =========================================================================
 
 // @route   POST /api/coupons/validate
 // @desc    Validate a coupon code against cart subtotal
@@ -251,21 +149,149 @@ router.post('/validate', async (req, res) => {
     }
 
     // Calculate discount amount
-    const discountAmount = Math.round((numSubtotal * coupon.discountPercent) / 100 * 100) / 100;
-    const finalTotal = Math.max(0, numSubtotal - discountAmount);
+    const discountAmount = Math.round((numSubtotal * coupon.discountPercent) / 100);
+    const newTotal = Math.max(0, numSubtotal - discountAmount);
 
-    return res.json({
+    res.json({
       success: true,
-      code: coupon.code,
-      discountPercent: coupon.discountPercent,
-      discountAmount,
-      minOrderAmount: coupon.minOrderAmount,
-      finalTotal,
-      message: `🎉 Coupon "${coupon.code}" applied! You saved ${coupon.discountPercent}% (-₹${discountAmount.toFixed(2)}).`
+      message: `🎉 Coupon "${coupon.code}" applied! You saved ₹${discountAmount.toLocaleString('en-IN')} (${coupon.discountPercent}% OFF).`,
+      coupon: {
+        code: coupon.code,
+        discountPercent: coupon.discountPercent,
+        discountAmount,
+        minOrderAmount: coupon.minOrderAmount,
+        description: coupon.description,
+        newTotal
+      }
     });
 
   } catch (error) {
-    res.status(500).json({ success: false, message: 'Server error validating coupon', error: error.message });
+    res.status(500).json({ success: false, message: 'Error validating coupon', error: error.message });
+  }
+});
+
+// @route   POST /api/coupons/bulk-delete
+// @desc    Bulk delete coupons (Admin)
+router.post('/bulk-delete', async (req, res) => {
+  try {
+    const { ids } = req.body;
+    if (!Array.isArray(ids) || ids.length === 0) {
+      return res.status(400).json({ message: 'Please provide an array of coupon IDs' });
+    }
+    const result = await Coupon.deleteMany({ _id: { $in: ids } });
+    res.json({ success: true, message: `Successfully deleted ${result.deletedCount} coupons`, count: result.deletedCount });
+  } catch (error) {
+    res.status(500).json({ message: 'Error performing bulk coupon delete', error: error.message });
+  }
+});
+
+// @route   PUT /api/coupons/bulk-status
+// @desc    Bulk update coupon active status (Admin)
+router.put('/bulk-status', async (req, res) => {
+  try {
+    const { ids, isActive } = req.body;
+    if (!Array.isArray(ids) || ids.length === 0) {
+      return res.status(400).json({ message: 'Please provide coupon IDs' });
+    }
+    const result = await Coupon.updateMany(
+      { _id: { $in: ids } },
+      { $set: { isActive: !!isActive } }
+    );
+    res.json({ success: true, message: `Updated status for ${result.modifiedCount} coupons`, count: result.modifiedCount });
+  } catch (error) {
+    res.status(500).json({ message: 'Error updating bulk coupon status', error: error.message });
+  }
+});
+
+// @route   POST /api/coupons
+// @desc    Create a new coupon (Admin)
+router.post('/', async (req, res) => {
+  try {
+    const { code, discountPercent, minOrderAmount, description, isActive } = req.body;
+    const cleanCode = (code || '').trim().toUpperCase();
+
+    if (!cleanCode) {
+      return res.status(400).json({ success: false, message: 'Coupon code is required' });
+    }
+
+    if (!discountPercent || Number(discountPercent) <= 0 || Number(discountPercent) > 100) {
+      return res.status(400).json({ success: false, message: 'Discount percentage must be between 1 and 100' });
+    }
+
+    // Check if code already exists
+    const existing = await Coupon.findOne({ code: cleanCode });
+    if (existing) {
+      return res.status(400).json({ success: false, message: `Coupon code "${cleanCode}" already exists` });
+    }
+
+    const newCoupon = new Coupon({
+      code: cleanCode,
+      discountPercent: Number(discountPercent),
+      minOrderAmount: Number(minOrderAmount) || 0,
+      description: description || `${discountPercent}% OFF on orders above ₹${Number(minOrderAmount) || 0}`,
+      isActive: isActive !== undefined ? Boolean(isActive) : true
+    });
+
+    const saved = await newCoupon.save();
+    res.status(201).json({ success: true, message: 'Coupon created successfully!', data: saved, ...saved.toObject() });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Error creating coupon', error: error.message });
+  }
+});
+
+// =========================================================================
+// PARAMETERIZED /:id ROUTES
+// =========================================================================
+
+// @route   GET /api/coupons/:id
+// @desc    Get single coupon by ID
+router.get('/:id', async (req, res) => {
+  try {
+    const coupon = await Coupon.findById(req.params.id);
+    if (!coupon) {
+      return res.status(404).json({ success: false, message: 'Coupon not found' });
+    }
+    res.json({ success: true, data: coupon, ...coupon.toObject() });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Error retrieving coupon', error: error.message });
+  }
+});
+
+// @route   PUT /api/coupons/:id
+// @desc    Update a coupon (Admin)
+router.put('/:id', async (req, res) => {
+  try {
+    const { code, discountPercent, minOrderAmount, description, isActive } = req.body;
+    const coupon = await Coupon.findById(req.params.id);
+
+    if (!coupon) {
+      return res.status(404).json({ success: false, message: 'Coupon not found' });
+    }
+
+    if (code) coupon.code = code.trim().toUpperCase();
+    if (discountPercent !== undefined) coupon.discountPercent = Number(discountPercent);
+    if (minOrderAmount !== undefined) coupon.minOrderAmount = Number(minOrderAmount);
+    if (description !== undefined) coupon.description = description;
+    if (isActive !== undefined) coupon.isActive = Boolean(isActive);
+
+    const updated = await coupon.save();
+    res.json({ success: true, message: 'Coupon updated successfully!', data: updated, ...updated.toObject() });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Error updating coupon', error: error.message });
+  }
+});
+
+// @route   DELETE /api/coupons/:id
+// @desc    Delete a coupon (Admin)
+router.delete('/:id', async (req, res) => {
+  try {
+    const deleted = await Coupon.findByIdAndDelete(req.params.id);
+    if (!deleted) {
+      return res.status(404).json({ success: false, message: 'Coupon not found' });
+    }
+    res.json({ success: true, message: 'Coupon deleted successfully!' });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Error deleting coupon', error: error.message });
   }
 });
 

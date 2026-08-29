@@ -5,28 +5,31 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Collections & Categories - Arshith Fresh Admin</title>
   
+  <!-- Shared Admin Theme Stylesheet -->
   <link rel="stylesheet" href="../assets/css/admin.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
   <style>
-    .form-group { margin-bottom: 14px; }
-    .form-label { display: block; font-size: 13px; font-weight: 500; color: var(--text-primary, #303030); margin-bottom: 5px; }
-    .form-control { width: 100%; padding: 8px 12px; font-size: 13.5px; border: 1px solid var(--border-subtle, #d2d5d8); border-radius: 6px; background: #fff; color: #1a1a1a; box-sizing: border-box; outline: none; }
-    .form-control:focus { border-color: #2c6ecb; box-shadow: 0 0 0 2px rgba(44, 110, 203, 0.15); }
-    .subcat-tag { background: #e0f2fe; color: #0369a1; font-size: 11.5px; font-weight: 500; padding: 2px 8px; border-radius: 4px; display: inline-block; margin: 2px 2px; max-width: 280px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .action-btn-sm { background: none; border: 1px solid #d2d5d8; border-radius: 4px; padding: 4px 8px; cursor: pointer; font-size: 12px; color: #4a4d50; }
-    .action-btn-sm:hover { background: #f1f2f4; color: #1a1a1a; }
-    .action-btn-danger:hover { background: #fee2e2; border-color: #fca5a5; color: #dc2626; }
+    .subcat-tag {
+      display: inline-block;
+      background: #e0f2fe;
+      color: #0369a1;
+      font-size: 11.5px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 4px;
+      margin-right: 4px;
+      margin-bottom: 4px;
+    }
   </style>
 </head>
 <body>
 
-  <!-- TOP HEADER -->
+  <!-- Topbar -->
   <header class="global-topbar">
     <div class="topbar-left">
       <div class="shopify-logo">
-        <svg viewBox="0 0 109.5 124.5">
-          <path d="M74.7 14.1c-.2 0-.4.1-.5.1-.2-.8-.6-1.5-1.1-2.2-2.1-2.9-5.7-4.4-10.7-4.4-1.2 0-2.5.1-3.7.4-4.8 1.1-9.4 3.9-13.6 8.3-3 3.1-6.1 7.6-7.8 11.2-.8 1.7-1.5 3.3-2.1 4.7l-15.6 4.8c-4.8 1.5-5 1.9-5.6 6.9L.1 113.1c-.5 4.3 2.5 8 6.8 8.4.4 0 .9 0 1.3-.1l74-15.3c4.5-.9 7.7-4.9 7.4-9.5l-14.9-82.5z"/>
-        </svg>
+        <svg viewBox="0 0 109.5 124.5"><path d="M74.7 14.1c-.2 0-.4.1-.5.1-.2-.8-.6-1.5-1.1-2.2-2.1-2.9-5.7-4.4-10.7-4.4-1.2 0-2.5.1-3.7.4-4.8 1.1-9.4 3.9-13.6 8.3-3 3.1-6.1 7.6-7.8 11.2-.8 1.7-1.5 3.3-2.1 4.7l-15.6 4.8c-4.8 1.5-5 1.9-5.6 6.9L.1 113.1c-.5 4.3 2.5 8 6.8 8.4.4 0 .9 0 1.3-.1l74-15.3c4.5-.9 7.7-4.9 7.4-9.5l-14.9-82.5z"/></svg>
         <span>admin</span>
       </div>
     </div>
@@ -34,7 +37,7 @@
     <div class="topbar-center">
       <div class="search-box-wrapper">
         <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-        <input type="text" class="global-search-input" placeholder="Search collections, categories...">
+        <input type="text" class="global-search-input" placeholder="Search categories...">
         <span class="kbd-shortcut">CTRL K</span>
       </div>
     </div>
@@ -51,11 +54,12 @@
     </div>
   </header>
 
-  <!-- APP LAYOUT -->
+  <!-- App Layout -->
   <div class="app-container">
     <aside class="app-sidebar">
       <div class="sidebar-menu">
         <a href="dashboard.html" class="menu-item"><div class="menu-item-left"><i class="fa-solid fa-house"></i><span>Dashboard</span></div></a>
+        <a href="analytics.html" class="menu-item"><div class="menu-item-left"><i class="fa-solid fa-chart-line"></i><span>Financials & Analytics</span></div></a>
         <a href="orders.html" class="menu-item"><div class="menu-item-left"><i class="fa-solid fa-bag-shopping"></i><span>Orders</span></div></a>
         <a href="products.html" class="menu-item active"><div class="menu-item-left"><i class="fa-solid fa-tag"></i><span>Products</span></div></a>
         <div class="submenu-list">
@@ -88,11 +92,23 @@
           </div>
         </div>
 
+        <!-- Sticky / Floating Bulk Actions Toolbar -->
+        <div id="bulkActionsBar" class="bulk-actions-bar">
+          <div class="bulk-selection-info">
+            <span class="bulk-selection-badge"><i class="fa-solid fa-check"></i> <span id="bulkSelectedCount">0</span> selected</span>
+          </div>
+          <div class="bulk-action-buttons">
+            <button type="button" class="btn-bulk-action" onclick="exportSelectedCollections()"><i class="fa-solid fa-file-csv"></i> Export CSV</button>
+            <button type="button" class="btn-bulk-action btn-bulk-danger" onclick="bulkDeleteCollections()"><i class="fa-solid fa-trash"></i> Delete Selected</button>
+            <button type="button" class="btn-bulk-close" onclick="deselectAll()" title="Deselect All"><i class="fa-solid fa-xmark"></i></button>
+          </div>
+        </div>
+
         <div class="table-scroll-container">
           <table class="shopify-table">
             <thead>
               <tr>
-                <th style="width: 36px;"><input type="checkbox" class="custom-checkbox"></th>
+                <th style="width: 36px;"><input type="checkbox" class="custom-checkbox" id="selectAllCheckbox" title="Select All"></th>
                 <th style="width: 220px;">Category</th>
                 <th style="min-width: 280px;">Sub-categories</th>
                 <th style="width: 150px; white-space: nowrap;">Products Count</th>
@@ -119,85 +135,86 @@
         <input type="hidden" id="collId">
         <div class="modal-body" style="padding: 20px 24px;">
           <div class="form-group">
-            <label class="form-label">Category Title *</label>
-            <input type="text" id="collTitle" class="form-control" placeholder="e.g. Dry Fruits or Cold-Pressed Oils" required>
+            <label class="form-label" style="font-weight:600;">Category Title *</label>
+            <input type="text" id="collTitle" class="form-control" placeholder="e.g. Oils, Spices, Dry Fruits" required style="width:100%; padding:8px 12px; border:1px solid #cbd5e1; border-radius:6px; font-size:13.5px;">
+          </div>
+          
+          <div class="form-group" style="margin-top: 14px;">
+            <label class="form-label" style="font-weight:600;">Sub-categories (comma-separated)</label>
+            <input type="text" id="collSubcategories" class="form-control" placeholder="e.g. Cold-Pressed Groundnut Oil, Wood-Pressed Sesame Oil, Coconut Oil" style="width:100%; padding:8px 12px; border:1px solid #cbd5e1; border-radius:6px; font-size:13.5px;">
+            <div style="font-size: 11.5px; color: #64748b; margin-top: 4px;">Separate multiple subcategories with commas.</div>
           </div>
 
-          <div class="form-group">
-            <label class="form-label">Sub-categories (Comma-separated)</label>
-            <input type="text" id="collSubcategories" class="form-control" placeholder="e.g. Badam, Cashews, Dates, Walnuts, Pista">
-            <small style="color: #64748b; font-size: 12px; margin-top: 4px; display: block;">Separate each sub-category name with a comma. These populate the dropdown in the Add/Edit Product form.</small>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label" style="display: flex; justify-content: space-between; align-items: center;">
-              <span>Category Image</span>
-              <span style="font-size: 11.5px; color: #64748b; font-weight: normal;">Upload from laptop or paste URL</span>
-            </label>
-
-            <!-- Choose File from Laptop / Drag & Drop -->
-            <div id="collImageDropzone" style="border: 2px dashed #cbd5e1; border-radius: 8px; padding: 14px 16px; text-align: center; cursor: pointer; background: #f8fafc; margin-bottom: 8px; transition: all 0.2s ease;" onclick="document.getElementById('collImageFile').click()">
+          <div class="form-group" style="margin-top: 14px;">
+            <label class="form-label" style="font-weight:600;">Category Image / Banner</label>
+            
+            <!-- Drag & Drop Upload Zone -->
+            <div id="collImageDropzone" style="border: 2px dashed #cbd5e1; border-radius: 8px; padding: 18px 16px; text-align: center; background: #f8fafc; cursor: pointer; transition: all 0.2s ease;">
+              <i class="fa-solid fa-cloud-arrow-up" style="font-size: 24px; color: #0f7139; margin-bottom: 6px;"></i>
+              <div style="font-size: 13px; font-weight: 600; color: #334155;">Click to upload local photo or drag & drop</div>
+              <div style="font-size: 11px; color: #64748b; margin-top: 2px;">PNG, JPG, WEBP or GIF (Max 10MB)</div>
               <input type="file" id="collImageFile" accept="image/*" style="display: none;" onchange="handleCollFileSelect(event)">
-              <i class="fa-solid fa-cloud-arrow-up" style="font-size: 24px; color: #0f7139; margin-bottom: 4px;"></i>
-              <div style="font-size: 13px; font-weight: 600; color: #1e293b;">Click to choose image from laptop</div>
             </div>
 
-            <div style="display: flex; align-items: center; margin: 8px 0; gap: 10px;">
-              <div style="flex: 1; height: 1px; background: #e2e8f0;"></div>
-              <span style="font-size: 10.5px; color: #94a3b8; font-weight: 600;">OR PASTE IMAGE URL</span>
-              <div style="flex: 1; height: 1px; background: #e2e8f0;"></div>
+            <div style="margin-top: 8px; display: flex; align-items: center; gap: 8px;">
+              <span style="font-size: 12px; color: #64748b; font-weight: 500;">Or URL:</span>
+              <input type="text" id="collImage" class="form-control" placeholder="https://... or image URL" oninput="updateCollPreview(this.value)" style="flex:1; padding:6px 10px; border:1px solid #cbd5e1; border-radius:6px; font-size:12.5px;">
             </div>
 
-            <input type="text" id="collImage" class="form-control" placeholder="https://images.unsplash.com/... or chosen image data" oninput="updateCollPreview(this.value)">
-
-            <div id="collPreviewBox" style="margin-top: 8px; display: none; text-align: center; background: #f8fafc; padding: 8px; border-radius: 6px; border: 1px solid #e2e8f0;">
-              <img id="collPreviewImg" src="" alt="Category Preview" style="max-height: 80px; max-width: 100%; border-radius: 4px; object-fit: contain;">
+            <!-- Preview Box -->
+            <div id="collPreviewBox" style="margin-top: 10px; text-align: center; display: none;">
+              <img id="collPreviewImg" src="" alt="Preview" style="max-height: 110px; max-width: 100%; border-radius: 8px; border: 1px solid #cbd5e1; object-fit: cover;">
             </div>
           </div>
 
-          <div class="form-group">
-            <label class="form-label">Description</label>
-            <textarea id="collDescription" class="form-control" rows="2" placeholder="Brief category description..."></textarea>
+          <div class="form-group" style="margin-top: 14px;">
+            <label class="form-label" style="font-weight:600;">Description (Optional)</label>
+            <textarea id="collDescription" class="form-control" rows="3" placeholder="Category story, health benefits or description..." style="width:100%; padding:8px 12px; border:1px solid #cbd5e1; border-radius:6px; font-size:13.5px; resize:vertical;"></textarea>
           </div>
         </div>
-        <div class="modal-footer" style="background: var(--bg-surface); border-top: 1px solid var(--border-color); padding: 14px 24px; display: flex; justify-content: flex-end; gap: 10px;">
+        <div class="modal-footer" style="padding: 14px 24px; border-top: 1px solid #e2e8f0; display: flex; justify-content: flex-end; gap: 10px;">
           <button type="button" class="btn-pill" onclick="closeModal()">Cancel</button>
-          <button type="submit" id="saveCollBtn" class="btn-pill btn-pill-primary">Save Category</button>
+          <button type="submit" class="btn-pill btn-pill-primary" id="saveCollBtn">Save Category</button>
         </div>
       </form>
     </div>
   </div>
 
+  <script src="../assets/js/admin-bulk.js"></script>
   <script>
-    const API_BASE = window.location.origin.includes('http') ? window.location.origin + '/api' : 'http://localhost:5000/api';
+    const API_BASE = 'http://localhost:5000/api';
     const tbody = document.getElementById('collectionsTableBody');
     const searchInput = document.getElementById('collectionSearchInput');
     const modal = document.getElementById('collectionModal');
+    const selectAllCheckbox = document.getElementById('selectAllCheckbox');
+    const bulkBar = document.getElementById('bulkActionsBar');
+    const bulkCountSpan = document.getElementById('bulkSelectedCount');
 
     let allCollections = [];
     let allProducts = [];
-
-
+    let displayedCollections = [];
 
     async function fetchCollections() {
       try {
         tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 25px;"><i class="fa-solid fa-spinner fa-spin"></i> Loading...</td></tr>';
         
-        const [colRes, prodRes] = await Promise.all([
+        const [res, prodRes] = await Promise.all([
           fetch(`${API_BASE}/collections`),
           fetch(`${API_BASE}/products`)
         ]);
 
-        const colData = await colRes.json();
-        const prodData = await prodRes.json();
-
-        allCollections = Array.isArray(colData) ? colData : (colData.data || []);
-        allProducts = Array.isArray(prodData) ? prodData : (prodData.data || []);
+        if (res.ok) {
+          allCollections = await res.json();
+        }
+        if (prodRes.ok) {
+          allProducts = await prodRes.json();
+        }
 
         renderTable(allCollections);
+        updateSelectionState();
       } catch (err) {
-        console.error('Error fetching collections:', err);
-        tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 20px; color: #ef4444;">Failed to load collections. Please refresh.</td></tr>';
+        console.error('Error fetching categories:', err);
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 20px; color: #ef4444;">Failed to load categories.</td></tr>';
       }
     }
 
@@ -219,6 +236,7 @@
     function renderTable(collections) {
       tbody.innerHTML = '';
       const list = Array.isArray(collections) ? collections : [];
+      displayedCollections = list;
       
       const countElem = document.getElementById('collectionCount');
       if (countElem) {
@@ -227,6 +245,7 @@
 
       if (list.length === 0) {
         tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 25px; color: #6d7175;">No categories found. Click "+ Add category" to create one.</td></tr>';
+        updateSelectionState();
         return;
       }
 
@@ -242,8 +261,14 @@
         const imgUrl = getCollectionImage(col);
 
         const tr = document.createElement('tr');
+        tr.dataset.id = col._id;
+        tr.dataset.title = colTitle;
+        tr.dataset.slug = col.slug || '';
+        tr.dataset.subs = subs.join(', ');
+        tr.dataset.count = prodCount;
+
         tr.innerHTML = `
-          <td><input type="checkbox" class="custom-checkbox"></td>
+          <td><input type="checkbox" class="custom-checkbox row-checkbox" value="${col._id}"></td>
           <td>
             <div class="table-product-item">
               <img src="${imgUrl}" class="table-product-thumb" alt="${colTitle}" onerror="this.src='https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=80';">
@@ -268,6 +293,128 @@
         `;
         tbody.appendChild(tr);
       });
+
+      attachRowCheckboxListeners();
+    }
+
+    // Selection Tracking
+    function attachRowCheckboxListeners() {
+      const rowCheckboxes = tbody.querySelectorAll('.row-checkbox');
+      rowCheckboxes.forEach(cb => {
+        cb.addEventListener('change', () => {
+          const row = cb.closest('tr');
+          if (cb.checked) {
+            row.classList.add('row-selected');
+          } else {
+            row.classList.remove('row-selected');
+          }
+          updateSelectionState();
+        });
+      });
+    }
+
+    function getSelectedRows() {
+      const selected = [];
+      tbody.querySelectorAll('.row-checkbox:checked').forEach(cb => {
+        const row = cb.closest('tr');
+        selected.push({
+          id: cb.value,
+          title: row.dataset.title,
+          slug: row.dataset.slug,
+          subs: row.dataset.subs,
+          count: row.dataset.count
+        });
+      });
+      return selected;
+    }
+
+    function updateSelectionState() {
+      const selected = getSelectedRows();
+      const count = selected.length;
+      const allCheckboxes = tbody.querySelectorAll('.row-checkbox');
+
+      if (count > 0) {
+        bulkCountSpan.textContent = count;
+        bulkBar.classList.add('active');
+      } else {
+        bulkBar.classList.remove('active');
+      }
+
+      if (selectAllCheckbox) {
+        if (allCheckboxes.length > 0 && count === allCheckboxes.length) {
+          selectAllCheckbox.checked = true;
+          selectAllCheckbox.indeterminate = false;
+        } else if (count > 0) {
+          selectAllCheckbox.checked = false;
+          selectAllCheckbox.indeterminate = true;
+        } else {
+          selectAllCheckbox.checked = false;
+          selectAllCheckbox.indeterminate = false;
+        }
+      }
+    }
+
+    if (selectAllCheckbox) {
+      selectAllCheckbox.addEventListener('change', function() {
+        const isChecked = this.checked;
+        const allCheckboxes = tbody.querySelectorAll('.row-checkbox');
+        allCheckboxes.forEach(cb => {
+          cb.checked = isChecked;
+          const row = cb.closest('tr');
+          if (isChecked) row.classList.add('row-selected');
+          else row.classList.remove('row-selected');
+        });
+        updateSelectionState();
+      });
+    }
+
+    function deselectAll() {
+      if (selectAllCheckbox) {
+        selectAllCheckbox.checked = false;
+        selectAllCheckbox.indeterminate = false;
+      }
+      tbody.querySelectorAll('.row-checkbox').forEach(cb => {
+        cb.checked = false;
+        cb.closest('tr').classList.remove('row-selected');
+      });
+      updateSelectionState();
+    }
+
+    // Bulk Action: Export Collections CSV
+    function exportSelectedCollections() {
+      const selected = getSelectedRows();
+      if (selected.length === 0) return;
+
+      const headers = ['Category ID', 'Category Title', 'Slug', 'Subcategories', 'Products Count'];
+      const rows = selected.map(c => [c.id, c.title, c.slug, c.subs || 'None', c.count]);
+      AdminExport.downloadCSV('categories_export', headers, rows);
+    }
+
+    // Bulk Action: Delete Selected Collections
+    async function bulkDeleteCollections() {
+      const selected = getSelectedRows();
+      if (selected.length === 0) return;
+
+      if (!confirm(`⚠️ Permanently delete ${selected.length} selected category(ies)? Products under these categories will remain available.`)) return;
+
+      const ids = selected.map(c => c.id);
+      try {
+        const res = await fetch(`${API_BASE}/collections/bulk-delete`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'x-admin-dev': 'true' },
+          body: JSON.stringify({ ids })
+        });
+
+        if (res.ok) {
+          AdminToast.show(`Successfully deleted ${ids.length} category(ies)!`, 'success');
+          deselectAll();
+          fetchCollections();
+        } else {
+          AdminToast.show('Failed to delete categories', 'error');
+        }
+      } catch (e) {
+        AdminToast.show('Error deleting categories', 'error');
+      }
     }
 
     if (searchInput) {
@@ -291,7 +438,7 @@
       if (!file) return;
 
       if (!file.type.startsWith('image/')) {
-        alert('Please select an image file (JPG, PNG, WEBP, GIF)');
+        AdminToast.show('Please select an image file (JPG, PNG, WEBP, GIF)', 'error');
         return;
       }
 
@@ -386,11 +533,11 @@
           throw new Error(err.message || 'Failed to save');
         }
 
-        alert(id ? 'Category updated successfully!' : 'Category created successfully!');
+        AdminToast.show(id ? 'Category updated successfully!' : 'Category created successfully!', 'success');
         closeModal();
         fetchCollections();
       } catch (err) {
-        alert('Error: ' + err.message);
+        AdminToast.show('Error: ' + err.message, 'error');
       } finally {
         btn.disabled = false;
         btn.textContent = 'Save Category';
@@ -406,13 +553,13 @@
           headers: { 'x-admin-dev': 'true' }
         });
         if (res.ok) {
-          alert('Category deleted successfully!');
+          AdminToast.show('Category deleted successfully!', 'success');
           fetchCollections();
         } else {
-          alert('Failed to delete category.');
+          AdminToast.show('Failed to delete category.', 'error');
         }
       } catch (e) {
-        alert('Error deleting category.');
+        AdminToast.show('Error deleting category.', 'error');
       }
     }
 
@@ -453,7 +600,6 @@
     window.closeModal = closeModal;
 
     fetchCollections();
-    document.addEventListener('DOMContentLoaded', fetchCollections);
   </script>
 
   <!-- Universal Image Preview Lightbox Modal -->

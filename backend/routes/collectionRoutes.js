@@ -13,21 +13,6 @@ router.get('/', async (req, res) => {
   }
 });
 
-// @route   GET /api/collections/:id
-// @desc    Get single collection by ID
-router.get('/:id', async (req, res) => {
-  try {
-    const collection = await Collection.findById(req.params.id);
-    if (!collection) {
-      return res.status(404).json({ success: false, message: 'Collection not found' });
-    }
-    const colObj = collection.toObject();
-    res.json({ success: true, data: colObj, ...colObj });
-  } catch (error) {
-    res.status(500).json({ success: false, message: 'Error retrieving collection', error: error.message });
-  }
-});
-
 // @route   POST /api/collections
 // @desc    Create a collection (Admin)
 router.post('/', async (req, res) => {
@@ -68,6 +53,44 @@ router.post('/', async (req, res) => {
   }
 });
 
+// =========================================================================
+// BULK OPERATIONS (MUST BE DEFINED BEFORE /:id ROUTES)
+// =========================================================================
+
+// @route   POST /api/collections/bulk-delete
+// @desc    Bulk delete collections (Admin)
+router.post('/bulk-delete', async (req, res) => {
+  try {
+    const { ids } = req.body;
+    if (!Array.isArray(ids) || ids.length === 0) {
+      return res.status(400).json({ message: 'Please provide an array of collection IDs' });
+    }
+    const result = await Collection.deleteMany({ _id: { $in: ids } });
+    res.json({ success: true, message: `Successfully deleted ${result.deletedCount} collections`, count: result.deletedCount });
+  } catch (error) {
+    res.status(500).json({ message: 'Error performing bulk collection delete', error: error.message });
+  }
+});
+
+// =========================================================================
+// PARAMETERIZED /:id ROUTES
+// =========================================================================
+
+// @route   GET /api/collections/:id
+// @desc    Get single collection by ID
+router.get('/:id', async (req, res) => {
+  try {
+    const collection = await Collection.findById(req.params.id);
+    if (!collection) {
+      return res.status(404).json({ success: false, message: 'Collection not found' });
+    }
+    const colObj = collection.toObject();
+    res.json({ success: true, data: colObj, ...colObj });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Error retrieving collection', error: error.message });
+  }
+});
+
 // @route   PUT /api/collections/:id
 // @desc    Update a collection & its subcategories (Admin)
 router.put('/:id', async (req, res) => {
@@ -98,10 +121,8 @@ router.put('/:id', async (req, res) => {
     );
 
     if (!updated) {
-      return res.status(404).json({ success: false, message: 'Collection not found' });
+      return res.status(404).json({ success: false, message: 'Collection not found to update' });
     }
-
-    console.log(`✅ Updated collection in MongoDB: "${updated.title}" (ID: ${updated._id})`);
 
     const updatedObj = updated.toObject();
     res.json({ success: true, data: updatedObj, ...updatedObj });

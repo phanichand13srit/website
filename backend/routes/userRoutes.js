@@ -352,4 +352,53 @@ router.get('/', async (req, res) => {
   }
 });
 
+// @route   POST /api/users/bulk-delete
+// @desc    Bulk delete users by IDs (Admin)
+router.post('/bulk-delete', async (req, res) => {
+  try {
+    const { ids } = req.body;
+    if (!Array.isArray(ids) || ids.length === 0) {
+      return res.status(400).json({ message: 'Please provide an array of user IDs to delete' });
+    }
+    const result = await User.deleteMany({ _id: { $in: ids } });
+    res.json({ success: true, message: `Successfully deleted ${result.deletedCount} users`, count: result.deletedCount });
+  } catch (error) {
+    res.status(500).json({ message: 'Error performing bulk delete', error: error.message });
+  }
+});
+
+// @route   PUT /api/users/bulk-role
+// @desc    Bulk update user roles (Admin)
+router.put('/bulk-role', async (req, res) => {
+  try {
+    const { ids, role } = req.body;
+    if (!Array.isArray(ids) || ids.length === 0 || !role) {
+      return res.status(400).json({ message: 'Please provide user IDs and a valid role' });
+    }
+    const result = await User.updateMany(
+      { _id: { $in: ids } },
+      { $set: { role } }
+    );
+    res.json({ success: true, message: `Updated role to ${role} for ${result.modifiedCount} users`, count: result.modifiedCount });
+  } catch (error) {
+    res.status(500).json({ message: 'Error updating user roles', error: error.message });
+  }
+});
+
+// @route   DELETE /api/users/:id
+// @desc    Delete single user (Admin)
+router.delete('/:id', async (req, res) => {
+  try {
+    const user = await User.findByIdAndDelete(req.params.id);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    res.json({ success: true, message: 'User deleted successfully', id: req.params.id });
+  } catch (error) {
+    res.status(500).json({ message: 'Error deleting user', error: error.message });
+  }
+});
+
 module.exports = router;
+
+

@@ -103,20 +103,6 @@ router.get('/', async (req, res) => {
   }
 });
 
-// @route   GET /api/orders/:id
-// @desc    Get single order details by ID
-router.get('/:id', async (req, res) => {
-  try {
-    const order = await Order.findById(req.params.id).populate('orderItems.product', 'name price image');
-    if (!order) {
-      return res.status(404).json({ message: 'Order not found' });
-    }
-    res.json(order);
-  } catch (error) {
-    res.status(500).json({ message: 'Error retrieving order', error: error.message });
-  }
-});
-
 // @route   POST /api/orders
 // @desc    Create a new order (Checkout) & automatically decrement inventory
 router.post('/', async (req, res) => {
@@ -200,6 +186,94 @@ router.post('/', async (req, res) => {
   }
 });
 
+// =========================================================================
+// BULK ORDER OPERATIONS (MUST BE DEFINED BEFORE /:id ROUTES)
+// =========================================================================
+
+// @route   POST /api/orders/bulk-delete
+// @desc    Bulk delete orders (Admin)
+router.post('/bulk-delete', async (req, res) => {
+  try {
+    const { ids } = req.body;
+    if (!Array.isArray(ids) || ids.length === 0) {
+      return res.status(400).json({ message: 'Please provide an array of order IDs' });
+    }
+    
+    // Find active orders to restore inventory
+    const orders = await Order.find({ _id: { $in: ids } });
+    for (const ord of orders) {
+      if (ord.status !== 'Cancelled' && ord.inventoryDeducted !== false) {
+        try {
+          await restoreInventoryForOrder(ord.orderItems);
+        } catch (e) {}
+      }
+    }
+
+    const result = await Order.deleteMany({ _id: { $in: ids } });
+    res.json({ success: true, message: `Successfully deleted ${result.deletedCount} orders`, count: result.deletedCount });
+  } catch (error) {
+    res.status(500).json({ message: 'Error performing bulk order delete', error: error.message });
+  }
+});
+
+// @route   PUT /api/orders/bulk-status
+// @desc    Bulk update order statuses (Admin)
+router.put('/bulk-status', async (req, res) => {
+  try {
+    const { ids, status } = req.body;
+    if (!Array.isArray(ids) || ids.length === 0 || !status) {
+      return res.status(400).json({ message: 'Please provide order IDs and a new status' });
+    }
+
+    const orders = await Order.find({ _id: { $in: ids } });
+    let updatedCount = 0;
+
+    for (const order of orders) {
+      const oldStatus = order.status;
+      const newStatus = status;
+
+      if (newStatus === 'Cancelled' && oldStatus !== 'Cancelled' && order.inventoryDeducted !== false) {
+        try {
+          await restoreInventoryForOrder(order.orderItems);
+          order.inventoryDeducted = false;
+        } catch (e) {}
+      } else if (oldStatus === 'Cancelled' && newStatus !== 'Cancelled' && order.inventoryDeducted === false) {
+        try {
+          await deductInventoryForOrder(order.orderItems);
+          order.inventoryDeducted = true;
+        } catch (e) {}
+      }
+
+      order.status = newStatus;
+      if (newStatus === 'Delivered') order.isDelivered = true;
+      await order.save();
+      updatedCount++;
+    }
+
+    res.json({ success: true, message: `Successfully updated ${updatedCount} orders to "${status}"`, count: updatedCount });
+  } catch (error) {
+    res.status(500).json({ message: 'Error performing bulk order status update', error: error.message });
+  }
+});
+
+// =========================================================================
+// PARAMETERIZED /:id ROUTES
+// =========================================================================
+
+// @route   GET /api/orders/:id
+// @desc    Get single order details by ID
+router.get('/:id', async (req, res) => {
+  try {
+    const order = await Order.findById(req.params.id).populate('orderItems.product', 'name price image');
+    if (!order) {
+      return res.status(404).json({ message: 'Order not found' });
+    }
+    res.json(order);
+  } catch (error) {
+    res.status(500).json({ message: 'Error retrieving order', error: error.message });
+  }
+});
+
 // @route   PUT /api/orders/:id/status
 // @desc    Update order status (Confirmed, Dispatched, Delivered, Cancelled) & auto adjust stock
 router.put('/:id/status', async (req, res) => {
@@ -268,7 +342,6 @@ router.put('/:id/status', async (req, res) => {
     res.status(500).json({ message: 'Error updating order status', error: error.message });
   }
 });
-
 
 // @route   PUT /api/orders/:id/cancel or POST /api/orders/:id/cancel
 // @desc    Cancel an order and return all items back into inventory
@@ -341,5 +414,26 @@ const cancelOrderHandler = async (req, res) => {
 
 router.put('/:id/cancel', cancelOrderHandler);
 router.post('/:id/cancel', cancelOrderHandler);
+
+// @route   DELETE /api/orders/:id
+// @desc    Delete single order (Admin)
+router.delete('/:id', async (req, res) => {
+  try {
+    const order = await Order.findById(req.params.id);
+    if (!order) {
+      return res.status(404).json({ message: 'Order not found' });
+    }
+    // If order was active, restore stock before deleting
+    if (order.status !== 'Cancelled' && order.inventoryDeducted !== false) {
+      try {
+        await restoreInventoryForOrder(order.orderItems);
+      } catch (err) {}
+    }
+    await Order.findByIdAndDelete(req.params.id);
+    res.json({ success: true, message: 'Order deleted successfully', id: req.params.id });
+  } catch (error) {
+    res.status(500).json({ message: 'Error deleting order', error: error.message });
+  }
+});
 
 module.exports = router;

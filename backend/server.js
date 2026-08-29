@@ -5,12 +5,13 @@ require('dotenv').config();
 const connectDB = require('./config/db');
 
 // Route Imports
-const productRoutes = require('./routes/productRoutes');
-const orderRoutes = require('./routes/orderRoutes');
-const userRoutes = require('./routes/userRoutes');
+const productRoutes    = require('./routes/productRoutes');
+const orderRoutes      = require('./routes/orderRoutes');
+const userRoutes       = require('./routes/userRoutes');
 const collectionRoutes = require('./routes/collectionRoutes');
-const couponRoutes = require('./routes/couponRoutes');
-const reviewRoutes = require('./routes/reviewRoutes');
+const couponRoutes     = require('./routes/couponRoutes');
+const reviewRoutes     = require('./routes/reviewRoutes');
+const analyticsRoutes  = require('./routes/analyticsRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -28,12 +29,13 @@ app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 // API Routes
-app.use('/api/products', productRoutes);
-app.use('/api/orders', orderRoutes);
-app.use('/api/users', userRoutes);
+app.use('/api/products',   productRoutes);
+app.use('/api/orders',     orderRoutes);
+app.use('/api/users',      userRoutes);
 app.use('/api/collections', collectionRoutes);
-app.use('/api/coupons', couponRoutes);
-app.use('/api/reviews', reviewRoutes);
+app.use('/api/coupons',    couponRoutes);
+app.use('/api/reviews',    reviewRoutes);
+app.use('/api/analytics',  analyticsRoutes);
 
 const path = require('path');
 

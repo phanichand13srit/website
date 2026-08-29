@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Customers - Arshith Fresh Admin</title>
+  <title>Customers & Users - Arshith Fresh Admin</title>
   
   <link rel="stylesheet" href="../assets/css/admin.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -44,6 +44,7 @@
     <aside class="app-sidebar">
       <div class="sidebar-menu">
         <a href="dashboard.html" class="menu-item"><div class="menu-item-left"><i class="fa-solid fa-house"></i><span>Dashboard</span></div></a>
+        <a href="analytics.html" class="menu-item"><div class="menu-item-left"><i class="fa-solid fa-chart-line"></i><span>Financials & Analytics</span></div></a>
         <a href="orders.html" class="menu-item"><div class="menu-item-left"><i class="fa-solid fa-bag-shopping"></i><span>Orders</span></div></a>
         <a href="products.html" class="menu-item"><div class="menu-item-left"><i class="fa-solid fa-tag"></i><span>Products</span></div></a>
         <div class="submenu-list">
@@ -75,21 +76,44 @@
           </div>
         </div>
 
+        <!-- Sticky / Floating Bulk Actions Toolbar -->
+        <div id="bulkActionsBar" class="bulk-actions-bar">
+          <div class="bulk-selection-info">
+            <span class="bulk-selection-badge"><i class="fa-solid fa-check"></i> <span id="bulkSelectedCount">0</span> selected</span>
+          </div>
+          <div class="bulk-action-buttons">
+            <button type="button" class="btn-bulk-action" onclick="copySelectedEmails()"><i class="fa-solid fa-envelope"></i> Copy Emails</button>
+            <button type="button" class="btn-bulk-action" onclick="exportSelectedUsers()"><i class="fa-solid fa-file-csv"></i> Export CSV</button>
+            
+            <div class="bulk-dropdown">
+              <button type="button" class="btn-bulk-action bulk-dropdown-toggle"><i class="fa-solid fa-user-gear"></i> Change Role <i class="fa-solid fa-chevron-down" style="font-size: 10px; margin-left: 2px;"></i></button>
+              <div class="bulk-dropdown-menu">
+                <button type="button" class="bulk-dropdown-item" onclick="bulkSetRole('customer')"><i class="fa-solid fa-user"></i> Set as Customer</button>
+                <button type="button" class="bulk-dropdown-item" onclick="bulkSetRole('admin')"><i class="fa-solid fa-shield"></i> Set as Admin</button>
+              </div>
+            </div>
+
+            <button type="button" class="btn-bulk-action btn-bulk-danger" onclick="bulkDeleteUsers()"><i class="fa-solid fa-trash"></i> Delete Selected</button>
+            <button type="button" class="btn-bulk-close" onclick="deselectAll()" title="Deselect All"><i class="fa-solid fa-xmark"></i></button>
+          </div>
+        </div>
+
         <div class="table-scroll-container">
           <table class="shopify-table">
             <thead>
               <tr>
-                <th style="width: 36px;"><input type="checkbox" class="custom-checkbox"></th>
+                <th style="width: 36px;"><input type="checkbox" class="custom-checkbox" id="selectAllCheckbox" title="Select All"></th>
                 <th>Customer / User</th>
                 <th>Email</th>
                 <th>Phone</th>
                 <th>Role</th>
                 <th>City / Location</th>
                 <th>Joined Date</th>
+                <th style="text-align: right;">Action</th>
               </tr>
             </thead>
             <tbody id="customersTableBody">
-              <tr><td colspan="7" style="text-align: center; padding: 25px;"><i class="fa-solid fa-spinner fa-spin"></i> Loading users...</td></tr>
+              <tr><td colspan="8" style="text-align: center; padding: 25px;"><i class="fa-solid fa-spinner fa-spin"></i> Loading users...</td></tr>
             </tbody>
           </table>
         </div>
@@ -97,33 +121,42 @@
     </main>
   </div>
 
+  <script src="../assets/js/admin-bulk.js"></script>
   <script>
     const API_BASE = 'http://localhost:5000/api';
     const tbody = document.getElementById('customersTableBody');
     const searchInput = document.getElementById('customerSearchInput');
+    const selectAllCheckbox = document.getElementById('selectAllCheckbox');
+    const bulkBar = document.getElementById('bulkActionsBar');
+    const bulkCountSpan = document.getElementById('bulkSelectedCount');
 
     let allUsers = [];
+    let displayedUsers = [];
 
     async function fetchCustomers() {
       try {
-        tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 25px;"><i class="fa-solid fa-spinner fa-spin"></i> Loading users...</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 25px;"><i class="fa-solid fa-spinner fa-spin"></i> Loading users...</td></tr>';
         
         const res = await fetch(`${API_BASE}/users`);
         if (!res.ok) throw new Error();
         allUsers = await res.json();
 
         document.getElementById('customerCount').textContent = `(${allUsers.length})`;
+        displayedUsers = allUsers;
         renderUsers(allUsers);
+        updateSelectionState();
       } catch (err) {
         console.error('Error fetching customers:', err);
-        tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 20px; color: #ef4444;">Failed to load users from database.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 20px; color: #ef4444;">Failed to load users from database.</td></tr>';
       }
     }
 
     function renderUsers(users) {
+      displayedUsers = users || [];
       tbody.innerHTML = '';
       if (!users || users.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 25px; color: #6d7175;">No registered users found.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 25px; color: #6d7175;">No registered users found.</td></tr>';
+        updateSelectionState();
         return;
       }
 
@@ -133,28 +166,241 @@
         const isAdm = u.role === 'admin';
 
         const tr = document.createElement('tr');
+        tr.dataset.id = u._id;
+        tr.dataset.name = name;
+        tr.dataset.email = u.email || '';
+        tr.dataset.phone = u.phone || '';
+        tr.dataset.role = u.role || 'customer';
+        tr.dataset.location = u.city || u.street || 'India';
+        tr.dataset.date = date;
+
         tr.innerHTML = `
-          <td><input type="checkbox" class="custom-checkbox"></td>
+          <td><input type="checkbox" class="custom-checkbox row-checkbox" value="${u._id}"></td>
           <td>
             <div style="display:flex; align-items:center; gap:10px;">
               <div style="width:34px; height:34px; border-radius:50%; background:#e2e8f0; color:#334155; font-weight:700; font-size:13px; display:flex; align-items:center; justify-content:center;">
                 ${name.charAt(0).toUpperCase()}
               </div>
-              <strong style="color: #1a1a1a;">${name}</strong>
+              <div>
+                <strong style="color: #1a1a1a;">${name}</strong>
+              </div>
             </div>
           </td>
-          <td>${u.email}</td>
+          <td><a href="mailto:${u.email}" style="color:#0f7139; font-weight:500;">${u.email}</a></td>
           <td>${u.phone || '<span style="color:#94a3b8;">-</span>'}</td>
           <td>
             <span class="status-pill ${isAdm ? 'active' : 'draft'}">${isAdm ? 'Admin' : 'Customer'}</span>
           </td>
           <td>${u.city || u.street || 'India'}</td>
           <td><span style="font-size: 12px; color: #64748b;">${date}</span></td>
+          <td style="text-align: right;">
+            <button class="action-btn-sm action-btn-danger" title="Delete User" onclick="deleteSingleUser('${u._id}', '${name.replace(/'/g, "\\'")}')">
+              <i class="fa-solid fa-trash"></i>
+            </button>
+          </td>
         `;
         tbody.appendChild(tr);
       });
+
+      attachRowCheckboxListeners();
     }
 
+    // Selection Tracking
+    function attachRowCheckboxListeners() {
+      const rowCheckboxes = tbody.querySelectorAll('.row-checkbox');
+      rowCheckboxes.forEach(cb => {
+        cb.addEventListener('change', () => {
+          const row = cb.closest('tr');
+          if (cb.checked) {
+            row.classList.add('row-selected');
+          } else {
+            row.classList.remove('row-selected');
+          }
+          updateSelectionState();
+        });
+      });
+    }
+
+    function getSelectedRows() {
+      const selected = [];
+      tbody.querySelectorAll('.row-checkbox:checked').forEach(cb => {
+        const row = cb.closest('tr');
+        selected.push({
+          id: cb.value,
+          name: row.dataset.name,
+          email: row.dataset.email,
+          phone: row.dataset.phone,
+          role: row.dataset.role,
+          location: row.dataset.location,
+          date: row.dataset.date
+        });
+      });
+      return selected;
+    }
+
+    function updateSelectionState() {
+      const selected = getSelectedRows();
+      const count = selected.length;
+      const allCheckboxes = tbody.querySelectorAll('.row-checkbox');
+
+      if (count > 0) {
+        bulkCountSpan.textContent = count;
+        bulkBar.classList.add('active');
+      } else {
+        bulkBar.classList.remove('active');
+      }
+
+      if (selectAllCheckbox) {
+        if (allCheckboxes.length > 0 && count === allCheckboxes.length) {
+          selectAllCheckbox.checked = true;
+          selectAllCheckbox.indeterminate = false;
+        } else if (count > 0) {
+          selectAllCheckbox.checked = false;
+          selectAllCheckbox.indeterminate = true;
+        } else {
+          selectAllCheckbox.checked = false;
+          selectAllCheckbox.indeterminate = false;
+        }
+      }
+    }
+
+    if (selectAllCheckbox) {
+      selectAllCheckbox.addEventListener('change', function() {
+        const isChecked = this.checked;
+        const allCheckboxes = tbody.querySelectorAll('.row-checkbox');
+        allCheckboxes.forEach(cb => {
+          cb.checked = isChecked;
+          const row = cb.closest('tr');
+          if (isChecked) row.classList.add('row-selected');
+          else row.classList.remove('row-selected');
+        });
+        updateSelectionState();
+      });
+    }
+
+    function deselectAll() {
+      if (selectAllCheckbox) {
+        selectAllCheckbox.checked = false;
+        selectAllCheckbox.indeterminate = false;
+      }
+      tbody.querySelectorAll('.row-checkbox').forEach(cb => {
+        cb.checked = false;
+        cb.closest('tr').classList.remove('row-selected');
+      });
+      updateSelectionState();
+    }
+
+    // Bulk Action: Copy Emails
+    function copySelectedEmails() {
+      const selected = getSelectedRows();
+      if (selected.length === 0) return;
+
+      const emails = selected.map(u => u.email).filter(Boolean);
+      if (emails.length === 0) {
+        AdminToast.show('No emails available for selected users', 'error');
+        return;
+      }
+
+      const emailStr = emails.join(', ');
+      navigator.clipboard.writeText(emailStr).then(() => {
+        AdminToast.show(`Copied ${emails.length} email(s) to clipboard!`, 'success');
+      }).catch(() => {
+        AdminToast.show(`Emails: ${emailStr}`, 'info');
+      });
+    }
+
+    // Bulk Action: Export to CSV
+    function exportSelectedUsers() {
+      const selected = getSelectedRows();
+      if (selected.length === 0) return;
+
+      const headers = ['User ID', 'Name', 'Email', 'Phone', 'Role', 'City / Location', 'Joined Date'];
+      const rows = selected.map(u => [u.id, u.name, u.email, u.phone || '-', u.role, u.location, u.date]);
+      AdminExport.downloadCSV('customers_export', headers, rows);
+    }
+
+    // Bulk Action: Update Role
+    async function bulkSetRole(newRole) {
+      const selected = getSelectedRows();
+      if (selected.length === 0) return;
+
+      const ids = selected.map(u => u.id);
+      if (!confirm(`Are you sure you want to set role "${newRole}" for ${ids.length} selected user(s)?`)) {
+        return;
+      }
+
+      try {
+        const res = await fetch(`${API_BASE}/users/bulk-role`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json', 'x-admin-dev': 'true' },
+          body: JSON.stringify({ ids, role: newRole })
+        });
+
+        if (res.ok) {
+          AdminToast.show(`Successfully updated role to "${newRole}" for ${ids.length} user(s)!`, 'success');
+          deselectAll();
+          fetchCustomers();
+        } else {
+          const err = await res.json().catch(() => ({}));
+          AdminToast.show('Failed to update roles: ' + (err.message || 'Error'), 'error');
+        }
+      } catch (e) {
+        AdminToast.show('Network error updating roles', 'error');
+      }
+    }
+
+    // Bulk Action: Delete Selected Users
+    async function bulkDeleteUsers() {
+      const selected = getSelectedRows();
+      if (selected.length === 0) return;
+
+      const ids = selected.map(u => u.id);
+      if (!confirm(`⚠️ Are you sure you want to permanently delete ${ids.length} selected customer account(s)? This action cannot be undone.`)) {
+        return;
+      }
+
+      try {
+        const res = await fetch(`${API_BASE}/users/bulk-delete`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'x-admin-dev': 'true' },
+          body: JSON.stringify({ ids })
+        });
+
+        if (res.ok) {
+          AdminToast.show(`Successfully deleted ${ids.length} user(s)!`, 'success');
+          deselectAll();
+          fetchCustomers();
+        } else {
+          const err = await res.json().catch(() => ({}));
+          AdminToast.show('Failed to delete users: ' + (err.message || 'Error'), 'error');
+        }
+      } catch (e) {
+        AdminToast.show('Network error deleting users', 'error');
+      }
+    }
+
+    // Delete single user
+    async function deleteSingleUser(id, name) {
+      if (!confirm(`Delete customer account for "${name}"?`)) return;
+
+      try {
+        const res = await fetch(`${API_BASE}/users/${id}`, {
+          method: 'DELETE',
+          headers: { 'x-admin-dev': 'true' }
+        });
+
+        if (res.ok) {
+          AdminToast.show(`User "${name}" deleted!`, 'success');
+          fetchCustomers();
+        } else {
+          AdminToast.show('Failed to delete user', 'error');
+        }
+      } catch (e) {
+        AdminToast.show('Network error deleting user', 'error');
+      }
+    }
+
+    // Search filter
     if (searchInput) {
       searchInput.addEventListener('input', function(e) {
         const q = e.target.value.toLowerCase().trim();

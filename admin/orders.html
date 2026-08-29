@@ -8,101 +8,100 @@
   <link rel="stylesheet" href="../assets/css/admin.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    .status-badge-paid { background: #dcfce7; color: #166534; padding: 3px 8px; border-radius: 12px; font-size: 11.5px; font-weight: 600; }
-    .status-badge-pending { background: #fef9c3; color: #854d0e; padding: 3px 8px; border-radius: 12px; font-size: 11.5px; font-weight: 600; }
-    .status-badge-delivered { background: #dbeafe; color: #1e40af; padding: 3px 8px; border-radius: 12px; font-size: 11.5px; font-weight: 600; }
-    
     .tab-pill-btn {
-      background: #f1f5f9;
-      border: 1.5px solid #cbd5e1;
-      color: #475569;
+      padding: 6px 14px;
+      border-radius: 20px;
       font-size: 13px;
       font-weight: 600;
-      padding: 6px 16px;
-      border-radius: 20px;
+      border: 1px solid #cbd5e1;
+      background: #ffffff;
+      color: #475569;
       cursor: pointer;
-      transition: all 0.2s ease;
       display: inline-flex;
       align-items: center;
       gap: 6px;
+      transition: all 0.15s ease;
+    }
+    .tab-pill-btn:hover {
+      background: #f1f5f9;
+      border-color: #94a3b8;
     }
     .tab-pill-btn.active {
       background: #0f7139;
-      border-color: #0f7139;
       color: #ffffff;
+      border-color: #0f7139;
       box-shadow: 0 2px 6px rgba(15, 113, 57, 0.25);
     }
-    .badge-delivered-done {
-      background: #dcfce7;
-      color: #15803d;
-      padding: 4px 10px;
-      border-radius: 12px;
-      font-size: 12px;
-      font-weight: 700;
-    }
-    .badge-cancelled-done {
-      background: #fef2f2;
-      color: #dc2626;
-      padding: 4px 10px;
-      border-radius: 12px;
-      font-size: 12px;
-      font-weight: 700;
-    }
-    .status-change-dropdown {
-      background: #0f7139;
-      color: #ffffff;
-      border: none;
-      padding: 6px 14px;
-      border-radius: 8px;
-      font-size: 12.5px;
-      font-weight: 700;
-      cursor: pointer;
-      box-shadow: 0 2px 6px rgba(15, 113, 57, 0.2);
-      transition: all 0.2s ease;
-      appearance: none;
-      -webkit-appearance: none;
-      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-      background-repeat: no-repeat;
-      background-position: right 10px center;
-      background-size: 14px;
-      padding-right: 30px;
-    }
-    .status-change-dropdown:hover {
-      background-color: #0b592c;
-    }
     .btn-stage {
-      color: #ffffff;
-      border: none;
-      padding: 7px 14px;
-      border-radius: 8px;
-      font-size: 12.5px;
-      font-weight: 700;
+      padding: 5px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
       cursor: pointer;
-      transition: all 0.2s ease;
+      border: none;
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+      transition: all 0.15s ease;
     }
-    .btn-stage-confirm { background: #ea580c; }
-    .btn-stage-confirm:hover { background: #c2410c; }
-
-    .btn-stage-dispatch { background: #0284c7; }
-    .btn-stage-dispatch:hover { background: #0369a1; }
-
-    .btn-stage-deliver { background: #16a34a; }
-    .btn-stage-deliver:hover { background: #15803d; }
+    .btn-stage-confirm {
+      background: #e0f2fe;
+      color: #0369a1;
+      border: 1px solid #bae6fd;
+    }
+    .btn-stage-confirm:hover {
+      background: #0284c7;
+      color: #ffffff;
+    }
+    .btn-stage-dispatch {
+      background: #fef3c7;
+      color: #b45309;
+      border: 1px solid #fde68a;
+    }
+    .btn-stage-dispatch:hover {
+      background: #d97706;
+      color: #ffffff;
+    }
+    .btn-stage-deliver {
+      background: #dcfce7;
+      color: #15803d;
+      border: 1px solid #bbf7d0;
+    }
+    .btn-stage-deliver:hover {
+      background: #16a34a;
+      color: #ffffff;
+    }
+    .badge-delivered-done {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      color: #16a34a;
+      font-weight: 700;
+      font-size: 12px;
+      background: #f0fdf4;
+      padding: 4px 8px;
+      border-radius: 12px;
+    }
+    .badge-cancelled-done {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      color: #dc2626;
+      font-weight: 600;
+      font-size: 12px;
+      background: #fef2f2;
+      padding: 4px 8px;
+      border-radius: 12px;
+    }
   </style>
 </head>
 <body>
 
-  <!-- TOP HEADER -->
+  <!-- Top Header -->
   <header class="global-topbar">
     <div class="topbar-left">
       <div class="shopify-logo">
-        <svg viewBox="0 0 109.5 124.5">
-          <path d="M74.7 14.1c-.2 0-.4.1-.5.1-.2-.8-.6-1.5-1.1-2.2-2.1-2.9-5.7-4.4-10.7-4.4-1.2 0-2.5.1-3.7.4-4.8 1.1-9.4 3.9-13.6 8.3-3 3.1-6.1 7.6-7.8 11.2-.8 1.7-1.5 3.3-2.1 4.7l-15.6 4.8c-4.8 1.5-5 1.9-5.6 6.9L.1 113.1c-.5 4.3 2.5 8 6.8 8.4.4 0 .9 0 1.3-.1l74-15.3c4.5-.9 7.7-4.9 7.4-9.5l-14.9-82.5z"/>
-        </svg>
+        <svg viewBox="0 0 109.5 124.5"><path d="M74.7 14.1c-.2 0-.4.1-.5.1-.2-.8-.6-1.5-1.1-2.2-2.1-2.9-5.7-4.4-10.7-4.4-1.2 0-2.5.1-3.7.4-4.8 1.1-9.4 3.9-13.6 8.3-3 3.1-6.1 7.6-7.8 11.2-.8 1.7-1.5 3.3-2.1 4.7l-15.6 4.8c-4.8 1.5-5 1.9-5.6 6.9L.1 113.1c-.5 4.3 2.5 8 6.8 8.4.4 0 .9 0 1.3-.1l74-15.3c4.5-.9 7.7-4.9 7.4-9.5l-14.9-82.5z"/></svg>
         <span>admin</span>
       </div>
     </div>
@@ -110,7 +109,7 @@
     <div class="topbar-center">
       <div class="search-box-wrapper">
         <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-        <input type="text" class="global-search-input" placeholder="Search orders, customers...">
+        <input type="text" class="global-search-input" placeholder="Search orders or customers...">
         <span class="kbd-shortcut">CTRL K</span>
       </div>
     </div>
@@ -127,24 +126,14 @@
     </div>
   </header>
 
-  <!-- APP LAYOUT -->
+  <!-- App Layout -->
   <div class="app-container">
     <aside class="app-sidebar">
       <div class="sidebar-menu">
         <a href="dashboard.html" class="menu-item"><div class="menu-item-left"><i class="fa-solid fa-house"></i><span>Dashboard</span></div></a>
+        <a href="analytics.html" class="menu-item"><div class="menu-item-left"><i class="fa-solid fa-chart-line"></i><span>Financials & Analytics</span></div></a>
         <a href="orders.html" class="menu-item active"><div class="menu-item-left"><i class="fa-solid fa-bag-shopping"></i><span>Orders</span></div></a>
-        
-        <!-- SUB-MODULES NAV UNDER ORDERS -->
-        <div class="submenu-list" style="margin-left: 15px; border-left: 2px solid #0f7139; padding-left: 8px;">
-          <a href="#" class="submenu-item active" id="sideNavAll" onclick="switchFilterTab('all', event)">All Orders</a>
-          <a href="#" class="submenu-item" id="sideNavPlaced" onclick="switchFilterTab('placed', event)">📥 Placed Orders</a>
-          <a href="#" class="submenu-item" id="sideNavConfirmed" onclick="switchFilterTab('confirmed', event)">📋 Confirmed Orders</a>
-          <a href="#" class="submenu-item" id="sideNavDispatched" onclick="switchFilterTab('dispatched', event)">🚚 Dispatched Orders</a>
-          <a href="#" class="submenu-item" id="sideNavDelivered" onclick="switchFilterTab('delivered', event)">✅ Delivered Orders</a>
-          <a href="#" class="submenu-item" id="sideNavCancelled" onclick="switchFilterTab('cancelled', event)">🚫 Cancelled Orders</a>
-        </div>
-
-        <a href="products.html" class="menu-item" style="margin-top: 10px;"><div class="menu-item-left"><i class="fa-solid fa-tag"></i><span>Products</span></div></a>
+        <a href="products.html" class="menu-item"><div class="menu-item-left"><i class="fa-solid fa-tag"></i><span>Products</span></div></a>
         <div class="submenu-list">
           <a href="collections.html" class="submenu-item">Collections / Categories</a>
           <a href="inventory.html" class="submenu-item">Inventory</a>
@@ -183,11 +172,34 @@
           </div>
         </div>
 
+        <!-- Sticky / Floating Bulk Actions Toolbar -->
+        <div id="bulkActionsBar" class="bulk-actions-bar">
+          <div class="bulk-selection-info">
+            <span class="bulk-selection-badge"><i class="fa-solid fa-check"></i> <span id="bulkSelectedCount">0</span> selected</span>
+          </div>
+          <div class="bulk-action-buttons">
+            <div class="bulk-dropdown">
+              <button type="button" class="btn-bulk-action btn-bulk-primary bulk-dropdown-toggle"><i class="fa-solid fa-truck-ramp-box"></i> Update Status <i class="fa-solid fa-chevron-down" style="font-size: 10px; margin-left: 2px;"></i></button>
+              <div class="bulk-dropdown-menu">
+                <button type="button" class="bulk-dropdown-item" onclick="bulkSetOrderStatus('Confirmed')"><i class="fa-solid fa-clipboard-check" style="color: #0284c7;"></i> Mark Confirmed</button>
+                <button type="button" class="bulk-dropdown-item" onclick="bulkSetOrderStatus('Dispatched')"><i class="fa-solid fa-truck" style="color: #d97706;"></i> Mark Dispatched</button>
+                <button type="button" class="bulk-dropdown-item" onclick="bulkSetOrderStatus('Delivered')"><i class="fa-solid fa-circle-check" style="color: #16a34a;"></i> Mark Delivered</button>
+                <button type="button" class="bulk-dropdown-item danger-text" onclick="bulkSetOrderStatus('Cancelled')"><i class="fa-solid fa-ban"></i> Mark Cancelled (Restock)</button>
+              </div>
+            </div>
+
+            <button type="button" class="btn-bulk-action" onclick="exportOrdersCSV()"><i class="fa-solid fa-file-csv"></i> Export CSV</button>
+            <button type="button" class="btn-bulk-action" onclick="printSelectedOrders()"><i class="fa-solid fa-print"></i> Print Invoices</button>
+            <button type="button" class="btn-bulk-action btn-bulk-danger" onclick="bulkDeleteOrders()"><i class="fa-solid fa-trash"></i> Delete Selected</button>
+            <button type="button" class="btn-bulk-close" onclick="deselectAll()" title="Deselect All"><i class="fa-solid fa-xmark"></i></button>
+          </div>
+        </div>
+
         <div class="table-scroll-container">
           <table class="shopify-table">
             <thead>
               <tr>
-                <th style="width: 36px;"><input type="checkbox" class="custom-checkbox"></th>
+                <th style="width: 36px;"><input type="checkbox" class="custom-checkbox" id="selectAllCheckbox" title="Select All"></th>
                 <th>Order ID</th>
                 <th>Date</th>
                 <th>Customer Details</th>
@@ -207,13 +219,18 @@
     </main>
   </div>
 
+  <script src="../assets/js/admin-bulk.js"></script>
   <script>
     const API_BASE = 'http://localhost:5000/api';
     const tbody = document.getElementById('ordersTableBody');
     const searchInput = document.getElementById('orderSearchInput');
+    const selectAllCheckbox = document.getElementById('selectAllCheckbox');
+    const bulkBar = document.getElementById('bulkActionsBar');
+    const bulkCountSpan = document.getElementById('bulkSelectedCount');
 
     let allOrders = [];
     let currentFilter = 'all';
+    let displayedOrders = [];
 
     async function fetchOrders() {
       try {
@@ -228,6 +245,7 @@
 
         updateSubModuleCounts();
         applyFilterAndRender();
+        updateSelectionState();
       } catch (err) {
         console.error('Error fetching orders:', err);
         tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; padding: 25px; color: #ef4444;">Failed to load orders.</td></tr>';
@@ -251,90 +269,66 @@
       document.getElementById('cntCancelled').textContent = `(${cntCancelled})`;
     }
 
-    function switchFilterTab(filter, event) {
-      if (event) event.preventDefault();
+    function switchFilterTab(filter) {
       currentFilter = filter;
-
-      // Update Pill Tab UI
       document.querySelectorAll('.tab-pill-btn').forEach(btn => {
-        btn.classList.toggle('active', btn.getAttribute('data-filter') === filter);
+        if (btn.dataset.filter === filter) btn.classList.add('active');
+        else btn.classList.remove('active');
       });
-
-      // Update Sidebar Nav UI
-      const sideNavMap = {
-        'all': 'sideNavAll',
-        'placed': 'sideNavPlaced',
-        'confirmed': 'sideNavConfirmed',
-        'dispatched': 'sideNavDispatched',
-        'delivered': 'sideNavDelivered',
-        'cancelled': 'sideNavCancelled'
-      };
-      document.querySelectorAll('.submenu-item').forEach(el => el.classList.remove('active'));
-      const activeSide = document.getElementById(sideNavMap[filter]);
-      if (activeSide) activeSide.classList.add('active');
-
-      // Update Page Heading Title
-      const titleMap = {
-        'all': 'All Orders Management',
-        'placed': '📥 Placed Orders',
-        'confirmed': '📋 Confirmed Orders',
-        'dispatched': '🚚 Dispatched Orders',
-        'delivered': '✅ Delivered Orders',
-        'cancelled': '🚫 Cancelled Orders'
-      };
-      document.getElementById('pageHeadingTitle').firstChild.nodeValue = (titleMap[filter] || 'Orders Management') + ' ';
-
       applyFilterAndRender();
     }
 
     function applyFilterAndRender() {
-      let filtered = [...allOrders];
+      const query = (searchInput ? searchInput.value : '').toLowerCase().trim();
 
-      if (currentFilter === 'placed') {
-        filtered = filtered.filter(o => o.status === 'Placed' || o.status === 'Pending');
-      } else if (currentFilter === 'confirmed') {
-        filtered = filtered.filter(o => o.status === 'Confirmed' || o.status === 'Processing');
-      } else if (currentFilter === 'dispatched') {
-        filtered = filtered.filter(o => o.status === 'Dispatched' || o.status === 'Shipped');
-      } else if (currentFilter === 'delivered') {
-        filtered = filtered.filter(o => o.status === 'Delivered');
-      } else if (currentFilter === 'cancelled') {
-        filtered = filtered.filter(o => o.status === 'Cancelled');
-      }
+      const filtered = allOrders.filter(order => {
+        // Tab sub-module filtering
+        const st = (order.status || 'Placed').toLowerCase();
+        let matchTab = true;
+        if (currentFilter === 'placed') matchTab = (st === 'placed' || st === 'pending');
+        else if (currentFilter === 'confirmed') matchTab = (st === 'confirmed' || st === 'processing');
+        else if (currentFilter === 'dispatched') matchTab = (st === 'dispatched' || st === 'shipped');
+        else if (currentFilter === 'delivered') matchTab = (st === 'delivered');
+        else if (currentFilter === 'cancelled') matchTab = (st === 'cancelled');
 
-      const q = searchInput ? searchInput.value.toLowerCase().trim() : '';
-      if (q) {
-        filtered = filtered.filter(o => {
-          const id = String(o._id).toLowerCase();
-          const cust = (o.customerName || '').toLowerCase();
-          return id.includes(q) || cust.includes(q);
-        });
-      }
+        if (!matchTab) return false;
+
+        // Search query filtering
+        if (query) {
+          const ordId = String(order._id || '').toLowerCase();
+          const cust = String(order.customerName || '').toLowerCase();
+          const phone = String(order.customerPhone || '').toLowerCase();
+          const email = String(order.customerEmail || '').toLowerCase();
+          return ordId.includes(query) || cust.includes(query) || phone.includes(query) || email.includes(query);
+        }
+        return true;
+      });
 
       renderOrders(filtered);
+      updateSelectionState();
     }
 
     function renderOrders(orders) {
+      displayedOrders = orders || [];
       tbody.innerHTML = '';
-
       if (!orders || orders.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="9" style="text-align: center; padding: 35px; color: #6d7175;">
-          No orders found in <strong>${currentFilter.toUpperCase()}</strong> section.
-        </td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="9" style="text-align: center; padding: 35px; color: #6d7175;"><i class="fa-solid fa-box-open" style="font-size:24px; margin-bottom:8px; display:block; opacity:0.6;"></i>No orders in stage "${currentFilter.toUpperCase()}".</td></tr>`;
+        updateSelectionState();
         return;
       }
 
       orders.forEach(order => {
-        const orderIdShort = String(order._id).substring(0, 8).toUpperCase();
-        const date = new Date(order.createdAt).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' });
-        const customer = order.customerName || (order.shippingAddress ? `${order.shippingAddress.address}, ${order.shippingAddress.city}` : 'Customer');
-        const total = `₹${order.totalPrice || 0}`;
-        const itemsCount = order.orderItems ? order.orderItems.length : 1;
-
-        const isPaid = order.isPaid;
-        const payBadge = isPaid
-          ? '<span class="status-badge-paid">Paid</span>'
-          : `<span class="status-badge-pending">${order.paymentMethod || 'COD'}</span>`;
+        const orderIdShort = String(order._id).slice(-8).toUpperCase();
+        const date = new Date(order.createdAt || Date.now()).toLocaleDateString('en-IN', {
+          day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
+        });
+        const customer = order.customerName || (order.user && order.user.name) || 'Guest Customer';
+        const itemsCount = Array.isArray(order.orderItems) ? order.orderItems.length : 1;
+        const total = `₹${order.totalPrice ? Number(order.totalPrice).toFixed(1) : '0'}`;
+        const payMethod = order.paymentMethod || 'Razorpay Secure';
+        const payBadge = order.isPaid 
+          ? `<span class="status-pill active" style="font-size:11px;">Paid</span>`
+          : `<span class="status-pill draft" style="font-size:11px; background:#fffbeb; color:#b45309; border:1px solid #fde68a;">${payMethod}</span>`;
 
         const st = order.status || 'Placed';
 
@@ -360,14 +354,23 @@
         } else if (st === 'Delivered') {
           actionCellHtml = `<span class="badge-delivered-done"><i class="fa-solid fa-circle-check"></i> Delivered</span>`;
         } else if (st === 'Cancelled') {
-          actionCellHtml = `<span class="badge-cancelled-done"><i class="fa-solid fa-ban"></i> Cancelled by Customer</span>`;
+          actionCellHtml = `<span class="badge-cancelled-done"><i class="fa-solid fa-ban"></i> Cancelled</span>`;
         } else {
           actionCellHtml = `<span style="font-size:12px; color:#64748b;">${st}</span>`;
         }
 
         const tr = document.createElement('tr');
+        tr.dataset.id = order._id;
+        tr.dataset.orderNumber = orderIdShort;
+        tr.dataset.customer = customer;
+        tr.dataset.email = order.customerEmail || '';
+        tr.dataset.phone = order.customerPhone || '';
+        tr.dataset.total = total;
+        tr.dataset.status = st;
+        tr.dataset.date = date;
+
         tr.innerHTML = `
-          <td><input type="checkbox" class="custom-checkbox"></td>
+          <td><input type="checkbox" class="custom-checkbox row-checkbox" value="${order._id}"></td>
           <td><strong>#AF-${orderIdShort}</strong></td>
           <td><span style="font-size: 12px; color: #475569;">${date}</span></td>
           <td>
@@ -388,8 +391,268 @@
         `;
         tbody.appendChild(tr);
       });
+
+      attachRowCheckboxListeners();
     }
 
+    // Selection Tracking
+    function attachRowCheckboxListeners() {
+      const rowCheckboxes = tbody.querySelectorAll('.row-checkbox');
+      rowCheckboxes.forEach(cb => {
+        cb.addEventListener('change', () => {
+          const row = cb.closest('tr');
+          if (cb.checked) {
+            row.classList.add('row-selected');
+          } else {
+            row.classList.remove('row-selected');
+          }
+          updateSelectionState();
+        });
+      });
+    }
+
+    function getSelectedRows() {
+      const selected = [];
+      tbody.querySelectorAll('.row-checkbox:checked').forEach(cb => {
+        const row = cb.closest('tr');
+        const orderObj = allOrders.find(o => String(o._id) === String(cb.value));
+        selected.push({
+          id: cb.value,
+          orderNumber: row.dataset.orderNumber,
+          customer: row.dataset.customer,
+          email: row.dataset.email,
+          phone: row.dataset.phone,
+          total: row.dataset.total,
+          status: row.dataset.status,
+          date: row.dataset.date,
+          raw: orderObj
+        });
+      });
+      return selected;
+    }
+
+    function updateSelectionState() {
+      const selected = getSelectedRows();
+      const count = selected.length;
+      const allCheckboxes = tbody.querySelectorAll('.row-checkbox');
+
+      if (count > 0) {
+        bulkCountSpan.textContent = count;
+        bulkBar.classList.add('active');
+      } else {
+        bulkBar.classList.remove('active');
+      }
+
+      if (selectAllCheckbox) {
+        if (allCheckboxes.length > 0 && count === allCheckboxes.length) {
+          selectAllCheckbox.checked = true;
+          selectAllCheckbox.indeterminate = false;
+        } else if (count > 0) {
+          selectAllCheckbox.checked = false;
+          selectAllCheckbox.indeterminate = true;
+        } else {
+          selectAllCheckbox.checked = false;
+          selectAllCheckbox.indeterminate = false;
+        }
+      }
+    }
+
+    if (selectAllCheckbox) {
+      selectAllCheckbox.addEventListener('change', function() {
+        const isChecked = this.checked;
+        const allCheckboxes = tbody.querySelectorAll('.row-checkbox');
+        allCheckboxes.forEach(cb => {
+          cb.checked = isChecked;
+          const row = cb.closest('tr');
+          if (isChecked) row.classList.add('row-selected');
+          else row.classList.remove('row-selected');
+        });
+        updateSelectionState();
+      });
+    }
+
+    function deselectAll() {
+      if (selectAllCheckbox) {
+        selectAllCheckbox.checked = false;
+        selectAllCheckbox.indeterminate = false;
+      }
+      tbody.querySelectorAll('.row-checkbox').forEach(cb => {
+        cb.checked = false;
+        cb.closest('tr').classList.remove('row-selected');
+      });
+      updateSelectionState();
+    }
+
+    // Bulk Action: Status Transition
+    async function bulkSetOrderStatus(newStatus) {
+      const selected = getSelectedRows();
+      if (selected.length === 0) return;
+
+      const ids = selected.map(o => o.id);
+      let confirmMsg = `Update status to "${newStatus}" for ${ids.length} selected order(s)?`;
+      if (newStatus === 'Cancelled') {
+        confirmMsg = `⚠️ Mark ${ids.length} selected order(s) as Cancelled? All item quantities will be restored back to store inventory.`;
+      }
+
+      if (!confirm(confirmMsg)) return;
+
+      try {
+        const res = await fetch(`${API_BASE}/orders/bulk-status`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json', 'x-admin-dev': 'true' },
+          body: JSON.stringify({ ids, status: newStatus })
+        });
+
+        if (res.ok) {
+          AdminToast.show(`Updated ${ids.length} order(s) to "${newStatus}"!`, 'success');
+          deselectAll();
+          fetchOrders();
+        } else {
+          AdminToast.show('Failed to update orders', 'error');
+        }
+      } catch (e) {
+        AdminToast.show('Network error updating orders', 'error');
+      }
+    }
+
+    // Bulk Action: Export Orders CSV
+    function exportOrdersCSV() {
+      const selected = getSelectedRows();
+      if (selected.length === 0) return;
+
+      const headers = ['Order ID', 'Date', 'Customer Name', 'Email', 'Phone', 'Items Count', 'Total Price', 'Payment Method', 'Payment Status', 'Fulfillment Status'];
+      const rows = selected.map(o => {
+        const raw = o.raw || {};
+        const items = Array.isArray(raw.orderItems) ? raw.orderItems.map(i => `${i.name || 'Item'} (x${i.qty || 1})`).join('; ') : '1 item';
+        return [
+          `#AF-${o.orderNumber}`,
+          o.date,
+          o.customer,
+          o.email || '-',
+          o.phone || '-',
+          items,
+          o.total,
+          raw.paymentMethod || 'Razorpay',
+          raw.isPaid ? 'Paid' : 'Unpaid/COD',
+          o.status
+        ];
+      });
+      AdminExport.downloadCSV('orders_export', headers, rows);
+    }
+
+    // Bulk Action: Print Selected Orders Invoices
+    function printSelectedOrders() {
+      const selected = getSelectedRows();
+      if (selected.length === 0) return;
+
+      const printWindow = window.open('', '_blank');
+      let html = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <title>Order Invoices - Arshith Fresh</title>
+          <style>
+            body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; padding: 24px; color: #1e293b; }
+            .invoice-card { border: 1px solid #cbd5e1; border-radius: 8px; padding: 20px; margin-bottom: 24px; page-break-inside: avoid; }
+            .invoice-header { display: flex; justify-content: space-between; border-bottom: 2px solid #0f7139; padding-bottom: 12px; margin-bottom: 16px; }
+            .invoice-brand { color: #0f7139; font-size: 20px; font-weight: 700; }
+            table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+            th, td { padding: 8px 12px; text-align: left; border-bottom: 1px solid #e2e8f0; font-size: 13px; }
+            th { background: #f8fafc; }
+            .total-row { font-weight: 700; font-size: 15px; color: #0f7139; }
+            @media print { .no-print { display: none; } }
+          </style>
+        </head>
+        <body>
+          <div class="no-print" style="margin-bottom: 20px; text-align: right;">
+            <button onclick="window.print()" style="padding: 8px 18px; background: #0f7139; color: #fff; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;">🖨️ Print Invoices</button>
+          </div>
+      `;
+
+      selected.forEach(o => {
+        const raw = o.raw || {};
+        const items = Array.isArray(raw.orderItems) ? raw.orderItems : [];
+        html += `
+          <div class="invoice-card">
+            <div class="invoice-header">
+              <div>
+                <div class="invoice-brand">🌱 Arshith Fresh</div>
+                <div style="font-size: 12px; color: #64748b;">100% Pure & Authentic Natural Products</div>
+              </div>
+              <div style="text-align: right;">
+                <div style="font-weight: 700; font-size: 16px;">ORDER #AF-${o.orderNumber}</div>
+                <div style="font-size: 12px; color: #64748b;">${o.date}</div>
+                <div style="font-size: 12px; font-weight: 600; color: #0f7139;">Status: ${o.status}</div>
+              </div>
+            </div>
+            
+            <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 12px;">
+              <div><strong>Customer:</strong> ${o.customer}<br><strong>Phone:</strong> ${o.phone || '-'}<br><strong>Email:</strong> ${o.email || '-'}</div>
+              <div style="text-align: right;"><strong>Payment:</strong> ${raw.paymentMethod || 'Razorpay'}<br><strong>Paid:</strong> ${raw.isPaid ? 'Yes' : 'No'}</div>
+            </div>
+
+            <table>
+              <thead>
+                <tr>
+                  <th>Item</th>
+                  <th style="text-align: center;">Qty</th>
+                  <th style="text-align: right;">Price</th>
+                  <th style="text-align: right;">Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${items.map(item => `
+                  <tr>
+                    <td>${item.name || 'Product'}</td>
+                    <td style="text-align: center;">${item.qty || 1}</td>
+                    <td style="text-align: right;">₹${item.price || 0}</td>
+                    <td style="text-align: right;">₹${(Number(item.price || 0) * Number(item.qty || 1)).toFixed(1)}</td>
+                  </tr>
+                `).join('')}
+                <tr class="total-row">
+                  <td colspan="3" style="text-align: right;">Grand Total:</td>
+                  <td style="text-align: right;">${o.total}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        `;
+      });
+
+      html += `</body></html>`;
+      printWindow.document.write(html);
+      printWindow.document.close();
+      AdminToast.show(`Opened print preview for ${selected.length} invoice(s)!`, 'info');
+    }
+
+    // Bulk Action: Delete Selected Orders
+    async function bulkDeleteOrders() {
+      const selected = getSelectedRows();
+      if (selected.length === 0) return;
+
+      if (!confirm(`⚠️ Permanently delete ${selected.length} selected order(s)? For active orders, inventory will be restored.`)) return;
+
+      const ids = selected.map(o => o.id);
+      try {
+        const res = await fetch(`${API_BASE}/orders/bulk-delete`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'x-admin-dev': 'true' },
+          body: JSON.stringify({ ids })
+        });
+
+        if (res.ok) {
+          AdminToast.show(`Successfully deleted ${ids.length} order(s)!`, 'success');
+          deselectAll();
+          fetchOrders();
+        } else {
+          AdminToast.show('Failed to delete orders', 'error');
+        }
+      } catch (e) {
+        AdminToast.show('Error deleting orders', 'error');
+      }
+    }
+
+    // Single order stage update
     async function updateOrderStatus(orderId, newStatus) {
       if (newStatus === 'Cancelled') {
         if (!confirm('Mark this order as Cancelled? All items will automatically be returned back into store inventory.')) {
@@ -437,13 +700,11 @@
           body: JSON.stringify({ status: newStatus, isDelivered })
         });
         if (res.ok) {
-          if (newStatus === 'Cancelled') {
-            alert('Order set to Cancelled. Inventory has been restored into stock.');
-          }
+          AdminToast.show(`Order status updated to "${newStatus}"!`, 'success');
           fetchOrders();
         } else {
           const errData = await res.json().catch(() => ({}));
-          alert('Failed to update status: ' + (errData.message || 'Unknown error'));
+          AdminToast.show('Failed to update status: ' + (errData.message || 'Unknown error'), 'error');
         }
       } catch (e) {
         console.warn('Backend sync warning:', e);

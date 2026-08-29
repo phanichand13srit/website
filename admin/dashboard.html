@@ -3,100 +3,270 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard - Arshith Fresh Admin</title>
+  <title>Financial & Sales Dashboard - Arshith Fresh Admin</title>
   
   <!-- Shared Admin Theme Stylesheet -->
   <link rel="stylesheet" href="../assets/css/admin.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Chart.js for High-Performance Interactive Financial Charts -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
   <style>
-    /* Overview KPI Cards */
-    .kpi-grid {
+    /* Financial KPI Grid */
+    .finance-kpi-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
       gap: 16px;
       margin-bottom: 24px;
     }
-    .kpi-card {
+
+    .finance-kpi-card {
       background: #ffffff;
       border: 1px solid var(--border-color, #e1e3e5);
       border-radius: var(--radius-md, 8px);
       padding: 18px 20px;
       display: flex;
-      align-items: center;
+      flex-direction: column;
       justify-content: space-between;
       box-shadow: 0 1px 3px rgba(0,0,0,0.04);
       transition: transform 0.15s, box-shadow 0.15s;
+      position: relative;
+      overflow: hidden;
     }
-    .kpi-card:hover {
+
+    .finance-kpi-card:hover {
       transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.07);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.07);
     }
-    .kpi-title {
-      font-size: 12px;
+
+    .finance-kpi-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .finance-kpi-title {
+      font-size: 12.5px;
       font-weight: 600;
+      color: #64748b;
       text-transform: uppercase;
       letter-spacing: 0.5px;
-      color: #64748b;
-      margin-bottom: 6px;
     }
-    .kpi-value {
-      font-size: 26px;
-      font-weight: 700;
-      color: #1e293b;
-    }
-    .kpi-icon-box {
-      width: 46px;
-      height: 46px;
+
+    .finance-kpi-icon-box {
+      width: 42px;
+      height: 42px;
       border-radius: 10px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 20px;
+      font-size: 18px;
     }
-    .kpi-icon-green { background: #e8f5e9; color: #0f7139; }
-    .kpi-icon-blue { background: #e0f2fe; color: #0284c7; }
-    .kpi-icon-purple { background: #f3e8ff; color: #9333ea; }
-    .kpi-icon-amber { background: #fef3c7; color: #d97706; }
 
-    /* Dashboard Sections Grid */
-    .dashboard-two-col {
+    .finance-kpi-icon-green { background: #e8f5e9; color: #0f7139; }
+    .finance-kpi-icon-blue { background: #e0f2fe; color: #0284c7; }
+    .finance-kpi-icon-purple { background: #f3e8ff; color: #9333ea; }
+    .finance-kpi-icon-amber { background: #fef3c7; color: #d97706; }
+
+    .finance-kpi-value {
+      font-size: 28px;
+      font-weight: 800;
+      color: #1e293b;
+      line-height: 1.2;
+      margin-bottom: 6px;
+    }
+
+    .finance-kpi-sub {
+      font-size: 12px;
+      color: #64748b;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .finance-badge-up {
+      color: #15803d;
+      background: #dcfce7;
+      padding: 2px 7px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 11px;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+    }
+
+    /* Chart Cards & Layout */
+    .chart-section-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 2fr 1fr;
       gap: 20px;
-    }
-    @media (max-width: 900px) {
-      .dashboard-two-col { grid-template-columns: 1fr; }
+      margin-bottom: 24px;
     }
 
-    .section-card {
+    @media (max-width: 1050px) {
+      .chart-section-grid { grid-template-columns: 1fr; }
+    }
+
+    .analytics-card {
       background: #ffffff;
       border: 1px solid var(--border-color, #e1e3e5);
       border-radius: var(--radius-md, 8px);
       box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-      overflow: hidden;
+      padding: 20px 22px;
+      display: flex;
+      flex-direction: column;
     }
-    .section-card-header {
-      padding: 14px 18px;
-      border-bottom: 1px solid #f1f5f9;
+
+    .analytics-card-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+      gap: 10px;
     }
-    .section-card-header h3 {
-      font-size: 15px;
+
+    .analytics-card-title {
+      font-size: 15.5px;
+      font-weight: 700;
+      color: #1e293b;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .chart-filter-pills {
+      display: flex;
+      gap: 6px;
+      background: #f1f5f9;
+      padding: 3px;
+      border-radius: 8px;
+    }
+
+    .chart-filter-btn {
+      background: none;
+      border: none;
+      padding: 4px 10px;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: #64748b;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .chart-filter-btn.active {
+      background: #ffffff;
+      color: #0f7139;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .chart-canvas-container {
+      position: relative;
+      width: 100%;
+      height: 300px;
+    }
+
+    /* Product Financial Leaderboard */
+    .top-products-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .top-product-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 12px;
+      background: #f8fafc;
+      border: 1px solid #f1f5f9;
+      border-radius: 8px;
+      transition: background 0.15s ease;
+    }
+
+    .top-product-item:hover {
+      background: #f0fdf4;
+      border-color: #bbf7d0;
+    }
+
+    .top-product-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .top-product-rank {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: #e2e8f0;
+      color: #475569;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11.5px;
+      font-weight: 700;
+    }
+
+    .top-product-rank.gold { background: #fef08a; color: #854d0e; }
+    .top-product-rank.silver { background: #e2e8f0; color: #334155; }
+    .top-product-rank.bronze { background: #fed7aa; color: #9a3412; }
+
+    .top-product-thumb {
+      width: 38px;
+      height: 38px;
+      border-radius: 6px;
+      object-fit: cover;
+      border: 1px solid #cbd5e1;
+    }
+
+    .top-product-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .top-product-name {
+      font-size: 13px;
       font-weight: 600;
       color: #1e293b;
-      margin: 0;
     }
-    .badge-category {
-      background: #f1f5f9;
-      color: #334155;
+
+    .top-product-meta {
       font-size: 11.5px;
-      font-weight: 500;
-      padding: 3px 8px;
-      border-radius: 4px;
-      display: inline-block;
+      color: #64748b;
     }
+
+    .top-product-right {
+      text-align: right;
+    }
+
+    .top-product-revenue {
+      font-size: 14px;
+      font-weight: 700;
+      color: #0f7139;
+    }
+
+    .top-product-units {
+      font-size: 11.5px;
+      color: #64748b;
+    }
+
+    /* Status Pill */
+    .status-pill {
+      font-size: 11.5px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .status-pill.active { background: #dcfce7; color: #15803d; }
+    .status-pill.draft { background: #f1f5f9; color: #475569; }
+    .status-pill.cancelled { background: #fee2e2; color: #b91c1c; }
   </style>
 </head>
 <body>
@@ -121,7 +291,7 @@
           <circle cx="11" cy="11" r="8"></circle>
           <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
         </svg>
-        <input type="text" class="global-search-input" placeholder="Search products, orders, customers...">
+        <input type="text" id="topGlobalSearch" class="global-search-input" placeholder="Search orders, revenue, products...">
         <span class="kbd-shortcut">CTRL K</span>
       </div>
     </div>
@@ -155,11 +325,19 @@
     <aside class="app-sidebar">
       <div class="sidebar-menu">
         
-        <!-- Dashboard (Active) -->
+        <!-- Dashboard / Financials (Active) -->
         <a href="dashboard.html" class="menu-item active">
           <div class="menu-item-left">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
             <span>Dashboard</span>
+          </div>
+        </a>
+
+        <!-- Financials & Analytics -->
+        <a href="analytics.html" class="menu-item">
+          <div class="menu-item-left">
+            <i class="fa-solid fa-chart-line" style="font-size: 15px; color: #94a3b8;"></i>
+            <span>Financials & Analytics</span>
           </div>
         </a>
 
@@ -221,211 +399,668 @@
     </aside>
 
     <!-- =======================================================================
-         3. MAIN DASHBOARD VIEWPORT
+         3. MAIN FINANCIAL & SALES DASHBOARD VIEWPORT
          ======================================================================= -->
     <main class="main-viewport">
       
       <!-- Top Action Bar -->
       <div class="page-top-header">
         <div class="page-title-row">
-          <h1>Dashboard Overview</h1>
+          <h1>Financial & Sales Dashboard</h1>
         </div>
 
         <div class="page-action-buttons">
-          <button class="btn-pill" onclick="loadDashboardData()"><i class="fa-solid fa-rotate"></i> Refresh</button>
-          <button class="btn-pill btn-pill-primary" onclick="window.location.href='products.html'"><i class="fa-solid fa-plus"></i> Add Product</button>
+          <button class="btn-pill" onclick="loadFinancialDashboard()"><i class="fa-solid fa-rotate"></i> Refresh Data</button>
+          <button class="btn-pill btn-pill-primary" onclick="exportFinancialCSV()"><i class="fa-solid fa-file-excel"></i> Export Report</button>
         </div>
       </div>
 
-      <!-- KPI Summary Cards -->
-      <div class="kpi-grid">
-        <div class="kpi-card">
-          <div>
-            <div class="kpi-title">Total Products</div>
-            <div class="kpi-value" id="statProducts">0</div>
+      <!-- 1. Four Core Financial KPI Cards -->
+      <div class="finance-kpi-grid">
+        
+        <!-- Total Money Earned (Revenue) -->
+        <div class="finance-kpi-card">
+          <div class="finance-kpi-top">
+            <div class="finance-kpi-title">Total Money Earned</div>
+            <div class="finance-kpi-icon-box finance-kpi-icon-green">
+              <i class="fa-solid fa-indian-rupee-sign"></i>
+            </div>
           </div>
-          <div class="kpi-icon-box kpi-icon-green"><i class="fa-solid fa-box"></i></div>
+          <div class="finance-kpi-value" id="kpiTotalRevenue">₹0.00</div>
+          <div class="finance-kpi-sub">
+            <span class="finance-badge-up"><i class="fa-solid fa-arrow-trend-up"></i> Live</span>
+            <span>from completed & active orders</span>
+          </div>
         </div>
 
-        <div class="kpi-card">
-          <div>
-            <div class="kpi-title">Categories</div>
-            <div class="kpi-value" id="statCollections">0</div>
+        <!-- Total Orders Count -->
+        <div class="finance-kpi-card">
+          <div class="finance-kpi-top">
+            <div class="finance-kpi-title">Total Orders Placed</div>
+            <div class="finance-kpi-icon-box finance-kpi-icon-blue">
+              <i class="fa-solid fa-bag-shopping"></i>
+            </div>
           </div>
-          <div class="kpi-icon-box kpi-icon-blue"><i class="fa-solid fa-layer-group"></i></div>
+          <div class="finance-kpi-value" id="kpiTotalOrders">0</div>
+          <div class="finance-kpi-sub">
+            <span id="kpiDeliveredRate" style="font-weight: 600; color: #0f7139;">0% delivered</span>
+            <span>across store</span>
+          </div>
         </div>
 
-        <div class="kpi-card">
-          <div>
-            <div class="kpi-title">Total Orders</div>
-            <div class="kpi-value" id="statOrders">0</div>
+        <!-- Average Order Value (AOV) -->
+        <div class="finance-kpi-card">
+          <div class="finance-kpi-top">
+            <div class="finance-kpi-title">Average Order Value</div>
+            <div class="finance-kpi-icon-box finance-kpi-icon-purple">
+              <i class="fa-solid fa-calculator"></i>
+            </div>
           </div>
-          <div class="kpi-icon-box kpi-icon-purple"><i class="fa-solid fa-bag-shopping"></i></div>
+          <div class="finance-kpi-value" id="kpiAOV">₹0.00</div>
+          <div class="finance-kpi-sub">
+            <span id="kpiUnitsSold" style="font-weight: 600; color: #7c3aed;">0 units sold</span>
+            <span>total</span>
+          </div>
         </div>
 
-        <div class="kpi-card">
-          <div>
-            <div class="kpi-title">Database Status</div>
-            <div class="kpi-value" style="font-size: 16px; color: #0f7139;" id="statDb">Connected</div>
+        <!-- Total Products & Inventory Value -->
+        <div class="finance-kpi-card">
+          <div class="finance-kpi-top">
+            <div class="finance-kpi-title">Catalog & Inventory Value</div>
+            <div class="finance-kpi-icon-box finance-kpi-icon-amber">
+              <i class="fa-solid fa-boxes-stacked"></i>
+            </div>
           </div>
-          <div class="kpi-icon-box kpi-icon-amber"><i class="fa-solid fa-server"></i></div>
+          <div class="finance-kpi-value" id="kpiInventoryValue">₹0.00</div>
+          <div class="finance-kpi-sub">
+            <span id="kpiProductCount" style="font-weight: 600; color: #d97706;">0 Products</span>
+            <span>in store catalog</span>
+          </div>
         </div>
+
       </div>
 
-      <!-- Dashboard Two Column Tables -->
-      <div class="dashboard-two-col">
-
-        <!-- Recent Products Table -->
-        <div class="section-card">
-          <div class="section-card-header">
-            <h3>Recent Products</h3>
-            <a href="products.html" class="btn-pill" style="font-size: 12px; padding: 4px 10px;">View All</a>
+      <!-- 2. Interactive Charts Section (Revenue Timeline & Category Doughnut) -->
+      <div class="chart-section-grid">
+        
+        <!-- Left: Money Earned & Order Timeline Chart -->
+        <div class="analytics-card">
+          <div class="analytics-card-header">
+            <div class="analytics-card-title">
+              <i class="fa-solid fa-chart-line" style="color: #0f7139;"></i> Revenue Earned & Orders Trend
+            </div>
+            <div class="chart-filter-pills">
+              <button class="chart-filter-btn" onclick="setTimeframe('7d', this)">7 Days</button>
+              <button class="chart-filter-btn" onclick="setTimeframe('30d', this)">30 Days</button>
+              <button class="chart-filter-btn active" onclick="setTimeframe('all', this)">All Time</button>
+            </div>
           </div>
-          <div class="table-scroll-container">
-            <table class="shopify-table">
-              <thead>
-                <tr>
-                  <th>Product</th>
-                  <th>Category</th>
-                  <th>Price</th>
-                  <th>Stock</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody id="recentProductsBody">
-                <tr><td colspan="5" style="text-align:center; padding:20px;"><i class="fa-solid fa-spinner fa-spin"></i> Loading products...</td></tr>
-              </tbody>
-            </table>
+          <div class="chart-canvas-container">
+            <canvas id="revenueTimelineChart"></canvas>
           </div>
         </div>
 
-        <!-- Recent Orders Table -->
-        <div class="section-card">
-          <div class="section-card-header">
-            <h3>Recent Orders</h3>
-            <a href="orders.html" class="btn-pill" style="font-size: 12px; padding: 4px 10px;">View All</a>
+        <!-- Right: Category Revenue Breakdown Doughnut -->
+        <div class="analytics-card">
+          <div class="analytics-card-header">
+            <div class="analytics-card-title">
+              <i class="fa-solid fa-chart-pie" style="color: #7c3aed;"></i> Revenue by Category
+            </div>
+            <span id="categoryCountBadge" style="font-size: 12px; color: #64748b; font-weight: 600;">0 Categories</span>
           </div>
-          <div class="table-scroll-container">
-            <table class="shopify-table">
-              <thead>
-                <tr>
-                  <th>Order</th>
-                  <th>Customer</th>
-                  <th>Total</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody id="recentOrdersBody">
-                <tr><td colspan="4" style="text-align:center; padding:20px;"><i class="fa-solid fa-spinner fa-spin"></i> Loading orders...</td></tr>
-              </tbody>
-            </table>
+          <div class="chart-canvas-container">
+            <canvas id="categoryRevenueChart"></canvas>
           </div>
         </div>
 
+      </div>
+
+      <!-- 3. Bottom Grid: Top Selling Products & Payment/Status Breakdown -->
+      <div class="chart-section-grid">
+
+        <!-- Top Selling Products Leaderboard -->
+        <div class="analytics-card">
+          <div class="analytics-card-header">
+            <div class="analytics-card-title">
+              <i class="fa-solid fa-trophy" style="color: #f59e0b;"></i> Top Performing Products (by Revenue)
+            </div>
+            <a href="products.html" class="btn-pill" style="font-size: 11.5px; padding: 3px 8px;">View Products</a>
+          </div>
+          
+          <div class="top-products-list" id="topProductsList">
+            <div style="text-align: center; padding: 25px; color: #94a3b8;">
+              <i class="fa-solid fa-spinner fa-spin"></i> Calculating product analytics...
+            </div>
+          </div>
+        </div>
+
+        <!-- Payment Methods & Status Distribution -->
+        <div class="analytics-card">
+          <div class="analytics-card-header">
+            <div class="analytics-card-title">
+              <i class="fa-solid fa-credit-card" style="color: #0284c7;"></i> Payment & Status Mix
+            </div>
+          </div>
+          <div class="chart-canvas-container">
+            <canvas id="paymentStatusChart"></canvas>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 4. Recent Financial Orders Stream -->
+      <div class="analytics-card" style="margin-bottom: 40px;">
+        <div class="analytics-card-header">
+          <div class="analytics-card-title">
+            <i class="fa-solid fa-receipt" style="color: #0f7139;"></i> Latest Financial Orders
+          </div>
+          <a href="orders.html" class="btn-pill" style="font-size: 12px; padding: 4px 10px;">Manage All Orders</a>
+        </div>
+
+        <div class="table-scroll-container">
+          <table class="shopify-table">
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>Date & Time</th>
+                <th>Customer</th>
+                <th>Items Ordered</th>
+                <th>Payment Mode</th>
+                <th>Amount Earned (₹)</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="financialOrdersTableBody">
+              <tr>
+                <td colspan="7" style="text-align: center; padding: 25px; color: #64748b;">
+                  <i class="fa-solid fa-spinner fa-spin"></i> Loading financial transactions...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
 
     </main>
   </div>
 
+  <!-- JAVASCRIPT ANALYTICS ENGINE -->
+  <script src="../assets/js/admin-bulk.js"></script>
   <script>
     const API_BASE = 'http://localhost:5000/api';
 
-    async function loadDashboardData() {
+    let rawOrders = [];
+    let rawProducts = [];
+    let rawCollections = [];
+
+    let timelineChartInstance = null;
+    let categoryChartInstance = null;
+    let paymentChartInstance = null;
+
+    let currentTimeframe = 'all';
+
+    async function loadFinancialDashboard() {
       try {
-        const [prodRes, colRes, ordRes] = await Promise.all([
+        const [ordRes, prodRes, colRes] = await Promise.all([
+          fetch(`${API_BASE}/orders`, { headers: { 'x-admin-dev': 'true' } }),
           fetch(`${API_BASE}/products`),
-          fetch(`${API_BASE}/collections`),
-          fetch(`${API_BASE}/orders`, { headers: { 'x-admin-dev': 'true' } })
+          fetch(`${API_BASE}/collections`)
         ]);
 
-        const products = await prodRes.json().catch(() => []);
-        const collections = await colRes.json().catch(() => []);
-        const orders = await ordRes.json().catch(() => []);
+        rawOrders = await ordRes.json().catch(() => []);
+        rawProducts = await prodRes.json().catch(() => []);
+        rawCollections = await colRes.json().catch(() => []);
 
-        // Stats
-        document.getElementById('statProducts').textContent = products.length;
-        document.getElementById('statCollections').textContent = collections.length;
-        document.getElementById('statOrders').textContent = orders.length;
-        document.getElementById('sidebarOrdersBadge').textContent = orders.length;
+        document.getElementById('sidebarOrdersBadge').textContent = rawOrders.length;
 
-        // Render Recent Products
-        renderRecentProducts(products.slice(0, 6));
+        // Calculate and render all metrics
+        computeKPIs();
+        renderTimelineChart();
+        renderCategoryDoughnut();
+        renderPaymentStatusChart();
+        renderTopProductsLeaderboard();
+        renderRecentFinancialOrders();
 
-        // Render Recent Orders
-        renderRecentOrders(orders.slice(0, 6));
       } catch (err) {
-        console.error('Error loading dashboard data:', err);
+        console.error('Error loading financial analytics:', err);
       }
     }
 
-    function renderRecentProducts(products) {
-      const tbody = document.getElementById('recentProductsBody');
-      if (!tbody) return;
+    // 1. Financial KPIs Calculation
+    function computeKPIs() {
+      // Delivered / Active Revenue vs Total
+      let totalMoneyEarned = 0;
+      let totalUnitsSold = 0;
+      let deliveredCount = 0;
 
-      if (!products || products.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:20px; color:#6d7175;">No products in database.</td></tr>';
-        return;
-      }
-
-      tbody.innerHTML = products.map(p => {
-        const stock = Number(p.countInStock) || 0;
-        const imgUrl = p.image || 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=80';
-        
-        let statusBadge = '<span class="status-pill active">Active</span>';
-        let stockBadge = `<span class="stock-badge-instock">${stock}</span>`;
-        let rowStyle = '';
-
-        if (stock === 0) {
-          statusBadge = '<span class="status-pill out-of-stock">Out of Stock (0)</span>';
-          stockBadge = '<span class="stock-badge-out">0</span>';
-          rowStyle = 'background-color: #fef2f2;';
-        } else if (stock < 10) {
-          statusBadge = `<span class="status-pill low-stock">Low Stock (${stock})</span>`;
-          stockBadge = `<span class="stock-badge-low">${stock}</span>`;
-          rowStyle = 'background-color: #fff8f8;';
+      rawOrders.forEach(o => {
+        const total = Number(o.totalPrice || 0);
+        if (o.status !== 'Cancelled') {
+          totalMoneyEarned += total;
         }
+        if (o.status === 'Delivered') {
+          deliveredCount++;
+        }
+        if (Array.isArray(o.orderItems)) {
+          o.orderItems.forEach(item => {
+            totalUnitsSold += Number(item.qty || item.quantity || 1);
+          });
+        }
+      });
 
-        return `
-          <tr style="cursor: pointer; ${rowStyle}" onclick="window.location.href='product-detail.html?id=${p._id}'">
-            <td>
-              <div class="table-product-item">
-                <img src="${imgUrl}" class="table-product-thumb" alt="${p.name}" onerror="this.src='https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=80';">
-                <strong style="font-size:13px; color:#1e293b;">${p.name}</strong>
-              </div>
-            </td>
-            <td><span class="badge-category">${p.category || 'General'}</span></td>
-            <td><strong>₹${p.price || 0}</strong></td>
-            <td>${stockBadge}</td>
-            <td>${statusBadge}</td>
-          </tr>
-        `;
-      }).join('');
+      const orderCount = rawOrders.length;
+      const activeOrders = rawOrders.filter(o => o.status !== 'Cancelled').length;
+      const aov = activeOrders > 0 ? (totalMoneyEarned / activeOrders) : 0;
+      const deliveredPercent = orderCount > 0 ? Math.round((deliveredCount / orderCount) * 100) : 0;
+
+      // Inventory Total Value
+      let totalCatalogInventoryValue = 0;
+      rawProducts.forEach(p => {
+        const price = Number(p.price || 0);
+        const stock = Number(p.countInStock || 0);
+        totalCatalogInventoryValue += (price * stock);
+      });
+
+      // Format currency
+      document.getElementById('kpiTotalRevenue').textContent = `₹${totalMoneyEarned.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+      document.getElementById('kpiTotalOrders').textContent = orderCount;
+      document.getElementById('kpiDeliveredRate').textContent = `${deliveredPercent}% fulfilled`;
+      document.getElementById('kpiAOV').textContent = `₹${aov.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+      document.getElementById('kpiUnitsSold').textContent = `${totalUnitsSold} items sold`;
+      document.getElementById('kpiInventoryValue').textContent = `₹${totalCatalogInventoryValue.toLocaleString('en-IN', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
+      document.getElementById('kpiProductCount').textContent = `${rawProducts.length} Products`;
     }
 
-    function renderRecentOrders(orders) {
-      const tbody = document.getElementById('recentOrdersBody');
-      if (!tbody) return;
+    // 2. Timeline Chart (Revenue & Orders over Time)
+    function setTimeframe(tf, btn) {
+      currentTimeframe = tf;
+      document.querySelectorAll('.chart-filter-btn').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      renderTimelineChart();
+    }
 
-      if (!orders || orders.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:20px; color:#6d7175;">No orders placed yet.</td></tr>';
+    function renderTimelineChart() {
+      const ctx = document.getElementById('revenueTimelineChart');
+      if (!ctx) return;
+
+      // Group orders by date
+      const dateMap = {}; // 'YYYY-MM-DD' -> { revenue: 0, orders: 0 }
+
+      const now = new Date();
+      let cutoffDays = 365;
+      if (currentTimeframe === '7d') cutoffDays = 7;
+      if (currentTimeframe === '30d') cutoffDays = 30;
+
+      const cutoffDate = new Date(now.getTime() - (cutoffDays * 24 * 60 * 60 * 1000));
+
+      rawOrders.forEach(o => {
+        const d = new Date(o.createdAt || Date.now());
+        if (d < cutoffDate) return;
+
+        const key = d.toISOString().split('T')[0];
+        if (!dateMap[key]) {
+          dateMap[key] = { revenue: 0, orders: 0, label: d.toLocaleDateString('en-IN', { month: 'short', day: 'numeric' }) };
+        }
+        if (o.status !== 'Cancelled') {
+          dateMap[key].revenue += Number(o.totalPrice || 0);
+        }
+        dateMap[key].orders += 1;
+      });
+
+      // Sort dates
+      const sortedKeys = Object.keys(dateMap).sort();
+      let labels = sortedKeys.map(k => dateMap[k].label);
+      let revenueData = sortedKeys.map(k => Math.round(dateMap[k].revenue));
+      let ordersData = sortedKeys.map(k => dateMap[k].orders);
+
+      if (sortedKeys.length === 0) {
+        labels = ['No Data'];
+        revenueData = [0];
+        ordersData = [0];
+      }
+
+      if (timelineChartInstance) {
+        timelineChartInstance.destroy();
+      }
+
+      timelineChartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels,
+          datasets: [
+            {
+              label: 'Revenue Earned (₹)',
+              data: revenueData,
+              borderColor: '#0f7139',
+              backgroundColor: 'rgba(15, 113, 57, 0.12)',
+              fill: true,
+              tension: 0.35,
+              yAxisID: 'yRevenue',
+              borderWidth: 2.5,
+              pointBackgroundColor: '#0f7139',
+              pointRadius: 4,
+              pointHoverRadius: 6
+            },
+            {
+              label: 'Orders Count',
+              data: ordersData,
+              borderColor: '#0284c7',
+              backgroundColor: 'rgba(2, 132, 199, 0.08)',
+              borderDash: [4, 4],
+              tension: 0.3,
+              yAxisID: 'yOrders',
+              borderWidth: 2,
+              pointBackgroundColor: '#0284c7',
+              pointRadius: 3
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: { mode: 'index', intersect: false },
+          plugins: {
+            legend: {
+              position: 'top',
+              labels: { boxWidth: 12, font: { weight: '600', size: 12 } }
+            },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  if (context.dataset.yAxisID === 'yRevenue') {
+                    return ` Revenue: ₹${context.raw.toLocaleString('en-IN')}`;
+                  }
+                  return ` Orders: ${context.raw}`;
+                }
+              }
+            }
+          },
+          scales: {
+            x: { grid: { display: false } },
+            yRevenue: {
+              type: 'linear',
+              position: 'left',
+              grid: { color: '#f1f5f9' },
+              ticks: {
+                callback: value => `₹${value}`
+              }
+            },
+            yOrders: {
+              type: 'linear',
+              position: 'right',
+              grid: { display: false },
+              ticks: { stepSize: 1 }
+            }
+          }
+        }
+      });
+    }
+
+    // 3. Category Revenue Doughnut Chart
+    function renderCategoryDoughnut() {
+      const ctx = document.getElementById('categoryRevenueChart');
+      if (!ctx) return;
+
+      const categoryRevenueMap = {};
+
+      rawOrders.forEach(o => {
+        if (o.status === 'Cancelled') return;
+        if (Array.isArray(o.orderItems)) {
+          o.orderItems.forEach(item => {
+            const itemPrice = Number(item.price || 0) * Number(item.qty || item.quantity || 1);
+            // Match with product to get category
+            let matchedCat = 'Oils';
+            const prod = rawProducts.find(p => String(p._id) === String(item.product) || p.name === item.name);
+            if (prod && prod.category) {
+              matchedCat = prod.category;
+            } else if (item.name) {
+              if (item.name.toLowerCase().includes('oil')) matchedCat = 'Oils';
+              else if (item.name.toLowerCase().includes('seed')) matchedCat = 'Seeds';
+              else if (item.name.toLowerCase().includes('powder') || item.name.toLowerCase().includes('podi')) matchedCat = 'Spice Powders';
+              else if (item.name.toLowerCase().includes('ghee') || item.name.toLowerCase().includes('honey')) matchedCat = 'Ghee & Honey';
+            }
+            categoryRevenueMap[matchedCat] = (categoryRevenueMap[matchedCat] || 0) + itemPrice;
+          });
+        }
+      });
+
+      const categories = Object.keys(categoryRevenueMap);
+      const revenues = categories.map(c => Math.round(categoryRevenueMap[c]));
+
+      document.getElementById('categoryCountBadge').textContent = `${categories.length} Active Categories`;
+
+      const palette = ['#0f7139', '#0284c7', '#7c3aed', '#f59e0b', '#ec4899', '#14b8a6', '#64748b'];
+
+      if (categoryChartInstance) {
+        categoryChartInstance.destroy();
+      }
+
+      categoryChartInstance = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: categories.length > 0 ? categories : ['Oils', 'Ghee & Honey', 'Seeds', 'Spice Powders'],
+          datasets: [{
+            data: revenues.length > 0 ? revenues : [5000, 2000, 1500, 1000],
+            backgroundColor: palette.slice(0, categories.length || 4),
+            borderWidth: 2,
+            borderColor: '#ffffff'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: { boxWidth: 10, font: { size: 11.5, weight: '500' } }
+            },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  const label = context.label || '';
+                  const val = context.raw || 0;
+                  return ` ${label}: ₹${val.toLocaleString('en-IN')}`;
+                }
+              }
+            }
+          },
+          cutout: '65%'
+        }
+      });
+    }
+
+    // 4. Payment & Order Status Mix
+    function renderPaymentStatusChart() {
+      const ctx = document.getElementById('paymentStatusChart');
+      if (!ctx) return;
+
+      let delivered = 0, confirmed = 0, placed = 0, cancelled = 0;
+      let razorpayCount = 0, codCount = 0;
+
+      rawOrders.forEach(o => {
+        if (o.status === 'Delivered') delivered++;
+        else if (o.status === 'Confirmed' || o.status === 'Dispatched') confirmed++;
+        else if (o.status === 'Cancelled') cancelled++;
+        else placed++;
+
+        const mode = (o.paymentMethod || '').toLowerCase();
+        if (mode.includes('cod') || mode.includes('cash')) codCount++;
+        else razorpayCount++;
+      });
+
+      if (paymentChartInstance) {
+        paymentChartInstance.destroy();
+      }
+
+      paymentChartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['Delivered', 'In Transit / Confirmed', 'Placed', 'Cancelled', 'Razorpay', 'Cash on Delivery'],
+          datasets: [{
+            label: 'Count',
+            data: [delivered, confirmed, placed, cancelled, razorpayCount, codCount],
+            backgroundColor: [
+              '#10b981',
+              '#3b82f6',
+              '#8b5cf6',
+              '#ef4444',
+              '#0f7139',
+              '#f59e0b'
+            ],
+            borderRadius: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false }
+          },
+          scales: {
+            x: { grid: { display: false } },
+            y: { grid: { color: '#f1f5f9' }, ticks: { stepSize: 1 } }
+          }
+        }
+      });
+    }
+
+    // 5. Top Selling Products Leaderboard
+    function renderTopProductsLeaderboard() {
+      const container = document.getElementById('topProductsList');
+      if (!container) return;
+
+      const productPerformance = {}; // prodName -> { name, units, revenue, category, img, stock }
+
+      // Seed all products
+      rawProducts.forEach(p => {
+        const name = p.name || p.title || 'Product';
+        productPerformance[name] = {
+          name,
+          category: p.category || 'General',
+          units: 0,
+          revenue: 0,
+          img: (p.images && p.images[0] && p.images[0].url) || p.image || 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=80',
+          stock: Number(p.countInStock || 0)
+        };
+      });
+
+      // Tally order sales
+      rawOrders.forEach(o => {
+        if (o.status === 'Cancelled') return;
+        if (Array.isArray(o.orderItems)) {
+          o.orderItems.forEach(item => {
+            const name = item.name;
+            const qty = Number(item.qty || item.quantity || 1);
+            const price = Number(item.price || 0);
+
+            if (name && productPerformance[name]) {
+              productPerformance[name].units += qty;
+              productPerformance[name].revenue += (qty * price);
+            } else if (name) {
+              productPerformance[name] = {
+                name,
+                category: 'General',
+                units: qty,
+                revenue: (qty * price),
+                img: item.image || 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=80',
+                stock: 10
+              };
+            }
+          });
+        }
+      });
+
+      const sortedProducts = Object.values(productPerformance).sort((a, b) => b.revenue - a.revenue).slice(0, 5);
+
+      if (sortedProducts.length === 0) {
+        container.innerHTML = `<div style="text-align:center; padding:20px; color:#94a3b8;">No products found.</div>`;
         return;
       }
 
-      tbody.innerHTML = orders.map(o => {
-        const orderIdShort = String(o._id).substring(0, 8);
-        const custName = o.customerName || (o.shippingAddress ? o.shippingAddress.address : 'Customer');
+      container.innerHTML = sortedProducts.map((p, idx) => {
+        let rankClass = '';
+        if (idx === 0) rankClass = 'gold';
+        else if (idx === 1) rankClass = 'silver';
+        else if (idx === 2) rankClass = 'bronze';
+
         return `
-          <tr style="cursor: pointer;" onclick="window.location.href='orders.html'">
-            <td><strong>#${orderIdShort}</strong></td>
-            <td>${custName}</td>
-            <td><strong>₹${o.totalPrice || 0}</strong></td>
-            <td><span class="status-pill ${o.status === 'Delivered' ? 'active' : 'draft'}">${o.status || 'Confirmed'}</span></td>
+          <div class="top-product-item">
+            <div class="top-product-left">
+              <div class="top-product-rank ${rankClass}">#${idx + 1}</div>
+              <img src="${p.img}" class="top-product-thumb" alt="${p.name}" onerror="this.src='https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=80';">
+              <div class="top-product-info">
+                <span class="top-product-name">${p.name}</span>
+                <span class="top-product-meta">${p.category} &bull; ${p.stock} in stock</span>
+              </div>
+            </div>
+            <div class="top-product-right">
+              <div class="top-product-revenue">₹${p.revenue.toLocaleString('en-IN')}</div>
+              <div class="top-product-units">${p.units} units sold</div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // 6. Recent Financial Orders Stream Table
+    function renderRecentFinancialOrders() {
+      const tbody = document.getElementById('financialOrdersTableBody');
+      if (!tbody) return;
+
+      if (!rawOrders || rawOrders.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:25px; color:#94a3b8;">No orders recorded yet.</td></tr>`;
+        return;
+      }
+
+      const recentOrders = rawOrders.slice(0, 8);
+
+      tbody.innerHTML = recentOrders.map(o => {
+        const idShort = String(o._id || '').substring(0, 8);
+        const dateStr = o.createdAt ? new Date(o.createdAt).toLocaleString('en-IN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'Recent';
+        const customer = o.customerName || (o.shippingAddress ? o.shippingAddress.address : 'Customer');
+        const itemsCount = Array.isArray(o.orderItems) ? o.orderItems.reduce((sum, item) => sum + Number(item.qty || 1), 0) : 1;
+        const total = Number(o.totalPrice || 0);
+
+        let statusClass = 'draft';
+        if (o.status === 'Delivered') statusClass = 'active';
+        else if (o.status === 'Cancelled') statusClass = 'cancelled';
+
+        return `
+          <tr style="cursor:pointer;" onclick="window.location.href='orders.html'">
+            <td><strong>#${idShort}</strong></td>
+            <td style="color:#64748b; font-size:12px;">${dateStr}</td>
+            <td><strong>${customer}</strong></td>
+            <td><span style="background:#f1f5f9; padding:2px 8px; border-radius:4px; font-weight:600; font-size:11.5px;">${itemsCount} item${itemsCount > 1 ? 's' : ''}</span></td>
+            <td><span style="font-size:12px; color:#475569;"><i class="fa-solid fa-shield-halved" style="color:#0f7139; margin-right:4px;"></i>${o.paymentMethod || 'Razorpay'}</span></td>
+            <td><strong style="color:#0f7139; font-size:13.5px;">₹${total.toFixed(2)}</strong></td>
+            <td><span class="status-pill ${statusClass}">${o.status || 'Placed'}</span></td>
           </tr>
         `;
       }).join('');
     }
 
-    document.addEventListener('DOMContentLoaded', loadDashboardData);
+    // 7. CSV Export for Financial Report
+    function exportFinancialCSV() {
+      if (!rawOrders || rawOrders.length === 0) {
+        alert('No orders available to export.');
+        return;
+      }
+
+      const headers = ['Order ID', 'Date Placed', 'Customer Name', 'Items Count', 'Payment Mode', 'Revenue Earned (₹)', 'Fulfillment Status'];
+      const rows = rawOrders.map(o => [
+        o._id,
+        o.createdAt ? new Date(o.createdAt).toISOString() : '',
+        o.customerName || '',
+        Array.isArray(o.orderItems) ? o.orderItems.length : 1,
+        o.paymentMethod || 'Razorpay',
+        o.totalPrice || 0,
+        o.status || 'Placed'
+      ]);
+
+      AdminExport.downloadCSV('financial_sales_report', headers, rows);
+    }
+
+    document.addEventListener('DOMContentLoaded', loadFinancialDashboard);
   </script>
 </body>
 </html>

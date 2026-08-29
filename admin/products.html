@@ -155,6 +155,14 @@
           </div>
         </a>
 
+        <!-- Financials & Analytics -->
+        <a href="analytics.html" class="menu-item">
+          <div class="menu-item-left">
+            <i class="fa-solid fa-chart-line" style="font-size: 15px; color: #94a3b8;"></i>
+            <span>Financials & Analytics</span>
+          </div>
+        </a>
+
         <!-- Orders -->
         <a href="orders.html" class="menu-item">
           <div class="menu-item-left">
@@ -264,13 +272,24 @@
         </div>
 
         <!-- Bulk Actions Floating Bar -->
-        <div id="bulkActionsBar" style="display: none; align-items: center; justify-content: space-between; padding: 10px 16px; background: #0f172a; color: #ffffff; border-bottom: 1px solid #1e293b;">
-          <div style="display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 13px;">
-            <i class="fa-solid fa-circle-check" style="color: #10b981;"></i>
-            <span id="bulkSelectedCount">0 items selected</span>
+        <div id="bulkActionsBar" class="bulk-actions-bar">
+          <div class="bulk-selection-info">
+            <span class="bulk-selection-badge"><i class="fa-solid fa-check"></i> <span id="bulkSelectedCount">0 items selected</span></span>
           </div>
-          <div style="display: flex; gap: 8px;">
-            <button type="button" style="background: #ef4444; color: #ffffff; border: none; padding: 6px 14px; font-size: 12px; font-weight: 600; border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;" onclick="deleteSelectedProducts()"><i class="fa-solid fa-trash"></i> Delete Selected</button>
+          <div class="bulk-action-buttons">
+            <div class="bulk-dropdown">
+              <button type="button" class="btn-bulk-action bulk-dropdown-toggle"><i class="fa-solid fa-tags"></i> Set Status <i class="fa-solid fa-chevron-down" style="font-size: 10px; margin-left: 2px;"></i></button>
+              <div class="bulk-dropdown-menu">
+                <button type="button" class="bulk-dropdown-item" onclick="bulkSetProductStatus('active')"><i class="fa-solid fa-circle-check" style="color: #10b981;"></i> Mark as Active</button>
+                <button type="button" class="bulk-dropdown-item" onclick="bulkSetProductStatus('draft')"><i class="fa-solid fa-file-pen" style="color: #64748b;"></i> Mark as Draft</button>
+                <button type="button" class="bulk-dropdown-item" onclick="bulkSetProductStatus('archived')"><i class="fa-solid fa-box-archive" style="color: #d97706;"></i> Mark as Archived</button>
+              </div>
+            </div>
+
+            <button type="button" class="btn-bulk-action" onclick="bulkSetProductStock()"><i class="fa-solid fa-cubes"></i> Update Stock</button>
+            <button type="button" class="btn-bulk-action" onclick="exportSelectedProductsCSV()"><i class="fa-solid fa-file-csv"></i> Export CSV</button>
+            <button type="button" class="btn-bulk-action btn-bulk-danger" onclick="deleteSelectedProducts()"><i class="fa-solid fa-trash"></i> Delete Selected</button>
+            <button type="button" class="btn-bulk-close" onclick="deselectAllProducts()" title="Deselect All"><i class="fa-solid fa-xmark"></i></button>
           </div>
         </div>
 
@@ -414,6 +433,7 @@
     </div>
   </div>
 
+  <script src="../assets/js/admin-bulk.js"></script>
   <script>
     const API_BASE = 'http://localhost:5000/api';
     const tableBody = document.getElementById('productsTableBody');
@@ -649,15 +669,40 @@
     // 5. Select All & Bulk Actions Checkboxes
     function updateBulkActionsBar() {
       const checkedBoxes = tableBody.querySelectorAll('.custom-checkbox:checked');
+      const allCheckboxes = tableBody.querySelectorAll('.custom-checkbox');
       const bulkBar = document.getElementById('bulkActionsBar');
       const countLabel = document.getElementById('bulkSelectedCount');
       if (!bulkBar) return;
 
-      if (checkedBoxes.length > 0) {
-        countLabel.textContent = `${checkedBoxes.length} item${checkedBoxes.length > 1 ? 's' : ''} selected`;
-        bulkBar.style.display = 'flex';
+      const count = checkedBoxes.length;
+
+      // Update row selection styling
+      allCheckboxes.forEach(cb => {
+        const row = cb.closest('tr');
+        if (row) {
+          if (cb.checked) row.classList.add('row-selected');
+          else row.classList.remove('row-selected');
+        }
+      });
+
+      if (count > 0) {
+        countLabel.textContent = `${count} item${count > 1 ? 's' : ''} selected`;
+        bulkBar.classList.add('active');
       } else {
-        bulkBar.style.display = 'none';
+        bulkBar.classList.remove('active');
+      }
+
+      if (selectAllCheckbox) {
+        if (allCheckboxes.length > 0 && count === allCheckboxes.length) {
+          selectAllCheckbox.checked = true;
+          selectAllCheckbox.indeterminate = false;
+        } else if (count > 0) {
+          selectAllCheckbox.checked = false;
+          selectAllCheckbox.indeterminate = true;
+        } else {
+          selectAllCheckbox.checked = false;
+          selectAllCheckbox.indeterminate = false;
+        }
       }
     }
 
@@ -675,28 +720,135 @@
       }
     });
 
-    async function deleteSelectedProducts() {
-      const checkedBoxes = tableBody.querySelectorAll('.custom-checkbox:checked');
-      if (checkedBoxes.length === 0) return;
-      if (!confirm(`Are you sure you want to delete ${checkedBoxes.length} selected product(s)?`)) return;
+    function deselectAllProducts() {
+      if (selectAllCheckbox) {
+        selectAllCheckbox.checked = false;
+        selectAllCheckbox.indeterminate = false;
+      }
+      tableBody.querySelectorAll('.custom-checkbox').forEach(cb => cb.checked = false);
+      updateBulkActionsBar();
+    }
 
-      const idsToDelete = [];
+    function getSelectedProductIds() {
+      const checkedBoxes = tableBody.querySelectorAll('.custom-checkbox:checked');
+      const ids = [];
       checkedBoxes.forEach(cb => {
         const tr = cb.closest('tr');
-        if (tr && tr.dataset.id) idsToDelete.push(tr.dataset.id);
+        if (tr && tr.dataset.id) ids.push(tr.dataset.id);
       });
+      return ids;
+    }
+
+    async function bulkSetProductStatus(status) {
+      const ids = getSelectedProductIds();
+      if (ids.length === 0) return;
 
       try {
-        await Promise.all(idsToDelete.map(id => fetch(`${API_BASE}/products/${id}`, { method: 'DELETE', headers: { 'x-admin-dev': 'true' } })));
-        alert(`${idsToDelete.length} product(s) deleted successfully!`);
-        if (selectAllCheckbox) selectAllCheckbox.checked = false;
-        updateBulkActionsBar();
-        fetchProducts();
+        const res = await fetch(`${API_BASE}/products/bulk-status`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json', 'x-admin-dev': 'true' },
+          body: JSON.stringify({ ids, status })
+        });
+
+        if (res.ok) {
+          AdminToast.show(`Updated status to "${status}" for ${ids.length} product(s)!`, 'success');
+          deselectAllProducts();
+          fetchProducts();
+        } else {
+          const errData = await res.json().catch(() => ({}));
+          AdminToast.show('Failed to update status: ' + (errData.message || 'Server error'), 'error');
+        }
+      } catch (e) {
+        AdminToast.show('Error updating product status: ' + e.message, 'error');
+      }
+    }
+
+    async function bulkSetProductStock() {
+      const ids = getSelectedProductIds();
+      if (ids.length === 0) return;
+
+      const qtyStr = prompt(`Set stock quantity for ${ids.length} selected product(s):`, '30');
+      if (qtyStr === null) return;
+      const qty = parseInt(qtyStr, 10);
+      if (isNaN(qty) || qty < 0) {
+        AdminToast.show('Please enter a valid non-negative number', 'error');
+        return;
+      }
+
+      try {
+        const res = await fetch(`${API_BASE}/products/bulk-stock`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json', 'x-admin-dev': 'true' },
+          body: JSON.stringify({ ids, quantity: qty, operation: 'set' })
+        });
+
+        if (res.ok) {
+          AdminToast.show(`Set stock to ${qty} for ${ids.length} product(s)!`, 'success');
+          deselectAllProducts();
+          fetchProducts();
+        } else {
+          const errData = await res.json().catch(() => ({}));
+          AdminToast.show('Failed to update stock: ' + (errData.message || 'Server error'), 'error');
+        }
+      } catch (e) {
+        AdminToast.show('Error updating stock: ' + e.message, 'error');
+      }
+    }
+
+    function exportSelectedProductsCSV() {
+      const checkedBoxes = tableBody.querySelectorAll('.custom-checkbox:checked');
+      if (checkedBoxes.length === 0) return;
+
+      const selected = [];
+      checkedBoxes.forEach(cb => {
+        const tr = cb.closest('tr');
+        const p = allProducts.find(prod => String(prod._id) === String(tr.dataset.id));
+        if (p) selected.push(p);
+      });
+
+      const headers = ['Product ID', 'Product Name', 'Category', 'Subcategory', 'Price (₹)', 'Stock', 'Status', 'Vendor'];
+      const rows = selected.map(p => [
+        p._id,
+        p.name || p.title || '',
+        p.category || '',
+        p.subcategory || '-',
+        p.price || 0,
+        p.countInStock || 0,
+        p.status || 'Active',
+        p.brand || 'Arshith Fresh'
+      ]);
+
+      AdminExport.downloadCSV('products_export', headers, rows);
+    }
+
+    async function deleteSelectedProducts() {
+      const idsToDelete = getSelectedProductIds();
+      if (idsToDelete.length === 0) return;
+      if (!confirm(`⚠️ Are you sure you want to permanently delete ${idsToDelete.length} selected product(s)?`)) return;
+
+      try {
+        const res = await fetch(`${API_BASE}/products/bulk-delete`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'x-admin-dev': 'true' },
+          body: JSON.stringify({ ids: idsToDelete })
+        });
+
+        if (res.ok) {
+          AdminToast.show(`Successfully deleted ${idsToDelete.length} product(s)!`, 'success');
+          deselectAllProducts();
+          fetchProducts();
+        } else {
+          AdminToast.show('Failed to delete selected products', 'error');
+        }
       } catch (err) {
-        alert('Error deleting selected products: ' + err.message);
+        AdminToast.show('Error deleting selected products: ' + err.message, 'error');
       }
     }
     window.deleteSelectedProducts = deleteSelectedProducts;
+    window.bulkSetProductStatus = bulkSetProductStatus;
+    window.bulkSetProductStock = bulkSetProductStock;
+    window.exportSelectedProductsCSV = exportSelectedProductsCSV;
+    window.deselectAllProducts = deselectAllProducts;
 
     // 6. Modal Multiple Image Handlers
     let modalUploadedImages = [];

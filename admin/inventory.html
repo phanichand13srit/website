@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Inventory - Arshith Fresh Admin</title>
+  <title>Inventory Management - Arshith Fresh Admin</title>
   
   <link rel="stylesheet" href="../assets/css/admin.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -20,6 +20,41 @@
     .stock-input:focus {
       border-color: #2c6ecb;
       outline: none;
+    }
+    .stock-input-low {
+      border-color: #f59e0b;
+      background-color: #fffbeb;
+      color: #b45309;
+    }
+    .stock-input-out {
+      border-color: #ef4444;
+      background-color: #fef2f2;
+      color: #b91c1c;
+    }
+    .category-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      border-radius: 16px;
+      font-size: 12px;
+      font-weight: 600;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      color: #475569;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+    }
+    .category-chip:hover {
+      background: #f1f5f9;
+      border-color: #cbd5e1;
+    }
+    .category-chip.active {
+      background: #0f7139;
+      color: #ffffff;
+      border-color: #0f7139;
+      box-shadow: 0 2px 6px rgba(15, 113, 57, 0.25);
     }
   </style>
 </head>
@@ -59,6 +94,7 @@
     <aside class="app-sidebar">
       <div class="sidebar-menu">
         <a href="dashboard.html" class="menu-item"><div class="menu-item-left"><i class="fa-solid fa-house"></i><span>Dashboard</span></div></a>
+        <a href="analytics.html" class="menu-item"><div class="menu-item-left"><i class="fa-solid fa-chart-line"></i><span>Financials & Analytics</span></div></a>
         <a href="orders.html" class="menu-item"><div class="menu-item-left"><i class="fa-solid fa-bag-shopping"></i><span>Orders</span></div></a>
         <a href="products.html" class="menu-item active"><div class="menu-item-left"><i class="fa-solid fa-tag"></i><span>Products</span></div></a>
         <div class="submenu-list">
@@ -121,11 +157,26 @@
           <!-- Dynamically populated category chips -->
         </div>
 
+        <!-- Sticky / Floating Bulk Actions Toolbar -->
+        <div id="bulkActionsBar" class="bulk-actions-bar">
+          <div class="bulk-selection-info">
+            <span class="bulk-selection-badge"><i class="fa-solid fa-check"></i> <span id="bulkSelectedCount">0</span> selected</span>
+          </div>
+          <div class="bulk-action-buttons">
+            <button type="button" class="btn-bulk-action btn-bulk-primary" onclick="bulkSetStockPrompt()"><i class="fa-solid fa-cubes"></i> Set Stock Quantity</button>
+            <button type="button" class="btn-bulk-action" onclick="bulkAddStock(10)"><i class="fa-solid fa-plus"></i> +10 Stock</button>
+            <button type="button" class="btn-bulk-action" onclick="bulkSetStockZero()"><i class="fa-solid fa-ban"></i> Mark Out of Stock (0)</button>
+            <button type="button" class="btn-bulk-action" onclick="exportInventoryCSV()"><i class="fa-solid fa-file-csv"></i> Export CSV</button>
+            <button type="button" class="btn-bulk-action btn-bulk-danger" onclick="bulkDeleteInventoryProducts()"><i class="fa-solid fa-trash"></i> Delete Selected</button>
+            <button type="button" class="btn-bulk-close" onclick="deselectAll()" title="Deselect All"><i class="fa-solid fa-xmark"></i></button>
+          </div>
+        </div>
+
         <div class="table-scroll-container">
           <table class="shopify-table">
             <thead>
               <tr>
-                <th style="width: 36px;"><input type="checkbox" class="custom-checkbox"></th>
+                <th style="width: 36px;"><input type="checkbox" class="custom-checkbox" id="selectAllCheckbox" title="Select All"></th>
                 <th>Product</th>
                 <th>Category</th>
                 <th>Unit</th>
@@ -144,6 +195,7 @@
     </main>
   </div>
 
+  <script src="../assets/js/admin-bulk.js"></script>
   <script>
     const API_BASE = 'http://localhost:5000/api';
     const tbody = document.getElementById('inventoryTbody');
@@ -152,6 +204,9 @@
     const stockSelect = document.getElementById('stockFilter');
     const chipsBar = document.getElementById('categoryChipsBar');
     const countBadge = document.getElementById('filterCountBadge');
+    const selectAllCheckbox = document.getElementById('selectAllCheckbox');
+    const bulkBar = document.getElementById('bulkActionsBar');
+    const bulkCountSpan = document.getElementById('bulkSelectedCount');
 
     let allProducts = [];
     let allCategories = [];
@@ -159,9 +214,9 @@
 
     async function fetchInventory() {
       try {
-        tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 25px;"><i class="fa-solid fa-spinner fa-spin"></i> Loading inventory...</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 25px;"><i class="fa-solid fa-spinner fa-spin"></i> Loading inventory from database...</td></tr>';
         
-        const [prodRes, colRes] = await Promise.all([
+        const [prodRes, catRes] = await Promise.all([
           fetch(`${API_BASE}/products`),
           fetch(`${API_BASE}/collections`)
         ]);
@@ -169,96 +224,104 @@
         if (prodRes.ok) {
           allProducts = await prodRes.json();
         }
-        if (colRes.ok) {
-          allCategories = await colRes.json();
+        if (catRes.ok) {
+          allCategories = await catRes.json();
         }
 
-        initCategoryDropdown();
-        updateCategoryChips();
+        populateCategoryFilters();
         applyFilters();
       } catch (err) {
-        console.error('Error fetching inventory:', err);
-        tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 25px; color: #ef4444;">Failed to load inventory from backend API.</td></tr>';
+        console.error('Error loading inventory:', err);
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 20px; color: #ef4444;">Failed to load inventory from server.</td></tr>';
       }
     }
 
-    function initCategoryDropdown() {
+    function populateCategoryFilters() {
       if (!categorySelect) return;
       categorySelect.innerHTML = '<option value="all">All Categories</option>';
-      allCategories.forEach(cat => {
+      
+      const distinctCats = new Set();
+      if (Array.isArray(allCategories)) {
+        allCategories.forEach(c => {
+          if (c.title) distinctCats.add(c.title);
+          if (c.name) distinctCats.add(c.name);
+        });
+      }
+      if (Array.isArray(allProducts)) {
+        allProducts.forEach(p => {
+          if (p.category) distinctCats.add(p.category);
+        });
+      }
+
+      distinctCats.forEach(cat => {
         const opt = document.createElement('option');
-        opt.value = cat.title;
-        opt.textContent = cat.title;
+        opt.value = cat;
+        opt.textContent = cat;
         categorySelect.appendChild(opt);
       });
+
+      renderCategoryChips(Array.from(distinctCats));
     }
 
-    function updateCategoryChips() {
+    function renderCategoryChips(categories) {
       if (!chipsBar) return;
       chipsBar.innerHTML = '';
 
-      // "All" Chip
-      const allBtn = document.createElement('button');
-      allBtn.style.cssText = getChipStyle(activeCategory === 'all');
-      allBtn.innerHTML = `All (${allProducts.length})`;
-      allBtn.onclick = () => selectCategory('all');
-      chipsBar.appendChild(allBtn);
+      const allChip = document.createElement('button');
+      allChip.type = 'button';
+      allChip.className = `category-chip ${activeCategory === 'all' ? 'active' : ''}`;
+      allChip.innerHTML = `All (${allProducts.length})`;
+      allChip.onclick = () => selectCategory('all');
+      chipsBar.appendChild(allChip);
 
-      // Individual Category Chips
-      allCategories.forEach(cat => {
-        const count = allProducts.filter(p => p.category && p.category.toLowerCase().trim() === cat.title.toLowerCase().trim()).length;
-        const isSelected = activeCategory.toLowerCase().trim() === cat.title.toLowerCase().trim();
-        const btn = document.createElement('button');
-        btn.style.cssText = getChipStyle(isSelected);
-        btn.innerHTML = `${cat.title} <span style="opacity:0.8; font-size:11px;">(${count})</span>`;
-        btn.onclick = () => selectCategory(cat.title);
-        chipsBar.appendChild(btn);
+      categories.forEach(cat => {
+        const count = allProducts.filter(p => p.category && p.category.toLowerCase() === cat.toLowerCase()).length;
+        const chip = document.createElement('button');
+        chip.type = 'button';
+        chip.className = `category-chip ${activeCategory.toLowerCase() === cat.toLowerCase() ? 'active' : ''}`;
+        chip.innerHTML = `${cat} (${count})`;
+        chip.onclick = () => selectCategory(cat);
+        chipsBar.appendChild(chip);
       });
     }
 
-    function getChipStyle(active) {
-      return `
-        padding: 5px 12px;
-        border-radius: 20px;
-        font-size: 12px;
-        font-weight: 600;
-        cursor: pointer;
-        border: 1px solid ${active ? '#0f7139' : '#cbd5e1'};
-        background: ${active ? '#0f7139' : '#ffffff'};
-        color: ${active ? '#ffffff' : '#334155'};
-        transition: all 0.15s ease;
-        white-space: nowrap;
-      `;
-    }
-
-    function selectCategory(catTitle) {
-      activeCategory = catTitle;
-      if (categorySelect) categorySelect.value = catTitle;
-      updateCategoryChips();
+    function selectCategory(cat) {
+      activeCategory = cat;
+      if (categorySelect) categorySelect.value = cat;
+      
+      if (chipsBar) {
+        chipsBar.querySelectorAll('.category-chip').forEach(chip => {
+          if ((cat === 'all' && chip.textContent.startsWith('All')) || chip.textContent.toLowerCase().startsWith(cat.toLowerCase())) {
+            chip.classList.add('active');
+          } else {
+            chip.classList.remove('active');
+          }
+        });
+      }
       applyFilters();
     }
 
     function applyFilters() {
-      const searchTerm = searchInput ? searchInput.value.toLowerCase().trim() : '';
-      const selectedStock = stockSelect ? stockSelect.value : 'all';
+      const q = (searchInput ? searchInput.value : '').toLowerCase().trim();
+      const stockVal = stockSelect ? stockSelect.value : 'all';
 
       const filtered = allProducts.filter(p => {
-        // Search term matching
-        const name = (p.name || '').toLowerCase();
-        const cat = (p.category || '').toLowerCase().trim();
+        // Keyword Search
+        const name = (p.name || p.title || '').toLowerCase();
         const sub = (p.subcategory || '').toLowerCase();
-        const matchesSearch = !searchTerm || name.includes(searchTerm) || cat.includes(searchTerm) || sub.includes(searchTerm);
+        const cat = (p.category || '').toLowerCase();
+        const matchesQuery = !q || name.includes(q) || sub.includes(q) || cat.includes(q);
 
-        // Category filter matching
-        const matchesCat = (activeCategory === 'all') || (cat === activeCategory.toLowerCase().trim());
+        // Category Filter
+        const matchesCat = activeCategory === 'all' || cat === activeCategory.toLowerCase();
 
-        // Stock status filter
-        const stock = Number(p.countInStock) || 0;
+        // Stock Filter
+        const stock = Number(p.countInStock || 0);
         let matchesStock = true;
-        if (selectedStock === 'in_stock') matchesStock = stock > 0;
-        if (selectedStock === 'out_of_stock') matchesStock = stock <= 0;
+        if (stockVal === 'in_stock') matchesStock = stock > 0;
+        else if (stockVal === 'out_of_stock') matchesStock = stock === 0;
 
-        return matchesSearch && matchesCat && matchesStock;
+        return matchesQuery && matchesCat && matchesStock;
       });
 
       if (countBadge) {
@@ -266,28 +329,30 @@
       }
 
       renderInventory(filtered);
+      updateSelectionState();
     }
 
     function renderInventory(products) {
       tbody.innerHTML = '';
       if (!products || products.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 30px; color: #6d7175;"><i class="fa-solid fa-box-open" style="font-size:24px; margin-bottom:8px; display:block; opacity:0.6;"></i>No products found matching the selected category and filter criteria.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 30px; color: #6d7175;"><i class="fa-solid fa-box-open" style="font-size:24px; margin-bottom:8px; display:block; opacity:0.6;"></i>No matching inventory products found.</td></tr>';
+        updateSelectionState();
         return;
       }
 
       products.forEach(p => {
-        const title = p.name || 'Unnamed Product';
-        const imgUrl = p.image || 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=80';
-        const stock = Number(p.countInStock) || 0;
-        
-        let stockInputClass = 'stock-input';
+        const title = p.name || p.title || 'Product';
+        const stock = Number(p.countInStock !== undefined ? p.countInStock : (p.stock || 0));
+        const imgUrl = (p.images && p.images[0] && p.images[0].url) || p.image || 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=80';
+
         let statusBadgeHtml = '';
+        let stockInputClass = 'stock-input';
         let rowBgStyle = '';
 
         if (stock === 0) {
           stockInputClass = 'stock-input stock-input-out';
-          statusBadgeHtml = `<span class="status-pill out-of-stock"><i class="fa-solid fa-circle-xmark"></i> Out of Stock (0)</span>`;
-          rowBgStyle = 'background-color: #fef2f2;';
+          statusBadgeHtml = `<span class="status-pill archived" style="background:#fee2e2; color:#991b1b;"><i class="fa-solid fa-circle-xmark"></i> Out of Stock (0)</span>`;
+          rowBgStyle = 'background-color: #fff5f5;';
         } else if (stock < 10) {
           stockInputClass = 'stock-input stock-input-low';
           statusBadgeHtml = `<span class="status-pill low-stock"><i class="fa-solid fa-triangle-exclamation"></i> Low Stock (${stock} left)</span>`;
@@ -297,10 +362,16 @@
         }
 
         const tr = document.createElement('tr');
+        tr.dataset.id = p._id;
+        tr.dataset.title = title;
+        tr.dataset.category = p.category || 'General';
+        tr.dataset.unit = p.unit || '1 unit';
+        tr.dataset.price = p.price || 0;
+        tr.dataset.stock = stock;
         if (rowBgStyle) tr.style.cssText = rowBgStyle;
 
         tr.innerHTML = `
-          <td><input type="checkbox" class="custom-checkbox"></td>
+          <td><input type="checkbox" class="custom-checkbox row-checkbox" value="${p._id}"></td>
           <td>
             <div class="table-product-item">
               <img src="${imgUrl}" class="table-product-thumb" alt="${title}" onerror="this.src='https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=80';">
@@ -325,6 +396,218 @@
         `;
         tbody.appendChild(tr);
       });
+
+      attachRowCheckboxListeners();
+    }
+
+    // Selection Tracking
+    function attachRowCheckboxListeners() {
+      const rowCheckboxes = tbody.querySelectorAll('.row-checkbox');
+      rowCheckboxes.forEach(cb => {
+        cb.addEventListener('change', () => {
+          const row = cb.closest('tr');
+          if (cb.checked) {
+            row.classList.add('row-selected');
+          } else {
+            row.classList.remove('row-selected');
+          }
+          updateSelectionState();
+        });
+      });
+    }
+
+    function getSelectedRows() {
+      const selected = [];
+      tbody.querySelectorAll('.row-checkbox:checked').forEach(cb => {
+        const row = cb.closest('tr');
+        selected.push({
+          id: cb.value,
+          title: row.dataset.title,
+          category: row.dataset.category,
+          unit: row.dataset.unit,
+          price: row.dataset.price,
+          stock: row.dataset.stock
+        });
+      });
+      return selected;
+    }
+
+    function updateSelectionState() {
+      const selected = getSelectedRows();
+      const count = selected.length;
+      const allCheckboxes = tbody.querySelectorAll('.row-checkbox');
+
+      if (count > 0) {
+        bulkCountSpan.textContent = count;
+        bulkBar.classList.add('active');
+      } else {
+        bulkBar.classList.remove('active');
+      }
+
+      if (selectAllCheckbox) {
+        if (allCheckboxes.length > 0 && count === allCheckboxes.length) {
+          selectAllCheckbox.checked = true;
+          selectAllCheckbox.indeterminate = false;
+        } else if (count > 0) {
+          selectAllCheckbox.checked = false;
+          selectAllCheckbox.indeterminate = true;
+        } else {
+          selectAllCheckbox.checked = false;
+          selectAllCheckbox.indeterminate = false;
+        }
+      }
+    }
+
+    if (selectAllCheckbox) {
+      selectAllCheckbox.addEventListener('change', function() {
+        const isChecked = this.checked;
+        const allCheckboxes = tbody.querySelectorAll('.row-checkbox');
+        allCheckboxes.forEach(cb => {
+          cb.checked = isChecked;
+          const row = cb.closest('tr');
+          if (isChecked) row.classList.add('row-selected');
+          else row.classList.remove('row-selected');
+        });
+        updateSelectionState();
+      });
+    }
+
+    function deselectAll() {
+      if (selectAllCheckbox) {
+        selectAllCheckbox.checked = false;
+        selectAllCheckbox.indeterminate = false;
+      }
+      tbody.querySelectorAll('.row-checkbox').forEach(cb => {
+        cb.checked = false;
+        cb.closest('tr').classList.remove('row-selected');
+      });
+      updateSelectionState();
+    }
+
+    // Bulk Action: Set Stock to exact value
+    async function bulkSetStockPrompt() {
+      const selected = getSelectedRows();
+      if (selected.length === 0) return;
+
+      const qtyStr = prompt(`Enter new stock quantity for ${selected.length} selected product(s):`, '25');
+      if (qtyStr === null) return;
+      const qty = parseInt(qtyStr, 10);
+      if (isNaN(qty) || qty < 0) {
+        AdminToast.show('Please enter a valid non-negative number', 'error');
+        return;
+      }
+
+      const ids = selected.map(p => p.id);
+      try {
+        const res = await fetch(`${API_BASE}/products/bulk-stock`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json', 'x-admin-dev': 'true' },
+          body: JSON.stringify({ ids, quantity: qty, operation: 'set' })
+        });
+
+        if (res.ok) {
+          AdminToast.show(`Stock set to ${qty} for ${ids.length} product(s)!`, 'success');
+          deselectAll();
+          fetchInventory();
+        } else {
+          AdminToast.show('Failed to update stock', 'error');
+        }
+      } catch (e) {
+        AdminToast.show('Error updating stock', 'error');
+      }
+    }
+
+    // Bulk Action: Add +10 Stock
+    async function bulkAddStock(delta = 10) {
+      const selected = getSelectedRows();
+      if (selected.length === 0) return;
+
+      const ids = selected.map(p => p.id);
+      try {
+        const res = await fetch(`${API_BASE}/products/bulk-stock`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json', 'x-admin-dev': 'true' },
+          body: JSON.stringify({ ids, quantity: delta, operation: 'add' })
+        });
+
+        if (res.ok) {
+          AdminToast.show(`Added +${delta} stock to ${ids.length} product(s)!`, 'success');
+          deselectAll();
+          fetchInventory();
+        } else {
+          AdminToast.show('Failed to add stock', 'error');
+        }
+      } catch (e) {
+        AdminToast.show('Error adding stock', 'error');
+      }
+    }
+
+    // Bulk Action: Set Stock 0
+    async function bulkSetStockZero() {
+      const selected = getSelectedRows();
+      if (selected.length === 0) return;
+
+      if (!confirm(`Mark ${selected.length} selected product(s) as Out of Stock (0 quantity)?`)) return;
+
+      const ids = selected.map(p => p.id);
+      try {
+        const res = await fetch(`${API_BASE}/products/bulk-stock`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json', 'x-admin-dev': 'true' },
+          body: JSON.stringify({ ids, quantity: 0, operation: 'set' })
+        });
+
+        if (res.ok) {
+          AdminToast.show(`Marked ${ids.length} product(s) as Out of Stock!`, 'success');
+          deselectAll();
+          fetchInventory();
+        } else {
+          AdminToast.show('Failed to update stock', 'error');
+        }
+      } catch (e) {
+        AdminToast.show('Error updating stock', 'error');
+      }
+    }
+
+    // Bulk Action: Export CSV
+    function exportInventoryCSV() {
+      const selected = getSelectedRows();
+      if (selected.length === 0) return;
+
+      const headers = ['Product ID', 'Product Name', 'Category', 'Unit', 'Price (₹)', 'Available Stock', 'Stock Status'];
+      const rows = selected.map(p => {
+        const stock = Number(p.stock);
+        const status = stock === 0 ? 'Out of Stock' : (stock < 10 ? 'Low Stock' : 'In Stock');
+        return [p.id, p.title, p.category, p.unit, p.price, stock, status];
+      });
+      AdminExport.downloadCSV('inventory_export', headers, rows);
+    }
+
+    // Bulk Action: Delete Selected
+    async function bulkDeleteInventoryProducts() {
+      const selected = getSelectedRows();
+      if (selected.length === 0) return;
+
+      if (!confirm(`⚠️ Permanently delete ${selected.length} selected product(s) from store catalog? This action cannot be undone.`)) return;
+
+      const ids = selected.map(p => p.id);
+      try {
+        const res = await fetch(`${API_BASE}/products/bulk-delete`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'x-admin-dev': 'true' },
+          body: JSON.stringify({ ids })
+        });
+
+        if (res.ok) {
+          AdminToast.show(`Successfully deleted ${ids.length} product(s)!`, 'success');
+          deselectAll();
+          fetchInventory();
+        } else {
+          AdminToast.show('Failed to delete products', 'error');
+        }
+      } catch (e) {
+        AdminToast.show('Error deleting products', 'error');
+      }
     }
 
     function handleStockInputColor(input) {
@@ -351,13 +634,13 @@
         });
 
         if (res.ok) {
-          alert('Stock quantity updated successfully!');
+          AdminToast.show('Stock quantity updated successfully!', 'success');
           fetchInventory();
         } else {
-          alert('Failed to update stock.');
+          AdminToast.show('Failed to update stock.', 'error');
         }
       } catch (e) {
-        alert('Error updating stock: ' + e.message);
+        AdminToast.show('Error updating stock: ' + e.message, 'error');
       }
     }
 

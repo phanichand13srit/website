@@ -47,48 +47,6 @@ router.get('/', async (req, res) => {
   }
 });
 
-// @route   GET /api/products/:id
-// @desc    Get single product by ID or slug/name
-router.get('/:id', async (req, res) => {
-  try {
-    const rawId = (req.params.id || '').trim();
-    let product = null;
-
-    // 1. If valid 24-char ObjectId, find by MongoDB ID
-    if (rawId.match(/^[0-9a-fA-F]{24}$/)) {
-      product = await Product.findById(rawId);
-    }
-
-    // 2. If not found by ID or if slug was passed (e.g. groundnut-oil-premium, coconut-oil)
-    if (!product && rawId) {
-      const cleanSlug = rawId.replace(/-/g, ' ').replace(/\s+/g, ' ').trim();
-      const firstWord = cleanSlug.split(' ')[0];
-
-      product = await Product.findOne({
-        $or: [
-          { name: { $regex: cleanSlug, $options: 'i' } },
-          { name: { $regex: firstWord, $options: 'i' } },
-          { tags: { $in: [cleanSlug, firstWord, rawId] } },
-          { category: { $regex: cleanSlug, $options: 'i' } }
-        ]
-      });
-    }
-
-    // 3. If still not found, return the first available product as a safe fallback
-    if (!product) {
-      product = await Product.findOne();
-    }
-
-    if (!product) {
-      return res.status(404).json({ message: 'Product not found' });
-    }
-
-    res.json(formatProduct(product));
-  } catch (error) {
-    res.status(500).json({ message: 'Error retrieving product', error: error.message });
-  }
-});
-
 // @route   POST /api/products
 // @desc    Create a new product (Admin)
 router.post('/', async (req, res) => {
@@ -131,6 +89,145 @@ router.post('/', async (req, res) => {
   } catch (error) {
     console.error('Error creating product:', error);
     res.status(400).json({ message: 'Error creating product', error: error.message });
+  }
+});
+
+// =========================================================================
+// BULK OPERATIONS (MUST BE DEFINED BEFORE /:id ROUTES)
+// =========================================================================
+
+// @route   POST /api/products/bulk-delete
+// @desc    Bulk delete products (Admin)
+router.post('/bulk-delete', async (req, res) => {
+  try {
+    const { ids } = req.body;
+    if (!Array.isArray(ids) || ids.length === 0) {
+      return res.status(400).json({ message: 'Please provide an array of product IDs' });
+    }
+    const result = await Product.deleteMany({ _id: { $in: ids } });
+    res.json({ success: true, message: `Successfully deleted ${result.deletedCount} products`, count: result.deletedCount });
+  } catch (error) {
+    res.status(500).json({ message: 'Error performing bulk product delete', error: error.message });
+  }
+});
+
+// @route   PUT /api/products/bulk-stock
+// @desc    Bulk update stock quantities (Admin)
+router.put('/bulk-stock', async (req, res) => {
+  try {
+    const { ids, quantity, operation } = req.body; // operation: 'set' | 'add'
+    if (!Array.isArray(ids) || ids.length === 0 || quantity === undefined) {
+      return res.status(400).json({ message: 'Please provide product IDs and quantity' });
+    }
+
+    const targetQty = Number(quantity);
+    let updatedCount = 0;
+
+    if (operation === 'add') {
+      const products = await Product.find({ _id: { $in: ids } });
+      for (const p of products) {
+        const cur = Number(p.countInStock || 0);
+        p.countInStock = Math.max(0, cur + targetQty);
+        await p.save();
+        updatedCount++;
+      }
+    } else {
+      // 'set' fixed stock
+      const result = await Product.updateMany(
+        { _id: { $in: ids } },
+        { $set: { countInStock: Math.max(0, targetQty) } }
+      );
+      updatedCount = result.modifiedCount;
+    }
+
+    res.json({ success: true, message: `Updated stock for ${updatedCount} products`, count: updatedCount });
+  } catch (error) {
+    res.status(500).json({ message: 'Error updating bulk stock', error: error.message });
+  }
+});
+
+// @route   PUT /api/products/bulk-category
+// @desc    Bulk update category / subcategory (Admin)
+router.put('/bulk-category', async (req, res) => {
+  try {
+    const { ids, category, subcategory } = req.body;
+    if (!Array.isArray(ids) || ids.length === 0 || !category) {
+      return res.status(400).json({ message: 'Please provide product IDs and a category' });
+    }
+    const updateFields = { category };
+    if (subcategory !== undefined) updateFields.subcategory = subcategory;
+
+    const result = await Product.updateMany(
+      { _id: { $in: ids } },
+      { $set: updateFields }
+    );
+    res.json({ success: true, message: `Updated category for ${result.modifiedCount} products`, count: result.modifiedCount });
+  } catch (error) {
+    res.status(500).json({ message: 'Error updating bulk category', error: error.message });
+  }
+});
+
+// @route   PUT /api/products/bulk-status
+// @desc    Bulk update status (Active, Draft, Archived) (Admin)
+router.put('/bulk-status', async (req, res) => {
+  try {
+    const { ids, status } = req.body;
+    if (!Array.isArray(ids) || ids.length === 0 || !status) {
+      return res.status(400).json({ message: 'Please provide product IDs and a status' });
+    }
+    const result = await Product.updateMany(
+      { _id: { $in: ids } },
+      { $set: { status } }
+    );
+    res.json({ success: true, message: `Updated status to "${status}" for ${result.modifiedCount} products`, count: result.modifiedCount });
+  } catch (error) {
+    res.status(500).json({ message: 'Error updating bulk status', error: error.message });
+  }
+});
+
+// =========================================================================
+// PARAMETERIZED /:id ROUTES
+// =========================================================================
+
+// @route   GET /api/products/:id
+// @desc    Get single product by ID or slug/name
+router.get('/:id', async (req, res) => {
+  try {
+    const rawId = (req.params.id || '').trim();
+    let product = null;
+
+    // 1. If valid 24-char ObjectId, find by MongoDB ID
+    if (rawId.match(/^[0-9a-fA-F]{24}$/)) {
+      product = await Product.findById(rawId);
+    }
+
+    // 2. If not found by ID or if slug was passed (e.g. groundnut-oil-premium, coconut-oil)
+    if (!product && rawId) {
+      const cleanSlug = rawId.replace(/-/g, ' ').replace(/\s+/g, ' ').trim();
+      const firstWord = cleanSlug.split(' ')[0];
+
+      product = await Product.findOne({
+        $or: [
+          { name: { $regex: cleanSlug, $options: 'i' } },
+          { name: { $regex: firstWord, $options: 'i' } },
+          { tags: { $in: [cleanSlug, firstWord, rawId] } },
+          { category: { $regex: cleanSlug, $options: 'i' } }
+        ]
+      });
+    }
+
+    // 3. If still not found, return the first available product as a safe fallback
+    if (!product) {
+      product = await Product.findOne();
+    }
+
+    if (!product) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+
+    res.json(formatProduct(product));
+  } catch (error) {
+    res.status(500).json({ message: 'Error retrieving product', error: error.message });
   }
 });
 
