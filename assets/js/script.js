@@ -1760,54 +1760,6 @@ async function fetchAndRenderAmazonReviews() {
             }
         } catch (e) {}
 
-        // If no reviews found yet, supply realistic authentic Amazon-style reviews (no images)
-        if (fetchedReviews.length === 0) {
-            fetchedReviews = [
-                {
-                    _id: 'default_1',
-                    productId: amazonReviewState.productId,
-                    productName: amazonReviewState.productName,
-                    rating: 5,
-                    title: 'VALUE FOR MONEY & PURE QUALITY',
-                    comment: `Its a classic pure organic product in this range with authentic freshness and traditional aroma which gives long lasting taste and experience. Truly healthy and 100% natural, its a full value for money.`,
-                    customerName: 'Amazon Customer',
-                    customerEmail: 'customer1@example.com',
-                    verifiedPurchase: true,
-                    helpfulCount: 17,
-                    images: [],
-                    createdAt: '2026-08-16T10:30:00.000Z'
-                },
-                {
-                    _id: 'default_2',
-                    productId: amazonReviewState.productId,
-                    productName: amazonReviewState.productName,
-                    rating: 4,
-                    title: 'Fresh quality and prompt hygienic delivery',
-                    comment: `Quality is very nice, fresh packaging and no artificial preservatives. Arrived well sealed in tamper-proof container. Will definitely order again from Arshith Fresh!`,
-                    customerName: 'musaffar mansuri',
-                    customerEmail: 'musaffar@example.com',
-                    verifiedPurchase: true,
-                    helpfulCount: 8,
-                    images: [],
-                    createdAt: '2026-08-18T14:15:00.000Z'
-                },
-                {
-                    _id: 'default_3',
-                    productId: amazonReviewState.productId,
-                    productName: amazonReviewState.productName,
-                    rating: 5,
-                    title: 'BEST HOME-STYLE TASTE & AROMA',
-                    comment: `Simply outstanding! Reminds me of traditional home cooking. Fresh texture, sealed perfectly, and completely natural ingredients.`,
-                    customerName: 'Sneha Reddy',
-                    customerEmail: 'sneha.reddy@example.com',
-                    verifiedPurchase: true,
-                    helpfulCount: 5,
-                    images: [],
-                    createdAt: '2026-08-22T09:00:00.000Z'
-                }
-            ];
-        }
-
         // Apply in-memory filter & sort if needed
         if (amazonReviewState.currentFilterRating) {
             fetchedReviews = fetchedReviews.filter(r => String(r.rating) === String(amazonReviewState.currentFilterRating));
@@ -1829,8 +1781,7 @@ async function fetchAndRenderAmazonReviews() {
         amazonReviewState.reviews = fetchedReviews;
 
         // Compute aggregate stats from REAL backend data
-        // If backend returned stats, use those. Otherwise compute from fetched reviews.
-        let totalRev, avgScore, dist, distCounts;
+        let totalRev = 0, avgScore = 0, dist = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 }, distCounts = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
 
         const hasBackendStats = data && data.totalReviews !== undefined;
 
@@ -1840,32 +1791,21 @@ async function fetchAndRenderAmazonReviews() {
             avgScore = data.averageRating || 0;
             dist = data.ratingDistribution || { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
             distCounts = data.distributionCounts || { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
-        } else {
-            // Compute live from the fetched reviews (includes local reviews + defaults)
-            const realReviews = fetchedReviews.filter(r => !r._id.toString().startsWith('default_'));
-            if (realReviews.length > 0) {
-                totalRev = realReviews.length;
-                const totalScore = realReviews.reduce((s, r) => s + (r.rating || 5), 0);
-                avgScore = Math.round((totalScore / totalRev) * 10) / 10;
-                distCounts = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
-                realReviews.forEach(r => {
-                    const star = Math.min(5, Math.max(1, Math.round(r.rating || 5)));
-                    distCounts[star] = (distCounts[star] || 0) + 1;
-                });
-                dist = {
-                    5: Math.round((distCounts[5] / totalRev) * 100),
-                    4: Math.round((distCounts[4] / totalRev) * 100),
-                    3: Math.round((distCounts[3] / totalRev) * 100),
-                    2: Math.round((distCounts[2] / totalRev) * 100),
-                    1: Math.round((distCounts[1] / totalRev) * 100),
-                };
-            } else {
-                // No real reviews yet — show all zeros, no fake data
-                totalRev = 0;
-                avgScore = 0;
-                dist = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
-                distCounts = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
-            }
+        } else if (fetchedReviews.length > 0) {
+            totalRev = fetchedReviews.length;
+            const totalScore = fetchedReviews.reduce((s, r) => s + (r.rating || 5), 0);
+            avgScore = Math.round((totalScore / totalRev) * 10) / 10;
+            fetchedReviews.forEach(r => {
+                const star = Math.min(5, Math.max(1, Math.round(r.rating || 5)));
+                distCounts[star] = (distCounts[star] || 0) + 1;
+            });
+            dist = {
+                5: Math.round((distCounts[5] / totalRev) * 100),
+                4: Math.round((distCounts[4] / totalRev) * 100),
+                3: Math.round((distCounts[3] / totalRev) * 100),
+                2: Math.round((distCounts[2] / totalRev) * 100),
+                1: Math.round((distCounts[1] / totalRev) * 100),
+            };
         }
 
         amazonReviewState.stats = {
@@ -2087,7 +2027,15 @@ function renderAmazonReviewsUI(container) {
 
                 <!-- Reviews Feed List (Matching User's Amazon Screenshot) -->
                 <div class="reviews-list-container" style="display: flex; flex-direction: column; gap: 26px;">
-                    ${amazonReviewState.reviews.map(r => {
+                    ${amazonReviewState.reviews.length === 0 ? `
+                        <div style="text-align: center; padding: 40px 20px; background: #fafafa; border: 1px dashed #d5d9d9; border-radius: 8px; color: #565959;">
+                            <p style="font-size: 15px; font-weight: 600; color: #0f1111; margin: 0 0 6px 0;">No customer reviews yet</p>
+                            <p style="font-size: 13.5px; margin: 0 0 16px 0;">Be the first to share your thoughts with other customers.</p>
+                            <button type="button" onclick="toggleAmazonReviewForm(true)" style="background: #ffd814; color: #0f1111; border: 1px solid #fcd200; padding: 7px 18px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer;">
+                                Write a customer review
+                            </button>
+                        </div>
+                    ` : amazonReviewState.reviews.map(r => {
                         const stars = '★'.repeat(r.rating || 5) + '☆'.repeat(5 - (r.rating || 5));
                         const dateFormatted = new Date(r.createdAt).toLocaleDateString('en-IN', {
                             day: 'numeric',

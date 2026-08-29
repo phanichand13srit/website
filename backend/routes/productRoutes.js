@@ -304,40 +304,12 @@ router.get('/:id/reviews', async (req, res) => {
       return res.status(404).json({ success: false, message: 'Product not found' });
     }
 
-    // Default sample reviews if no reviews submitted yet
-    const defaultReviews = [
-      {
-        _id: 'default_rev_1',
-        name: 'Ramesh Kumar',
-        rating: 5,
-        title: 'Authentic taste and fresh aroma!',
-        comment: 'Very fresh and high quality. Reminds me of traditional home-made pure products. Highly recommend Arshith Fresh!',
-        createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000)
-      },
-      {
-        _id: 'default_rev_2',
-        name: 'Sneha Reddy',
-        rating: 5,
-        title: 'Excellent packaging and purity',
-        comment: '100% natural, no adulteration. Fast delivery and safe packing. Will definitely purchase regularly.',
-        createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
-      },
-      {
-        _id: 'default_rev_3',
-        name: 'Venkata Rao',
-        rating: 4,
-        title: 'Great quality products',
-        comment: 'Good natural flavor and hygienic packaging. Loved the fresh quality.',
-        createdAt: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000)
-      }
-    ];
-
-    const reviews = (product.reviews && product.reviews.length > 0) ? product.reviews : defaultReviews;
+    const reviews = (product.reviews && product.reviews.length > 0) ? product.reviews : [];
     res.json({
       success: true,
       productId: product._id,
-      rating: product.rating || 4.9,
-      numReviews: (product.reviews && product.reviews.length > 0) ? product.reviews.length : defaultReviews.length,
+      rating: product.rating || 0,
+      numReviews: (product.reviews && product.reviews.length > 0) ? product.reviews.length : 0,
       reviews
     });
   } catch (error) {
