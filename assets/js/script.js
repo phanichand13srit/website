@@ -1921,93 +1921,20 @@ function renderAmazonReviewsUI(container) {
                         `;
                     }).join('')}
                 </div>
-
-                <!-- Write Review Prompt Box -->
-                <div class="write-review-prompt-box" style="border-top: 1px solid #e7e7e7; padding-top: 20px; text-align: left;">
-                    <h4 style="margin: 0 0 4px 0; font-size: 16px; color: #0f172a; font-weight: 700;">Review this product</h4>
-                    <p style="margin: 0 0 14px 0; font-size: 13.5px; color: #565959;">Share your thoughts with other customers</p>
-                    <button type="button" class="write-review-main-btn" onclick="toggleAmazonReviewForm(true)" style="width: 100%; background: #ffffff; color: #0f1111; border: 1px solid #888c8c; padding: 9px 18px; border-radius: 8px; font-size: 13.5px; font-weight: 500; cursor: pointer; box-shadow: 0 2px 5px rgba(213,217,217,.5); transition: all 0.2s;">
-                        Write a product review
-                    </button>
+                <!-- Verified Purchase Policy Notice -->
+                <div class="write-review-prompt-box" style="border-top: 1px solid #e7e7e7; padding-top: 18px; text-align: left;">
+                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                        <span style="font-size: 16px;">🛡️</span>
+                        <strong style="font-size: 14px; color: #0f172a;">Verified Reviews Only</strong>
+                    </div>
+                    <p style="margin: 0; font-size: 12.5px; line-height: 1.5; color: #565959;">
+                        To guarantee 100% authentic ratings, only customers who purchased this product can leave reviews from their <a href="../profile.html" style="color: #007185; font-weight: 600; text-decoration: none;">Order History</a>.
+                    </p>
                 </div>
             </div>
 
-            <!-- RIGHT COLUMN: REVIEWS FEED & WRITE FORM -->
+            <!-- RIGHT COLUMN: REVIEWS FEED -->
             <div class="reviews-feed-panel" style="display: flex; flex-direction: column; gap: 24px;">
-
-                <!-- Collapsible Write / Edit Review Card Form -->
-                <div id="amazonWriteReviewCard" class="review-form-card" style="display: ${amazonReviewState.editingReviewId ? 'block' : 'none'}; background: #fdfdfd; border: 1.5px solid #007185; border-radius: 12px; padding: 24px; box-shadow: 0 4px 16px rgba(0,0,0,0.06);">
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px;">
-                        <h3 class="review-form-title" id="amazonFormHeaderTitle" style="font-size: 17px; font-weight: 700; color: #0f1111; margin: 0 0 4px 0;">
-                            ${amazonReviewState.editingReviewId ? 'Edit Your Review' : 'Create Review'}
-                        </h3>
-                        <button type="button" onclick="toggleAmazonReviewForm(false)" style="background: none; border: none; font-size: 22px; cursor: pointer; color: #64748b;">&times;</button>
-                    </div>
-                    <p class="review-form-desc" style="font-size: 13px; color: #565959; margin: 0 0 16px 0;">Product: <strong>${escapeHtml(amazonReviewState.productName)}</strong></p>
-
-                    <form id="amazonReviewForm" onsubmit="handleAmazonReviewFormSubmit(event)">
-                        
-                        <!-- 1. Interactive 1 to 5 Star Picker -->
-                        <div class="interactive-star-rating-box" style="background: #ffffff; border: 1px solid #d5d9d9; border-radius: 8px; padding: 12px 16px; margin-bottom: 14px;">
-                            <label style="display: block; font-size: 13px; font-weight: 700; color: #0f1111; margin-bottom: 6px;">Overall rating *</label>
-                            <div class="star-picker-row" id="starPickerContainer" style="display: flex; align-items: center; gap: 6px; font-size: 28px; cursor: pointer; margin-bottom: 4px;">
-                                ${[1, 2, 3, 4, 5].map(s => `
-                                    <span class="star-pick-btn ${s <= amazonReviewState.selectedFormRating ? 'active' : ''}" 
-                                          data-star="${s}"
-                                          onclick="setInteractiveFormRating(${s})"
-                                          onmouseover="previewInteractiveStars(${s})"
-                                          onmouseout="restoreInteractiveStars()"
-                                          style="color: ${s <= amazonReviewState.selectedFormRating ? '#de7921' : '#d5d9d9'}; transition: transform 0.15s ease;">★</span>
-                                `).join('')}
-                            </div>
-                            <div class="star-feedback-text" id="starFeedbackText" style="font-size: 13px; font-weight: 600; color: #0f7139;">
-                                ${ratingLabelsMap[amazonReviewState.selectedFormRating] || '5 Stars - Excellent'}
-                            </div>
-                        </div>
-
-                        <!-- 2. Customer Name & Email -->
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
-                            <div>
-                                <label style="display: block; font-size: 12.5px; font-weight: 700; color: #0f1111; margin-bottom: 4px;">Public Name *</label>
-                                <input type="text" id="reviewAuthorInput" required placeholder="Your name" 
-                                       value="${currentUser && currentUser.name ? escapeHtml(currentUser.name) : ''}" 
-                                       style="width: 100%; padding: 8px 12px; border: 1px solid #888c8c; border-radius: 6px; font-size: 13.5px; outline: none; box-sizing: border-box; background: #fff;">
-                            </div>
-                            <div>
-                                <label style="display: block; font-size: 12.5px; font-weight: 700; color: #0f1111; margin-bottom: 4px;">Email Address *</label>
-                                <input type="email" id="reviewEmailInput" required placeholder="name@example.com" 
-                                       value="${currentUser && currentUser.email ? escapeHtml(currentUser.email) : ''}" 
-                                       style="width: 100%; padding: 8px 12px; border: 1px solid #888c8c; border-radius: 6px; font-size: 13.5px; outline: none; box-sizing: border-box; background: #fff;">
-                            </div>
-                        </div>
-
-                        <!-- 3. Headline / Title -->
-                        <div style="margin-bottom: 12px;">
-                            <label style="display: block; font-size: 12.5px; font-weight: 700; color: #0f1111; margin-bottom: 4px;">Add a headline *</label>
-                            <input type="text" id="reviewTitleInput" required placeholder="What's most important to know? (e.g. VALUE FOR MONEY)" 
-                                   maxlength="120"
-                                   style="width: 100%; padding: 8px 12px; border: 1px solid #888c8c; border-radius: 6px; font-size: 13.5px; outline: none; box-sizing: border-box; background: #fff;">
-                        </div>
-
-                        <!-- 4. Review Comment Textarea -->
-                        <div style="margin-bottom: 12px;">
-                            <label style="display: block; font-size: 12.5px; font-weight: 700; color: #0f1111; margin-bottom: 4px;">Add a written review *</label>
-                            <textarea id="reviewCommentInput" required placeholder="What did you like or dislike? How was the taste, packaging, and freshness?" 
-                                      rows="4" 
-                                      minlength="5" maxlength="2000"
-                                      style="width: 100%; padding: 8px 12px; border: 1px solid #888c8c; border-radius: 6px; font-size: 13.5px; font-family: inherit; outline: none; box-sizing: border-box; resize: vertical; line-height: 1.5; background: #fff;"></textarea>
-                        </div>
-
-
-                        <!-- Action Buttons -->
-                        <div style="display: flex; justify-content: flex-end; gap: 10px;">
-                            <button type="button" onclick="toggleAmazonReviewForm(false)" style="background: #ffffff; color: #0f1111; border: 1px solid #d5d9d9; padding: 8px 16px; border-radius: 8px; font-size: 13.5px; font-weight: 500; cursor: pointer;">Cancel</button>
-                            <button type="submit" id="submitAmazonReviewBtn" style="background: #ffd814; color: #0f1111; border: 1px solid #fcd200; padding: 8px 22px; border-radius: 8px; font-size: 13.5px; font-weight: 600; cursor: pointer; box-shadow: 0 2px 5px rgba(213,217,217,.5);">
-                                Submit Review
-                            </button>
-                        </div>
-                    </form>
-                </div>
 
                 <!-- Feed Header: Title + Sort -->
                 <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e7e7e7; padding-bottom: 10px;">
@@ -2030,10 +1957,7 @@ function renderAmazonReviewsUI(container) {
                     ${amazonReviewState.reviews.length === 0 ? `
                         <div style="text-align: center; padding: 40px 20px; background: #fafafa; border: 1px dashed #d5d9d9; border-radius: 8px; color: #565959;">
                             <p style="font-size: 15px; font-weight: 600; color: #0f1111; margin: 0 0 6px 0;">No customer reviews yet</p>
-                            <p style="font-size: 13.5px; margin: 0 0 16px 0;">Be the first to share your thoughts with other customers.</p>
-                            <button type="button" onclick="toggleAmazonReviewForm(true)" style="background: #ffd814; color: #0f1111; border: 1px solid #fcd200; padding: 7px 18px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer;">
-                                Write a customer review
-                            </button>
+                            <p style="font-size: 13.5px; margin: 0; color: #565959;">Verified customers who purchased this item can leave a review from their account order history.</p>
                         </div>
                     ` : amazonReviewState.reviews.map(r => {
                         const stars = '★'.repeat(r.rating || 5) + '☆'.repeat(5 - (r.rating || 5));
