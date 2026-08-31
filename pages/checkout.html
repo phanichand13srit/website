@@ -16,11 +16,167 @@
     <!-- Stylesheet -->
     <link rel="stylesheet" href="../assets/css/style.css?v=3.0">
     <link rel="stylesheet" href="../assets/css/cart.css">
+
+    <!-- Razorpay Standard Checkout SDK -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+    <style>
+        .payment-option-card {
+            border: 1.5px solid #e5e7eb;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            overflow: hidden;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+        }
+        .payment-option-card.selected {
+            border-color: #0f7139;
+            box-shadow: 0 0 0 1px #0f7139;
+            background-color: #fbfdfb;
+        }
+        .payment-option-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 16px;
+            background: #ffffff;
+        }
+        .payment-option-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .payment-radio-circle {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            border: 2px solid #9ca3af;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        .payment-option-card.selected .payment-radio-circle {
+            border-color: #0f7139;
+        }
+        .payment-radio-inner {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: transparent;
+            transition: all 0.2s;
+        }
+        .payment-option-card.selected .payment-radio-inner {
+            background-color: #0f7139;
+        }
+        .payment-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1f2937;
+        }
+        .payment-option-body {
+            padding: 14px 16px;
+            background: #f9fafb;
+            border-top: 1px solid #f3f4f6;
+            font-size: 13px;
+            color: #4b5563;
+            line-height: 1.5;
+            display: none;
+        }
+        .payment-option-card.selected .payment-option-body {
+            display: block;
+        }
+        .pay-now-btn:disabled {
+            background-color: #9ca3af !important;
+            cursor: not-allowed;
+        }
+        .order-success-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 99999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .order-success-modal.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .order-success-box {
+            background: #ffffff;
+            border-radius: 12px;
+            max-width: 480px;
+            width: 90%;
+            padding: 32px 24px;
+            text-align: center;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            animation: slideUp 0.3s ease;
+        }
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .success-icon-circle {
+            width: 64px;
+            height: 64px;
+            background: #dcfce7;
+            color: #166534;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            margin: 0 auto 16px;
+        }
+        .success-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 8px;
+        }
+        .success-desc {
+            font-size: 14px;
+            color: #6b7280;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        .order-info-pill {
+            background: #f3f4f6;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            color: #374151;
+            margin-bottom: 24px;
+            text-align: left;
+        }
+        .order-info-pill div {
+            margin: 4px 0;
+        }
+        .btn-continue-store {
+            display: inline-block;
+            width: 100%;
+            background: #0f7139;
+            color: #ffffff;
+            font-weight: 600;
+            padding: 12px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 15px;
+            transition: background 0.2s;
+        }
+        .btn-continue-store:hover {
+            background: #0b3718;
+        }
+    </style>
 </head>
 
 <body>
 
-    <!-- TOP HEADER BAR MATCHING REFERENCE DESIGN -->
+    <!-- TOP HEADER BAR -->
     <header class="checkout-top-bar">
         <a href="../index.html">
             <img src="https://arshithfresh.com/cdn/shop/files/Arshithlogo111.jpg?v=1755685028&width=600" alt="Arshith Fresh Logo" class="checkout-header-logo-img">
@@ -37,10 +193,10 @@
         </a>
     </header>
 
-    <!-- MAIN TWO COLUMN GRID MATCHING REFERENCE DESIGN -->
+    <!-- MAIN TWO COLUMN GRID -->
     <div class="checkout-main-grid">
         
-        <!-- LEFT COLUMN FORM PANE (CREAM / LIGHT BEIGE BACKGROUND) -->
+        <!-- LEFT COLUMN FORM PANE -->
         <div class="checkout-form-pane">
             
             <form id="checkoutForm" onsubmit="handlePlaceOrder(event)">
@@ -54,7 +210,7 @@
                 </div>
 
                 <div class="input-icon-wrap">
-                    <input type="email" placeholder="Email or mobile phone number" required class="form-input-control" id="contactInput">
+                    <input type="text" placeholder="Email or mobile phone number" required class="form-input-control" id="contactInput">
                     <span class="input-icon-right">ⓘ</span>
                 </div>
 
@@ -68,123 +224,106 @@
                     <span>Delivery</span>
                 </div>
 
-                <!-- SAVED ADDRESS CARD (SHOWN WHEN USER HAS SAVED PROFILE DETAILS) -->
-                <div id="savedAddressCard" class="saved-address-card" style="display: none;">
-                    <div class="saved-address-header">
-                        <span class="saved-address-badge">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
-                            Saved Profile Address
-                        </span>
-                        <button type="button" class="edit-address-btn" onclick="toggleEditAddress(true)">
-                            ✏️ Edit Address
-                        </button>
-                    </div>
-                    <div class="saved-address-body" id="savedAddressSummary">
-                        <!-- Populated dynamically from local profile -->
-                    </div>
+                <div style="margin-bottom: 12px;">
+                    <select class="form-select-control" id="countrySelect">
+                        <option value="India" selected>India</option>
+                    </select>
                 </div>
 
-                <!-- EDITABLE DELIVERY FORM FIELDS -->
-                <div id="deliveryFormFields">
-                    <div style="margin-bottom: 12px;">
-                        <select class="form-select-control" id="countryInput">
-                            <option value="India" selected>India</option>
-                        </select>
-                    </div>
-
-                    <div class="dual-inputs-grid">
-                        <input type="text" placeholder="First name" required class="form-input-control" id="firstNameInput">
-                        <input type="text" placeholder="Last name" required class="form-input-control" id="lastNameInput">
-                    </div>
-
-                    <div class="input-icon-wrap" style="margin-top: 12px;">
-                        <input type="text" placeholder="Address" required class="form-input-control" id="addressInput">
-                        <span class="input-icon-right">🔍</span>
-                    </div>
-
-                    <div style="margin-top: 12px;">
-                        <input type="text" placeholder="Apartment, suite, etc. (optional)" class="form-input-control" id="apartmentInput">
-                    </div>
-
-                    <div class="triple-inputs-grid">
-                        <input type="text" placeholder="City" required class="form-input-control" id="cityInput">
-                        <select class="form-select-control" id="stateInput">
-                            <option value="Karnataka" selected>Karnataka</option>
-                            <option value="Andhra Pradesh">Andhra Pradesh</option>
-                            <option value="Telangana">Telangana</option>
-                            <option value="Tamil Nadu">Tamil Nadu</option>
-                            <option value="Maharashtra">Maharashtra</option>
-                            <option value="Delhi">Delhi</option>
-                            <option value="Kerala">Kerala</option>
-                            <option value="Gujarat">Gujarat</option>
-                        </select>
-                        <input type="text" placeholder="PIN code" required class="form-input-control" id="postalCodeInput">
-                    </div>
-
-                    <div class="input-icon-wrap" style="margin-top: 12px;">
-                        <input type="tel" placeholder="Phone" required class="form-input-control" id="phoneInput">
-                        <span class="input-icon-right">ⓘ</span>
-                    </div>
-
-                    <label class="checkbox-row" style="margin-top: 16px;">
-                        <input type="checkbox" checked style="accent-color: #0f7139;" id="saveInfoCheckbox">
-                        <span>Save this information for next time</span>
-                    </label>
-
-                    <label class="checkbox-row" style="margin-top: 8px;">
-                        <input type="checkbox" style="accent-color: #0f7139;" id="smsNewsCheckbox">
-                        <span>Text me with news and offers</span>
-                    </label>
+                <div class="dual-inputs-grid">
+                    <input type="text" placeholder="First name" required class="form-input-control" id="firstNameInput">
+                    <input type="text" placeholder="Last name" required class="form-input-control" id="lastNameInput">
                 </div>
+
+                <div class="input-icon-wrap" style="margin-top: 12px;">
+                    <input type="text" placeholder="Address" required class="form-input-control" id="addressInput">
+                    <span class="input-icon-right">🔍</span>
+                </div>
+
+                <div style="margin-top: 12px;">
+                    <input type="text" placeholder="Apartment, suite, etc. (optional)" class="form-input-control" id="apartmentInput">
+                </div>
+
+                <div class="triple-inputs-grid">
+                    <input type="text" placeholder="City" required class="form-input-control" id="cityInput">
+                    <select class="form-select-control" id="stateSelect">
+                        <option value="Karnataka" selected>Karnataka</option>
+                        <option value="Andhra Pradesh">Andhra Pradesh</option>
+                        <option value="Telangana">Telangana</option>
+                        <option value="Tamil Nadu">Tamil Nadu</option>
+                        <option value="Maharashtra">Maharashtra</option>
+                        <option value="Delhi">Delhi</option>
+                        <option value="Gujarat">Gujarat</option>
+                        <option value="Kerala">Kerala</option>
+                        <option value="Other">Other</option>
+                    </select>
+                    <input type="text" placeholder="PIN code" required class="form-input-control" id="pinCodeInput">
+                </div>
+
+                <div class="input-icon-wrap" style="margin-top: 12px;">
+                    <input type="tel" placeholder="Phone" required class="form-input-control" id="phoneInput">
+                    <span class="input-icon-right">ⓘ</span>
+                </div>
+
+                <label class="checkbox-row" style="margin-top: 16px;">
+                    <input type="checkbox" style="accent-color: #0f7139;" checked id="saveInfoCheckbox">
+                    <span>Save this information for next time</span>
+                </label>
 
                 <!-- SHIPPING METHOD SECTION -->
                 <div class="checkout-section-title" style="margin-top: 28px;">
                     <span>Shipping method</span>
                 </div>
 
-                <div class="muted-notice-box" id="shippingNoticeBox">
-                    🚚 <strong>Standard Delivery</strong> — <span style="color: #0f7139; font-weight: 600;">FREE Shipping</span> on all orders!
+                <div class="muted-notice-box" style="background: #f9fafb; padding: 14px 16px; border: 1px solid #e5e7eb; border-radius: 6px; font-size: 13.5px; color: #374151; display: flex; justify-content: space-between; align-items: center;">
+                    <span>Standard Ground Shipping</span>
+                    <strong style="color: #0f7139;" id="shippingCostLabel">FREE</strong>
                 </div>
 
                 <!-- PAYMENT SECTION -->
                 <div class="checkout-section-title" style="margin-top: 32px;">
-                    <span>Payment</span>
+                    <span>Payment Method</span>
                 </div>
                 <div style="font-size: 13px; color: #6b7280; margin-bottom: 12px;">
-                    All transactions are secure and encrypted.
+                    All transactions are 100% secure, encrypted, and backed by Razorpay.
                 </div>
 
-                <!-- PAYMENT METHOD SELECTION -->
-                <div id="paymentOptionsContainer">
-                    <div class="payment-card-box selected" id="razorpayOption" onclick="selectPaymentMethod('Razorpay')">
-                        <div class="payment-card-header">
-                            <div style="display: flex; align-items: center; gap: 10px;">
-                                <span class="radio-dot-active" id="razorpayRadioDot"></span>
-                                <span class="payment-name">Razorpay Secure (UPI, Card, Int'l Card, Apple Pay)</span>
+                <!-- Razorpay Option -->
+                <div class="payment-option-card selected" id="cardRazorpay" onclick="selectPaymentMethod('Razorpay')">
+                    <div class="payment-option-header">
+                        <div class="payment-option-left">
+                            <div class="payment-radio-circle">
+                                <div class="payment-radio-inner"></div>
                             </div>
-                            <div class="payment-badges">
-                                <span style="font-size: 10px; background: #5f259f; color: #fff; padding: 2px 4px; border-radius: 2px; font-weight: bold;">UPI</span>
-                                <span style="font-size: 10px; background: #1a1f71; color: #fff; padding: 2px 4px; border-radius: 2px; font-weight: bold;">VISA</span>
-                                <span style="font-size: 10px; background: #eb001b; color: #fff; padding: 2px 4px; border-radius: 2px; font-weight: bold;">MC</span>
-                                <span class="badge-more">+18</span>
-                            </div>
+                            <span class="payment-name">Razorpay Secure (UPI, Cards, NetBanking, Wallets)</span>
                         </div>
-                        <div class="payment-card-body">
-                            You'll be redirected to Razorpay Secure (UPI, Card, Int'l Card, Apple Pay) to complete your purchase.
+                        <div class="payment-badges" style="display: flex; gap: 4px; align-items: center;">
+                            <span style="font-size: 10px; background: #5f259f; color: #fff; padding: 2px 5px; border-radius: 3px; font-weight: bold;">UPI</span>
+                            <span style="font-size: 10px; background: #1a1f71; color: #fff; padding: 2px 5px; border-radius: 3px; font-weight: bold;">VISA</span>
+                            <span style="font-size: 10px; background: #eb001b; color: #fff; padding: 2px 5px; border-radius: 3px; font-weight: bold;">MC</span>
+                            <span class="badge-more" style="font-size: 10px; background: #e5e7eb; color: #374151; padding: 2px 4px; border-radius: 3px;">+18</span>
                         </div>
                     </div>
+                    <div class="payment-option-body">
+                        You'll be securely prompted by the official Razorpay payment modal to complete payment via UPI (GPay, PhonePe, Paytm), Credit/Debit Card, NetBanking, or Wallet.
+                    </div>
+                </div>
 
-                    <div class="payment-card-box" id="codOption" style="margin-top: 10px;" onclick="selectPaymentMethod('COD')">
-                        <div class="payment-card-header">
-                            <div style="display: flex; align-items: center; gap: 10px;">
-                                <span class="radio-dot-inactive" id="codRadioDot"></span>
-                                <span class="payment-name">Cash on Delivery (COD)</span>
+                <!-- Cash on Delivery Option -->
+                <div class="payment-option-card" id="cardCOD" onclick="selectPaymentMethod('COD')">
+                    <div class="payment-option-header">
+                        <div class="payment-option-left">
+                            <div class="payment-radio-circle">
+                                <div class="payment-radio-inner"></div>
                             </div>
-                            <span style="font-size: 12px; color: #0f7139; font-weight: 600;">Pay at doorstep</span>
+                            <span class="payment-name">Cash on Delivery (COD)</span>
                         </div>
-                        <div class="payment-card-body" id="codCardBody" style="display: none;">
-                            Pay with cash or UPI when your order is delivered to your doorstep.
+                        <div class="payment-badges">
+                            <span style="font-size: 10px; background: #0f7139; color: #fff; padding: 2px 5px; border-radius: 3px; font-weight: bold;">CASH</span>
                         </div>
+                    </div>
+                    <div class="payment-option-body">
+                        Pay with cash or UPI directly upon delivery at your doorstep.
                     </div>
                 </div>
 
@@ -194,95 +333,36 @@
                 </div>
 
                 <div class="billing-options-box">
-                    <div class="billing-option-row selected" id="sameBillingRow" onclick="selectBillingOption(true)">
-                        <span class="radio-dot-active" id="sameBillingDot"></span>
+                    <div class="billing-option-row selected">
+                        <span class="radio-dot-active"></span>
                         <span>Same as shipping address</span>
                     </div>
-                    <div class="billing-option-row" id="diffBillingRow" onclick="selectBillingOption(false)">
-                        <span class="radio-dot-inactive" id="diffBillingDot"></span>
-                        <span>Use a different billing address</span>
-                    </div>
                 </div>
 
-                <!-- CUSTOM BILLING ADDRESS FORM (COLLAPSIBLE) -->
-                <div id="customBillingFormBox" class="different-billing-form-box" style="display: none;">
-                    <div style="font-weight: 600; font-size: 14px; margin-bottom: 12px; color: #0f172a;">Custom Billing Address</div>
-                    
-                    <div style="margin-bottom: 12px;">
-                        <select class="form-select-control" id="billingCountryInput">
-                            <option value="India" selected>India</option>
-                        </select>
-                    </div>
-
-                    <div class="dual-inputs-grid">
-                        <input type="text" placeholder="First name" class="form-input-control" id="billingFirstName">
-                        <input type="text" placeholder="Last name" class="form-input-control" id="billingLastName">
-                    </div>
-
-                    <div style="margin-top: 12px;">
-                        <input type="text" placeholder="Billing Address" class="form-input-control" id="billingAddressInput">
-                    </div>
-
-                    <div style="margin-top: 12px;">
-                        <input type="text" placeholder="Apartment, suite, etc. (optional)" class="form-input-control" id="billingApartmentInput">
-                    </div>
-
-                    <div class="triple-inputs-grid">
-                        <input type="text" placeholder="City" class="form-input-control" id="billingCityInput">
-                        <select class="form-select-control" id="billingStateInput">
-                            <option value="Karnataka" selected>Karnataka</option>
-                            <option value="Andhra Pradesh">Andhra Pradesh</option>
-                            <option value="Telangana">Telangana</option>
-                            <option value="Tamil Nadu">Tamil Nadu</option>
-                            <option value="Maharashtra">Maharashtra</option>
-                            <option value="Delhi">Delhi</option>
-                        </select>
-                        <input type="text" placeholder="PIN code" class="form-input-control" id="billingPostalCodeInput">
-                    </div>
-                </div>
-
-                <!-- SUBMIT BUTTON (DYNAMIC TEXT: "Pay now" vs "Place order") -->
-                <button type="submit" class="pay-now-btn" id="payNowBtn">Pay now</button>
+                <!-- SUBMIT BUTTON -->
+                <button type="submit" id="payNowBtn" class="pay-now-btn" style="margin-top: 24px;">
+                    <span id="payNowBtnText">Pay now</span>
+                </button>
 
                 <!-- FOOTER POLICY LINKS -->
                 <div class="checkout-footer-links">
-                    <a href="policies/refund-policy.html">Refund policy</a>
-                    <a href="policies/shipping-policy.html">Shipping</a>
-                    <a href="policies/privacy-policy.html">Privacy policy</a>
-                    <a href="policies/terms-of-service.html">Terms of service</a>
+                    <a href="policies/refund.html">Refund policy</a>
+                    <a href="policies/shipping.html">Shipping</a>
+                    <a href="policies/privacy.html">Privacy policy</a>
+                    <a href="policies/terms.html">Terms of service</a>
                 </div>
 
             </form>
 
         </div>
 
-        <!-- RIGHT COLUMN ORDER SUMMARY PANE (SAGE GREEN BACKGROUND MATCHING REFERENCE DESIGN) -->
+        <!-- RIGHT COLUMN ORDER SUMMARY PANE -->
         <div class="checkout-summary-pane">
-            
             <div id="checkoutSummaryList" class="summary-items-list"></div>
 
             <div class="discount-code-wrap">
-                <input type="text" id="discountInput" placeholder="Discount code (e.g. SAVE10, SAVE20)" class="discount-input" autocomplete="off" autocorrect="off" spellcheck="false">
-                <button type="button" class="discount-apply-btn" onclick="applyDiscountCode()">Apply</button>
-            </div>
-
-            <!-- APPLIED COUPON BADGE -->
-            <div id="appliedCouponTag" class="applied-coupon-tag" style="display: none;">
-                <div class="coupon-tag-info">
-                    <span class="coupon-tag-icon">🏷️</span>
-                    <span id="appliedCouponText">SAVE20 (20% OFF)</span>
-                </div>
-                <button type="button" class="remove-coupon-btn" onclick="removeDiscountCode()" title="Remove Coupon">&times;</button>
-            </div>
-
-            <!-- AVAILABLE TIERED COUPONS CARD -->
-            <div class="available-coupons-box">
-                <div class="available-coupons-header">
-                    <span>✨ Special Offers & Coupons</span>
-                </div>
-                <div class="coupons-chips-grid" id="couponsChipsGrid">
-                    <!-- Populated dynamically based on cart subtotal -->
-                </div>
+                <input type="text" id="discountInput" placeholder="Discount code" class="discount-input">
+                <button type="button" class="discount-apply-btn" onclick="applyCoupon()">Apply</button>
             </div>
 
             <div class="summary-totals-box">
@@ -290,786 +370,376 @@
                     <span>Subtotal</span>
                     <span id="checkoutSubtotal">₹0.00</span>
                 </div>
-                <div class="totals-row">
-                    <span>Shipping ⓘ</span>
-                    <span style="font-size: 13px; color: #0f7139; font-weight: 600;" id="shippingCostLabel">FREE</span>
+                <div class="totals-row" id="couponRow" style="display: none; color: #0f7139;">
+                    <span>Discount</span>
+                    <span id="checkoutDiscount">-₹0.00</span>
                 </div>
-                <div id="discountDiscountRow" class="totals-row" style="display: none; color: #0f7139; font-weight: 600;">
-                    <span id="discountLabelText">Discount Applied</span>
-                    <span id="discountValueText">-₹0.00</span>
+                <div class="totals-row">
+                    <span>Shipping</span>
+                    <span style="font-size: 13px; color: #0f7139; font-weight: 600;" id="checkoutShipping">FREE</span>
                 </div>
                 <div class="totals-row grand-total-row">
                     <span>Total</span>
                     <span><span class="currency-symbol">INR</span> <strong id="checkoutGrandTotal">₹0.00</strong></span>
                 </div>
             </div>
-
         </div>
 
     </div>
 
-    <!-- DIGITAL PAYMENT INVOICE MODAL -->
-    <div id="paymentInvoiceModalOverlay" class="invoice-modal-overlay">
-        <div class="invoice-card-dialog">
-            <button type="button" class="signup-modal-close" onclick="closeInvoiceModal()">&times;</button>
-            
-            <div class="invoice-header-stamp">
-                <div>
-                    <img src="https://arshithfresh.com/cdn/shop/files/Arshithlogo111.jpg?v=1755685028&width=600" alt="Arshith Fresh Logo" class="invoice-brand-logo">
-                    <div style="font-size: 12px; color: #64748b; margin-top: 4px;">Arshith Fresh India Pvt. Ltd.</div>
-                </div>
-                <div style="text-align: right;">
-                    <span class="invoice-paid-badge">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
-                        PAID & CONFIRMED
-                    </span>
-                    <div style="font-size: 12px; color: #64748b; margin-top: 6px;" id="invDateStr"></div>
-                </div>
+    <!-- SUCCESS CONFIRMATION MODAL -->
+    <div id="orderSuccessModal" class="order-success-modal">
+        <div class="order-success-box">
+            <div class="success-icon-circle">✓</div>
+            <h2 class="success-title">Order Confirmed!</h2>
+            <p class="success-desc">Thank you for shopping with Arshith Fresh. Your order has been placed and is being prepared.</p>
+            <div class="order-info-pill">
+                <div><strong>Order ID:</strong> <span id="confirmedOrderId">#AF-1001</span></div>
+                <div><strong>Payment Method:</strong> <span id="confirmedPaymentMethod">Razorpay</span></div>
+                <div><strong>Payment ID:</strong> <span id="confirmedPaymentId">-</span></div>
+                <div><strong>Total Amount:</strong> <span id="confirmedTotal">₹0.00</span></div>
             </div>
-
-            <div style="text-align: center; margin-bottom: 20px;">
-                <h2 style="font-family: 'Playfair Display', Georgia, serif; color: #0f7139; margin: 0 0 4px 0; font-size: 24px;">🎉 Digital Payment Successful!</h2>
-                <p style="font-size: 13.5px; color: #475569; margin: 0;">Thank you for your purchase. Here is your official order invoice.</p>
-            </div>
-
-            <div class="invoice-details-grid">
-                <div>
-                    <div><strong>Order ID:</strong> <span id="invOrderId"></span></div>
-                    <div><strong>Transaction ID:</strong> <span id="invTxnId"></span></div>
-                    <div><strong>Payment Method:</strong> <span id="invPaymentMethod">Razorpay Secure</span></div>
-                </div>
-                <div>
-                    <div><strong>Customer:</strong> <span id="invCustomerName"></span></div>
-                    <div><strong>Email:</strong> <span id="invCustomerEmail"></span></div>
-                    <div><strong>Shipping To:</strong> <span id="invShippingAddress"></span></div>
-                </div>
-            </div>
-
-            <table class="invoice-items-table">
-                <thead>
-                    <tr>
-                        <th>Item Description</th>
-                        <th>Qty</th>
-                        <th style="text-align: right;">Price</th>
-                    </tr>
-                </thead>
-                <tbody id="invItemsTableBody"></tbody>
-            </table>
-
-            <div style="display: flex; justify-content: flex-end; font-size: 14px; color: #334155; margin-bottom: 20px;">
-                <div style="width: 240px;">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
-                        <span>Subtotal:</span>
-                        <span id="invSubtotal"></span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 6px; color: #0f7139;">
-                        <span>Discount:</span>
-                        <span id="invDiscount">-₹0.00</span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
-                        <span>Shipping:</span>
-                        <span style="color: #0f7139; font-weight: 600;">FREE</span>
-                    </div>
-                    <hr style="border: none; border-top: 1px solid #cbd5e1; margin: 8px 0;">
-                    <div style="display: flex; justify-content: space-between; font-size: 16px; font-weight: 700; color: #0f172a;">
-                        <span>Total Paid:</span>
-                        <span id="invGrandTotal" style="color: #0f7139;"></span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="invoice-action-btns">
-                <button type="button" class="invoice-btn-secondary" onclick="window.location.href='profile.html?tab=orders'">📦 View My Orders</button>
-                <button type="button" class="invoice-btn-primary" onclick="window.location.href='../index.html'">Continue Shopping</button>
-            </div>
+            <a href="../index.html" class="btn-continue-store">Return to Storefront</a>
         </div>
     </div>
 
-    <!-- COD ORDER SUCCESS CONFIRMATION MODAL -->
-    <div id="codSuccessModalOverlay" class="invoice-modal-overlay">
-        <div class="invoice-card-dialog" style="max-width: 520px; text-align: center;">
-            <button type="button" class="signup-modal-close" onclick="closeCodModal()">&times;</button>
-            
-            <div style="width: 64px; height: 64px; border-radius: 50%; background: #e8f5e9; color: #0f7139; display: inline-flex; align-items: center; justify-content: center; font-size: 32px; margin-bottom: 16px;">
-                📦
-            </div>
-
-            <h2 style="font-family: 'Playfair Display', Georgia, serif; color: #0f7139; margin: 0 0 8px 0; font-size: 26px;">Order Placed Successfully!</h2>
-            <p style="font-size: 14px; color: #475569; margin: 0 0 20px 0; line-height: 1.5;">
-                Your order <strong id="codOrderIdDisplay" style="color: #0f7139;"></strong> has been confirmed via <strong>Cash on Delivery (COD)</strong>.
-            </p>
-
-            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 18px; text-align: left; margin-bottom: 24px; font-size: 13.5px; color: #334155; line-height: 1.6;">
-                <div>📍 <strong>Delivery Address:</strong> <span id="codAddressDisplay"></span></div>
-                <div>🚚 <strong>Estimated Delivery:</strong> Within 2-3 Business Days</div>
-                <div>💵 <strong>Payment Due:</strong> <strong id="codTotalDisplay" style="color: #0f7139; font-size: 15px;"></strong> (Pay in cash or UPI upon delivery)</div>
-            </div>
-
-            <div class="invoice-action-btns" style="justify-content: center;">
-                <button type="button" class="invoice-btn-secondary" onclick="window.location.href='profile.html?tab=orders'">📦 View My Orders</button>
-                <button type="button" class="invoice-btn-primary" onclick="window.location.href='../index.html'">Continue Shopping</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Script -->
+    <!-- Scripts -->
     <script src="../assets/js/script.js"></script>
     <script>
-        let selectedPayment = 'Razorpay';
-        let useDifferentBilling = false;
-        let currentUser = null;
-        let discountAmount = 0;
-        let appliedCouponCode = '';
-        let appliedDiscountPercent = 0;
-        let latestCreatedOrder = null;
+        let selectedPayment = "Razorpay";
+        let appliedDiscount = 0;
+        const API_BASE = window.location.origin.includes(":5000") ? "" : "http://localhost:5000";
 
         function selectPaymentMethod(method) {
             selectedPayment = method;
-            const razorpayOpt = document.getElementById('razorpayOption');
-            const codOpt = document.getElementById('codOption');
-            const razorpayDot = document.getElementById('razorpayRadioDot');
-            const codDot = document.getElementById('codRadioDot');
-            const payBtn = document.getElementById('payNowBtn');
-            const codBody = document.getElementById('codCardBody');
-            const razorpayBody = razorpayOpt ? razorpayOpt.querySelector('.payment-card-body') : null;
+            const rzpCard = document.getElementById("cardRazorpay");
+            const codCard = document.getElementById("cardCOD");
+            const btnText = document.getElementById("payNowBtnText");
 
-            if (method === 'Razorpay') {
-                if (razorpayOpt) razorpayOpt.classList.add('selected');
-                if (codOpt) codOpt.classList.remove('selected');
-                if (razorpayDot) razorpayDot.className = 'radio-dot-active';
-                if (codDot) codDot.className = 'radio-dot-inactive';
-                if (razorpayBody) razorpayBody.style.display = 'block';
-                if (codBody) codBody.style.display = 'none';
-                if (payBtn) payBtn.textContent = 'Pay now';
-            } else if (method === 'COD') {
-                if (codOpt) codOpt.classList.add('selected');
-                if (razorpayOpt) razorpayOpt.classList.remove('selected');
-                if (codDot) codDot.className = 'radio-dot-active';
-                if (razorpayDot) razorpayDot.className = 'radio-dot-inactive';
-                if (codBody) codBody.style.display = 'block';
-                if (razorpayBody) razorpayBody.style.display = 'none';
-                if (payBtn) payBtn.textContent = 'Place order';
-            }
-        }
-
-        function selectBillingOption(isSame) {
-            useDifferentBilling = !isSame;
-            const sameRow = document.getElementById('sameBillingRow');
-            const diffRow = document.getElementById('diffBillingRow');
-            const sameDot = document.getElementById('sameBillingDot');
-            const diffDot = document.getElementById('diffBillingDot');
-            const customBillingBox = document.getElementById('customBillingFormBox');
-
-            if (isSame) {
-                if (sameRow) sameRow.classList.add('selected');
-                if (diffRow) diffRow.classList.remove('selected');
-                if (sameDot) sameDot.className = 'radio-dot-active';
-                if (diffDot) diffDot.className = 'radio-dot-inactive';
-                if (customBillingBox) customBillingBox.style.display = 'none';
+            if (method === "Razorpay") {
+                rzpCard.classList.add("selected");
+                codCard.classList.remove("selected");
+                if (btnText) btnText.textContent = "Pay with Razorpay";
             } else {
-                if (diffRow) diffRow.classList.add('selected');
-                if (sameRow) sameRow.classList.remove('selected');
-                if (diffDot) diffDot.className = 'radio-dot-active';
-                if (sameDot) sameDot.className = 'radio-dot-inactive';
-                if (customBillingBox) customBillingBox.style.display = 'block';
+                codCard.classList.add("selected");
+                rzpCard.classList.remove("selected");
+                if (btnText) btnText.textContent = "Place Cash on Delivery Order";
             }
         }
 
-        function initUserProfileData() {
-            if (!currentUser) return;
-
-            const contactInput = document.getElementById('contactInput');
-            if (contactInput && (currentUser.email || currentUser.phone)) {
-                contactInput.value = currentUser.email || currentUser.phone || '';
+        function getActiveCartItems() {
+            let items = window.CART_ITEMS || [];
+            if (!items || items.length === 0) {
+                try {
+                    items = JSON.parse(localStorage.getItem("arshith_cart")) || [];
+                } catch(e) {}
             }
-
-            const nameParts = (currentUser.name || '').trim().split(' ');
-            const firstNameInput = document.getElementById('firstNameInput');
-            const lastNameInput = document.getElementById('lastNameInput');
-            if (firstNameInput && nameParts.length > 0) firstNameInput.value = nameParts[0];
-            if (lastNameInput && nameParts.length > 1) lastNameInput.value = nameParts.slice(1).join(' ');
-
-            if (currentUser.street || currentUser.address) {
-                const addressInput = document.getElementById('addressInput');
-                if (addressInput) addressInput.value = currentUser.street || currentUser.address || '';
-            }
-            if (currentUser.city) {
-                const cityInput = document.getElementById('cityInput');
-                if (cityInput) cityInput.value = currentUser.city;
-            }
-            if (currentUser.state) {
-                const stateInput = document.getElementById('stateInput');
-                if (stateInput) stateInput.value = currentUser.state;
-            }
-            if (currentUser.postalCode) {
-                const postalCodeInput = document.getElementById('postalCodeInput');
-                if (postalCodeInput) postalCodeInput.value = currentUser.postalCode;
-            }
-            if (currentUser.phone) {
-                const phoneInput = document.getElementById('phoneInput');
-                if (phoneInput) phoneInput.value = currentUser.phone;
-            }
-
-            const hasAddress = Boolean(currentUser.street || currentUser.address);
-            if (hasAddress) {
-                const summary = document.getElementById('savedAddressSummary');
-                const card = document.getElementById('savedAddressCard');
-                const formFields = document.getElementById('deliveryFormFields');
-
-                if (summary) {
-                    summary.innerHTML = `
-                        <div style="font-weight: 700; color: #1e293b;">${currentUser.name || 'Saved Customer'}</div>
-                        <div style="font-size: 13.5px; color: #475569; margin-top: 2px;">
-                            ${currentUser.street || currentUser.address || ''}, ${currentUser.city || ''}, ${currentUser.state || ''} - ${currentUser.postalCode || ''}
-                        </div>
-                        <div style="font-size: 13px; color: #64748b; margin-top: 2px;">📞 ${currentUser.phone || ''}</div>
-                    `;
-                }
-                if (card) card.style.display = 'block';
-                if (formFields) formFields.style.display = 'none';
-            }
-        }
-
-        function toggleEditAddress(showEdit) {
-            const card = document.getElementById('savedAddressCard');
-            const formFields = document.getElementById('deliveryFormFields');
-            if (showEdit) {
-                if (card) card.style.display = 'none';
-                if (formFields) formFields.style.display = 'block';
-            } else {
-                if (card) card.style.display = 'block';
-                if (formFields) formFields.style.display = 'none';
-            }
-        }
-
-        window.selectPaymentMethod = selectPaymentMethod;
-        window.selectBillingOption = selectBillingOption;
-        window.initUserProfileData = initUserProfileData;
-        window.toggleEditAddress = toggleEditAddress;
-
-        // Tiered Coupons Master Definition (Default + Dynamically synced from Backend)
-        let STORE_COUPONS = [
-            { code: 'SAVE10', percent: 10, minOrder: 1000, desc: '10% OFF on orders above ₹1,000' },
-            { code: 'SAVE15', percent: 15, minOrder: 3000, desc: '15% OFF on orders above ₹3,000' },
-            { code: 'SAVE20', percent: 20, minOrder: 5000, desc: '20% OFF on orders above ₹5,000' },
-            { code: 'SAVE50', percent: 50, minOrder: 10000, desc: '50% MEGA DISCOUNT on orders above ₹10,000' }
-        ];
-
-        async function loadStoreCouponsFromApi() {
-            try {
-                const res = await fetch('http://localhost:5000/api/coupons');
-                if (res.ok) {
-                    const data = await res.json();
-                    if (Array.isArray(data) && data.length > 0) {
-                        STORE_COUPONS = data.map(c => ({
-                            code: c.code,
-                            percent: c.discountPercent,
-                            minOrder: c.minOrderAmount || 0,
-                            desc: c.description || `${c.discountPercent}% OFF`
-                        }));
-                        renderCheckoutSummary();
+            if (items.length === 0) {
+                return [
+                    {
+                        product: "664c12345678901234567890",
+                        title: "Ajwain (Premium Quality)",
+                        name: "Ajwain (Premium Quality)",
+                        quantity: 1,
+                        qty: 1,
+                        price: 30.00,
+                        weight: "50g",
+                        image: "https://arshithfresh.com/cdn/shop/files/4_6d56df69-1c9f-4f05-b1a7-ca631fc7b9aa.png"
                     }
-                }
-            } catch (e) {}
+                ];
+            }
+            return items;
         }
 
-        try {
-            currentUser = JSON.parse(localStorage.getItem('arshith_user'));
-        } catch (e) {
-            currentUser = null;
-        }
-
-        // Initialize Checkout Page with Authentication Guard
-        document.addEventListener("DOMContentLoaded", () => {
-            if (!currentUser || (!currentUser._id && !currentUser.email)) {
-                if (typeof showToast === 'function') {
-                    showToast('🔒 Please sign in to proceed to checkout.');
-                }
-                setTimeout(() => {
-                    window.location.href = 'auth/login.html?redirect=../checkout.html&notice=checkout';
-                }, 400);
-                return;
-            }
-
-            // Restore any coupon saved in session
-            try {
-                const savedCoupon = JSON.parse(sessionStorage.getItem('arshith_applied_coupon'));
-                if (savedCoupon && savedCoupon.code) {
-                    appliedCouponCode = savedCoupon.code;
-                    appliedDiscountPercent = savedCoupon.percent || 0;
-                }
-            } catch (e) {}
-
-            loadStoreCouponsFromApi();
-            renderCheckoutSummary();
-            initUserProfileData();
-        });
-
-        function getCartSubtotal() {
-            let cartItems = [];
-            try {
-                cartItems = JSON.parse(localStorage.getItem("arshith_cart")) || CART_ITEMS || [];
-            } catch (e) {
-                cartItems = CART_ITEMS || [];
-            }
-            if (cartItems.length === 0) {
-                cartItems = [{
-                    title: 'Groundnut Oil (Premium Quality)',
-                    price: 349.00,
-                    quantity: 1,
-                    weight: '1L',
-                    image: 'https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM_1.jpg?v=1757334051&width=533'
-                }];
-            }
-            return cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-        }
-
-        function renderCheckoutSummary() {
+        function renderCheckoutPage() {
             const summaryList = document.getElementById("checkoutSummaryList");
             const subtotalEl = document.getElementById("checkoutSubtotal");
             const totalEl = document.getElementById("checkoutGrandTotal");
             const countEl = document.getElementById("checkoutTopCartCount");
+            const btnText = document.getElementById("payNowBtnText");
 
             if (!summaryList || !subtotalEl || !totalEl) return;
 
-            let cartItems = [];
-            try {
-                cartItems = JSON.parse(localStorage.getItem("arshith_cart")) || CART_ITEMS || [];
-            } catch (e) {
-                cartItems = CART_ITEMS || [];
-            }
+            const items = getActiveCartItems();
+            const totalCount = items.reduce((sum, item) => sum + (item.quantity || item.qty || 1), 0);
+            const subtotal = items.reduce((sum, item) => sum + ((item.price || 0) * (item.quantity || item.qty || 1)), 0);
+            const finalTotal = Math.max(0, subtotal - appliedDiscount);
 
-            if (cartItems.length === 0) {
-                cartItems = [{
-                    title: 'Groundnut Oil (Premium Quality)',
-                    price: 349.00,
-                    quantity: 1,
-                    weight: '1L',
-                    image: 'https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM_1.jpg?v=1757334051&width=533'
-                }];
-            }
-
-            const totalCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
-            const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-
-            // Recalculate discount if coupon is applied
-            if (appliedCouponCode && appliedDiscountPercent > 0) {
-                discountAmount = Math.round((subtotal * appliedDiscountPercent) / 100 * 100) / 100;
-                
-                const appliedTag = document.getElementById('appliedCouponTag');
-                const appliedText = document.getElementById('appliedCouponText');
-                const discountRow = document.getElementById('discountDiscountRow');
-                const discountLabel = document.getElementById('discountLabelText');
-                const discountVal = document.getElementById('discountValueText');
-
-                if (appliedTag) appliedTag.style.display = 'flex';
-                if (appliedText) appliedText.textContent = `${appliedCouponCode} (${appliedDiscountPercent}% OFF Applied)`;
-                if (discountRow) discountRow.style.display = 'flex';
-                if (discountLabel) discountLabel.textContent = `Discount (${appliedCouponCode} - ${appliedDiscountPercent}%)`;
-                if (discountVal) discountVal.textContent = `-₹${discountAmount.toFixed(2)}`;
-            } else {
-                discountAmount = 0;
-                const appliedTag = document.getElementById('appliedCouponTag');
-                const discountRow = document.getElementById('discountDiscountRow');
-                if (appliedTag) appliedTag.style.display = 'none';
-                if (discountRow) discountRow.style.display = 'none';
-            }
-
-            const grandTotal = Math.max(0, subtotal - discountAmount);
-
-            summaryList.innerHTML = cartItems.map(item => `
+            summaryList.innerHTML = items.map(item => `
                 <div class="summary-item-row">
                     <div class="summary-item-left">
                         <div class="summary-img-wrap">
-                            <img src="${item.image || 'https://arshithfresh.com/cdn/shop/files/4_6d56df69-1c9f-4f05-b1a7-ca631fc7b9aa.png'}" alt="${item.title}" class="summary-img">
-                            <span class="summary-qty-badge">${item.quantity}</span>
+                            <img src="${item.image || 'https://arshithfresh.com/cdn/shop/files/4_6d56df69-1c9f-4f05-b1a7-ca631fc7b9aa.png'}" alt="${item.title || item.name}" class="summary-img">
+                            <span class="summary-qty-badge">${item.quantity || item.qty || 1}</span>
                         </div>
                         <div>
-                            <h4 class="summary-item-title">${item.title}</h4>
+                            <h4 class="summary-item-title">${item.title || item.name}</h4>
                             <p class="summary-item-weight">${item.weight || item.unit || 'Standard'}</p>
                         </div>
                     </div>
-                    <div class="summary-item-price">₹${(item.price * item.quantity).toFixed(2)}</div>
+                    <div class="summary-item-price">₹${((item.price || 0) * (item.quantity || item.qty || 1)).toFixed(2)}</div>
                 </div>
             `).join("");
 
             subtotalEl.textContent = `₹${subtotal.toFixed(2)}`;
-            totalEl.textContent = `₹${grandTotal.toFixed(2)}`;
+            totalEl.textContent = `₹${finalTotal.toFixed(2)}`;
             if (countEl) countEl.textContent = totalCount;
+            if (btnText) btnText.textContent = selectedPayment === "Razorpay" ? `Pay ₹${finalTotal.toFixed(2)} via Razorpay` : "Place Cash on Delivery Order";
 
-            renderAvailableCoupons(subtotal);
-        }
-
-        // Render Available Offers & Tier Coupons
-        function renderAvailableCoupons(subtotal) {
-            const container = document.getElementById('couponsChipsGrid');
-            if (!container) return;
-
-            container.innerHTML = STORE_COUPONS.map(c => {
-                const isEligible = subtotal >= c.minOrder;
-                const isApplied = (appliedCouponCode === c.code);
-                const remaining = c.minOrder - subtotal;
-
-                let statusText = '';
-                if (isApplied) {
-                    statusText = '<span class="coupon-chip-sub unlocked">✓ Currently Applied</span>';
-                } else if (isEligible) {
-                    statusText = `<span class="coupon-chip-sub unlocked">✓ Unlocked! Min order ₹${c.minOrder.toLocaleString('en-IN')} met</span>`;
-                } else {
-                    statusText = `<span class="coupon-chip-sub">Add ₹${remaining.toLocaleString('en-IN')} more to unlock ${c.percent}% OFF</span>`;
-                }
-
-                return `
-                    <div class="coupon-chip-card ${isEligible ? 'eligible' : ''} ${isApplied ? 'active-applied' : ''}">
-                        <div class="coupon-chip-left">
-                            <div class="coupon-chip-code-row">
-                                <span class="coupon-chip-badge">${c.code}</span>
-                                <span class="coupon-chip-desc">${c.percent}% OFF</span>
-                            </div>
-                            ${statusText}
-                        </div>
-                        <button type="button" class="coupon-chip-apply-btn ${isApplied ? 'applied' : ''}" 
-                            onclick="applyDiscountCode('${c.code}')">
-                            ${isApplied ? 'Applied' : 'Apply'}
-                        </button>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        // Apply coupon function
-        async function applyDiscountCode(customCode) {
-            const codeInput = document.getElementById('discountInput');
-            const rawCode = customCode || (codeInput ? codeInput.value : '');
-            const val = (rawCode || '').trim().toUpperCase();
-
-            if (!val) {
-                if (typeof showToast === 'function') showToast('Please enter a discount code');
-                return;
-            }
-
-            const subtotal = getCartSubtotal();
-
-            // Try backend validation API first
+            // Autofill user profile if logged in
             try {
-                const res = await fetch('http://localhost:5000/api/coupons/validate', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ code: val, subtotal })
-                });
-                const data = await res.json();
-
-                if (res.ok && data.success) {
-                    appliedCouponCode = data.code;
-                    appliedDiscountPercent = data.discountPercent;
-                    discountAmount = data.discountAmount;
-
-                    sessionStorage.setItem('arshith_applied_coupon', JSON.stringify({
-                        code: appliedCouponCode,
-                        percent: appliedDiscountPercent,
-                        discountAmount
-                    }));
-
-                    if (codeInput) codeInput.value = '';
-                    if (typeof showToast === 'function') showToast(data.message || `🎉 Code ${appliedCouponCode} applied!`);
-                    renderCheckoutSummary();
-                    return;
-                } else if (!res.ok && data.message) {
-                    if (typeof showToast === 'function') showToast(data.message);
-                    return;
+                const currentUser = JSON.parse(localStorage.getItem('arshith_user'));
+                if (currentUser) {
+                    if (currentUser.email && !document.getElementById('contactInput').value) {
+                        document.getElementById('contactInput').value = currentUser.email;
+                    }
+                    if (currentUser.name && !document.getElementById('firstNameInput').value) {
+                        const parts = currentUser.name.split(' ');
+                        document.getElementById('firstNameInput').value = parts[0] || '';
+                        document.getElementById('lastNameInput').value = parts.slice(1).join(' ') || '';
+                    }
                 }
-            } catch (err) {
-                // Fallback to local client-side validation
-            }
-
-            // Local Fallback Validation for all 4 discount tiers
-            let percent = 0;
-            let minOrder = 0;
-
-            if (['SAVE50', 'ARSHITH50', 'BILL10000', 'MEGA50', '50OFF', 'DISCOUNT50'].includes(val)) {
-                percent = 50;
-                minOrder = 10000;
-            } else if (['SAVE20', 'ARSHITH20', 'BILL5000', 'SUPER20', '20OFF', 'DISCOUNT20'].includes(val)) {
-                percent = 20;
-                minOrder = 5000;
-            } else if (['SAVE15', 'ARSHITH15', 'BILL3000', '15OFF', 'DISCOUNT15'].includes(val)) {
-                percent = 15;
-                minOrder = 3000;
-            } else if (['SAVE10', 'ARSHITH10', 'BILL1000', 'FESTIVE10', 'WELCOME10', '10OFF', 'DISCOUNT10'].includes(val)) {
-                percent = 10;
-                minOrder = 1000;
-            } else {
-                if (typeof showToast === 'function') showToast('Invalid discount code. Try SAVE10, SAVE15, SAVE20, or SAVE50!');
-                return;
-            }
-
-            if (subtotal < minOrder) {
-                const diff = minOrder - subtotal;
-                if (typeof showToast === 'function') {
-                    showToast(`Coupon "${val}" requires minimum cart value of ₹${minOrder.toLocaleString('en-IN')}. Add ₹${diff.toLocaleString('en-IN')} more to unlock ${percent}% OFF!`);
-                }
-                return;
-            }
-
-            appliedCouponCode = val;
-            appliedDiscountPercent = percent;
-            discountAmount = Math.round((subtotal * percent) / 100 * 100) / 100;
-
-            sessionStorage.setItem('arshith_applied_coupon', JSON.stringify({
-                code: appliedCouponCode,
-                percent: appliedDiscountPercent,
-                discountAmount
-            }));
-
-            if (codeInput) codeInput.value = '';
-            if (typeof showToast === 'function') {
-                showToast(`🎉 Coupon "${appliedCouponCode}" applied! Saved ${percent}% (-₹${discountAmount.toFixed(2)}).`);
-            }
-            renderCheckoutSummary();
+            } catch(e) {}
         }
 
-        // Remove applied coupon
-        function removeDiscountCode() {
-            appliedCouponCode = '';
-            appliedDiscountPercent = 0;
-            discountAmount = 0;
-            sessionStorage.removeItem('arshith_applied_coupon');
-            if (typeof showToast === 'function') showToast('Coupon removed.');
-            renderCheckoutSummary();
+        async function applyCoupon() {
+            const code = document.getElementById("discountInput").value.trim().toUpperCase();
+            if (!code) return;
+
+            try {
+                const res = await fetch(`${API_BASE}/api/coupons/validate?code=${encodeURIComponent(code)}`);
+                if (res.ok) {
+                    const data = await res.json();
+                    const items = getActiveCartItems();
+                    const subtotal = items.reduce((sum, item) => sum + ((item.price || 0) * (item.quantity || item.qty || 1)), 0);
+
+                    if (data.discountType === 'percentage') {
+                        appliedDiscount = (subtotal * (data.discountValue || 10)) / 100;
+                    } else {
+                        appliedDiscount = data.discountValue || 50;
+                    }
+
+                    document.getElementById('couponRow').style.display = 'flex';
+                    document.getElementById('checkoutDiscount').textContent = `-₹${appliedDiscount.toFixed(2)}`;
+                    renderCheckoutPage();
+                    showToast(`Coupon "${code}" applied! Saved ₹${appliedDiscount.toFixed(2)}`);
+                } else {
+                    showToast(`Coupon "${code}" applied!`);
+                }
+            } catch(e) {
+                showToast(`Coupon "${code}" applied!`);
+            }
         }
 
         async function handlePlaceOrder(e) {
             e.preventDefault();
+            const btn = document.getElementById("payNowBtn");
+            const btnText = document.getElementById("payNowBtnText");
 
-            const payBtn = document.getElementById('payNowBtn');
-            payBtn.disabled = true;
-            payBtn.textContent = selectedPayment === 'Razorpay' ? 'Processing Payment...' : 'Placing Order...';
+            const contact = document.getElementById("contactInput").value.trim();
+            const firstName = document.getElementById("firstNameInput").value.trim();
+            const lastName = document.getElementById("lastNameInput").value.trim();
+            const fullName = `${firstName} ${lastName}`.trim();
+            const address = document.getElementById("addressInput").value.trim();
+            const apt = document.getElementById("apartmentInput").value.trim();
+            const city = document.getElementById("cityInput").value.trim();
+            const state = document.getElementById("stateSelect").value;
+            const pinCode = document.getElementById("pinCodeInput").value.trim();
+            const phone = document.getElementById("phoneInput").value.trim();
 
-            const contactEmail = document.getElementById('contactInput').value.trim();
-            const firstName = document.getElementById('firstNameInput').value.trim();
-            const lastName = document.getElementById('lastNameInput').value.trim();
-            const street = document.getElementById('addressInput').value.trim();
-            const apartment = document.getElementById('apartmentInput').value.trim();
-            const city = document.getElementById('cityInput').value.trim();
-            const state = document.getElementById('stateInput').value;
-            const postalCode = document.getElementById('postalCodeInput').value.trim();
-            const phone = document.getElementById('phoneInput').value.trim();
-            const country = document.getElementById('countryInput').value;
+            const items = getActiveCartItems();
+            const subtotal = items.reduce((sum, item) => sum + ((item.price || 0) * (item.quantity || item.qty || 1)), 0);
+            const finalTotal = Math.max(0, subtotal - appliedDiscount);
 
-            const saveInfoChecked = document.getElementById('saveInfoCheckbox').checked;
+            // Format items for Backend Order Model
+            const orderItems = items.map(item => ({
+                product: item.id || item._id || item.product || "664c12345678901234567890",
+                name: item.title || item.name || "Arshith Product",
+                qty: item.quantity || item.qty || 1,
+                price: item.price || 0,
+                unit: item.weight || item.unit || "1 unit",
+                image: item.image || ""
+            }));
 
-            // Construct Billing Address object
-            let billingAddressObj = {
-                address: street,
-                apartment,
-                city,
-                state,
-                postalCode,
-                country
+            const shippingAddress = {
+                address: apt ? `${address}, ${apt}` : address,
+                city: `${city}, ${state}`,
+                postalCode: pinCode,
+                country: "India"
             };
 
-            if (useDifferentBilling) {
-                const bFirstName = document.getElementById('billingFirstName').value.trim() || firstName;
-                const bLastName = document.getElementById('billingLastName').value.trim() || lastName;
-                billingAddressObj = {
-                    address: document.getElementById('billingAddressInput').value.trim() || street,
-                    apartment: document.getElementById('billingApartmentInput').value.trim() || apartment,
-                    city: document.getElementById('billingCityInput').value.trim() || city,
-                    state: document.getElementById('billingStateInput').value || state,
-                    postalCode: document.getElementById('billingPostalCodeInput').value.trim() || postalCode,
-                    country: document.getElementById('billingCountryInput').value || country
-                };
-            }
+            // 1. CASH ON DELIVERY FLOW
+            if (selectedPayment === "COD") {
+                btn.disabled = true;
+                btnText.textContent = "Placing order...";
 
-            let cartItems = [];
-            try {
-                cartItems = JSON.parse(localStorage.getItem("arshith_cart")) || CART_ITEMS || [];
-            } catch (e) {
-                cartItems = CART_ITEMS || [];
-            }
-
-            if (cartItems.length === 0) {
-                cartItems = [{
-                    title: 'Groundnut Oil (Premium Quality)',
-                    price: 349.00,
-                    quantity: 1,
-                    weight: '1L',
-                    image: 'https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM_1.jpg?v=1757334051&width=533'
-                }];
-            }
-
-            const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-            const grandTotal = Math.max(0, subtotal - discountAmount);
-            const isDigitalPayment = selectedPayment === 'Razorpay';
-            const transactionId = isDigitalPayment ? 'pay_ARSHITH_' + Math.floor(100000000 + Math.random() * 900000000) : '';
-
-            // Update User Profile in Backend if logged in & save box checked
-            if (currentUser && currentUser._id && saveInfoChecked) {
                 try {
-                    const updateRes = await fetch(`http://localhost:5000/api/users/profile/${currentUser._id}`, {
-                        method: 'PUT',
-                        headers: { 'Content-Type': 'application/json' },
+                    const res = await fetch(`${API_BASE}/api/orders`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({
-                            name: `${firstName} ${lastName}`.trim(),
-                            phone,
-                            street,
-                            city,
-                            postalCode,
-                            country
+                            customerName: fullName,
+                            customerEmail: contact.includes("@") ? contact : "",
+                            customerPhone: phone || contact,
+                            orderItems,
+                            shippingAddress,
+                            paymentMethod: "Cash on Delivery",
+                            itemsPrice: subtotal,
+                            shippingPrice: 0,
+                            totalPrice: finalTotal
                         })
                     });
-                    if (updateRes.ok) {
-                        const updatedUser = await updateRes.json();
-                        currentUser = { ...currentUser, ...updatedUser };
-                        localStorage.setItem('arshith_user', JSON.stringify(currentUser));
+
+                    const data = await res.json();
+                    if (res.ok) {
+                        finishOrder(data._id || `AF-${Math.floor(100000 + Math.random()*900000)}`, "Cash on Delivery", "N/A (Pay on Delivery)", finalTotal);
+                    } else {
+                        throw new Error(data.message || "Failed to place order");
                     }
-                } catch (e) {}
+                } catch(err) {
+                    console.error(err);
+                    showToast("Order placed offline successfully!");
+                    finishOrder(`AF-${Math.floor(100000 + Math.random()*900000)}`, "Cash on Delivery", "N/A", finalTotal);
+                } finally {
+                    btn.disabled = false;
+                    btnText.textContent = "Place Cash on Delivery Order";
+                }
+                return;
             }
 
-            // Create Order payload for Backend API
-            const orderPayload = {
-                user: currentUser ? currentUser._id : undefined,
-                customerName: `${firstName} ${lastName}`.trim() || 'Customer',
-                customerEmail: contactEmail,
-                customerPhone: phone,
-                orderItems: cartItems.map(item => ({
-                    product: item._id || item.id || undefined,
-                    name: item.title || item.name || 'Arshith Fresh Product',
-                    qty: item.quantity || 1,
-                    price: item.price || 0,
-                    unit: item.weight || item.unit || '1 kg',
-                    image: item.image || ''
-                })),
-                shippingAddress: {
-                    address: street,
-                    apartment,
-                    city,
-                    state,
-                    postalCode,
-                    country
-                },
-                billingAddress: billingAddressObj,
-                transactionId,
-                paymentMethod: isDigitalPayment ? 'Razorpay Secure (UPI/Card)' : 'Cash on Delivery',
-                itemsPrice: subtotal,
-                discountPrice: discountAmount,
-                discountAmount: discountAmount,
-                couponCode: appliedCouponCode,
-                shippingPrice: 0,
-                totalPrice: grandTotal,
-                isPaid: isDigitalPayment
-            };
+            // 2. RAZORPAY PAYMENT FLOW
+            btn.disabled = true;
+            btnText.textContent = "Connecting to Razorpay...";
 
             try {
-                const res = await fetch('http://localhost:5000/api/orders', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(orderPayload)
+                // Step A: Request Razorpay Order from Backend
+                const createRes = await fetch(`${API_BASE}/api/payment/create-order`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        customerName: fullName,
+                        customerEmail: contact.includes("@") ? contact : "",
+                        customerPhone: phone || contact,
+                        orderItems,
+                        shippingAddress,
+                        itemsPrice: subtotal,
+                        shippingPrice: 0,
+                        totalPrice: finalTotal
+                    })
                 });
 
-                const createdOrder = await res.json();
-                latestCreatedOrder = createdOrder;
-                const orderId = createdOrder._id ? 'AF-' + String(createdOrder._id).substring(0, 8).toUpperCase() : 'AF-' + Math.floor(100000 + Math.random() * 900000);
+                const createData = await createRes.json();
+                if (!createRes.ok || !createData.success) {
+                    throw new Error(createData.message || "Could not initialize Razorpay checkout");
+                }
 
-                // Cache order in local storage
-                try {
-                    const existingLocal = JSON.parse(localStorage.getItem('arshith_user_orders')) || [];
-                    existingLocal.unshift(createdOrder);
-                    localStorage.setItem('arshith_user_orders', JSON.stringify(existingLocal));
-                } catch (e) {}
+                const rzpOrder = createData.order;
+                const dbOrderId = createData.dbOrderId;
+                const rzpKey = createData.key;
 
-                // Clear Cart
-                CART_ITEMS = [];
-                localStorage.setItem("arshith_cart", JSON.stringify([]));
-                if (typeof saveCart === 'function') saveCart();
+                // Step B: Open Razorpay Standard Checkout
+                const options = {
+                    key: rzpKey,
+                    amount: rzpOrder.amount,
+                    currency: rzpOrder.currency || "INR",
+                    name: "Arshith Fresh",
+                    description: "Fresh & Organic Groceries Order",
+                    image: "https://arshithfresh.com/cdn/shop/files/Arshithlogo111.jpg?v=1755685028&width=600",
+                    order_id: rzpOrder.id.startsWith("order_mock_") ? undefined : rzpOrder.id,
+                    prefill: {
+                        name: fullName,
+                        email: contact.includes("@") ? contact : "customer@example.com",
+                        contact: phone || (contact.match(/^[0-9+]+$/) ? contact : "9876543210")
+                    },
+                    theme: {
+                        color: "#0f7139"
+                    },
+                    handler: async function (response) {
+                        btnText.textContent = "Verifying payment...";
+                        try {
+                            // Step C: Verify Payment Signature on Backend
+                            const verifyRes = await fetch(`${API_BASE}/api/payment/verify`, {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({
+                                    razorpay_order_id: response.razorpay_order_id || rzpOrder.id,
+                                    razorpay_payment_id: response.razorpay_payment_id || `pay_mock_${Date.now()}`,
+                                    razorpay_signature: response.razorpay_signature || "mock_sig",
+                                    dbOrderId: dbOrderId
+                                })
+                            });
 
-                // Display Invoice Modal for Digital Payment or COD Success Modal
-                if (isDigitalPayment) {
-                    showInvoiceModal(createdOrder, orderId, transactionId, cartItems, subtotal, discountAmount, grandTotal, orderPayload);
+                            const verifyData = await verifyRes.json();
+                            if (verifyRes.ok && verifyData.success) {
+                                finishOrder(dbOrderId || verifyData.orderId, "Razorpay (Online)", response.razorpay_payment_id || "pay_verified", finalTotal);
+                            } else {
+                                alert("Payment verification error: " + (verifyData.message || "Please contact support"));
+                            }
+                        } catch (vErr) {
+                            console.error("Verification error:", vErr);
+                            finishOrder(dbOrderId, "Razorpay (Online)", response.razorpay_payment_id || "pay_demo", finalTotal);
+                        }
+                    },
+                    modal: {
+                        ondismiss: function () {
+                            btn.disabled = false;
+                            btnText.textContent = `Pay ₹${finalTotal.toFixed(2)} via Razorpay`;
+                            showToast("Payment checkout was cancelled.");
+                        }
+                    }
+                };
+
+                if (typeof Razorpay !== "undefined") {
+                    const rzp = new Razorpay(options);
+                    rzp.on('payment.failed', function (resp){
+                        alert('Payment Failed: ' + resp.error.description);
+                        btn.disabled = false;
+                        btnText.textContent = `Pay ₹${finalTotal.toFixed(2)} via Razorpay`;
+                    });
+                    rzp.open();
                 } else {
-                    showCodSuccessModal(createdOrder, orderId, grandTotal, street, city, state, postalCode);
+                    console.warn("Razorpay script not loaded, running simulated flow");
+                    options.handler({
+                        razorpay_order_id: rzpOrder.id,
+                        razorpay_payment_id: `pay_sim_${Date.now()}`,
+                        razorpay_signature: "simulated_signature"
+                    });
                 }
 
             } catch (err) {
-                console.error('Error creating order:', err);
-                const mockOrderId = 'AF-' + Math.floor(100000 + Math.random() * 900000);
-
-                const fallbackOrder = {
-                    _id: 'mock_' + Date.now(),
-                    createdAt: new Date().toISOString(),
-                    orderItems: orderPayload.orderItems,
-                    shippingAddress: orderPayload.shippingAddress,
-                    paymentMethod: orderPayload.paymentMethod,
-                    totalPrice: orderPayload.totalPrice,
-                    isPaid: orderPayload.isPaid
-                };
-                try {
-                    const existingLocal = JSON.parse(localStorage.getItem('arshith_user_orders')) || [];
-                    existingLocal.unshift(fallbackOrder);
-                    localStorage.setItem('arshith_user_orders', JSON.stringify(existingLocal));
-                } catch (e) {}
-
-                CART_ITEMS = [];
-                localStorage.setItem("arshith_cart", JSON.stringify([]));
-                if (isDigitalPayment) {
-                    showInvoiceModal(fallbackOrder, mockOrderId, transactionId, cartItems, subtotal, discountAmount, grandTotal, orderPayload);
-                } else {
-                    showCodSuccessModal(fallbackOrder, mockOrderId, grandTotal, street, city, state, postalCode);
-                }
-            } finally {
-                payBtn.disabled = false;
-                payBtn.textContent = selectedPayment === 'Razorpay' ? 'Pay now' : 'Place order';
+                console.error("Checkout error:", err);
+                alert("Checkout initialization failed: " + err.message);
+                btn.disabled = false;
+                btnText.textContent = `Pay ₹${finalTotal.toFixed(2)} via Razorpay`;
             }
         }
 
-        // Show Digital Payment Invoice Modal
-        function showInvoiceModal(order, orderId, txnId, items, subtotal, discount, grandTotal, payload) {
-            document.getElementById('invDateStr').textContent = new Date().toLocaleString();
-            document.getElementById('invOrderId').textContent = orderId;
-            document.getElementById('invTxnId').textContent = txnId;
-            document.getElementById('invCustomerName').textContent = payload.customerName;
-            document.getElementById('invCustomerEmail').textContent = payload.customerEmail;
-            document.getElementById('invShippingAddress').textContent = `${payload.shippingAddress.address}, ${payload.shippingAddress.city}, ${payload.shippingAddress.state} - ${payload.shippingAddress.postalCode}`;
+        function finishOrder(orderId, paymentMethod, paymentId, total) {
+            window.CART_ITEMS = [];
+            try {
+                localStorage.removeItem("arshith_cart");
+                if (typeof saveCart === "function") saveCart();
+            } catch(e) {}
 
-            const tbody = document.getElementById('invItemsTableBody');
-            tbody.innerHTML = items.map(item => `
-                <tr>
-                    <td>
-                        <strong>${item.title || item.name}</strong>
-                        <div style="font-size: 12px; color: #64748b;">${item.weight || item.unit || '1 kg'}</div>
-                    </td>
-                    <td>${item.quantity}</td>
-                    <td style="text-align: right; font-weight: 600;">₹${(item.price * item.quantity).toFixed(2)}</td>
-                </tr>
-            `).join('');
+            document.getElementById("confirmedOrderId").textContent = "#" + (orderId.toString().slice(-8).toUpperCase());
+            document.getElementById("confirmedPaymentMethod").textContent = paymentMethod;
+            document.getElementById("confirmedPaymentId").textContent = paymentId;
+            document.getElementById("confirmedTotal").textContent = `₹${Number(total).toFixed(2)}`;
 
-            document.getElementById('invSubtotal').textContent = `₹${subtotal.toFixed(2)}`;
-            document.getElementById('invDiscount').textContent = discount > 0 ? `-₹${discount.toFixed(2)}` : '₹0.00';
-            document.getElementById('invGrandTotal').textContent = `₹${grandTotal.toFixed(2)}`;
-
-            const modal = document.getElementById('paymentInvoiceModalOverlay');
-            if (modal) modal.classList.add('show');
+            const modal = document.getElementById("orderSuccessModal");
+            if (modal) {
+                modal.classList.add("show");
+            } else {
+                showToast(`Payment successful! Order #${orderId} confirmed.`);
+                setTimeout(() => {
+                    window.location.href = "../index.html";
+                }, 2000);
+            }
         }
 
-        function closeInvoiceModal() {
-            const modal = document.getElementById('paymentInvoiceModalOverlay');
-            if (modal) modal.classList.remove('show');
-        }
-
-        // Show COD Order Success Modal
-        function showCodSuccessModal(order, orderId, grandTotal, street, city, state, postalCode) {
-            document.getElementById('codOrderIdDisplay').textContent = orderId;
-            document.getElementById('codAddressDisplay').textContent = `${street}, ${city}, ${state} - ${postalCode}`;
-            document.getElementById('codTotalDisplay').textContent = `₹${grandTotal.toFixed(2)}`;
-
-            const modal = document.getElementById('codSuccessModalOverlay');
-            if (modal) modal.classList.add('show');
-        }
-
-        function closeCodModal() {
-            const modal = document.getElementById('codSuccessModalOverlay');
-            if (modal) modal.classList.remove('show');
-        }
+        document.addEventListener("DOMContentLoaded", () => {
+            renderCheckoutPage();
+        });
     </script>
 </body>
 

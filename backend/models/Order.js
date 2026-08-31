@@ -88,6 +88,23 @@ const orderSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  paidAt: {
+    type: Date,
+  },
+  paymentStatus: {
+    type: String,
+    enum: ['pending', 'paid', 'failed'],
+    default: 'pending',
+  },
+  razorpayOrderId: {
+    type: String,
+  },
+  razorpayPaymentId: {
+    type: String,
+  },
+  razorpaySignature: {
+    type: String,
+  },
   isDelivered: {
     type: Boolean,
     default: false,

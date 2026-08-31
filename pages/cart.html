@@ -322,10 +322,7 @@
                 <div class="cart-summary-section">
                     <div class="cart-summary-box">
                         <div class="estimated-total-row">
-                            <span class="lbl-estimated">Estimated subtotal</span>
-                            <span class="val-estimated">Rs. ${subtotal.toFixed(2)}</span>
-                        </div>
-                        <p class="cart-tax-notice">Taxes included. Discounts and coupons applied at checkout.</p>
+                        <p class="cart-tax-notice">Taxes included. Discounts and shipping calculated at checkout.</p>
                         <button class="cart-checkout-btn" onclick="handleCartCheckout()">Check out</button>
                     </div>
                 </div>
@@ -333,21 +330,11 @@
         }
 
         function handleCartCheckout() {
-            let currentUser = null;
-            try {
-                currentUser = JSON.parse(localStorage.getItem('arshith_user'));
-            } catch (e) {}
+            window.location.href = "checkout.html";
+        }
 
-            if (currentUser && (currentUser._id || currentUser.email)) {
-                window.location.href = 'checkout.html';
-            } else {
-                if (typeof showToast === 'function') {
-                    showToast('Please sign in or create an account to proceed to checkout.');
-                }
-                setTimeout(() => {
-                    window.location.href = 'auth/login.html?redirect=../checkout.html&notice=checkout';
-                }, 400);
-            }
+        function openCheckoutModal() {
+            window.location.href = "checkout.html";
         }
 
         document.addEventListener("DOMContentLoaded", () => {

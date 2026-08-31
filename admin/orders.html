@@ -324,11 +324,20 @@
         });
         const customer = order.customerName || (order.user && order.user.name) || 'Guest Customer';
         const itemsCount = Array.isArray(order.orderItems) ? order.orderItems.length : 1;
-        const total = `₹${order.totalPrice ? Number(order.totalPrice).toFixed(1) : '0'}`;
-        const payMethod = order.paymentMethod || 'Razorpay Secure';
-        const payBadge = order.isPaid 
-          ? `<span class="status-pill active" style="font-size:11px;">Paid</span>`
-          : `<span class="status-pill draft" style="font-size:11px; background:#fffbeb; color:#b45309; border:1px solid #fde68a;">${payMethod}</span>`;
+        const isPaid = order.isPaid || order.paymentStatus === 'paid';
+        let payBadge = '';
+        if (isPaid) {
+          payBadge = `<span class="status-pill active" style="font-size:11px;"><i class="fa-solid fa-circle-check"></i> Paid (${order.paymentMethod || 'Razorpay'})</span>`;
+          if (order.razorpayPaymentId) {
+            payBadge += `<div style="font-size: 10px; color: #059669; margin-top: 2px; font-family: monospace;">${order.razorpayPaymentId}</div>`;
+          }
+        } else if (order.paymentMethod === 'Cash on Delivery' || order.paymentMethod === 'COD') {
+          payBadge = `<span class="status-pill draft" style="font-size:11px; background:#f0fdf4; color:#15803d; border:1px solid #bbf7d0;"><i class="fa-solid fa-hand-holding-dollar"></i> COD</span>`;
+        } else if (order.paymentStatus === 'failed') {
+          payBadge = `<span class="status-pill archived" style="font-size:11px;"><i class="fa-solid fa-circle-xmark"></i> Failed</span>`;
+        } else {
+          payBadge = `<span class="status-pill draft" style="font-size:11px; background:#fffbeb; color:#b45309; border:1px solid #fde68a;">Pending</span>`;
+        }
 
         const st = order.status || 'Placed';
 
