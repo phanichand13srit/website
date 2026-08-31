@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Product = require('../models/Product');
+const { sendStockAlertNotification } = require('../utils/notificationService');
 
 // Helper to format product consistently for both frontend storefront & admin dashboards
 function formatProduct(p) {
@@ -265,6 +266,14 @@ router.put('/:id', async (req, res) => {
     if (!updatedProduct) {
       return res.status(404).json({ message: 'Product not found to update' });
     }
+
+    // Trigger stock alert email to admin if updated stock level is 10 or below
+    if (updatedProduct.countInStock <= 10) {
+      sendStockAlertNotification({ product: updatedProduct, newStock: updatedProduct.countInStock }).catch(err => {
+        console.error('Error sending stock alert notification on product update:', err.message);
+      });
+    }
+
     res.json(formatProduct(updatedProduct));
   } catch (error) {
     res.status(400).json({ message: 'Error updating product', error: error.message });

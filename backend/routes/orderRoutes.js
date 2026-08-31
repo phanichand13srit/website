@@ -3,7 +3,12 @@ const router = express.Router();
 const mongoose = require('mongoose');
 const Order = require('../models/Order');
 const Product = require('../models/Product');
-const { sendOrderPlacedNotification, sendOrderCancelledNotification } = require('../utils/notificationService');
+const { 
+  sendOrderPlacedNotification, 
+  sendOrderCancelledNotification,
+  sendAdminOrderPlacedNotification,
+  sendStockAlertNotification 
+} = require('../utils/notificationService');
 
 // Helper to escape regex special characters
 function escapeRegex(text) {
@@ -45,6 +50,13 @@ async function deductInventoryForOrder(orderItems) {
       product.countInStock = newStock;
       await product.save();
       console.log(`📉 [Inventory Deducted] "${product.name}" stock: ${oldStock} -> ${newStock} (-${qty})`);
+
+      // Trigger low stock (<= 10) or out of stock (= 0) notification to admin
+      if (newStock <= 10) {
+        sendStockAlertNotification({ product, newStock, oldStock }).catch(err => {
+          console.error('Error sending stock alert notification:', err.message);
+        });
+      }
     } else {
       console.warn(`⚠️ [Inventory Warning] Could not find product to deduct stock: ${item.name || item.product}`);
     }
@@ -173,10 +185,13 @@ router.post('/', async (req, res) => {
       }
     }
 
-    // Trigger non-blocking email notification (Payment Invoice)
+    // Trigger non-blocking email notifications (Customer Payment Invoice & Admin New Order Alert)
     if (orderStatus !== 'Cancelled') {
       sendOrderPlacedNotification({ order: createdOrder }).catch(err => {
-        console.error('Error dispatching order placement email:', err.message);
+        console.error('Error dispatching order placement email to customer:', err.message);
+      });
+      sendAdminOrderPlacedNotification({ order: createdOrder }).catch(err => {
+        console.error('Error dispatching order placement email to admin:', err.message);
       });
     }
 
