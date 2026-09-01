@@ -35,6 +35,8 @@ router.post('/create-order', async (req, res) => {
       itemsPrice,
       shippingPrice,
       totalPrice,
+      discountPrice,
+      couponCode,
     } = req.body;
 
     if (!orderItems || orderItems.length === 0) {
@@ -92,6 +94,8 @@ router.post('/create-order', async (req, res) => {
       },
       paymentMethod: 'Razorpay',
       itemsPrice: itemsPrice || calculatedTotal,
+      discountPrice: discountPrice || 0,
+      couponCode: couponCode || '',
       shippingPrice: shippingPrice || 0,
       totalPrice: calculatedTotal,
       status: 'Pending',

@@ -97,11 +97,12 @@ router.get('/all', async (req, res) => {
 // VALIDATION & BULK OPERATIONS (MUST BE DEFINED BEFORE /:id ROUTES)
 // =========================================================================
 
-// @route   POST /api/coupons/validate
+// @route   POST or GET /api/coupons/validate
 // @desc    Validate a coupon code against cart subtotal
-router.post('/validate', async (req, res) => {
+router.all('/validate', async (req, res) => {
   try {
-    const { code, subtotal } = req.body;
+    const code = req.body.code || req.query.code;
+    const subtotal = req.body.subtotal || req.query.subtotal;
     const cleanCode = (code || '').trim().toUpperCase();
     const numSubtotal = Number(subtotal) || 0;
 
@@ -119,13 +120,13 @@ router.post('/validate', async (req, res) => {
 
     // Additional generic code alias mapping
     if (!coupon) {
-      if (['FESTIVE10', 'WELCOME10', 'BILL1000', '10OFF', 'DISCOUNT10'].includes(cleanCode)) {
+      if (['FESTIVE10', 'WELCOME10', 'BILL1000', '10OFF', 'DISCOUNT10', 'SAVE10'].includes(cleanCode)) {
         coupon = { code: cleanCode, discountPercent: 10, minOrderAmount: 1000, description: '10% OFF on orders above ₹1,000' };
-      } else if (['BILL3000', '15OFF', 'DISCOUNT15'].includes(cleanCode)) {
+      } else if (['BILL3000', '15OFF', 'DISCOUNT15', 'SAVE15'].includes(cleanCode)) {
         coupon = { code: cleanCode, discountPercent: 15, minOrderAmount: 3000, description: '15% OFF on orders above ₹3,000' };
-      } else if (['SUPER20', 'BILL5000', '20OFF', 'DISCOUNT20'].includes(cleanCode)) {
+      } else if (['SUPER20', 'BILL5000', '20OFF', 'DISCOUNT20', 'SAVE20'].includes(cleanCode)) {
         coupon = { code: cleanCode, discountPercent: 20, minOrderAmount: 5000, description: '20% OFF on orders above ₹5,000' };
-      } else if (['BILL10000', '50OFF', 'DISCOUNT50'].includes(cleanCode)) {
+      } else if (['BILL10000', '50OFF', 'DISCOUNT50', 'SAVE50'].includes(cleanCode)) {
         coupon = { code: cleanCode, discountPercent: 50, minOrderAmount: 10000, description: '50% OFF on orders above ₹10,000' };
       }
     }
@@ -133,12 +134,12 @@ router.post('/validate', async (req, res) => {
     if (!coupon) {
       return res.status(400).json({
         success: false,
-        message: 'Invalid coupon code. Try SAVE10, SAVE15, SAVE20, or SAVE50!'
+        message: `Invalid coupon code "${cleanCode}". Try SAVE10, SAVE15, SAVE20, or SAVE50!`
       });
     }
 
-    // Check minimum order amount
-    if (numSubtotal < coupon.minOrderAmount) {
+    // Check minimum order amount if subtotal is provided
+    if (numSubtotal > 0 && numSubtotal < coupon.minOrderAmount) {
       const remaining = coupon.minOrderAmount - numSubtotal;
       return res.status(400).json({
         success: false,
@@ -149,12 +150,12 @@ router.post('/validate', async (req, res) => {
     }
 
     // Calculate discount amount
-    const discountAmount = Math.round((numSubtotal * coupon.discountPercent) / 100);
+    const discountAmount = numSubtotal > 0 ? Math.round((numSubtotal * coupon.discountPercent) / 100) : 0;
     const newTotal = Math.max(0, numSubtotal - discountAmount);
 
     res.json({
       success: true,
-      message: `🎉 Coupon "${coupon.code}" applied! You saved ₹${discountAmount.toLocaleString('en-IN')} (${coupon.discountPercent}% OFF).`,
+      message: `🎉 Coupon "${coupon.code}" applied! Saved ${coupon.discountPercent}% OFF (₹${discountAmount.toLocaleString('en-IN')}).`,
       coupon: {
         code: coupon.code,
         discountPercent: coupon.discountPercent,

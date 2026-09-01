@@ -360,9 +360,28 @@
         <div class="checkout-summary-pane">
             <div id="checkoutSummaryList" class="summary-items-list"></div>
 
+            <!-- APPLIED COUPON TAG (Hidden by default) -->
+            <div id="appliedCouponTag" class="applied-coupon-tag" style="display: none;">
+                <div class="coupon-tag-info">
+                    <span class="coupon-tag-icon">🎟️</span>
+                    <span id="appliedCouponCodeText">SAVE10</span>
+                    <span id="appliedCouponSaveText" style="font-weight: 500; color: #0b542a; font-size: 12px;">(10% OFF)</span>
+                </div>
+                <button type="button" class="remove-coupon-btn" onclick="removeCoupon()" title="Remove coupon" aria-label="Remove coupon">&times;</button>
+            </div>
+
             <div class="discount-code-wrap">
-                <input type="text" id="discountInput" placeholder="Discount code" class="discount-input">
-                <button type="button" class="discount-apply-btn" onclick="applyCoupon()">Apply</button>
+                <input type="text" id="discountInput" placeholder="Discount code (e.g. SAVE10)" class="discount-input">
+                <button type="button" id="applyCouponBtn" class="discount-apply-btn" onclick="applyCoupon()">Apply</button>
+            </div>
+
+            <!-- AVAILABLE COUPONS CHIPS BOX -->
+            <div id="availableCouponsContainer" class="available-coupons-box" style="margin-top: 12px;">
+                <div class="available-coupons-header">
+                    <span>🎟️ Special Offers & Discounts</span>
+                    <span style="font-size: 11px; font-weight: 600; color: #0f7139;">Click to apply</span>
+                </div>
+                <div id="availableCouponsList" class="coupons-chips-grid"></div>
             </div>
 
             <div class="summary-totals-box">
@@ -407,6 +426,7 @@
     <script src="../assets/js/script.js"></script>
     <script>
         let selectedPayment = "Razorpay";
+        let appliedCouponCode = "";
         let appliedDiscount = 0;
         const API_BASE = window.location.origin.includes(":5000") ? "" : "http://localhost:5000";
 
@@ -482,6 +502,16 @@
             `).join("");
 
             subtotalEl.textContent = `₹${subtotal.toFixed(2)}`;
+            
+            const couponRow = document.getElementById('couponRow');
+            const checkoutDiscount = document.getElementById('checkoutDiscount');
+            if (appliedDiscount > 0) {
+                if (couponRow) couponRow.style.display = 'flex';
+                if (checkoutDiscount) checkoutDiscount.textContent = `-₹${appliedDiscount.toFixed(2)}`;
+            } else {
+                if (couponRow) couponRow.style.display = 'none';
+            }
+
             totalEl.textContent = `₹${finalTotal.toFixed(2)}`;
             if (countEl) countEl.textContent = totalCount;
             if (btnText) btnText.textContent = selectedPayment === "Razorpay" ? `Pay ₹${finalTotal.toFixed(2)} via Razorpay` : "Place Cash on Delivery Order";
@@ -502,32 +532,118 @@
             } catch(e) {}
         }
 
-        async function applyCoupon() {
-            const code = document.getElementById("discountInput").value.trim().toUpperCase();
-            if (!code) return;
+        async function applyCoupon(customCode) {
+            const inputEl = document.getElementById("discountInput");
+            const code = (customCode || inputEl.value || "").trim().toUpperCase();
+            if (!code) {
+                showToast("Please enter a coupon code.");
+                return;
+            }
+
+            inputEl.value = code;
+            const items = getActiveCartItems();
+            const subtotal = items.reduce((sum, item) => sum + ((item.price || 0) * (item.quantity || item.qty || 1)), 0);
 
             try {
-                const res = await fetch(`${API_BASE}/api/coupons/validate?code=${encodeURIComponent(code)}`);
-                if (res.ok) {
-                    const data = await res.json();
-                    const items = getActiveCartItems();
-                    const subtotal = items.reduce((sum, item) => sum + ((item.price || 0) * (item.quantity || item.qty || 1)), 0);
+                const res = await fetch(`${API_BASE}/api/coupons/validate`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ code, subtotal })
+                });
+                const data = await res.json();
 
-                    if (data.discountType === 'percentage') {
-                        appliedDiscount = (subtotal * (data.discountValue || 10)) / 100;
-                    } else {
-                        appliedDiscount = data.discountValue || 50;
-                    }
+                if (res.ok && data.success && data.coupon) {
+                    appliedCouponCode = data.coupon.code;
+                    appliedDiscount = Number(data.coupon.discountAmount) || Math.round((subtotal * (data.coupon.discountPercent || 0)) / 100);
 
                     document.getElementById('couponRow').style.display = 'flex';
                     document.getElementById('checkoutDiscount').textContent = `-₹${appliedDiscount.toFixed(2)}`;
+
+                    const tagEl = document.getElementById("appliedCouponTag");
+                    if (tagEl) {
+                        tagEl.style.display = "flex";
+                        document.getElementById("appliedCouponCodeText").textContent = data.coupon.code;
+                        document.getElementById("appliedCouponSaveText").textContent = `(${data.coupon.discountPercent}% OFF - Saved ₹${appliedDiscount.toFixed(2)})`;
+                    }
+
                     renderCheckoutPage();
-                    showToast(`Coupon "${code}" applied! Saved ₹${appliedDiscount.toFixed(2)}`);
+                    renderAvailableCoupons();
+                    showToast(data.message || `Coupon "${code}" applied!`);
                 } else {
-                    showToast(`Coupon "${code}" applied!`);
+                    removeCoupon(false);
+                    showToast(data.message || `Invalid coupon code "${code}".`);
                 }
             } catch(e) {
-                showToast(`Coupon "${code}" applied!`);
+                console.error("Coupon error:", e);
+                showToast("Unable to validate coupon. Please check connection.");
+            }
+        }
+
+        function removeCoupon(notify = true) {
+            appliedCouponCode = "";
+            appliedDiscount = 0;
+
+            const inputEl = document.getElementById("discountInput");
+            if (inputEl) inputEl.value = "";
+
+            const couponRow = document.getElementById("couponRow");
+            if (couponRow) couponRow.style.display = "none";
+
+            const tagEl = document.getElementById("appliedCouponTag");
+            if (tagEl) tagEl.style.display = "none";
+
+            renderCheckoutPage();
+            renderAvailableCoupons();
+            if (notify) showToast("Coupon removed.");
+        }
+
+        async function renderAvailableCoupons() {
+            const container = document.getElementById("availableCouponsList");
+            if (!container) return;
+
+            const items = getActiveCartItems();
+            const subtotal = items.reduce((sum, item) => sum + ((item.price || 0) * (item.quantity || item.qty || 1)), 0);
+
+            try {
+                let coupons = window.STORE_COUPONS;
+                if (!coupons) {
+                    const res = await fetch(`${API_BASE}/api/coupons`);
+                    if (res.ok) {
+                        coupons = await res.json();
+                        window.STORE_COUPONS = coupons;
+                    }
+                }
+                if (!coupons || coupons.length === 0) {
+                    coupons = [
+                        { code: 'SAVE10', discountPercent: 10, minOrderAmount: 1000, description: '10% OFF > ₹1,000' },
+                        { code: 'SAVE15', discountPercent: 15, minOrderAmount: 3000, description: '15% OFF > ₹3,000' },
+                        { code: 'SAVE20', discountPercent: 20, minOrderAmount: 5000, description: '20% OFF > ₹5,000' },
+                        { code: 'SAVE50', discountPercent: 50, minOrderAmount: 10000, description: '50% OFF > ₹10,000' }
+                    ];
+                }
+
+                container.innerHTML = coupons.map(c => {
+                    const isApplied = appliedCouponCode === c.code;
+                    const isEligible = subtotal >= (c.minOrderAmount || 0);
+                    const chipClass = isApplied ? 'coupon-chip-card active-applied' : (isEligible ? 'coupon-chip-card eligible' : 'coupon-chip-card');
+                    const badge = isApplied 
+                        ? `<span style="color:#0f7139; font-size:11px; font-weight:700;">Applied ✓</span>` 
+                        : (isEligible 
+                            ? `<button type="button" style="background:#0f7139; color:#fff; border:none; padding:4px 10px; border-radius:4px; font-size:11px; font-weight:600; cursor:pointer;" onclick="applyCoupon('${c.code}')">Apply</button>` 
+                            : `<span style="font-size:10.5px; color:#94a3b8;">Min ₹${(c.minOrderAmount||0).toLocaleString('en-IN')}</span>`);
+
+                    return `
+                        <div class="${chipClass}">
+                            <div class="coupon-chip-left">
+                                <span style="font-weight:700; font-size:12.5px; color:#0f7139;">${c.code} (${c.discountPercent}% OFF)</span>
+                                <span style="font-size:11px; color:#64748b;">${c.description || `${c.discountPercent}% OFF on orders above ₹${(c.minOrderAmount||0).toLocaleString('en-IN')}`}</span>
+                            </div>
+                            <div>${badge}</div>
+                        </div>
+                    `;
+                }).join("");
+            } catch(e) {
+                console.error("Error rendering available coupons:", e);
             }
         }
 
@@ -585,6 +701,8 @@
                             shippingAddress,
                             paymentMethod: "Cash on Delivery",
                             itemsPrice: subtotal,
+                            discountPrice: appliedDiscount,
+                            couponCode: appliedCouponCode,
                             shippingPrice: 0,
                             totalPrice: finalTotal
                         })
@@ -623,6 +741,8 @@
                         orderItems,
                         shippingAddress,
                         itemsPrice: subtotal,
+                        discountPrice: appliedDiscount,
+                        couponCode: appliedCouponCode,
                         shippingPrice: 0,
                         totalPrice: finalTotal
                     })
@@ -739,6 +859,7 @@
 
         document.addEventListener("DOMContentLoaded", () => {
             renderCheckoutPage();
+            renderAvailableCoupons();
         });
     </script>
 </body>

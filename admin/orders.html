@@ -324,6 +324,7 @@
         });
         const customer = order.customerName || (order.user && order.user.name) || 'Guest Customer';
         const itemsCount = Array.isArray(order.orderItems) ? order.orderItems.length : 1;
+        const total = '₹' + Number(order.totalPrice || order.itemsPrice || 0).toFixed(2);
         const isPaid = order.isPaid || order.paymentStatus === 'paid';
         let payBadge = '';
         if (isPaid) {
