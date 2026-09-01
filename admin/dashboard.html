@@ -448,20 +448,6 @@
           </div>
         </div>
 
-        <!-- Average Order Value (AOV) -->
-        <div class="finance-kpi-card">
-          <div class="finance-kpi-top">
-            <div class="finance-kpi-title">Average Order Value</div>
-            <div class="finance-kpi-icon-box finance-kpi-icon-purple">
-              <i class="fa-solid fa-calculator"></i>
-            </div>
-          </div>
-          <div class="finance-kpi-value" id="kpiAOV">₹0.00</div>
-          <div class="finance-kpi-sub">
-            <span id="kpiUnitsSold" style="font-weight: 600; color: #7c3aed;">0 units sold</span>
-            <span>total</span>
-          </div>
-        </div>
 
         <!-- Total Products & Inventory Value -->
         <div class="finance-kpi-card">
@@ -665,8 +651,8 @@
       document.getElementById('kpiTotalRevenue').textContent = `₹${totalMoneyEarned.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
       document.getElementById('kpiTotalOrders').textContent = orderCount;
       document.getElementById('kpiDeliveredRate').textContent = `${deliveredPercent}% fulfilled`;
-      document.getElementById('kpiAOV').textContent = `₹${aov.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-      document.getElementById('kpiUnitsSold').textContent = `${totalUnitsSold} items sold`;
+      const aovEl = document.getElementById('kpiAOV'); if (aovEl) aovEl.textContent = `₹${aov.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+      const unitsEl = document.getElementById('kpiUnitsSold'); if (unitsEl) unitsEl.textContent = `${totalUnitsSold} items sold`;
       document.getElementById('kpiInventoryValue').textContent = `₹${totalCatalogInventoryValue.toLocaleString('en-IN', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
       document.getElementById('kpiProductCount').textContent = `${rawProducts.length} Products`;
     }

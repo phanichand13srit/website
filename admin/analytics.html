@@ -190,14 +190,6 @@
           <div class="finance-kpi-sub"><span id="kDelivered" style="font-weight:700;color:#0f7139;">—</span>&nbsp;delivered &nbsp;·&nbsp; <span id="kDeliveryRate" style="color:#64748b;">—</span> rate</div>
         </div>
 
-        <div class="finance-kpi-card">
-          <div class="finance-kpi-top">
-            <span class="finance-kpi-title">Average Order Value</span>
-            <div class="finance-kpi-icon-box kpi-purple"><i class="fa-solid fa-calculator"></i></div>
-          </div>
-          <div class="finance-kpi-value" id="kAOV">—</div>
-          <div class="finance-kpi-sub">Total <span id="kUnits" style="font-weight:700;color:#7c3aed;">—</span>&nbsp;product units shipped across all orders</div>
-        </div>
 
         <div class="finance-kpi-card">
           <div class="finance-kpi-top">
@@ -384,8 +376,8 @@
       document.getElementById('kOrders').textContent    = kpis.totalOrders;
       document.getElementById('kDelivered').textContent = kpis.deliveredOrders + ' orders';
       document.getElementById('kDeliveryRate').textContent = kpis.deliveryRate + '%';
-      document.getElementById('kAOV').textContent       = fmt(kpis.aov);
-      document.getElementById('kUnits').textContent     = kpis.totalUnitsSold;
+      const elAOV = document.getElementById('kAOV'); if (elAOV) elAOV.textContent = fmt(kpis.aov);
+      const elUnits = document.getElementById('kUnits'); if (elUnits) elUnits.textContent = kpis.totalUnitsSold;
       document.getElementById('kDiscount').textContent  = fmt(kpis.totalDiscount);
       document.getElementById('kCoupons').textContent   = coupons.active;
       document.getElementById('kInventory').textContent = '₹' + fmtInt(products.inventoryValue);
