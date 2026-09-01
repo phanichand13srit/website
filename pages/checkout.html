@@ -528,6 +528,18 @@
                         document.getElementById('firstNameInput').value = parts[0] || '';
                         document.getElementById('lastNameInput').value = parts.slice(1).join(' ') || '';
                     }
+                    if (currentUser.phone && !document.getElementById('phoneInput').value) {
+                        document.getElementById('phoneInput').value = currentUser.phone;
+                    }
+                    if (currentUser.street && !document.getElementById('addressInput').value) {
+                        document.getElementById('addressInput').value = currentUser.street;
+                    }
+                    if (currentUser.city && !document.getElementById('cityInput').value) {
+                        document.getElementById('cityInput').value = currentUser.city;
+                    }
+                    if (currentUser.postalCode && !document.getElementById('pinCodeInput').value) {
+                        document.getElementById('pinCodeInput').value = currentUser.postalCode;
+                    }
                 }
             } catch(e) {}
         }

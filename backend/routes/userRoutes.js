@@ -293,7 +293,7 @@ router.put('/profile/:id', async (req, res) => {
     const updated = await User.findByIdAndUpdate(
       req.params.id,
       {
-        ...(name && { name }),
+        ...(name !== undefined && { name }),
         ...(phone !== undefined && { phone }),
         ...(street !== undefined && { street }),
         ...(city !== undefined && { city }),

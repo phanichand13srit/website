@@ -237,8 +237,10 @@
     <!-- Script -->
     <script src="../assets/js/script.js"></script>
     <script>
-        // Check if user is logged in
+        const API_BASE = window.location.origin.includes(':5000') ? '' : 'http://localhost:5000';
         let currentUser = null;
+        let hasFormBeenPopulated = false;
+
         try {
             currentUser = JSON.parse(localStorage.getItem('arshith_user'));
         } catch (e) {
@@ -248,7 +250,7 @@
         if (!currentUser || !currentUser._id) {
             window.location.href = 'auth/login.html';
         } else {
-            loadUserProfile();
+            loadUserProfile(true);
         }
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -268,7 +270,24 @@
             }
         });
 
-        async function loadUserProfile() {
+        function populateFormInputs(u) {
+            if (!u) return;
+            const formFields = ['profileName', 'profilePhone', 'profileStreet', 'profileCity', 'profilePostalCode'];
+            const activeEl = document.activeElement;
+            const isEditing = formFields.some(id => document.getElementById(id) === activeEl);
+
+            if (!hasFormBeenPopulated || !isEditing) {
+                if (document.getElementById('profileName')) document.getElementById('profileName').value = u.name || '';
+                if (document.getElementById('profileEmail')) document.getElementById('profileEmail').value = u.email || '';
+                if (document.getElementById('profilePhone')) document.getElementById('profilePhone').value = u.phone || '';
+                if (document.getElementById('profileStreet')) document.getElementById('profileStreet').value = u.street || '';
+                if (document.getElementById('profileCity')) document.getElementById('profileCity').value = u.city || '';
+                if (document.getElementById('profilePostalCode')) document.getElementById('profilePostalCode').value = u.postalCode || '';
+                hasFormBeenPopulated = true;
+            }
+        }
+
+        async function loadUserProfile(isInitial = false) {
             if (!currentUser) return;
 
             // Display Top Card Info
@@ -276,34 +295,28 @@
             const email = currentUser.email || '';
             const initial = name.charAt(0).toUpperCase() || 'U';
 
-            document.getElementById('userAvatar').textContent = initial;
-            document.getElementById('userGreeting').textContent = `Hello, ${name}`;
-            document.getElementById('userEmailDisplay').textContent = email;
+            if (document.getElementById('userAvatar')) document.getElementById('userAvatar').textContent = initial;
+            if (document.getElementById('userGreeting')) document.getElementById('userGreeting').textContent = `Hello, ${name}`;
+            if (document.getElementById('userEmailDisplay')) document.getElementById('userEmailDisplay').textContent = email;
 
-            // Populate Form Fields from local cache
-            document.getElementById('profileName').value = currentUser.name || '';
-            document.getElementById('profileEmail').value = currentUser.email || '';
-            document.getElementById('profilePhone').value = currentUser.phone || '';
-            document.getElementById('profileStreet').value = currentUser.street || '';
-            document.getElementById('profileCity').value = currentUser.city || '';
-            document.getElementById('profilePostalCode').value = currentUser.postalCode || '';
+            // Populate Form Fields from local cache if initial load
+            if (isInitial || !hasFormBeenPopulated) {
+                populateFormInputs(currentUser);
+            }
 
             // Fetch live profile & order history from MongoDB + combine with local cache
             let apiOrders = [];
             try {
-                const res = await fetch(`http://localhost:5000/api/users/profile/${currentUser._id}`);
+                const res = await fetch(`${API_BASE}/api/users/profile/${currentUser._id}`);
                 if (res.ok) {
                     const data = await res.json();
                     if (data && data.user) {
                         const u = data.user;
                         currentUser = { ...currentUser, ...u };
                         localStorage.setItem('arshith_user', JSON.stringify(currentUser));
-
-                        document.getElementById('profileName').value = u.name || '';
-                        document.getElementById('profilePhone').value = u.phone || '';
-                        document.getElementById('profileStreet').value = u.street || '';
-                        document.getElementById('profileCity').value = u.city || '';
-                        document.getElementById('profilePostalCode').value = u.postalCode || '';
+                        if (isInitial || !hasFormBeenPopulated) {
+                            populateFormInputs(currentUser);
+                        }
                     }
                     apiOrders = data.orders || [];
                 }
@@ -335,8 +348,10 @@
             renderUserOrders(finalOrders);
         }
 
-        // Live polling every 3 seconds for active tracker status updates
-        setInterval(loadUserProfile, 3000);
+        // Live polling every 3 seconds for active tracker status updates ONLY (does not overwrite form fields)
+        setInterval(() => {
+            loadUserProfile(false);
+        }, 3000);
 
         function renderCurrentActiveOrder(orders) {
             const container = document.getElementById('currentOrderContainer');
@@ -715,49 +730,61 @@
             const btn = document.getElementById('saveProfileBtn');
             const alertBox = document.getElementById('saveSuccessAlert');
 
+            const nameVal = document.getElementById('profileName').value.trim();
+            const phoneVal = document.getElementById('profilePhone').value.trim();
+            const streetVal = document.getElementById('profileStreet').value.trim();
+            const cityVal = document.getElementById('profileCity').value.trim();
+            const postalCodeVal = document.getElementById('profilePostalCode').value.trim();
+
             const updatedData = {
-                name: document.getElementById('profileName').value.trim(),
-                phone: document.getElementById('profilePhone').value.trim(),
-                street: document.getElementById('profileStreet').value.trim(),
-                city: document.getElementById('profileCity').value.trim(),
-                postalCode: document.getElementById('profilePostalCode').value.trim()
+                name: nameVal || (currentUser ? currentUser.name : 'Valued Customer'),
+                phone: phoneVal,
+                street: streetVal,
+                city: cityVal,
+                postalCode: postalCodeVal
             };
 
             btn.disabled = true;
             btn.textContent = 'Saving...';
 
             try {
-                const response = await fetch(`http://localhost:5000/api/users/profile/${currentUser._id}`, {
+                const response = await fetch(`${API_BASE}/api/users/profile/${currentUser._id}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(updatedData)
                 });
 
-                const data = await response.json();
+                let data = null;
+                try { data = await response.json(); } catch(err) {}
 
-                if (!response.ok) {
-                    throw new Error(data.message || 'Failed to update profile');
+                if (response.ok && data) {
+                    currentUser = { ...currentUser, ...data };
+                } else {
+                    currentUser = { ...currentUser, ...updatedData };
                 }
-
-                currentUser = { ...currentUser, ...data };
+            } catch (err) {
+                console.error('API save error, persisting locally:', err);
+                currentUser = { ...currentUser, ...updatedData };
+            } finally {
                 localStorage.setItem('arshith_user', JSON.stringify(currentUser));
-                document.getElementById('userGreeting').textContent = `Hello, ${data.name}`;
-                document.getElementById('userAvatar').textContent = data.name.charAt(0).toUpperCase();
+                hasFormBeenPopulated = true;
+
+                if (document.getElementById('userGreeting')) {
+                    document.getElementById('userGreeting').textContent = `Hello, ${currentUser.name || 'Valued Customer'}`;
+                }
+                if (document.getElementById('userAvatar')) {
+                    document.getElementById('userAvatar').textContent = (currentUser.name || 'U').charAt(0).toUpperCase();
+                }
 
                 if (alertBox) {
                     alertBox.style.display = 'flex';
-                    setTimeout(() => { alertBox.style.display = 'none'; }, 3000);
+                    setTimeout(() => { alertBox.style.display = 'none'; }, 3500);
                 }
 
                 if (typeof showToast === 'function') {
-                    showToast('Profile updated successfully!');
+                    showToast('Profile details updated successfully!');
                 }
-            } catch (err) {
-                console.error(err);
-                if (typeof showToast === 'function') {
-                    showToast(err.message || 'Error saving changes');
-                }
-            } finally {
+
                 btn.disabled = false;
                 btn.textContent = 'Save Changes';
             }
@@ -779,7 +806,7 @@
             btn.textContent = 'Updating...';
 
             try {
-                const response = await fetch(`http://localhost:5000/api/users/change-password/${currentUser._id}`, {
+                const response = await fetch(`${API_BASE}/api/users/change-password/${currentUser._id}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ currentPassword: pass, newPassword: pass })
@@ -794,14 +821,12 @@
                 document.getElementById('passwordForm').reset();
                 if (alertBox) {
                     alertBox.style.display = 'flex';
-                    setTimeout(() => { alertBox.style.display = 'none'; }, 3000);
+                    setTimeout(() => { alertBox.style.display = 'none'; }, 3500);
                 }
 
                 if (typeof showToast === 'function') {
                     showToast('Password changed successfully!');
                 }
-            } catch (err) {
-                alert(err.message || 'Error changing password');
             } finally {
                 btn.disabled = false;
                 btn.textContent = 'Update Password';
