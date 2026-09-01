@@ -346,39 +346,39 @@
                     </div>
 
                     <!-- Billing Address Form Container (Displayed when 'different' is selected) -->
-                    <div id="billingFormContainer" style="display: none; padding: 18px; background: #f8fafc; border-top: 1px solid #e2e8f0;">
-                        <div class="form-row-2col">
-                            <div class="input-group">
-                                <label for="billingFirstNameInput">First name</label>
-                                <input type="text" id="billingFirstNameInput" placeholder="First name">
+                    <div id="billingFormContainer" style="display: none; padding: 20px; background: #f8fafc; border-top: 1px solid #e2e8f0;">
+                        <div class="dual-inputs-grid" style="margin-top: 0;">
+                            <div>
+                                <label style="display: block; font-size: 12.5px; font-weight: 600; color: #374151; margin-bottom: 5px;">First name</label>
+                                <input type="text" id="billingFirstNameInput" placeholder="First name" class="form-input-control">
                             </div>
-                            <div class="input-group">
-                                <label for="billingLastNameInput">Last name</label>
-                                <input type="text" id="billingLastNameInput" placeholder="Last name">
+                            <div>
+                                <label style="display: block; font-size: 12.5px; font-weight: 600; color: #374151; margin-bottom: 5px;">Last name</label>
+                                <input type="text" id="billingLastNameInput" placeholder="Last name" class="form-input-control">
                             </div>
                         </div>
 
-                        <div class="input-group">
-                            <label for="billingAddressInput">Address</label>
-                            <input type="text" id="billingAddressInput" placeholder="Street address, House No., Building">
+                        <div style="margin-top: 12px;">
+                            <label style="display: block; font-size: 12.5px; font-weight: 600; color: #374151; margin-bottom: 5px;">Address</label>
+                            <input type="text" id="billingAddressInput" placeholder="Street address, House No., Building" class="form-input-control">
                         </div>
 
-                        <div class="input-group">
-                            <label for="billingApartmentInput">Apartment, suite, etc. (optional)</label>
-                            <input type="text" id="billingApartmentInput" placeholder="Apartment, suite, unit, etc.">
+                        <div style="margin-top: 12px;">
+                            <label style="display: block; font-size: 12.5px; font-weight: 600; color: #374151; margin-bottom: 5px;">Apartment, suite, etc. (optional)</label>
+                            <input type="text" id="billingApartmentInput" placeholder="Apartment, suite, unit, etc." class="form-input-control">
                         </div>
 
-                        <div class="form-row-3col">
-                            <div class="input-group">
-                                <label for="billingCityInput">City</label>
-                                <input type="text" id="billingCityInput" placeholder="City">
+                        <div class="triple-inputs-grid" style="margin-top: 12px;">
+                            <div>
+                                <label style="display: block; font-size: 12.5px; font-weight: 600; color: #374151; margin-bottom: 5px;">City</label>
+                                <input type="text" id="billingCityInput" placeholder="City" class="form-input-control">
                             </div>
-                            <div class="input-group">
-                                <label for="billingStateSelect">State</label>
-                                <select id="billingStateSelect">
+                            <div>
+                                <label style="display: block; font-size: 12.5px; font-weight: 600; color: #374151; margin-bottom: 5px;">State</label>
+                                <select id="billingStateSelect" class="form-select-control">
                                     <option value="Andhra Pradesh">Andhra Pradesh</option>
                                     <option value="Telangana">Telangana</option>
-                                    <option value="Karnataka">Karnataka</option>
+                                    <option value="Karnataka" selected>Karnataka</option>
                                     <option value="Tamil Nadu">Tamil Nadu</option>
                                     <option value="Maharashtra">Maharashtra</option>
                                     <option value="Kerala">Kerala</option>
@@ -387,15 +387,15 @@
                                     <option value="Other">Other</option>
                                 </select>
                             </div>
-                            <div class="input-group">
-                                <label for="billingPinCodeInput">PIN code</label>
-                                <input type="text" id="billingPinCodeInput" placeholder="PIN code">
+                            <div>
+                                <label style="display: block; font-size: 12.5px; font-weight: 600; color: #374151; margin-bottom: 5px;">PIN code</label>
+                                <input type="text" id="billingPinCodeInput" placeholder="PIN code" class="form-input-control">
                             </div>
                         </div>
 
-                        <div class="input-group" style="margin-bottom: 0;">
-                            <label for="billingPhoneInput">Phone number (for billing verification)</label>
-                            <input type="text" id="billingPhoneInput" placeholder="10-digit phone number">
+                        <div style="margin-top: 12px;">
+                            <label style="display: block; font-size: 12.5px; font-weight: 600; color: #374151; margin-bottom: 5px;">Phone number (for billing verification)</label>
+                            <input type="tel" id="billingPhoneInput" placeholder="10-digit phone number" class="form-input-control">
                         </div>
                     </div>
                 </div>
