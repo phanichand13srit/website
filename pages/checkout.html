@@ -332,10 +332,71 @@
                     <span>Billing address</span>
                 </div>
 
-                <div class="billing-options-box">
-                    <div class="billing-option-row selected">
-                        <span class="radio-dot-active"></span>
-                        <span>Same as shipping address</span>
+                <div class="billing-options-box" id="billingOptionsBox">
+                    <!-- Option 1: Same as shipping address -->
+                    <div class="billing-option-row selected" id="billingSameRow" onclick="selectBillingOption('same')">
+                        <span class="radio-dot-active" id="billingSameDot"></span>
+                        <span style="font-weight: 500; color: #1e293b;">Same as shipping address</span>
+                    </div>
+
+                    <!-- Option 2: Use a different billing address -->
+                    <div class="billing-option-row" id="billingDiffRow" onclick="selectBillingOption('different')">
+                        <span class="radio-dot-inactive" id="billingDiffDot"></span>
+                        <span style="font-weight: 500; color: #1e293b;">Use a different billing address</span>
+                    </div>
+
+                    <!-- Billing Address Form Container (Displayed when 'different' is selected) -->
+                    <div id="billingFormContainer" style="display: none; padding: 18px; background: #f8fafc; border-top: 1px solid #e2e8f0;">
+                        <div class="form-row-2col">
+                            <div class="input-group">
+                                <label for="billingFirstNameInput">First name</label>
+                                <input type="text" id="billingFirstNameInput" placeholder="First name">
+                            </div>
+                            <div class="input-group">
+                                <label for="billingLastNameInput">Last name</label>
+                                <input type="text" id="billingLastNameInput" placeholder="Last name">
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="billingAddressInput">Address</label>
+                            <input type="text" id="billingAddressInput" placeholder="Street address, House No., Building">
+                        </div>
+
+                        <div class="input-group">
+                            <label for="billingApartmentInput">Apartment, suite, etc. (optional)</label>
+                            <input type="text" id="billingApartmentInput" placeholder="Apartment, suite, unit, etc.">
+                        </div>
+
+                        <div class="form-row-3col">
+                            <div class="input-group">
+                                <label for="billingCityInput">City</label>
+                                <input type="text" id="billingCityInput" placeholder="City">
+                            </div>
+                            <div class="input-group">
+                                <label for="billingStateSelect">State</label>
+                                <select id="billingStateSelect">
+                                    <option value="Andhra Pradesh">Andhra Pradesh</option>
+                                    <option value="Telangana">Telangana</option>
+                                    <option value="Karnataka">Karnataka</option>
+                                    <option value="Tamil Nadu">Tamil Nadu</option>
+                                    <option value="Maharashtra">Maharashtra</option>
+                                    <option value="Kerala">Kerala</option>
+                                    <option value="Delhi">Delhi</option>
+                                    <option value="Gujarat">Gujarat</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            <div class="input-group">
+                                <label for="billingPinCodeInput">PIN code</label>
+                                <input type="text" id="billingPinCodeInput" placeholder="PIN code">
+                            </div>
+                        </div>
+
+                        <div class="input-group" style="margin-bottom: 0;">
+                            <label for="billingPhoneInput">Phone number (for billing verification)</label>
+                            <input type="text" id="billingPhoneInput" placeholder="10-digit phone number">
+                        </div>
                     </div>
                 </div>
 
@@ -426,6 +487,7 @@
     <script src="../assets/js/script.js"></script>
     <script>
         let selectedPayment = "Razorpay";
+        let selectedBillingOption = "same";
         let appliedCouponCode = "";
         let appliedDiscount = 0;
         const API_BASE = window.location.origin.includes(":5000") ? "" : "http://localhost:5000";
@@ -444,6 +506,29 @@
                 codCard.classList.add("selected");
                 rzpCard.classList.remove("selected");
                 if (btnText) btnText.textContent = "Place Cash on Delivery Order";
+            }
+        }
+
+        function selectBillingOption(option) {
+            selectedBillingOption = option;
+            const sameRow = document.getElementById("billingSameRow");
+            const diffRow = document.getElementById("billingDiffRow");
+            const sameDot = document.getElementById("billingSameDot");
+            const diffDot = document.getElementById("billingDiffDot");
+            const formContainer = document.getElementById("billingFormContainer");
+
+            if (option === "same") {
+                if (sameRow) sameRow.classList.add("selected");
+                if (diffRow) diffRow.classList.remove("selected");
+                if (sameDot) sameDot.className = "radio-dot-active";
+                if (diffDot) diffDot.className = "radio-dot-inactive";
+                if (formContainer) formContainer.style.display = "none";
+            } else {
+                if (sameRow) sameRow.classList.remove("selected");
+                if (diffRow) diffRow.classList.add("selected");
+                if (sameDot) sameDot.className = "radio-dot-inactive";
+                if (diffDot) diffDot.className = "radio-dot-active";
+                if (formContainer) formContainer.style.display = "block";
             }
         }
 
@@ -696,6 +781,28 @@
                 country: "India"
             };
 
+            let billingAddress = shippingAddress;
+            if (selectedBillingOption === "different") {
+                const bFirstName = document.getElementById("billingFirstNameInput").value.trim() || firstName;
+                const bLastName = document.getElementById("billingLastNameInput").value.trim() || lastName;
+                const bFullName = `${bFirstName} ${bLastName}`.trim() || fullName;
+                const bAddress = document.getElementById("billingAddressInput").value.trim() || address;
+                const bApt = document.getElementById("billingApartmentInput").value.trim();
+                const bCity = document.getElementById("billingCityInput").value.trim() || city;
+                const bState = document.getElementById("billingStateSelect").value || state;
+                const bPinCode = document.getElementById("billingPinCodeInput").value.trim() || pinCode;
+                const bPhone = document.getElementById("billingPhoneInput").value.trim() || phone;
+
+                billingAddress = {
+                    name: bFullName,
+                    address: bApt ? `${bAddress}, ${bApt}` : bAddress,
+                    city: `${bCity}, ${bState}`,
+                    postalCode: bPinCode,
+                    phone: bPhone,
+                    country: "India"
+                };
+            }
+
             // 1. CASH ON DELIVERY FLOW
             if (selectedPayment === "COD") {
                 btn.disabled = true;
@@ -711,6 +818,7 @@
                             customerPhone: phone || contact,
                             orderItems,
                             shippingAddress,
+                            billingAddress,
                             paymentMethod: "Cash on Delivery",
                             itemsPrice: subtotal,
                             discountPrice: appliedDiscount,
@@ -752,6 +860,7 @@
                         customerPhone: phone || contact,
                         orderItems,
                         shippingAddress,
+                        billingAddress,
                         itemsPrice: subtotal,
                         discountPrice: appliedDiscount,
                         couponCode: appliedCouponCode,

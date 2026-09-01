@@ -29,6 +29,7 @@ router.post('/create-order', async (req, res) => {
     const {
       orderItems,
       shippingAddress,
+      billingAddress,
       customerName,
       customerEmail,
       customerPhone,
@@ -87,6 +88,12 @@ router.post('/create-order', async (req, res) => {
       customerPhone: customerPhone || '',
       orderItems,
       shippingAddress: shippingAddress || {
+        address: 'N/A',
+        city: 'N/A',
+        postalCode: '000000',
+        country: 'India',
+      },
+      billingAddress: billingAddress || shippingAddress || {
         address: 'N/A',
         city: 'N/A',
         postalCode: '000000',
