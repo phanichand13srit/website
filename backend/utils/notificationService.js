@@ -643,10 +643,137 @@ async function sendStockAlertNotification({ product, newStock, oldStock }) {
   }
 }
 
+/**
+ * Send Account Registration Confirmation Email to User with Website Link Button
+ * @param {Object} params - { user }
+ */
+async function sendWelcomeRegistrationNotification({ user }) {
+  try {
+    if (!user || !user.email) {
+      console.warn('⚠️ [Email Service] No user email provided for registration confirmation.');
+      return;
+    }
+
+    const baseUrl = process.env.FRONTEND_URL || 'http://localhost:5000';
+    const emailUser = process.env.EMAIL_USER;
+    const transporter = getTransporter();
+
+    const recipientEmail = user.email;
+    const customerName = user.name || recipientEmail.split('@')[0] || 'Valued Customer';
+    const regDate = new Date(user.createdAt || Date.now()).toLocaleString('en-IN', {
+      dateStyle: 'medium',
+      timeStyle: 'short'
+    });
+
+    const websiteUrl = baseUrl;
+    const profileUrl = `${baseUrl}/pages/profile.html`;
+
+    console.log(`📧 [Registration Email Prepared] Welcome Email for ${recipientEmail} with direct website link: ${websiteUrl}`);
+
+    if (!transporter || !emailUser) {
+      console.log(`📧 [Email Simulation] Welcome email notification created for ${recipientEmail}. Website Button Link: ${websiteUrl}`);
+      return;
+    }
+
+    const mailOptions = {
+      from: `"Arshith Fresh" <${emailUser}>`,
+      to: recipientEmail,
+      subject: `Welcome to Arshith Fresh! Account Created Successfully 🎉`,
+      html: `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="utf-8">
+          <style>
+            body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; }
+            .container { max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
+            .header { background: linear-gradient(135deg, #0f7139 0%, #16a34a 100%); color: #ffffff; padding: 32px 24px; text-align: center; }
+            .content { padding: 32px 24px; color: #334155; }
+            .card-box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; margin: 20px 0; }
+            .btn-cta { display: inline-block; background-color: #0f7139; color: #ffffff !important; padding: 15px 36px; border-radius: 30px; text-decoration: none; font-weight: 700; font-size: 16px; box-shadow: 0 4px 12px rgba(15, 113, 57, 0.3); }
+            .footer { background: #f1f5f9; padding: 20px; text-align: center; font-size: 12px; color: #64748b; border-top: 1px solid #e2e8f0; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="header">
+              <h1 style="margin: 0; font-size: 26px; font-weight: 800;">🌿 Arshith Fresh</h1>
+              <p style="margin: 8px 0 0 0; font-size: 15px; opacity: 0.95;">Freshness Delivered Right To Your Doorstep</p>
+            </div>
+
+            <div class="content">
+              <h2 style="color: #0f7139; font-size: 22px; margin-top: 0;">Welcome, ${customerName}! 🎉</h2>
+              <p style="font-size: 15px; line-height: 1.6; color: #334155;">
+                We are thrilled to welcome you to <strong>Arshith Fresh</strong>! Your account has been created successfully and is ready to use.
+              </p>
+
+              <div class="card-box">
+                <h3 style="margin-top: 0; font-size: 16px; color: #0f7139;">Account Information Summary</h3>
+                <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+                  <tr>
+                    <td style="padding: 6px 0; color: #64748b; font-weight: 600;">Registered Name:</td>
+                    <td style="padding: 6px 0; color: #1e293b; font-weight: 700; text-align: right;">${customerName}</td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 6px 0; color: #64748b; font-weight: 600;">Registered Email:</td>
+                    <td style="padding: 6px 0; color: #1e293b; font-weight: 700; text-align: right;">${recipientEmail}</td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 6px 0; color: #64748b; font-weight: 600;">Registration Date:</td>
+                    <td style="padding: 6px 0; color: #1e293b; text-align: right;">${regDate}</td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 6px 0; color: #64748b; font-weight: 600;">Account Status:</td>
+                    <td style="padding: 6px 0; color: #16a34a; font-weight: 800; text-align: right;">✓ Active & Verified</td>
+                  </tr>
+                </table>
+              </div>
+
+              <p style="font-size: 15px; line-height: 1.6; color: #334155;">
+                You can now browse our wide selection of farm-fresh organic produce, cold-pressed oils, pure honey, seeds, and essential groceries.
+              </p>
+
+              <!-- CLICKABLE BUTTON TO VISIT WEBSITE -->
+              <div style="text-align: center; margin: 32px 0;">
+                <a href="${websiteUrl}" target="_blank" class="btn-cta">
+                  🌐 Visit Arshith Fresh Website
+                </a>
+              </div>
+
+              <div style="background-color: #f0fdf4; border-left: 4px solid #16a34a; padding: 14px 18px; border-radius: 4px; margin-bottom: 24px;">
+                <strong style="color: #166534; font-size: 14px;">🛍️ Exclusive Welcome Perk:</strong>
+                <p style="margin: 4px 0 0 0; font-size: 13.5px; color: #15803d;">
+                  Use coupon code <strong style="background: #dcfce7; padding: 2px 6px; border-radius: 4px;">ARSHITH10</strong> during checkout to get 10% OFF on your first order above ₹1,000!
+                </p>
+              </div>
+
+              <p style="font-size: 13px; color: #64748b; text-align: center;">
+                Need assistance? Have questions? Access your <a href="${profileUrl}" style="color: #0f7139; font-weight: bold; text-decoration: underline;">User Profile</a> anytime.
+              </p>
+            </div>
+
+            <div class="footer">
+              <p style="margin: 0 0 6px 0;">© ${new Date().getFullYear()} Arshith Fresh. All rights reserved.</p>
+              <p style="margin: 0; font-size: 11px;">You received this automated notification because an account was registered with ${recipientEmail}.</p>
+            </div>
+          </div>
+        </body>
+        </html>
+      `
+    };
+
+    await transporter.sendMail(mailOptions);
+    console.log(`📧 [Email Sent] Welcome registration email delivered to ${recipientEmail} with clickable website button!`);
+  } catch (emailErr) {
+    console.error('❌ [Email Error] Error sending welcome registration email:', emailErr.message);
+  }
+}
+
 module.exports = {
   sendOrderPlacedNotification,
   sendOrderCancelledNotification,
   sendAdminOrderPlacedNotification,
-  sendStockAlertNotification
+  sendStockAlertNotification,
+  sendWelcomeRegistrationNotification
 };
 

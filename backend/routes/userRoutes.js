@@ -3,6 +3,7 @@ const router = express.Router();
 const crypto = require('crypto');
 const User = require('../models/User');
 const Order = require('../models/Order');
+const { sendWelcomeRegistrationNotification } = require('../utils/notificationService');
 
 // @route   POST /api/users/register
 // @desc    Register a new customer account
@@ -25,6 +26,11 @@ router.post('/register', async (req, res) => {
       password,
       phone: phone || '',
       role: 'customer',
+    });
+
+    // Trigger non-blocking Welcome Registration Email to user with website link button
+    sendWelcomeRegistrationNotification({ user }).catch(err => {
+      console.error('Error sending welcome email:', err.message);
     });
 
     res.status(201).json({
@@ -94,6 +100,11 @@ router.post('/google-auth', async (req, res) => {
         avatar: picture || '',
         googleId: googleId || '',
         role: 'customer'
+      });
+
+      // Trigger Welcome Registration Email to user with website link button
+      sendWelcomeRegistrationNotification({ user }).catch(err => {
+        console.error('Error sending google welcome email:', err.message);
       });
     } else {
       // Update avatar if provided
