@@ -12,7 +12,7 @@
     /* KPI Stats Grid */
     .kpi-grid {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(3, 1fr);
       gap: 16px;
       margin-bottom: 24px;
     }
@@ -399,14 +399,6 @@
 
         <div class="kpi-card">
           <div>
-            <div class="kpi-title">Highest Tier</div>
-            <div class="kpi-value" id="kpiMaxDiscount">50%</div>
-          </div>
-          <div class="kpi-icon-box kpi-icon-purple"><i class="fa-solid fa-bolt"></i></div>
-        </div>
-
-        <div class="kpi-card">
-          <div>
             <div class="kpi-title">Min Order Start</div>
             <div class="kpi-value" id="kpiMinOrder">₹1,000</div>
           </div>
@@ -554,13 +546,11 @@
     function updateKPIs() {
       const total = allCoupons.length;
       const active = allCoupons.filter(c => c.isActive !== false).length;
-      const maxDiscount = allCoupons.reduce((max, c) => Math.max(max, c.discountPercent || 0), 0);
       const minOrders = allCoupons.map(c => c.minOrderAmount || 0).filter(n => n > 0);
       const minOrderStart = minOrders.length > 0 ? Math.min(...minOrders) : 1000;
 
       document.getElementById('kpiTotalCoupons').textContent = total;
       document.getElementById('kpiActiveCoupons').textContent = active;
-      document.getElementById('kpiMaxDiscount').textContent = `${maxDiscount}%`;
       document.getElementById('kpiMinOrder').textContent = `₹${minOrderStart.toLocaleString('en-IN')}`;
       
       const badge = document.getElementById('sidebarCouponsBadge');
