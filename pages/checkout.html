@@ -947,16 +947,31 @@
         }
 
         function finishOrder(orderId, paymentMethod, paymentId, total) {
-            window.CART_ITEMS = [];
-            try {
-                localStorage.removeItem("arshith_cart");
-                if (typeof saveCart === "function") saveCart();
-            } catch(e) {}
+            // 1. Thoroughly clear cart both in memory array and in localStorage
+            if (typeof clearStoreCart === "function") {
+                clearStoreCart();
+            } else {
+                if (typeof CART_ITEMS !== "undefined") CART_ITEMS.length = 0;
+                window.CART_ITEMS = [];
+                try {
+                    localStorage.setItem("arshith_cart", "[]");
+                    localStorage.removeItem("arshith_cart");
+                } catch(e) {}
+            }
 
-            document.getElementById("confirmedOrderId").textContent = "#" + (orderId.toString().slice(-8).toUpperCase());
-            document.getElementById("confirmedPaymentMethod").textContent = paymentMethod;
-            document.getElementById("confirmedPaymentId").textContent = paymentId;
-            document.getElementById("confirmedTotal").textContent = `₹${Number(total).toFixed(2)}`;
+            // 2. Reset cart badges on DOM
+            const badges = document.querySelectorAll(".cart-count, .cart-badge-num, #checkoutTopCartCount, .cart-count-badge");
+            badges.forEach(b => b.textContent = "0");
+
+            // 3. Update confirmation details safely
+            const elId = document.getElementById("confirmedOrderId");
+            if (elId) elId.textContent = "#" + (orderId.toString().slice(-8).toUpperCase());
+            const elMethod = document.getElementById("confirmedPaymentMethod");
+            if (elMethod) elMethod.textContent = paymentMethod;
+            const elPayId = document.getElementById("confirmedPaymentId");
+            if (elPayId) elPayId.textContent = paymentId;
+            const elTotal = document.getElementById("confirmedTotal");
+            if (elTotal) elTotal.textContent = `₹${Number(total).toFixed(2)}`;
 
             const modal = document.getElementById("orderSuccessModal");
             if (modal) {

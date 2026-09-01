@@ -698,6 +698,23 @@ document.addEventListener("DOMContentLoaded", () => {
         updateCartCountBadge();
     }
 
+    function clearStoreCart() {
+        CART_ITEMS.length = 0;
+        window.CART_ITEMS = [];
+        try {
+            localStorage.setItem("arshith_cart", "[]");
+            localStorage.removeItem("arshith_cart");
+        } catch (e) {}
+        updateCartCountBadge();
+        if (typeof renderCartPage === "function") {
+            try { renderCartPage(); } catch(e) {}
+        }
+    }
+
+    window.saveCart = saveCart;
+    window.clearStoreCart = clearStoreCart;
+    window.addToStoreCart = addToStoreCart;
+
     function addToStoreCart(id, name, price, image, qty = 1) {
         const existing = CART_ITEMS.find(item => item.id === id || item.title === name);
         if (existing) {
