@@ -682,17 +682,49 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    // Helper to consolidate duplicate products in cart array into single entries with total combined quantity
+    function consolidateCartItems(items) {
+        if (!Array.isArray(items) || items.length === 0) return [];
+        const map = new Map();
+        items.forEach(item => {
+            if (!item) return;
+            const key = String(item.id || item._id || item.product || item.title || item.name || '').trim().toLowerCase();
+            const qty = Math.max(1, Number(item.quantity || item.qty || 1));
+            const price = Number(item.price || 0);
+            if (map.has(key)) {
+                const existing = map.get(key);
+                const newQty = (Number(existing.quantity || existing.qty || 1)) + qty;
+                existing.quantity = newQty;
+                existing.qty = newQty;
+                if (!existing.image && item.image) existing.image = item.image;
+            } else {
+                map.set(key, {
+                    ...item,
+                    id: item.id || item._id || item.product || String(Date.now()),
+                    title: item.title || item.name || "Arshith Fresh Product",
+                    name: item.name || item.title || "Arshith Fresh Product",
+                    price: price,
+                    quantity: qty,
+                    qty: qty
+                });
+            }
+        });
+        return Array.from(map.values());
+    }
+    window.consolidateCartItems = consolidateCartItems;
+
     // Global Cart State
     let CART_ITEMS = [];
     try {
         const saved = localStorage.getItem("arshith_cart");
         if (saved) {
-            CART_ITEMS = JSON.parse(saved);
+            CART_ITEMS = consolidateCartItems(JSON.parse(saved));
         }
     } catch (e) {}
 
     function saveCart() {
         try {
+            CART_ITEMS = consolidateCartItems(CART_ITEMS);
             localStorage.setItem("arshith_cart", JSON.stringify(CART_ITEMS));
         } catch (e) {}
         updateCartCountBadge();
@@ -713,12 +745,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
     window.saveCart = saveCart;
     window.clearStoreCart = clearStoreCart;
-    window.addToStoreCart = addToStoreCart;
 
     function addToStoreCart(id, name, price, image, qty = 1) {
-        const existing = CART_ITEMS.find(item => item.id === id || item.title === name);
+        CART_ITEMS = consolidateCartItems(CART_ITEMS);
+        const searchKey = String(id || name || '').trim().toLowerCase();
+        const existing = CART_ITEMS.find(item => {
+            const itemId = String(item.id || item._id || item.product || '').trim().toLowerCase();
+            const itemTitle = String(item.title || item.name || '').trim().toLowerCase();
+            return (searchKey && (itemId === searchKey || itemTitle === searchKey));
+        });
+
+        let finalQty = Number(qty);
         if (existing) {
-            existing.quantity += Number(qty);
+            existing.quantity = (Number(existing.quantity || existing.qty || 1)) + Number(qty);
+            existing.qty = existing.quantity;
+            finalQty = existing.quantity;
         } else {
             CART_ITEMS.push({
                 id: id || String(Date.now()),
@@ -726,16 +767,18 @@ document.addEventListener("DOMContentLoaded", () => {
                 name: name,
                 price: Number(price) || 0,
                 image: image || "https://arshithfresh.com/cdn/shop/collections/spice_200x200_crop_center.png?v=1746963495",
-                quantity: Number(qty)
+                quantity: Number(qty),
+                qty: Number(qty)
             });
         }
         saveCart();
         if (typeof showToast === "function") {
-            showToast(`Added ${name} to cart!`);
+            showToast(`Added ${name} to cart! (Quantity: ${finalQty})`);
         } else {
-            alert(`Added ${name} to cart!`);
+            alert(`Added ${name} to cart! (Quantity: ${finalQty})`);
         }
     }
+    window.addToStoreCart = addToStoreCart;
 
     function updateCartQuantity(index, newQty) {
         if (newQty <= 0) {

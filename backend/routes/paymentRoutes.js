@@ -81,12 +81,33 @@ router.post('/create-order', async (req, res) => {
       rzpOrder = await razorpay.orders.create(options);
     }
 
+    // Consolidate duplicate products into single item entries with combined quantity
+    const itemMap = new Map();
+    (orderItems || []).forEach(item => {
+      if (!item) return;
+      const key = String(item.product || item.name || item.title || '').trim().toLowerCase();
+      const qty = Math.max(1, Number(item.qty || item.quantity || 1));
+      const price = Number(item.price || 0);
+      if (itemMap.has(key)) {
+        const existing = itemMap.get(key);
+        existing.qty = (Number(existing.qty || 1)) + qty;
+      } else {
+        itemMap.set(key, {
+          ...item,
+          name: item.name || item.title || 'Fresh Product',
+          qty: qty,
+          price: price
+        });
+      }
+    });
+    const sanitizedOrderItems = Array.from(itemMap.values());
+
     // Create pending Order in MongoDB
     const order = new Order({
       customerName: customerName || 'Customer',
       customerEmail: customerEmail || '',
       customerPhone: customerPhone || '',
-      orderItems,
+      orderItems: sanitizedOrderItems,
       shippingAddress: shippingAddress || {
         address: 'N/A',
         city: 'N/A',

@@ -530,6 +530,25 @@
                     items = JSON.parse(localStorage.getItem("arshith_cart")) || [];
                 } catch(e) {}
             }
+            if (typeof consolidateCartItems === 'function') {
+                items = consolidateCartItems(items);
+            } else if (Array.isArray(items) && items.length > 0) {
+                const map = new Map();
+                items.forEach(item => {
+                    if (!item) return;
+                    const key = String(item.id || item._id || item.product || item.title || item.name || '').trim().toLowerCase();
+                    const qty = Math.max(1, Number(item.quantity || item.qty || 1));
+                    if (map.has(key)) {
+                        const existing = map.get(key);
+                        existing.quantity = (Number(existing.quantity || existing.qty || 1)) + qty;
+                        existing.qty = existing.quantity;
+                    } else {
+                        map.set(key, { ...item, quantity: qty, qty: qty });
+                    }
+                });
+                items = Array.from(map.values());
+            }
+
             if (items.length === 0) {
                 return [
                     {
@@ -755,15 +774,26 @@
             const subtotal = items.reduce((sum, item) => sum + ((item.price || 0) * (item.quantity || item.qty || 1)), 0);
             const finalTotal = Math.max(0, subtotal - appliedDiscount);
 
-            // Format items for Backend Order Model
-            const orderItems = items.map(item => ({
-                product: item.id || item._id || item.product || "664c12345678901234567890",
-                name: item.title || item.name || "Arshith Product",
-                qty: item.quantity || item.qty || 1,
-                price: item.price || 0,
-                unit: item.weight || item.unit || "1 unit",
-                image: item.image || ""
-            }));
+            // Format & consolidate items for Backend Order Model
+            const itemMap = new Map();
+            items.forEach(item => {
+                const key = String(item.id || item._id || item.product || item.title || item.name || '').trim().toLowerCase();
+                const qty = Math.max(1, Number(item.quantity || item.qty || 1));
+                if (itemMap.has(key)) {
+                    const existing = itemMap.get(key);
+                    existing.qty += qty;
+                } else {
+                    itemMap.set(key, {
+                        product: item.id || item._id || item.product || "664c12345678901234567890",
+                        name: item.title || item.name || "Arshith Product",
+                        qty: qty,
+                        price: Number(item.price || 0),
+                        unit: item.weight || item.unit || "1 unit",
+                        image: item.image || ""
+                    });
+                }
+            });
+            const orderItems = Array.from(itemMap.values());
 
             const shippingAddress = {
                 address: apt ? `${address}, ${apt}` : address,

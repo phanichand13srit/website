@@ -145,12 +145,27 @@ router.post('/', async (req, res) => {
 
     const validUser = (user && mongoose.Types.ObjectId.isValid(user)) ? user : undefined;
 
-    const sanitizedItems = orderItems.map(item => ({
-      ...item,
-      product: (item.product && mongoose.Types.ObjectId.isValid(item.product)) ? item.product : undefined,
-      qty: Number(item.qty || item.quantity || 1),
-      price: Number(item.price || 0)
-    }));
+    // Consolidate duplicate products into single item entries with combined quantity
+    const itemMap = new Map();
+    (orderItems || []).forEach(item => {
+      if (!item) return;
+      const key = String(item.product || item.name || item.title || '').trim().toLowerCase();
+      const qty = Math.max(1, Number(item.qty || item.quantity || 1));
+      const price = Number(item.price || 0);
+      if (itemMap.has(key)) {
+        const existing = itemMap.get(key);
+        existing.qty = (Number(existing.qty || 1)) + qty;
+      } else {
+        itemMap.set(key, {
+          ...item,
+          product: (item.product && mongoose.Types.ObjectId.isValid(item.product)) ? item.product : undefined,
+          name: item.name || item.title || 'Fresh Product',
+          qty: qty,
+          price: price
+        });
+      }
+    });
+    const sanitizedItems = Array.from(itemMap.values());
 
     const orderStatus = status || 'Placed';
 

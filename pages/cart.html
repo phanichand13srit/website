@@ -250,6 +250,11 @@
             const container = document.getElementById("cartPageContainer");
             if (!container) return;
 
+            if (typeof consolidateCartItems === 'function') {
+                CART_ITEMS = consolidateCartItems(CART_ITEMS);
+                window.CART_ITEMS = CART_ITEMS;
+            }
+
             if (CART_ITEMS.length === 0) {
                 // IMAGE 2: EMPTY CART STATE
                 container.innerHTML = `
