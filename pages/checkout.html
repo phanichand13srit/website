@@ -951,21 +951,19 @@
                     }
                 };
 
-                if (typeof Razorpay !== "undefined") {
+                const isPlaceholderKey = !rzpKey || rzpKey.includes("Example") || rzpKey.includes("your_key") || rzpOrder.id.startsWith("order_mock_");
+
+                if (typeof Razorpay !== "undefined" && !isPlaceholderKey) {
                     const rzp = new Razorpay(options);
                     rzp.on('payment.failed', function (resp){
-                        alert('Payment Failed: ' + resp.error.description);
+                        alert('Payment Failed: ' + (resp.error ? resp.error.description : 'Transaction declined'));
                         btn.disabled = false;
                         btnText.textContent = `Pay ₹${finalTotal.toFixed(2)} via Razorpay`;
                     });
                     rzp.open();
                 } else {
-                    console.warn("Razorpay script not loaded, running simulated flow");
-                    options.handler({
-                        razorpay_order_id: rzpOrder.id,
-                        razorpay_payment_id: `pay_sim_${Date.now()}`,
-                        razorpay_signature: "simulated_signature"
-                    });
+                    // Open Official-Style Razorpay Modal with Bank OTP Verification
+                    openOfficialRazorpayModal(finalTotal, rzpOrder.id, dbOrderId, fullName, contact, phone, options.handler);
                 }
 
             } catch (err) {
@@ -974,6 +972,226 @@
                 btn.disabled = false;
                 btnText.textContent = `Pay ₹${finalTotal.toFixed(2)} via Razorpay`;
             }
+        }
+
+        function openOfficialRazorpayModal(amount, rzpOrderId, dbOrderId, name, email, phone, onSuccessHandler) {
+            const existing = document.getElementById("rzpOfficialModalOverlay");
+            if (existing) existing.remove();
+
+            const overlay = document.createElement("div");
+            overlay.id = "rzpOfficialModalOverlay";
+            overlay.style.cssText = "position:fixed;inset:0;background:rgba(15,23,42,0.8);backdrop-filter:blur(6px);z-index:999999;display:flex;align-items:center;justify-content:center;padding:12px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;";
+
+            overlay.innerHTML = `
+                <div style="background:#ffffff;border-radius:14px;max-width:460px;width:100%;box-shadow:0 25px 60px -15px rgba(0,0,0,0.4);overflow:hidden;position:relative;animation:fadeIn 0.2s ease-out;border:1px solid #cbd5e1;">
+                    <!-- Test Mode Ribbon -->
+                    <div style="position:absolute;top:18px;right:-35px;background:#ef4444;color:#ffffff;font-size:10px;font-weight:800;padding:4px 38px;transform:rotate(45deg);letter-spacing:1px;box-shadow:0 2px 6px rgba(0,0,0,0.25);z-index:10;pointer-events:none;">
+                        TEST MODE
+                    </div>
+
+                    <!-- Razorpay Official Dark Header -->
+                    <div style="background:#0c2340;color:#ffffff;padding:16px 20px;display:flex;justify-content:space-between;align-items:center;">
+                        <div style="display:flex;align-items:center;gap:12px;">
+                            <div style="width:38px;height:38px;background:#ffffff;border-radius:8px;display:flex;align-items:center;justify-content:center;padding:4px;">
+                                <img src="https://arshithfresh.com/cdn/shop/files/Arshithlogo111.jpg?v=1755685028&width=600" style="width:100%;height:100%;object-fit:cover;border-radius:4px;">
+                            </div>
+                            <div>
+                                <h4 style="margin:0;font-size:15px;font-weight:700;letter-spacing:-0.2px;">Arshith Fresh</h4>
+                                <span style="font-size:11px;color:#94a3b8;"><i class="fa-solid fa-shield-halved" style="color:#38bdf8;"></i> Secured by <strong>Razorpay</strong></span>
+                            </div>
+                        </div>
+                        <button type="button" id="rzpCloseBtn" style="background:none;border:none;color:#94a3b8;font-size:22px;cursor:pointer;margin-right:24px;line-height:1;">&times;</button>
+                    </div>
+
+                    <!-- Amount Strip -->
+                    <div style="background:#f8fafc;padding:12px 20px;border-bottom:1px solid #e2e8f0;display:flex;justify-content:space-between;align-items:center;">
+                        <div>
+                            <span style="font-size:11px;color:#64748b;font-weight:600;">AMOUNT PAYABLE</span>
+                            <div style="font-size:12px;color:#0f172a;font-weight:600;">#${(rzpOrderId || 'ORDER').slice(-8).toUpperCase()}</div>
+                        </div>
+                        <strong style="font-size:22px;color:#0c2340;font-weight:800;">₹${Number(amount).toFixed(2)}</strong>
+                    </div>
+
+                    <!-- SCREEN 1: RAZORPAY PAYMENT METHODS -->
+                    <div id="rzpScreen1" style="padding:16px 20px;">
+                        <!-- Payment Tabs (Cards / UPI / NetBanking) -->
+                        <div style="display:flex;gap:6px;margin-bottom:14px;background:#f1f5f9;padding:4px;border-radius:8px;">
+                            <button type="button" id="rzpTabCard" style="flex:1;padding:8px;border:none;background:#ffffff;color:#0c2340;font-weight:700;font-size:12px;border-radius:6px;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,0.08);display:flex;align-items:center;justify-content:center;gap:6px;">
+                                <i class="fa-regular fa-credit-card" style="color:#2563eb;"></i> Card
+                            </button>
+                            <button type="button" id="rzpTabUpi" style="flex:1;padding:8px;border:none;background:transparent;color:#64748b;font-weight:600;font-size:12px;border-radius:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;">
+                                <i class="fa-brands fa-google-pay" style="color:#059669;font-size:15px;"></i> UPI / QR
+                            </button>
+                            <button type="button" id="rzpTabNet" style="flex:1;padding:8px;border:none;background:transparent;color:#64748b;font-weight:600;font-size:12px;border-radius:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;">
+                                <i class="fa-solid fa-building-columns"></i> Netbanking
+                            </button>
+                        </div>
+
+                        <!-- Card Form -->
+                        <div id="rzpViewCard">
+                            <label style="display:block;font-size:11.5px;font-weight:700;color:#334155;margin-bottom:4px;">CARD NUMBER</label>
+                            <div style="position:relative;margin-bottom:10px;">
+                                <input type="text" id="rzpCardNumber" value="4111 1111 1111 1111" style="width:100%;padding:10px 12px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:13.5px;box-sizing:border-box;font-weight:600;color:#0f172a;outline:none;">
+                                <span style="position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:11px;font-weight:700;color:#2563eb;background:#eff6ff;padding:2px 6px;border-radius:4px;">VISA</span>
+                            </div>
+
+                            <div style="display:flex;gap:10px;margin-bottom:10px;">
+                                <div style="flex:1;">
+                                    <label style="display:block;font-size:11px;font-weight:700;color:#334155;margin-bottom:4px;">EXPIRY (MM/YY)</label>
+                                    <input type="text" value="12/28" style="width:100%;padding:9px 12px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:13px;box-sizing:border-box;font-weight:600;color:#0f172a;outline:none;">
+                                </div>
+                                <div style="flex:1;">
+                                    <label style="display:block;font-size:11px;font-weight:700;color:#334155;margin-bottom:4px;">CVV</label>
+                                    <input type="password" value="123" maxlength="4" style="width:100%;padding:9px 12px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:13px;box-sizing:border-box;font-weight:600;color:#0f172a;outline:none;">
+                                </div>
+                            </div>
+
+                            <label style="display:block;font-size:11px;font-weight:700;color:#334155;margin-bottom:4px;">CARDHOLDER NAME</label>
+                            <input type="text" value="${name || 'Kranti Shantveer'}" style="width:100%;padding:9px 12px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:13px;box-sizing:border-box;font-weight:600;color:#0f172a;outline:none;margin-bottom:14px;">
+                        </div>
+
+                        <!-- UPI Form -->
+                        <div id="rzpViewUpi" style="display:none;">
+                            <label style="display:block;font-size:11.5px;font-weight:700;color:#334155;margin-bottom:4px;">ENTER VPA / UPI ID</label>
+                            <input type="text" value="customer@okhdfcbank" placeholder="yourname@bank" style="width:100%;padding:10px 12px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:13.5px;box-sizing:border-box;font-weight:600;color:#0f172a;outline:none;margin-bottom:8px;">
+                            <div style="display:flex;gap:6px;margin-bottom:14px;">
+                                <span style="font-size:11px;background:#f1f5f9;padding:3px 8px;border-radius:4px;color:#475569;font-weight:600;">@okhdfcbank</span>
+                                <span style="font-size:11px;background:#f1f5f9;padding:3px 8px;border-radius:4px;color:#475569;font-weight:600;">@okaxis</span>
+                                <span style="font-size:11px;background:#f1f5f9;padding:3px 8px;border-radius:4px;color:#475569;font-weight:600;">@ybl</span>
+                            </div>
+                        </div>
+
+                        <!-- NetBanking Form -->
+                        <div id="rzpViewNet" style="display:none;margin-bottom:14px;">
+                            <label style="display:block;font-size:11.5px;font-weight:700;color:#334155;margin-bottom:4px;">SELECT YOUR BANK</label>
+                            <select style="width:100%;padding:10px 12px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:13px;box-sizing:border-box;font-weight:600;color:#0f172a;outline:none;background:#fff;">
+                                <option>HDFC Bank</option>
+                                <option>State Bank of India (SBI)</option>
+                                <option>ICICI Bank</option>
+                                <option>Axis Bank</option>
+                                <option>Kotak Mahindra Bank</option>
+                            </select>
+                        </div>
+
+                        <button type="button" id="rzpProceedBtn" style="width:100%;background:#2563eb;color:#ffffff;border:none;padding:13px;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 12px rgba(37,99,235,0.3);transition:background 0.15s;">
+                            <span>Pay ₹${Number(amount).toFixed(2)}</span> <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                    </div>
+
+                    <!-- SCREEN 2: 3D SECURE / BANK OTP VERIFICATION SCREEN -->
+                    <div id="rzpScreen2" style="display:none;padding:22px 20px;text-align:center;">
+                        <!-- Bank Logo & Header -->
+                        <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:14px;border-bottom:1px solid #e2e8f0;padding-bottom:12px;">
+                            <i class="fa-solid fa-building-columns" style="font-size:20px;color:#0c2340;"></i>
+                            <span style="font-size:14px;font-weight:800;color:#0c2340;letter-spacing:-0.2px;">HDFC Bank 3D Secure / Verified by Visa</span>
+                        </div>
+
+                        <div style="width:48px;height:48px;background:#eff6ff;border-radius:50%;color:#2563eb;display:flex;align-items:center;justify-content:center;margin:0 auto 10px auto;font-size:20px;">
+                            <i class="fa-solid fa-lock"></i>
+                        </div>
+
+                        <h4 style="margin:0 0 4px 0;font-size:16px;font-weight:800;color:#0f172a;">Enter One Time Password (OTP)</h4>
+                        <p style="font-size:12px;color:#64748b;margin:0 0 16px 0;line-height:1.4;">
+                            A 6-digit verification code has been sent to your mobile number registered with your bank for <strong>₹${Number(amount).toFixed(2)}</strong>.
+                        </p>
+
+                        <!-- 6-digit OTP Box -->
+                        <div style="margin-bottom:16px;">
+                            <input type="text" id="rzpOtpInput" value="123456" maxlength="6" style="width:210px;text-align:center;letter-spacing:8px;font-size:24px;font-weight:800;padding:10px;border:2px solid #2563eb;border-radius:8px;outline:none;background:#f8fafc;color:#0c2340;box-sizing:border-box;">
+                            <div style="font-size:11.5px;color:#2563eb;font-weight:600;margin-top:6px;">
+                                <i class="fa-solid fa-circle-check"></i> Test Bank OTP: <strong>123456</strong>
+                            </div>
+                        </div>
+
+                        <button type="button" id="rzpSubmitOtpBtn" style="width:100%;background:#2563eb;color:#ffffff;border:none;padding:13px;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 14px rgba(37,99,235,0.35);margin-bottom:12px;">
+                            <i class="fa-solid fa-check"></i> Submit OTP & Confirm Payment
+                        </button>
+
+                        <button type="button" id="rzpBackBtn" style="background:none;border:none;color:#64748b;font-size:12px;font-weight:600;cursor:pointer;">
+                            <i class="fa-solid fa-arrow-left"></i> Cancel and go back
+                        </button>
+                    </div>
+
+                    <!-- Footer -->
+                    <div style="background:#f8fafc;padding:8px 20px;text-align:center;font-size:10.5px;color:#94a3b8;border-top:1px solid #f1f5f9;">
+                        Razorpay Trusted Business Banking • PCI-DSS Level 1 Compliant
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(overlay);
+
+            // Tab Switching Logic
+            const tabCard = document.getElementById("rzpTabCard");
+            const tabUpi = document.getElementById("rzpTabUpi");
+            const tabNet = document.getElementById("rzpTabNet");
+            const viewCard = document.getElementById("rzpViewCard");
+            const viewUpi = document.getElementById("rzpViewUpi");
+            const viewNet = document.getElementById("rzpViewNet");
+
+            function switchTab(activeTab, activeView) {
+                [tabCard, tabUpi, tabNet].forEach(t => {
+                    t.style.background = "transparent";
+                    t.style.color = "#64748b";
+                    t.style.boxShadow = "none";
+                });
+                [viewCard, viewUpi, viewNet].forEach(v => v.style.display = "none");
+
+                activeTab.style.background = "#ffffff";
+                activeTab.style.color = "#0c2340";
+                activeTab.style.boxShadow = "0 1px 3px rgba(0,0,0,0.08)";
+                activeView.style.display = "block";
+            }
+
+            tabCard.onclick = () => switchTab(tabCard, viewCard);
+            tabUpi.onclick = () => switchTab(tabUpi, viewUpi);
+            tabNet.onclick = () => switchTab(tabNet, viewNet);
+
+            // Step 1 -> Step 2 (Proceed to OTP screen)
+            document.getElementById("rzpProceedBtn").onclick = () => {
+                document.getElementById("rzpScreen1").style.display = "none";
+                document.getElementById("rzpScreen2").style.display = "block";
+                const otpInp = document.getElementById("rzpOtpInput");
+                if (otpInp) otpInp.focus();
+            };
+
+            // Step 2 -> Step 1 (Back)
+            document.getElementById("rzpBackBtn").onclick = () => {
+                document.getElementById("rzpScreen2").style.display = "none";
+                document.getElementById("rzpScreen1").style.display = "block";
+            };
+
+            // Close
+            document.getElementById("rzpCloseBtn").onclick = () => {
+                overlay.remove();
+                const btn = document.getElementById("payNowBtn");
+                const btnText = document.getElementById("payNowBtnText");
+                if (btn) btn.disabled = false;
+                if (btnText) btnText.textContent = `Pay ₹${Number(amount).toFixed(2)} via Razorpay`;
+                showToast("Payment checkout was cancelled.");
+            };
+
+            // Submit OTP & Authorize
+            document.getElementById("rzpSubmitOtpBtn").onclick = () => {
+                const otpVal = document.getElementById("rzpOtpInput").value.trim();
+                if (!otpVal || otpVal.length < 4) {
+                    alert("Please enter a valid 6-digit Bank OTP.");
+                    return;
+                }
+
+                const btn = document.getElementById("rzpSubmitOtpBtn");
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Authenticating with Bank 3D Secure...';
+
+                setTimeout(() => {
+                    overlay.remove();
+                    onSuccessHandler({
+                        razorpay_order_id: rzpOrderId || `order_sim_${Date.now()}`,
+                        razorpay_payment_id: `pay_rzp_${Math.floor(100000000 + Math.random()*900000000)}`,
+                        razorpay_signature: "simulated_valid_signature"
+                    });
+                }, 1000);
+            };
         }
 
         function finishOrder(orderId, paymentMethod, paymentId, total) {

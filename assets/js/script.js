@@ -1,7 +1,7 @@
 /* JavaScript Behaviors for Arshith Fresh Replica */
 
 // Global Toast Notification Helper
-function showToast(message, duration = 3000) {
+function showToast(message, type = 'info', duration = 3500) {
     if (!message) return;
     let toast = document.getElementById("arshithGlobalToast");
     if (!toast) {
@@ -10,7 +10,26 @@ function showToast(message, duration = 3000) {
         toast.className = "arshith-toast";
         document.body.appendChild(toast);
     }
-    toast.textContent = message;
+
+    // Set styling and icon based on type
+    let iconHtml = '';
+    let bg = '#0f172a';
+    let borderColor = 'transparent';
+
+    if (type === 'error' || message.toLowerCase().includes('already exist') || message.toLowerCase().includes('error') || message.toLowerCase().includes('failed') || message.toLowerCase().includes('invalid')) {
+        bg = '#7f1d1d';
+        borderColor = '#ef4444';
+        iconHtml = '<i class="fa-solid fa-triangle-exclamation" style="margin-right:8px;color:#fca5a5;"></i>';
+    } else if (type === 'success' || message.toLowerCase().includes('success') || message.toLowerCase().includes('created') || message.toLowerCase().includes('unlocked') || message.toLowerCase().includes('confirmed')) {
+        bg = '#064e3b';
+        borderColor = '#10b981';
+        iconHtml = '<i class="fa-solid fa-circle-check" style="margin-right:8px;color:#6ee7b7;"></i>';
+    }
+
+    toast.style.background = bg;
+    toast.style.border = `1.5px solid ${borderColor}`;
+    toast.style.zIndex = '9999999';
+    toast.innerHTML = `${iconHtml}<span>${message}</span>`;
     toast.classList.add("show");
 
     if (window._toastTimeout) {
@@ -823,11 +842,54 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // Auto-update badges on page load, history navigation, and cross-tab storage changes
-    document.addEventListener("DOMContentLoaded", updateCartCountBadge);
-    window.addEventListener("pageshow", updateCartCountBadge);
-    window.addEventListener("storage", updateCartCountBadge);
-    try { updateCartCountBadge(); } catch (e) {}
+    function getStoreCartUrl() {
+        const path = window.location.pathname;
+        if (path.includes('/pages/')) {
+            if (path.includes('/categories/') || path.includes('/policies/') || path.includes('/auth/')) {
+                return '../cart.html';
+            }
+            return 'cart.html';
+        }
+        return 'pages/cart.html';
+    }
+
+    function initStickyCartBar() {
+        const cartUrl = getStoreCartUrl();
+        const cartBars = document.querySelectorAll(".sticky-cart-bar, #stickyCartBar");
+        const isCartPage = window.location.pathname.endsWith('/cart.html') || window.location.pathname.endsWith('/cart');
+
+        cartBars.forEach(bar => {
+            if (isCartPage) {
+                bar.style.display = "none";
+                return;
+            }
+            bar.setAttribute("href", cartUrl);
+            bar.style.cursor = "pointer";
+            bar.onclick = function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                window.location.href = cartUrl;
+            };
+        });
+    }
+
+    // Auto-update badges & sticky bar on page load, history navigation, and cross-tab storage changes
+    document.addEventListener("DOMContentLoaded", () => {
+        updateCartCountBadge();
+        initStickyCartBar();
+    });
+    window.addEventListener("pageshow", () => {
+        updateCartCountBadge();
+        initStickyCartBar();
+    });
+    window.addEventListener("storage", () => {
+        updateCartCountBadge();
+        initStickyCartBar();
+    });
+    try { 
+        updateCartCountBadge(); 
+        initStickyCartBar();
+    } catch (e) {}
 
     window.CART_ITEMS = CART_ITEMS;
     window.addToStoreCart = addToStoreCart;
@@ -835,6 +897,7 @@ document.addEventListener("DOMContentLoaded", () => {
     window.removeFromCart = removeFromCart;
     window.saveCart = saveCart;
     window.updateCartCountBadge = updateCartCountBadge;
+    window.initStickyCartBar = initStickyCartBar;
 
     function createProductCardHTML(p) {
         if (!p) return "";
@@ -1281,12 +1344,17 @@ function initAutoSignupPopup() {
                         <p class="signup-modal-sub">Create your account today to unlock instant discount code <strong>ARSHITH10</strong>, track live orders, and enjoy faster checkout.</p>
                     </div>
 
+                    <div id="modalSignupError" class="signup-modal-error" style="display:none;">
+                        <i class="fa-solid fa-circle-exclamation"></i>
+                        <div id="modalSignupErrorText"></div>
+                    </div>
+
                     <form id="autoSignupModalForm" onsubmit="handleModalSignup(event)">
                         <div class="signup-form-group">
                             <input type="text" id="modalSignupName" placeholder="Full Name" required class="signup-modal-input">
                         </div>
                         <div class="signup-form-group">
-                            <input type="email" id="modalSignupEmail" placeholder="Email Address" required class="signup-modal-input">
+                            <input type="email" id="modalSignupEmail" placeholder="Email Address" required class="signup-modal-input" oninput="clearSignupModalError()">
                         </div>
                         <div class="signup-form-group">
                             <input type="password" id="modalSignupPassword" placeholder="Create Password (min 6 characters)" minlength="6" required class="signup-modal-input">
@@ -1313,6 +1381,16 @@ function initAutoSignupPopup() {
     }, 3000);
 }
 
+function clearSignupModalError() {
+    const errBox = document.getElementById('modalSignupError');
+    const emailInput = document.getElementById('modalSignupEmail');
+    if (errBox) errBox.style.display = 'none';
+    if (emailInput) {
+        emailInput.style.borderColor = '';
+        emailInput.style.boxShadow = '';
+    }
+}
+
 function closeSignupModal() {
     const overlay = document.getElementById('arshithSignupModalOverlay');
     if (overlay) {
@@ -1330,11 +1408,20 @@ async function handleModalSignup(e) {
     const name = document.getElementById('modalSignupName').value.trim();
     const email = document.getElementById('modalSignupEmail').value.trim();
     const password = document.getElementById('modalSignupPassword').value;
+    const errorBox = document.getElementById('modalSignupError');
+    const errorText = document.getElementById('modalSignupErrorText');
+    const emailInput = document.getElementById('modalSignupEmail');
+
+    if (errorBox) errorBox.style.display = 'none';
+    if (emailInput) {
+        emailInput.style.borderColor = '';
+        emailInput.style.boxShadow = '';
+    }
 
     if (!name || !email || !password) return;
 
     btn.disabled = true;
-    btn.textContent = 'Creating Account...';
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Creating Account...';
 
     try {
         const res = await fetch('http://localhost:5000/api/users/register', {
@@ -1354,9 +1441,7 @@ async function handleModalSignup(e) {
             sessionStorage.setItem('arshith_signup_popup_dismissed', 'true');
         } catch (e) {}
 
-        if (typeof showToast === 'function') {
-            showToast('🎉 Account created! Discount code ARSHITH10 unlocked.');
-        }
+        showToast('🎉 Account created! Discount code ARSHITH10 unlocked.', 'success');
 
         closeSignupModal();
 
@@ -1365,17 +1450,37 @@ async function handleModalSignup(e) {
         }, 1200);
 
     } catch (err) {
-        if (typeof showToast === 'function') {
-            showToast(err.message || 'Registration error');
-        } else {
-            alert(err.message || 'Registration error');
+        const rawMsg = err.message || 'Registration error';
+        const isExisting = rawMsg.toLowerCase().includes('already exist');
+
+        const path = window.location.pathname;
+        const isSubpage = path.includes('/pages/');
+        const isDeep = path.includes('/categories/') || path.includes('/policies/');
+        const loginUrl = isDeep ? '../auth/login.html' : (isSubpage ? 'auth/login.html' : 'pages/auth/login.html');
+
+        if (errorBox && errorText) {
+            if (isExisting) {
+                errorText.innerHTML = `An account with <strong>${escapeHtml(email)}</strong> already exists.<br><a href="${loginUrl}" style="display:inline-block;margin-top:4px;color:#0f7139;font-weight:700;text-decoration:underline;">Click here to Log In &rarr;</a>`;
+            } else {
+                errorText.innerHTML = escapeHtml(rawMsg);
+            }
+            errorBox.style.display = 'flex';
         }
+
+        if (emailInput) {
+            emailInput.style.borderColor = '#ef4444';
+            emailInput.style.boxShadow = '0 0 0 3px rgba(239, 68, 68, 0.15)';
+            emailInput.focus();
+        }
+
+        showToast(isExisting ? 'Account already exists! Please log in instead.' : rawMsg, 'error');
     } finally {
         btn.disabled = false;
         btn.textContent = 'Claim 10% OFF & Create Account';
     }
 }
 
+window.clearSignupModalError = clearSignupModalError;
 window.closeSignupModal = closeSignupModal;
 window.handleModalSignup = handleModalSignup;
 window.initAutoSignupPopup = initAutoSignupPopup;

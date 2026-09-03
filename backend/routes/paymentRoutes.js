@@ -44,7 +44,11 @@ router.post('/create-order', async (req, res) => {
       return res.status(400).json({ success: false, message: 'No items in order' });
     }
 
-    const calculatedTotal = totalPrice || (itemsPrice || 0) + (shippingPrice || 0);
+    let calculatedTotal = Number(totalPrice);
+    if (!calculatedTotal || calculatedTotal <= 0) {
+      const itemsSum = Number(itemsPrice) || orderItems.reduce((acc, item) => acc + (Number(item.price || 0) * Math.max(1, Number(item.qty || item.quantity || 1))), 0);
+      calculatedTotal = itemsSum + Number(shippingPrice || 0) - Number(discountPrice || 0);
+    }
     const amountInPaise = Math.round(Number(calculatedTotal) * 100);
 
     if (amountInPaise <= 0) {

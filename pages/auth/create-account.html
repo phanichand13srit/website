@@ -323,11 +323,24 @@
                     window.location.href = redirectDestination;
                 }, 600);
             } catch (err) {
+                const rawMsg = err.message || 'Registration failed';
+                const isExisting = rawMsg.toLowerCase().includes('already exist');
                 if (alertBox) {
-                    alertBox.innerText = err.message;
+                    if (isExisting) {
+                        alertBox.innerHTML = `An account with <strong>${email}</strong> already exists. <a href="login.html" style="color:#0f7139;text-decoration:underline;font-weight:700;margin-left:4px;">Click here to Log In &rarr;</a>`;
+                    } else {
+                        alertBox.innerText = rawMsg;
+                    }
                     alertBox.style.display = 'block';
-                } else {
-                    alert(err.message);
+                }
+                const emailInp = document.getElementById('regEmail');
+                if (emailInp) {
+                    emailInp.style.borderColor = '#ef4444';
+                    emailInp.style.boxShadow = '0 0 0 3px rgba(239, 68, 68, 0.15)';
+                    emailInp.focus();
+                }
+                if (typeof showToast === 'function') {
+                    showToast(isExisting ? 'Account already exists! Please log in.' : rawMsg, 'error');
                 }
                 submitBtn.disabled = false;
                 submitBtn.innerText = 'Create Account';

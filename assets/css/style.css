@@ -5139,6 +5139,44 @@ main {
     color: #0f172a;
 }
 
+.signup-modal-error {
+    background: #fef2f2;
+    border: 1.5px solid #fca5a5;
+    color: #991b1b;
+    padding: 12px 16px;
+    border-radius: 10px;
+    font-size: 13.5px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-align: left;
+    line-height: 1.4;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.12);
+    animation: shakeModalAlert 0.35s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+.signup-modal-error i {
+    font-size: 18px;
+    color: #ef4444;
+    flex-shrink: 0;
+}
+
+.signup-modal-error a {
+    color: #0f7139;
+    font-weight: 700;
+    text-decoration: underline;
+    margin-left: 4px;
+}
+
+@keyframes shakeModalAlert {
+    10%, 90% { transform: translate3d(-1px, 0, 0); }
+    20%, 80% { transform: translate3d(2px, 0, 0); }
+    30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+    40%, 60% { transform: translate3d(4px, 0, 0); }
+}
+
 .signup-modal-logo {
     height: 38px;
     object-fit: contain;
