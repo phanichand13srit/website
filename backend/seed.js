@@ -222,15 +222,40 @@ const sampleCollections = [
 ];
 
 async function seedDatabase() {
+  const primaryUri = process.env.MONGO_URI;
+  const fallbackUri = 'mongodb://127.0.0.1:27017/arshith_fresh';
+  let connected = false;
+
+  if (primaryUri) {
+    try {
+      console.log(`Connecting to Primary MongoDB (Atlas)...`);
+      await mongoose.connect(primaryUri, { serverSelectionTimeoutMS: 3000 });
+      console.log('✅ Connected to Primary MongoDB!');
+      connected = true;
+    } catch (err) {
+      console.warn(`⚠️ Atlas connection failed (${err.message.substring(0, 60)}...).`);
+    }
+  }
+
+  if (!connected) {
+    try {
+      console.log(`Connecting to Local MongoDB (${fallbackUri})...`);
+      await mongoose.connect(fallbackUri, { serverSelectionTimeoutMS: 3000 });
+      console.log('✅ Connected to Local MongoDB!');
+      connected = true;
+    } catch (err) {
+      console.error('❌ Error connecting to Local MongoDB:', err.message);
+      process.exit(1);
+    }
+  }
+
   try {
-    console.log(`Connecting to MongoDB at: ${MONGO_URI}`);
-    await mongoose.connect(MONGO_URI);
-    console.log('Connected! Resetting collections...');
+    console.log('Resetting collections...');
 
     // Clear old data
     await Product.deleteMany({});
     await Collection.deleteMany({});
-    await User.deleteMany({});
+    await User.deleteMany({ role: 'admin' });
 
     // Insert Products
     const insertedProducts = await Product.insertMany(sampleProducts);
