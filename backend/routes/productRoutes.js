@@ -89,7 +89,7 @@ router.post('/', async (req, res) => {
     res.status(201).json(formatProduct(savedProduct));
   } catch (error) {
     console.error('Error creating product:', error);
-    res.status(400).json({ message: 'Error creating product', error: error.message });
+    res.status(400).json({ message: error.message || 'Error creating product', error: error.message });
   }
 });
 

@@ -2275,22 +2275,44 @@ function updateInteractiveStarsVisual(starCount) {
     }
 }
 
-window.handleReviewImageUpload = function(event) {
+window.handleReviewImageUpload = async function(event) {
     const files = event.target.files;
     if (!files || files.length === 0) return;
 
-    const previewBox = document.getElementById('reviewImagesPreviewBox');
+    function compressReviewImg(file) {
+        return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    let w = img.width, h = img.height;
+                    const max = 800;
+                    if (w > max || h > max) {
+                        if (w > h) { h = Math.round((h * max) / w); w = max; }
+                        else { w = Math.round((w * max) / h); h = max; }
+                    }
+                    const canvas = document.createElement('canvas');
+                    canvas.width = w; canvas.height = h;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, w, h);
+                    resolve(canvas.toDataURL('image/jpeg', 0.8));
+                };
+                img.onerror = () => resolve(null);
+                img.src = e.target.result;
+            };
+            reader.onerror = () => resolve(null);
+            reader.readAsDataURL(file);
+        });
+    }
 
-    Array.from(files).forEach(file => {
-        if (!file.type.startsWith('image/')) return;
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const base64 = e.target.result;
-            amazonReviewState.uploadedImages.push(base64);
-            renderReviewImagePreviews();
-        };
-        reader.readAsDataURL(file);
-    });
+    for (const file of Array.from(files)) {
+        if (!file.type.startsWith('image/')) continue;
+        const compressed = await compressReviewImg(file);
+        if (compressed) {
+            amazonReviewState.uploadedImages.push(compressed);
+        }
+    }
+    renderReviewImagePreviews();
 };
 
 function renderReviewImagePreviews() {
