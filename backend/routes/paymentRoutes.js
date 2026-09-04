@@ -3,6 +3,8 @@ const router = express.Router();
 const Razorpay = require('razorpay');
 const crypto = require('crypto');
 const Order = require('../models/Order');
+const { createShiprocketOrder } = require('../utils/shiprocketService');
+
 
 // Initialize Razorpay instance
 const getRazorpayInstance = () => {
@@ -206,6 +208,11 @@ router.post('/verify', async (req, res) => {
       order.razorpayPaymentId = razorpay_payment_id;
       order.razorpaySignature = razorpay_signature || 'mock_sig';
       await order.save();
+
+      // Automatically push confirmed order to Shiprocket
+      createShiprocketOrder(order).catch(err => {
+        console.warn('[Shiprocket] Auto push payment notice:', err.message);
+      });
 
       return res.json({
         success: true,

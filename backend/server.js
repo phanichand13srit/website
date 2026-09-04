@@ -13,6 +13,7 @@ const couponRoutes     = require('./routes/couponRoutes');
 const reviewRoutes     = require('./routes/reviewRoutes');
 const analyticsRoutes  = require('./routes/analyticsRoutes');
 const paymentRoutes    = require('./routes/paymentRoutes');
+const shiprocketRoutes = require('./routes/shiprocketRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -38,6 +39,8 @@ app.use('/api/coupons',     couponRoutes);
 app.use('/api/reviews',     reviewRoutes);
 app.use('/api/analytics',   analyticsRoutes);
 app.use('/api/payment',     paymentRoutes);
+app.use('/api/shiprocket',  shiprocketRoutes);
+
 
 const path = require('path');
 

@@ -9,6 +9,8 @@ const {
   sendAdminOrderPlacedNotification,
   sendStockAlertNotification 
 } = require('../utils/notificationService');
+const { createShiprocketOrder } = require('../utils/shiprocketService');
+
 
 // Helper to escape regex special characters
 function escapeRegex(text) {
@@ -200,13 +202,16 @@ router.post('/', async (req, res) => {
       }
     }
 
-    // Trigger non-blocking email notifications (Customer Payment Invoice & Admin New Order Alert)
+    // Trigger non-blocking email notifications & Shiprocket order push
     if (orderStatus !== 'Cancelled') {
       sendOrderPlacedNotification({ order: createdOrder }).catch(err => {
         console.error('Error dispatching order placement email to customer:', err.message);
       });
       sendAdminOrderPlacedNotification({ order: createdOrder }).catch(err => {
         console.error('Error dispatching order placement email to admin:', err.message);
+      });
+      createShiprocketOrder(createdOrder).catch(err => {
+        console.warn('[Shiprocket] Auto push notice:', err.message);
       });
     }
 
