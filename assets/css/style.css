@@ -5259,27 +5259,29 @@ main {
 
 /* 2. Collection Page Title & Banner Slider (Pic 1 & Pic 2) */
 .collection-hero-container {
-    max-width: 1680px;
-    width: 98%;
+    max-width: 1440px;
+    width: 100%;
     margin: 0 auto;
-    padding: 24px 16px 10px;
+    padding: 16px 20px 8px;
+    box-sizing: border-box;
 }
 
 .collection-main-heading {
     font-family: 'Playfair Display', Georgia, serif;
-    font-size: 38px;
-    font-weight: 400;
+    font-size: 34px;
+    font-weight: 600;
     color: #0f7139;
-    margin: 0 0 20px 0;
+    margin: 0 0 18px 0;
 }
 
 .collection-banner-slider-wrapper {
     position: relative;
     width: 100%;
     overflow: hidden;
-    border-radius: 20px;
-    margin-bottom: 28px;
-    background: transparent;
+    border-radius: 18px;
+    margin-bottom: 24px;
+    background: #022c1b;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
 
 .collection-slider-track {
@@ -5293,6 +5295,19 @@ main {
     min-width: 100%;
     box-sizing: border-box;
     position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    border-radius: 18px;
+}
+
+.collection-slide img {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: contain;
+    border-radius: 18px;
 }
 
 /* =======================================================
@@ -5452,8 +5467,17 @@ main {
     .col-banner-img-wrap {
         min-height: 160px !important;
     }
-    .col-banner-img-wrap img {
-        max-height: 150px !important;
+    .collection-banner-slider-wrapper,
+    .collection-slide {
+        height: auto !important;
+        max-height: none !important;
+        border-radius: 12px !important;
+    }
+    .collection-slide img {
+        height: auto !important;
+        max-height: none !important;
+        object-fit: contain !important;
+        border-radius: 12px !important;
     }
 }
 
@@ -5461,27 +5485,28 @@ main {
     position: absolute !important;
     top: 50% !important;
     transform: translateY(-50%) !important;
-    width: 44px !important;
-    height: 44px !important;
-    background: #0f7139 !important;
+    width: 38px !important;
+    height: 38px !important;
+    background: rgba(15, 113, 57, 0.9) !important;
     color: #ffffff !important;
-    border: 2px solid #ffffff !important;
+    border: 1.5px solid rgba(255, 255, 255, 0.9) !important;
     border-radius: 50% !important;
     cursor: pointer !important;
     z-index: 15 !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2) !important;
-    transition: all 0.3s ease !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25) !important;
+    transition: all 0.25s ease !important;
     padding: 0 !important;
     user-select: none !important;
     outline: none !important;
     font-size: 0 !important; /* Hide raw html text child */
+    backdrop-filter: blur(6px) !important;
 }
 
 .collection-slider-arrow::after {
-    font-size: 26px;
+    font-size: 22px;
     line-height: 1;
     font-weight: bold;
     display: block;
@@ -5489,63 +5514,64 @@ main {
 
 .collection-slider-arrow.prev::after {
     content: "‹";
-    margin-right: 2px;
+    margin-right: 1px;
 }
 
 .collection-slider-arrow.next::after {
     content: "›";
-    margin-left: 2px;
+    margin-left: 1px;
 }
 
 .collection-slider-arrow:hover {
-    background: #0d5c2e !important;
-    transform: translateY(-50%) scale(1.1) !important;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3) !important;
+    background: #0f7139 !important;
+    transform: translateY(-50%) scale(1.08) !important;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35) !important;
 }
 
 .collection-slider-arrow.prev {
-    left: 20px !important;
+    left: 16px !important;
 }
 
 .collection-slider-arrow.next {
-    right: 20px !important;
+    right: 16px !important;
 }
 
 .collection-slider-dots {
     position: absolute;
-    bottom: 16px;
+    bottom: 12px;
     left: 50%;
     transform: translateX(-50%);
     display: flex;
     gap: 8px;
     z-index: 15;
-    background: rgba(0, 0, 0, 0.35);
-    padding: 6px 14px;
+    background: rgba(0, 0, 0, 0.45);
+    padding: 5px 12px;
     border-radius: 20px;
-    backdrop-filter: blur(4px);
+    backdrop-filter: blur(6px);
 }
 
 .collection-slider-dots .dot {
-    width: 10px;
-    height: 10px;
+    width: 9px;
+    height: 9px;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.5);
+    background: rgba(255, 255, 255, 0.55);
     cursor: pointer;
     transition: all 0.3s ease;
 }
 
 .collection-slider-dots .dot.active {
-    width: 28px;
+    width: 24px;
     border-radius: 6px;
     background: #ffffff;
 }
 
 /* 3. Collection Layout (Sidebar & Product Grid - Pic 3) */
 .collection-body-layout {
-    max-width: 1680px;
-    width: 98%;
+    max-width: 1440px;
+    width: 100%;
     margin: 0 auto;
-    padding: 10px 16px 60px;
+    padding: 10px 20px 60px;
+    box-sizing: border-box;
     display: grid;
     grid-template-columns: 250px 1fr;
     gap: 36px;

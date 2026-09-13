@@ -1,11 +1,16 @@
 const mongoose = require('mongoose');
+const dns = require('dns');
 require('dotenv').config();
+
+try {
+  dns.setServers(['8.8.8.8', '8.8.4.4', '1.1.1.1']);
+} catch (e) {}
 
 const Product = require('./models/Product');
 const Collection = require('./models/Collection');
 const User = require('./models/User');
 
-const MONGO_URI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/arshith_fresh';
+const MONGO_URI = process.env.MONGO_URI || 'mongodb+srv://valavalabalaadithya_db_user:arshith@cluster0.hwgf3hh.mongodb.net/arshith_Fresh?appName=Cluster0';
 
 const sampleProducts = [
   {
@@ -152,6 +157,51 @@ const sampleProducts = [
     rating: 4.88,
     numReviews: 58,
     isFeatured: true,
+  },
+  {
+    name: 'Besan Flour (Gram Flour)',
+    category: 'Cooking Essentials',
+    subcategory: 'Flours & Grains',
+    price: 79,
+    originalPrice: 99,
+    unit: '500 gm',
+    countInStock: 35,
+    brand: 'Arshith Fresh',
+    image: 'assets/images/products/besan-flour.jpg',
+    description: '100% naturally pure, freshly delivered stone-ground besan flour for authentic taste.',
+    rating: 4.92,
+    numReviews: 48,
+    isFeatured: true,
+  },
+  {
+    name: 'Kabuli Chana (Cooking Essentials)',
+    category: 'Cooking Essentials',
+    subcategory: 'Pulses & Legumes',
+    price: 89,
+    originalPrice: 115,
+    unit: '500 gm',
+    countInStock: 30,
+    brand: 'Arshith Fresh',
+    image: 'assets/images/products/kabuli-chana.jpg',
+    description: 'Naturally pure, preservative-free premium quality Kabuli Chana packed fresh.',
+    rating: 4.89,
+    numReviews: 39,
+    isFeatured: true,
+  },
+  {
+    name: 'Pure Chilli Powder (Cooking Essentials)',
+    category: 'Cooking Essentials',
+    subcategory: 'Spices & Seasoning',
+    price: 149,
+    originalPrice: 195,
+    unit: '500 gm',
+    countInStock: 45,
+    brand: 'Arshith Fresh',
+    image: 'assets/images/products/chilli-powder.jpg',
+    description: '100% natural, preservative-free authentic red chilli powder with rich aroma and flavour.',
+    rating: 4.95,
+    numReviews: 56,
+    isFeatured: true,
   }
 ];
 
@@ -222,14 +272,14 @@ const sampleCollections = [
 ];
 
 async function seedDatabase() {
-  const primaryUri = process.env.MONGO_URI;
+  const primaryUri = MONGO_URI;
   const fallbackUri = 'mongodb://127.0.0.1:27017/arshith_fresh';
   let connected = false;
 
   if (primaryUri) {
     try {
       console.log(`Connecting to Primary MongoDB (Atlas)...`);
-      await mongoose.connect(primaryUri, { serverSelectionTimeoutMS: 3000 });
+      await mongoose.connect(primaryUri, { serverSelectionTimeoutMS: 4000 });
       console.log('✅ Connected to Primary MongoDB!');
       connected = true;
     } catch (err) {

@@ -573,6 +573,54 @@ document.addEventListener("DOMContentLoaded", () => {
             rating: 4.88,
             numReviews: 58,
             isFeatured: true
+        },
+        {
+            _id: "6a910cc273615f661cdfc433",
+            name: "Besan Flour (Gram Flour)",
+            category: "Cooking Essentials",
+            subcategory: "Flours & Grains",
+            price: 79,
+            originalPrice: 99,
+            unit: "500 gm",
+            countInStock: 35,
+            brand: "Arshith Fresh",
+            image: "assets/images/products/besan-flour.jpg",
+            description: "100% naturally pure, freshly delivered stone-ground besan flour for authentic taste.",
+            rating: 4.92,
+            numReviews: 48,
+            isFeatured: true
+        },
+        {
+            _id: "6a910cc273615f661cdfc434",
+            name: "Kabuli Chana (Cooking Essentials)",
+            category: "Cooking Essentials",
+            subcategory: "Pulses & Legumes",
+            price: 89,
+            originalPrice: 115,
+            unit: "500 gm",
+            countInStock: 30,
+            brand: "Arshith Fresh",
+            image: "assets/images/products/kabuli-chana.jpg",
+            description: "Naturally pure, preservative-free premium quality Kabuli Chana packed fresh.",
+            rating: 4.89,
+            numReviews: 39,
+            isFeatured: true
+        },
+        {
+            _id: "6a910cc273615f661cdfc435",
+            name: "Pure Chilli Powder (Cooking Essentials)",
+            category: "Cooking Essentials",
+            subcategory: "Spices & Seasoning",
+            price: 149,
+            originalPrice: 195,
+            unit: "500 gm",
+            countInStock: 45,
+            brand: "Arshith Fresh",
+            image: "assets/images/products/chilli-powder.jpg",
+            description: "100% natural, preservative-free authentic red chilli powder with rich aroma and flavour.",
+            rating: 4.95,
+            numReviews: 56,
+            isFeatured: true
         }
     ];
 
@@ -669,9 +717,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 } else if (path.includes("dry-seeds") || path.includes("seeds")) {
                     categoryProducts = apiProducts.filter(p => (p.category && p.category.toLowerCase().includes("seed")) || (p.name && p.name.toLowerCase().includes("seed")));
                 } else if (path.includes("cooking-essentials") || path.includes("essentials")) {
-                    categoryProducts = apiProducts.filter(p => (p.category && p.category.toLowerCase().includes("cooking")) || (p.name && (p.name.toLowerCase().includes("rice") || p.name.toLowerCase().includes("dal") || p.name.toLowerCase().includes("salt"))));
+                    categoryProducts = apiProducts.filter(p => (p.category && (p.category.toLowerCase().includes("cooking") || p.category.toLowerCase().includes("essential"))) || (p.name && (p.name.toLowerCase().includes("besan") || p.name.toLowerCase().includes("kabuli") || p.name.toLowerCase().includes("chana") || p.name.toLowerCase().includes("chilli") || p.name.toLowerCase().includes("rice") || p.name.toLowerCase().includes("dal") || p.name.toLowerCase().includes("salt") || p.name.toLowerCase().includes("flour"))));
                 } else if (path.includes("spice-powders") || path.includes("powders")) {
-                    categoryProducts = apiProducts.filter(p => (p.category && p.category.toLowerCase().includes("powder")) || (p.name && (p.name.toLowerCase().includes("powder") || p.name.toLowerCase().includes("podi"))));
+                    categoryProducts = apiProducts.filter(p => (p.category && p.category.toLowerCase().includes("powder")) || (p.name && (p.name.toLowerCase().includes("powder") || p.name.toLowerCase().includes("podi") || p.name.toLowerCase().includes("chilli") || p.name.toLowerCase().includes("karam") || p.name.toLowerCase().includes("masala"))));
                 } else if (path.includes("spices")) {
                     categoryProducts = apiProducts.filter(p => (p.category && p.category.toLowerCase().includes("spice")) || (p.name && (p.name.toLowerCase().includes("clove") || p.name.toLowerCase().includes("cardamom") || p.name.toLowerCase().includes("cinnamon") || p.name.toLowerCase().includes("pepper") || p.name.toLowerCase().includes("ajwain"))));
                 }
@@ -925,6 +973,30 @@ document.addEventListener("DOMContentLoaded", () => {
             const id = p._id || p.id || "";
 
             const path = window.location.pathname.toLowerCase();
+            let displayImg = image;
+            if (displayImg && !displayImg.startsWith("http") && !displayImg.startsWith("//") && !displayImg.startsWith("data:")) {
+                const cleanImg = displayImg.replace(/^(\.\.\/)+/, '').replace(/^\.\//, '').replace(/^\//, '');
+                if (path.includes("/pages/categories/") || path.includes("/pages/auth/") || path.includes("/pages/policies/")) {
+                    displayImg = "../../" + cleanImg;
+                } else if (path.includes("/pages/")) {
+                    displayImg = "../" + cleanImg;
+                } else {
+                    displayImg = cleanImg;
+                }
+            }
+
+            let displaySecondImg = secondImage;
+            if (displaySecondImg && !displaySecondImg.startsWith("http") && !displaySecondImg.startsWith("//") && !displaySecondImg.startsWith("data:")) {
+                const cleanSecond = displaySecondImg.replace(/^(\.\.\/)+/, '').replace(/^\.\//, '').replace(/^\//, '');
+                if (path.includes("/pages/categories/") || path.includes("/pages/auth/") || path.includes("/pages/policies/")) {
+                    displaySecondImg = "../../" + cleanSecond;
+                } else if (path.includes("/pages/")) {
+                    displaySecondImg = "../" + cleanSecond;
+                } else {
+                    displaySecondImg = cleanSecond;
+                }
+            }
+
             let productUrl = "pages/product.html";
             if (path.includes("/pages/categories/") || path.includes("/pages/auth/") || path.includes("/pages/policies/")) {
                 productUrl = "../product.html";
@@ -949,8 +1021,8 @@ document.addEventListener("DOMContentLoaded", () => {
                                 </svg>
                             </button>
                             ${!inStock ? `<span class="card-out-of-stock-tag" style="position: absolute; top: 10px; right: 10px; background: #dc2626; color: #fff; font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 4px; z-index: 2; letter-spacing: 0.5px;">OUT OF STOCK</span>` : ''}
-                            <img src="${image}" alt="${name}" class="primary-img" style="${inStock ? '' : 'opacity: 0.7;'}" onerror="this.onerror=null; this.src='${fallbackImg}';">
-                            ${hasSecondImage ? `<img src="${secondImage}" alt="${name}" class="hover-img" onerror="this.style.display='none';">` : ''}
+                            <img src="${displayImg}" alt="${name}" class="primary-img" style="${inStock ? '' : 'opacity: 0.7;'}" onerror="this.onerror=null; this.src='${fallbackImg}';">
+                            ${hasSecondImage ? `<img src="${displaySecondImg}" alt="${name}" class="hover-img" onerror="this.style.display='none';">` : ''}
                         </div>
                         <div class="product-info">
                             <h3 class="card__heading" title="${name}">${name}</h3>
