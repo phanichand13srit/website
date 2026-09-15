@@ -748,8 +748,8 @@ main {
 .instamart-card-badge {
     position: absolute;
     top: 14px;
-    right: 14px;
-    background: rgba(0, 40, 30, 0.8);
+    left: 20px;
+    background: rgba(0, 30, 20, 0.85);
     backdrop-filter: blur(8px);
     border: 1px solid rgba(189, 163, 128, 0.35);
     padding: 4px 11px;
@@ -781,8 +781,8 @@ main {
 
 /* Left Content */
 .instamart-card-content {
-    flex: 1 1 58%;
-    padding: 24px 16px 24px 24px;
+    flex: 1 1 50%;
+    padding: 42px 14px 20px 20px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -847,27 +847,78 @@ main {
 
 /* Right Image Container */
 .instamart-card-img-wrap {
-    flex: 0 0 42%;
+    flex: 0 0 50%;
     height: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
     position: relative;
-    padding: 10px 14px 10px 0;
+    padding: 12px 14px 12px 4px;
     box-sizing: border-box;
     overflow: hidden;
 }
 
 .instamart-card-img-wrap img {
-    max-height: 88%;
+    max-height: 100%;
     max-width: 100%;
     object-fit: contain;
     filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.28));
     transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
+.card-oils .instamart-card-img-wrap,
+.card-podulu .instamart-card-img-wrap,
+.card-ghee .instamart-card-img-wrap,
+.card-seeds .instamart-card-img-wrap {
+    flex: 0 0 50%;
+    padding: 10px 14px 10px 4px;
+}
+
+.card-nuts .instamart-card-img-wrap,
+.card-spices .instamart-card-img-wrap {
+    flex: 0 0 53%;
+    padding: 6px 12px 6px 0;
+}
+
+.card-oils .instamart-card-img-wrap img,
+.card-podulu .instamart-card-img-wrap img,
+.card-ghee .instamart-card-img-wrap img,
+.card-seeds .instamart-card-img-wrap img {
+    width: 100%;
+    height: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    object-position: center;
+    border-radius: 12px;
+    border: none;
+    box-shadow: none;
+    filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.35));
+    transform: scale(1.08);
+}
+
+/* Make last two cards (dry fruits & spices) scale up to match vertical size of seeds & other cards */
+.card-nuts .instamart-card-img-wrap img,
+.card-spices .instamart-card-img-wrap img {
+    width: 100%;
+    height: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    object-position: center;
+    border-radius: 12px;
+    border: none;
+    box-shadow: none;
+    filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.35));
+    transform: scale(1.26);
+    transform-origin: center center;
+}
+
 .instamart-banner-card:hover .instamart-card-img-wrap img {
-    transform: scale(1.08) rotate(1deg);
+    transform: scale(1.14);
+}
+
+.instamart-banner-card.card-nuts:hover .instamart-card-img-wrap img,
+.instamart-banner-card.card-spices:hover .instamart-card-img-wrap img {
+    transform: scale(1.32);
 }
 
 /* Arrow Controls */
@@ -968,7 +1019,13 @@ main {
         border-radius: 18px;
     }
     .instamart-card-content {
-        padding: 16px 12px 16px 16px;
+        padding: 34px 10px 14px 14px;
+    }
+    .instamart-card-badge {
+        top: 10px;
+        left: 14px;
+        font-size: 9.5px;
+        padding: 3px 8px;
     }
     .instamart-card-title {
         font-size: 1.15rem;
@@ -5272,6 +5329,43 @@ main {
     font-weight: 600;
     color: #0f7139;
     margin: 0 0 18px 0;
+}
+
+/* Category Featured Single Header Banner (Medium Proportional Banner) */
+.category-featured-banner {
+    position: relative;
+    max-width: 1020px;
+    width: 100%;
+    height: auto;
+    margin: 0 auto 22px;
+    border-radius: 16px;
+    background: #540224;
+    box-shadow: 0 6px 20px rgba(84, 2, 36, 0.22);
+    overflow: hidden;
+    border: 1.5px solid rgba(189, 163, 128, 0.35);
+}
+
+.category-featured-banner img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 16px;
+    transition: transform 0.4s ease;
+}
+
+.category-featured-banner:hover img {
+    transform: scale(1.015);
+}
+
+@media (max-width: 768px) {
+    .category-featured-banner {
+        max-width: 100%;
+        border-radius: 12px;
+        margin-bottom: 16px;
+    }
+    .category-featured-banner img {
+        border-radius: 12px;
+    }
 }
 
 .collection-banner-slider-wrapper {
