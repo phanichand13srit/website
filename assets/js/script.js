@@ -1054,6 +1054,21 @@ document.addEventListener("DOMContentLoaded", () => {
         const slider = document.querySelector(".categories-slider") || document.getElementById("categoriesSlider");
         if (!slider) return;
 
+        function getCanonicalColImage(col) {
+            if (col && col.image && col.image.startsWith('http')) return col.image;
+            const t = (col ? (col.title || col.name || '') : '').toLowerCase();
+            if (t.includes('oil')) return 'https://arshithfresh.com/cdn/shop/collections/oil_n_natural_extract_200x200_crop_center.jpg?v=1746964936';
+            if (t.includes('dry fruit') || t.includes('nut') || t.includes('badam') || t.includes('kaju')) return 'https://arshithfresh.com/cdn/shop/collections/seeds_dry_fruits_nuts_webp_200x200_crop_center.jpg?v=1746963459';
+            if (t.includes('seed')) return 'https://arshithfresh.com/cdn/shop/collections/dry_seeds_200x200_crop_center.jpg?v=1746963515';
+            if (t.includes('ghee') || t.includes('honey')) return 'https://arshithfresh.com/cdn/shop/collections/ghee_1_200x200_crop_center.jpg?v=1746964905';
+            if (t.includes('cooking') || t.includes('essential')) return 'https://arshithfresh.com/cdn/shop/collections/groceries_200x200_crop_center.jpg?v=1746965740';
+            if (t.includes('vegetable') || t.includes('veggie')) return 'https://images.unsplash.com/photo-1540420773420-3366772f4999?w=500&auto=format&fit=crop&q=80';
+            if (t.includes('dairy') || t.includes('milk') || t.includes('paneer') || t.includes('curd')) return 'https://images.unsplash.com/photo-1550583724-b2692b85b150?w=500&auto=format&fit=crop&q=80';
+            if (t.includes('powder') || t.includes('podi')) return 'https://arshithfresh.com/cdn/shop/collections/powders_200x200_crop_center.jpg?v=1743477019';
+            if (t.includes('spice')) return 'https://arshithfresh.com/cdn/shop/collections/spice_200x200_crop_center.png?v=1746963495';
+            return col && col.image ? col.image : 'https://arshithfresh.com/cdn/shop/collections/spice_200x200_crop_center.png?v=1746963495';
+        }
+
         try {
             const res = await fetch("http://localhost:5000/api/collections");
             if (!res.ok) return;
@@ -1062,7 +1077,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             slider.innerHTML = collections.map(col => {
                 const title = col.title || "Category";
-                const img = col.image || "https://arshithfresh.com/cdn/shop/collections/spice_200x200_crop_center.png?v=1746963495";
+                const img = getCanonicalColImage(col);
                 const slug = col.slug || title.toLowerCase().replace(/\s+/g, '-');
                 return `
                     <div class="category-card" onclick="window.location.href='pages/categories/${slug}.html'">
