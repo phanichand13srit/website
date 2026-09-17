@@ -1366,6 +1366,32 @@ document.addEventListener("DOMContentLoaded", () => {
     initLiveSearchAutocomplete();
 });
 
+// Global Logout Function
+window.handleLogout = function() {
+    try {
+        localStorage.removeItem('arshith_user');
+        localStorage.removeItem('arshith_user_orders');
+        sessionStorage.clear();
+    } catch (e) {}
+
+    if (typeof showToast === 'function') {
+        showToast('Logged out successfully');
+    }
+
+    const path = window.location.pathname;
+    const isSubpage = path.includes('/pages/');
+    const isDeep = path.includes('/pages/auth/') || path.includes('/pages/categories/') || path.includes('/pages/policies/');
+    const redirectUrl = isDeep ? '../../index.html' : (isSubpage ? '../index.html' : 'index.html');
+
+    setTimeout(() => {
+        try {
+            localStorage.removeItem('arshith_user');
+            sessionStorage.clear();
+        } catch (e) {}
+        window.location.href = redirectUrl;
+    }, 150);
+};
+
 // Global Image Thumbnail Switcher for Product Detail
 window.switchDetailImage = function(url, thumbElem) {
     const mainImg = document.getElementById('mainDetailProductImg');

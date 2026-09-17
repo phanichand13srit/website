@@ -237,6 +237,7 @@
         const API_BASE = '';
         let currentUser = null;
         let hasFormBeenPopulated = false;
+        let isLoggingOut = false;
 
         try {
             currentUser = JSON.parse(localStorage.getItem('arshith_user'));
@@ -339,12 +340,14 @@
             let apiOrders = [];
             try {
                 const res = await fetch(`${API_BASE}/api/users/profile/${currentUser._id}`);
-                if (res.ok) {
+                if (!isLoggingOut && res.ok) {
                     const data = await res.json();
-                    if (data && data.user) {
+                    if (!isLoggingOut && data && data.user) {
                         const u = data.user;
                         currentUser = { ...currentUser, ...u };
-                        localStorage.setItem('arshith_user', JSON.stringify(currentUser));
+                        if (!isLoggingOut && localStorage.getItem('arshith_user')) {
+                            localStorage.setItem('arshith_user', JSON.stringify(currentUser));
+                        }
                         if (isInitial || !hasFormBeenPopulated) {
                             populateFormInputs(currentUser);
                         }
@@ -827,7 +830,9 @@
                 console.error('API save error, persisting locally:', err);
                 currentUser = { ...currentUser, ...updatedData };
             } finally {
-                localStorage.setItem('arshith_user', JSON.stringify(currentUser));
+                if (!isLoggingOut && localStorage.getItem('arshith_user')) {
+                    localStorage.setItem('arshith_user', JSON.stringify(currentUser));
+                }
                 hasFormBeenPopulated = true;
 
                 if (document.getElementById('userGreeting')) {
@@ -1087,15 +1092,24 @@
         };
 
         function handleLogout() {
-            localStorage.removeItem('arshith_user');
-            sessionStorage.clear();
+            isLoggingOut = true;
+            currentUser = null;
+            try {
+                localStorage.removeItem('arshith_user');
+                localStorage.removeItem('arshith_user_orders');
+                sessionStorage.clear();
+            } catch (e) {}
 
             if (typeof showToast === 'function') {
                 showToast('Logged out successfully');
             }
             setTimeout(() => {
+                try {
+                    localStorage.removeItem('arshith_user');
+                    sessionStorage.clear();
+                } catch (e) {}
                 window.location.href = '../index.html';
-            }, 400);
+            }, 150);
         }
     </script>
 
