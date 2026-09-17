@@ -1681,13 +1681,6 @@ async function showFestiveOfferModal(force = false) {
                         <div class="festive-card-frame">
                             <div class="festive-img-wrap">
                                 <img src="${imgHamper}" alt="${banner.title || 'Royal Festive Organic Hamper'}" class="festive-hamper-img" onerror="this.onerror=null;this.src='${rootPath}assets/images/Arshithlogo111.jpg';">
-                                <div class="festive-floating-badge">
-                                    <span class="badge-icon">🎁</span>
-                                    <div class="badge-meta">
-                                        <strong>Royal Festive Hamper</strong>
-                                        <span>Ghee • Cold Pressed Oils • Dry Fruits</span>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     </div>
