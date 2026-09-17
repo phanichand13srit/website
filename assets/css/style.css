@@ -657,7 +657,8 @@ button {
 /* Main Section Wrapper */
 main {
     flex-grow: 1;
-    padding-bottom: 60px; /* Account for mobile bottom sticky nav */
+    padding-bottom: 0 !important;
+    margin-bottom: 0 !important;
 }
 
 /* Hero Banner Carousel */
@@ -2825,21 +2826,27 @@ main {
 
 /* Footer Banner Wrapper - Seamless Zero-Gap Connection */
 .footer-banner-wrapper {
-    width: 100%;
-    margin: 0 !important;
-    margin-bottom: -6px !important;
+    width: 100vw !important;
+    position: relative !important;
+    left: 50% !important;
+    right: 50% !important;
+    margin-left: -50vw !important;
+    margin-right: -50vw !important;
+    margin-top: 0 !important;
+    margin-bottom: -4px !important;
     padding: 0 !important;
     line-height: 0 !important;
     font-size: 0 !important;
-    overflow: hidden;
-    position: relative;
-    z-index: 2;
-    display: block;
-    background-color: transparent;
+    overflow: hidden !important;
+    z-index: 2 !important;
+    display: block !important;
+    background-color: transparent !important;
+    box-sizing: border-box !important;
 }
 
 .footer-banner-img {
     width: 100% !important;
+    max-width: 100% !important;
     height: auto !important;
     display: block !important;
     margin: 0 !important;
@@ -2847,23 +2854,31 @@ main {
     vertical-align: bottom !important;
     border: none !important;
     outline: none !important;
+    object-fit: cover !important;
 }
 
 @media screen and (max-width: 767px) {
     .footer-banner-wrapper {
-        margin: 0 !important;
-        margin-bottom: -4px !important;
+        margin-top: 0 !important;
+        margin-bottom: -3px !important;
         padding: 0 !important;
     }
 }
 
 /* Main Footer styling */
 .main-footer {
+    width: 100vw !important;
+    position: relative !important;
+    left: 50% !important;
+    right: 50% !important;
+    margin-left: -50vw !important;
+    margin-right: -50vw !important;
+    margin-top: 0 !important;
     background: linear-gradient(180deg, #005d4a 0%, #0B3214 100%);
     color: #e2e8f0;
     padding: 60px 24px 40px;
-    position: relative;
     overflow: visible;
+    box-sizing: border-box !important;
 }
 
 .main-footer::before {
@@ -3353,7 +3368,8 @@ main {
         margin-top: 5px;
     }
     .footer-banner-wrapper {
-        margin-bottom: -20px;
+        margin-top: 0 !important;
+        margin-bottom: -3px !important;
     }
     .believe-grid {
         grid-template-columns: 1fr;
@@ -8473,11 +8489,18 @@ body {
 
 /* 10. Footer Refinement - Exact Original Rich Theme */
 .main-footer {
+    width: 100vw !important;
+    position: relative !important;
+    left: 50% !important;
+    right: 50% !important;
+    margin-left: -50vw !important;
+    margin-right: -50vw !important;
+    margin-top: 0 !important;
     background: linear-gradient(180deg, #005d4a 0%, #0B3214 100%) !important;
     color: #e2e8f0 !important;
-    position: relative !important;
     padding: 60px 24px 40px !important;
     border-top: none !important;
+    box-sizing: border-box !important;
 }
 
 .footer-top {
