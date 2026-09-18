@@ -1443,8 +1443,8 @@ function initAutoSignupPopup() {
     }
 
     const isSubpage = path.includes('/pages/');
-    const isDeep = path.includes('/categories/') || path.includes('/policies/');
-    const logoUrl = 'https://arshithfresh.com/cdn/shop/files/Arshithlogo111.jpg?v=1755685028&width=600';
+    const isDeep = path.includes('/categories/') || path.includes('/policies/') || path.includes('/auth/');
+    const logoUrl = isDeep ? '../../assets/images/Arshithlogo111.jpg' : (isSubpage ? '../assets/images/Arshithlogo111.jpg' : 'assets/images/Arshithlogo111.jpg');
     const loginUrl = isDeep ? '../auth/login.html' : (isSubpage ? 'auth/login.html' : 'pages/auth/login.html');
 
     setTimeout(() => {
@@ -1456,7 +1456,7 @@ function initAutoSignupPopup() {
                     <button type="button" class="signup-modal-close" onclick="closeSignupModal()">&times;</button>
                     
                     <div class="signup-modal-header">
-                        <img src="${logoUrl}" alt="Arshith Fresh Logo" class="signup-modal-logo">
+                        <img src="${logoUrl}" alt="Arshith Fresh Logo" class="signup-modal-logo" onerror="this.onerror=null; this.src='https://cdn.shopify.com/s/files/1/0858/0772/6869/files/masaaaaa-removebg-preview.png?v=1760592733';">
                         <br>
                         <span class="signup-offer-badge">🎁 SPECIAL WELCOME OFFER</span>
                         <h2 class="signup-modal-title">Get 10% OFF Your First Order!</h2>
