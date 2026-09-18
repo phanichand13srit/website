@@ -656,17 +656,61 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             if (!apiProducts || apiProducts.length === 0) {
-                apiProducts = FALLBACK_STOREFRONT_PRODUCTS;
+                // If API offline or database empty, show empty state instead of hardcoded fallbacks
+                apiProducts = [];
             }
 
-            const homeGrids = document.querySelectorAll(".products-carousel-section .products-grid");
-            homeGrids.forEach(grid => {
-                if (apiProducts && apiProducts.length > 0) {
-                    grid.innerHTML = apiProducts.map(p => createProductCardHTML(p)).join('');
-                }
-            });
-
             const path = window.location.pathname.toLowerCase();
+            const isHomepage = path === '/' || path.endsWith('/index.html') || path.endsWith('/folder%203/') || path === '';
+
+            // Render section by section on Homepage
+            if (apiProducts && apiProducts.length > 0) {
+                const favGrid = document.querySelector(".sec-favorites .products-grid");
+                if (favGrid) {
+                    favGrid.innerHTML = apiProducts.map(p => createProductCardHTML(p)).join('');
+                }
+                
+                const seedsGrid = document.querySelector(".sec-superfood-seeds .products-grid");
+                if (seedsGrid) {
+                    const seedsProds = apiProducts.filter(p => (p.category && p.category.toLowerCase().includes("seed")) || (p.name && p.name.toLowerCase().includes("seed")));
+                    if (seedsProds.length > 0) {
+                        seedsGrid.innerHTML = seedsProds.map(p => createProductCardHTML(p)).join('');
+                    }
+                }
+
+                const oilsGrid = document.querySelector(".sec-oils .products-grid");
+                if (oilsGrid) {
+                    const oilsProds = apiProducts.filter(p => (p.category && p.category.toLowerCase().includes("oil")) || (p.name && p.name.toLowerCase().includes("oil")));
+                    if (oilsProds.length > 0) {
+                        oilsGrid.innerHTML = oilsProds.map(p => createProductCardHTML(p)).join('');
+                    }
+                }
+
+                const poduluGrid = document.querySelector(".sec-podulu .products-grid");
+                if (poduluGrid) {
+                    const poduluProds = apiProducts.filter(p => (p.category && p.category.toLowerCase().includes("powder")) || (p.name && (p.name.toLowerCase().includes("podi") || p.name.toLowerCase().includes("karam") || p.name.toLowerCase().includes("powder"))));
+                    if (poduluProds.length > 0) {
+                        poduluGrid.innerHTML = poduluProds.map(p => createProductCardHTML(p)).join('');
+                    }
+                }
+
+                const gheeGrid = document.querySelector(".sec-ghee .products-grid");
+                if (gheeGrid) {
+                    const gheeProds = apiProducts.filter(p => (p.category && (p.category.toLowerCase().includes("ghee") || p.category.toLowerCase().includes("honey"))) || (p.name && (p.name.toLowerCase().includes("ghee") || p.name.toLowerCase().includes("honey"))));
+                    if (gheeProds.length > 0) {
+                        gheeGrid.innerHTML = gheeProds.map(p => createProductCardHTML(p)).join('');
+                    }
+                }
+
+                const nutsGrid = document.querySelector(".sec-dryfruits .products-grid");
+                if (nutsGrid) {
+                    const nutsProds = apiProducts.filter(p => (p.category && p.category.toLowerCase().includes("dry")) || (p.name && (p.name.toLowerCase().includes("almond") || p.name.toLowerCase().includes("cashew") || p.name.toLowerCase().includes("pista") || p.name.toLowerCase().includes("walnut") || p.name.toLowerCase().includes("anjeer") || p.name.toLowerCase().includes("date"))));
+                    if (nutsProds.length > 0) {
+                        nutsGrid.innerHTML = nutsProds.map(p => createProductCardHTML(p)).join('');
+                    }
+                }
+            }
+
             const colGrid = document.getElementById("collectionsProductGrid");
             if (!colGrid) return;
 
@@ -2055,13 +2099,13 @@ function initLiveSearchAutocomplete() {
                 if (fetched.length > 0) {
                     allSearchProducts = fetched;
                 } else {
-                    allSearchProducts = STARTER_SEARCH_CATALOG;
+                    allSearchProducts = [];
                 }
             } else {
-                allSearchProducts = STARTER_SEARCH_CATALOG;
+                allSearchProducts = [];
             }
         } catch (e) {
-            allSearchProducts = STARTER_SEARCH_CATALOG;
+            allSearchProducts = [];
         } finally {
             isFetchingProducts = false;
         }
