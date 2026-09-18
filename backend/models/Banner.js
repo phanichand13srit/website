@@ -74,7 +74,7 @@ const bannerSchema = new mongoose.Schema({
   },
   deal1Image: {
     type: String,
-    default: 'https://arshithfresh.com/cdn/shop/collections/seeds_dry_fruits_nuts_webp_200x200_crop_center.jpg?v=1746963459'
+    default: 'https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/seeds_dry_fruits_nuts_webp_200x200_crop_center.jpg?v=1746963459'
   },
   deal2Title: {
     type: String,
@@ -94,7 +94,7 @@ const bannerSchema = new mongoose.Schema({
   },
   deal2Image: {
     type: String,
-    default: 'https://arshithfresh.com/cdn/shop/collections/groceries_200x200_crop_center.jpg?v=1746965740'
+    default: 'https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/groceries_200x200_crop_center.jpg?v=1746965740'
   },
   deal3Title: {
     type: String,
@@ -114,7 +114,7 @@ const bannerSchema = new mongoose.Schema({
   },
   deal3Image: {
     type: String,
-    default: 'https://arshithfresh.com/cdn/shop/collections/ghee_1_200x200_crop_center.jpg?v=1746964905'
+    default: 'https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/ghee_1_200x200_crop_center.jpg?v=1746964905'
   }
 }, {
   timestamps: true

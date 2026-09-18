@@ -375,7 +375,7 @@
 
         tbody.innerHTML = reviews.map(r => {
           const prodName = (r.productId && r.productId.name) ? r.productId.name : (r.productName || 'Product');
-          const prodImg = (r.productId && r.productId.image) ? r.productId.image : 'https://arshithfresh.com/cdn/shop/collections/spice_200x200_crop_center.png?v=1746963495';
+          const prodImg = (r.productId && r.productId.image) ? r.productId.image : 'https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/spice_200x200_crop_center.png?v=1746963495';
           const stars = '★'.repeat(r.rating || 5) + '☆'.repeat(5 - (r.rating || 5));
           const dateStr = new Date(r.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
 

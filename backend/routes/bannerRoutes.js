@@ -21,17 +21,17 @@ const defaultBannerData = {
   deal1Sub: 'Almonds, Cashews & Native Organic Fruits',
   deal1Badge: '20% OFF',
   deal1Link: 'pages/categories/dry-fruits-nuts.html',
-  deal1Image: 'https://arshithfresh.com/cdn/shop/collections/seeds_dry_fruits_nuts_webp_200x200_crop_center.jpg?v=1746963459',
+  deal1Image: 'https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/seeds_dry_fruits_nuts_webp_200x200_crop_center.jpg?v=1746963459',
   deal2Title: '30% OFF on Vegetables',
   deal2Sub: 'Farm Vegetables & Pure Cooking Essentials',
   deal2Badge: '30% OFF',
   deal2Link: 'pages/categories/cooking-essentials.html',
-  deal2Image: 'https://arshithfresh.com/cdn/shop/collections/groceries_200x200_crop_center.jpg?v=1746965740',
+  deal2Image: 'https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/groceries_200x200_crop_center.jpg?v=1746965740',
   deal3Title: '40% OFF on Combo Offers',
   deal3Sub: 'A2 Bilona Ghee + Wood-Pressed Oils Hamper',
   deal3Badge: '40% OFF',
   deal3Link: 'pages/collections.html?category=all',
-  deal3Image: 'https://arshithfresh.com/cdn/shop/collections/ghee_1_200x200_crop_center.jpg?v=1746964905'
+  deal3Image: 'https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/ghee_1_200x200_crop_center.jpg?v=1746964905'
 };
 
 // @route   GET /api/banners

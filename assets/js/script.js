@@ -833,7 +833,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 title: name,
                 name: name,
                 price: Number(price) || 0,
-                image: image || "https://arshithfresh.com/cdn/shop/collections/spice_200x200_crop_center.png?v=1746963495",
+                image: image || "https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/spice_200x200_crop_center.png?v=1746963495",
                 quantity: Number(qty),
                 qty: Number(qty)
             });
@@ -955,7 +955,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const safeNameForJs = rawName.replace(/['"\\]/g, "\\$&");
             const price = Number(p.price || p.salePrice || p.currentPrice || 30);
             const originalPrice = Number(p.originalPrice || p.regularPrice || p.mrp || Math.round(price * 1.25));
-            const image = p.image || (p.images && p.images[0] ? (typeof p.images[0] === 'object' ? p.images[0].url : p.images[0]) : '') || p.img || p.imageUrl || "https://arshithfresh.com/cdn/shop/collections/spice_200x200_crop_center.png?v=1746963495";
+            const image = p.image || (p.images && p.images[0] ? (typeof p.images[0] === 'object' ? p.images[0].url : p.images[0]) : '') || p.img || p.imageUrl || "https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/spice_200x200_crop_center.png?v=1746963495";
             const safeImgForJs = image.replace(/['"\\]/g, "\\$&");
             
             let secondImage = '';
@@ -969,7 +969,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const discount = originalPrice > price ? Math.round(((originalPrice - price) / originalPrice) * 100) : 0;
             const reviewsCount = p.reviewsCount || Math.floor(Math.random() * 20) + 25;
-            const fallbackImg = "https://arshithfresh.com/cdn/shop/collections/spice_200x200_crop_center.png?v=1746963495";
+            const fallbackImg = "https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/spice_200x200_crop_center.png?v=1746963495";
             const id = p._id || p.id || "";
 
             const path = window.location.pathname.toLowerCase();
@@ -1057,16 +1057,16 @@ document.addEventListener("DOMContentLoaded", () => {
         function getCanonicalColImage(col) {
             if (col && col.image && col.image.startsWith('http')) return col.image;
             const t = (col ? (col.title || col.name || '') : '').toLowerCase();
-            if (t.includes('oil')) return 'https://arshithfresh.com/cdn/shop/collections/oil_n_natural_extract_200x200_crop_center.jpg?v=1746964936';
-            if (t.includes('dry fruit') || t.includes('nut') || t.includes('badam') || t.includes('kaju')) return 'https://arshithfresh.com/cdn/shop/collections/seeds_dry_fruits_nuts_webp_200x200_crop_center.jpg?v=1746963459';
-            if (t.includes('seed')) return 'https://arshithfresh.com/cdn/shop/collections/dry_seeds_200x200_crop_center.jpg?v=1746963515';
-            if (t.includes('ghee') || t.includes('honey')) return 'https://arshithfresh.com/cdn/shop/collections/ghee_1_200x200_crop_center.jpg?v=1746964905';
-            if (t.includes('cooking') || t.includes('essential')) return 'https://arshithfresh.com/cdn/shop/collections/groceries_200x200_crop_center.jpg?v=1746965740';
+            if (t.includes('oil')) return 'https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/oil_n_natural_extract_200x200_crop_center.jpg?v=1746964936';
+            if (t.includes('dry fruit') || t.includes('nut') || t.includes('badam') || t.includes('kaju')) return 'https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/seeds_dry_fruits_nuts_webp_200x200_crop_center.jpg?v=1746963459';
+            if (t.includes('seed')) return 'https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/dry_seeds_200x200_crop_center.jpg?v=1746963515';
+            if (t.includes('ghee') || t.includes('honey')) return 'https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/ghee_1_200x200_crop_center.jpg?v=1746964905';
+            if (t.includes('cooking') || t.includes('essential')) return 'https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/groceries_200x200_crop_center.jpg?v=1746965740';
             if (t.includes('vegetable') || t.includes('veggie')) return 'https://images.unsplash.com/photo-1540420773420-3366772f4999?w=500&auto=format&fit=crop&q=80';
             if (t.includes('dairy') || t.includes('milk') || t.includes('paneer') || t.includes('curd')) return 'https://images.unsplash.com/photo-1550583724-b2692b85b150?w=500&auto=format&fit=crop&q=80';
-            if (t.includes('powder') || t.includes('podi')) return 'https://arshithfresh.com/cdn/shop/collections/powders_200x200_crop_center.jpg?v=1743477019';
-            if (t.includes('spice')) return 'https://arshithfresh.com/cdn/shop/collections/spice_200x200_crop_center.png?v=1746963495';
-            return col && col.image ? col.image : 'https://arshithfresh.com/cdn/shop/collections/spice_200x200_crop_center.png?v=1746963495';
+            if (t.includes('powder') || t.includes('podi')) return 'https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/powders_200x200_crop_center.jpg?v=1743477019';
+            if (t.includes('spice')) return 'https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/spice_200x200_crop_center.png?v=1746963495';
+            return col && col.image ? col.image : 'https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/spice_200x200_crop_center.png?v=1746963495';
         }
 
         try {
@@ -1083,7 +1083,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 return `
                     <div class="category-card" onclick="window.location.href='pages/categories/${slug}.html'">
                         <div class="category-img-container">
-                            <img src="${img}" alt="${title}" class="category-img" onerror="this.src='https://arshithfresh.com/cdn/shop/collections/spice_200x200_crop_center.png?v=1746963495';">
+                            <img src="${img}" alt="${title}" class="category-img" onerror="this.src='https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/spice_200x200_crop_center.png?v=1746963495';">
                         </div>
                         <h4 class="category-name">${title}</h4>
                     </div>
@@ -1155,7 +1155,7 @@ document.addEventListener("DOMContentLoaded", () => {
             allImgs = [p.image];
         }
         if (allImgs.length === 0) {
-            allImgs = ["https://arshithfresh.com/cdn/shop/collections/spice_200x200_crop_center.png?v=1746963495"];
+            allImgs = ["https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/spice_200x200_crop_center.png?v=1746963495"];
         }
 
         const mainImage = allImgs[0];
@@ -1319,7 +1319,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const qInput = document.getElementById('detailQtyInput');
         const qty = qInput ? (Number(qInput.value) || 1) : 1;
-        const pImg = prod.image || (prod.images && prod.images[0] ? (prod.images[0].url || prod.images[0]) : '') || "https://arshithfresh.com/cdn/shop/collections/spice_200x200_crop_center.png?v=1746963495";
+        const pImg = prod.image || (prod.images && prod.images[0] ? (prod.images[0].url || prod.images[0]) : '') || "https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/spice_200x200_crop_center.png?v=1746963495";
         addToStoreCart(
             prod._id || '',
             prod.name || prod.title || 'Arshith Fresh Product',
@@ -1558,17 +1558,17 @@ async function fetchActiveBannerConfig() {
         deal1Sub: 'Almonds, Cashews & Native Organic Fruits',
         deal1Badge: '20% OFF',
         deal1Link: 'pages/categories/dry-fruits-nuts.html',
-        deal1Image: 'https://arshithfresh.com/cdn/shop/collections/seeds_dry_fruits_nuts_webp_200x200_crop_center.jpg?v=1746963459',
+        deal1Image: 'https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/seeds_dry_fruits_nuts_webp_200x200_crop_center.jpg?v=1746963459',
         deal2Title: '30% OFF on Vegetables',
         deal2Sub: 'Farm Vegetables & Pure Cooking Essentials',
         deal2Badge: '30% OFF',
         deal2Link: 'pages/categories/cooking-essentials.html',
-        deal2Image: 'https://arshithfresh.com/cdn/shop/collections/groceries_200x200_crop_center.jpg?v=1746965740',
+        deal2Image: 'https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/groceries_200x200_crop_center.jpg?v=1746965740',
         deal3Title: '40% OFF on Combo Offers',
         deal3Sub: 'A2 Bilona Ghee + Wood-Pressed Oils Hamper',
         deal3Badge: '40% OFF',
         deal3Link: 'pages/collections.html?category=all',
-        deal3Image: 'https://arshithfresh.com/cdn/shop/collections/ghee_1_200x200_crop_center.jpg?v=1746964905'
+        deal3Image: 'https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/ghee_1_200x200_crop_center.jpg?v=1746964905'
     };
     return currentActiveBannerConfig;
 }
@@ -1682,7 +1682,7 @@ async function showFestiveOfferModal(force = false) {
                             <a href="${fruitsUrl}" class="festive-deal-card" onclick="closeFestiveOfferModal()">
                                 <span class="deal-card-badge">${banner.deal1Badge || '20% OFF'}</span>
                                 <div class="deal-card-icon-wrap">
-                                    <img src="${banner.deal1Image || 'https://arshithfresh.com/cdn/shop/collections/seeds_dry_fruits_nuts_webp_200x200_crop_center.jpg?v=1746963459'}" alt="${banner.deal1Title || 'Fresh Fruits'}" class="deal-card-img">
+                                    <img src="${banner.deal1Image || 'https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/seeds_dry_fruits_nuts_webp_200x200_crop_center.jpg?v=1746963459'}" alt="${banner.deal1Title || 'Fresh Fruits'}" class="deal-card-img">
                                 </div>
                                 <div class="deal-card-info">
                                     <h4 class="deal-title">${banner.deal1Title || '20% OFF on Fresh Fruits'}</h4>
@@ -1695,7 +1695,7 @@ async function showFestiveOfferModal(force = false) {
                             <a href="${veggiesUrl}" class="festive-deal-card" onclick="closeFestiveOfferModal()">
                                 <span class="deal-card-badge badge-green">${banner.deal2Badge || '30% OFF'}</span>
                                 <div class="deal-card-icon-wrap">
-                                    <img src="${banner.deal2Image || 'https://arshithfresh.com/cdn/shop/collections/groceries_200x200_crop_center.jpg?v=1746965740'}" alt="${banner.deal2Title || 'Vegetables'}" class="deal-card-img">
+                                    <img src="${banner.deal2Image || 'https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/groceries_200x200_crop_center.jpg?v=1746965740'}" alt="${banner.deal2Title || 'Vegetables'}" class="deal-card-img">
                                 </div>
                                 <div class="deal-card-info">
                                     <h4 class="deal-title">${banner.deal2Title || '30% OFF on Vegetables'}</h4>
@@ -1708,7 +1708,7 @@ async function showFestiveOfferModal(force = false) {
                             <a href="${comboUrl}" class="festive-deal-card" onclick="closeFestiveOfferModal()">
                                 <span class="deal-card-badge badge-gold">${banner.deal3Badge || '40% OFF'}</span>
                                 <div class="deal-card-icon-wrap">
-                                    <img src="${banner.deal3Image || 'https://arshithfresh.com/cdn/shop/collections/ghee_1_200x200_crop_center.jpg?v=1746964905'}" alt="${banner.deal3Title || 'Combo Offers'}" class="deal-card-img">
+                                    <img src="${banner.deal3Image || 'https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/ghee_1_200x200_crop_center.jpg?v=1746964905'}" alt="${banner.deal3Title || 'Combo Offers'}" class="deal-card-img">
                                 </div>
                                 <div class="deal-card-info">
                                     <h4 class="deal-title">${banner.deal3Title || '40% OFF on Combo Offers'}</h4>

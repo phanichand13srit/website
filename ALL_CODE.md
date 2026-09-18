@@ -8788,7 +8788,7 @@ npm run seed
 
         tbody.innerHTML = reviews.map(r => {
           const prodName = (r.productId && r.productId.name) ? r.productId.name : (r.productName || 'Product');
-          const prodImg = (r.productId && r.productId.image) ? r.productId.image : 'https://arshithfresh.com/cdn/shop/collections/spice_200x200_crop_center.png?v=1746963495';
+          const prodImg = (r.productId && r.productId.image) ? r.productId.image : 'https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/spice_200x200_crop_center.png?v=1746963495';
           const stars = '★'.repeat(r.rating || 5) + '☆'.repeat(5 - (r.rating || 5));
           const dateStr = new Date(r.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
 
@@ -20969,8 +20969,8 @@ document.addEventListener("DOMContentLoaded", () => {
             unit: "1 Litre",
             countInStock: 25,
             brand: "Arshith Fresh",
-            image: "https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM_1.jpg?v=1757334051&width=533",
-            hoverImage: "https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-06-30_at_7.28.42_PM_1_3752719d-4e83-4d00-a8be-0c4d13076c23.jpg?v=1757334051&width=533",
+            image: "https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM_1.jpg?v=1757334051&width=533",
+            hoverImage: "https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-06-30_at_7.28.42_PM_1_3752719d-4e83-4d00-a8be-0c4d13076c23.jpg?v=1757334051&width=533",
             description: "100% pure cold-pressed groundnut oil, ideal for healthy everyday cooking.",
             rating: 4.9,
             numReviews: 67,
@@ -20985,8 +20985,8 @@ document.addEventListener("DOMContentLoaded", () => {
             unit: "500 ml",
             countInStock: 30,
             brand: "Arshith Fresh",
-            image: "https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM_2.jpg?v=1757334050&width=533",
-            hoverImage: "https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-06-30_at_7.28.41_PM_887d3105-a7d1-45a3-b1b0-e0054291d902.jpg?v=1757334050&width=533",
+            image: "https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM_2.jpg?v=1757334050&width=533",
+            hoverImage: "https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-06-30_at_7.28.41_PM_887d3105-a7d1-45a3-b1b0-e0054291d902.jpg?v=1757334050&width=533",
             description: "Unrefined, fragrant cold-pressed coconut oil from sun-dried copra.",
             rating: 4.83,
             numReviews: 54,
@@ -21001,8 +21001,8 @@ document.addEventListener("DOMContentLoaded", () => {
             unit: "250 ml",
             countInStock: 20,
             brand: "Arshith Fresh",
-            image: "https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-09-15_at_4.34.52_PM.jpg?v=1757934372&width=533",
-            hoverImage: "https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-06-30_at_7.32.29_PM_2_eb23ab0e-a49c-457d-9dad-00ce2758289c.jpg?v=1757934372&width=533",
+            image: "https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-09-15_at_4.34.52_PM.jpg?v=1757934372&width=533",
+            hoverImage: "https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-06-30_at_7.32.29_PM_2_eb23ab0e-a49c-457d-9dad-00ce2758289c.jpg?v=1757934372&width=533",
             description: "Traditional granular bilona buffalo ghee with rich aroma and taste.",
             rating: 4.91,
             numReviews: 32,
@@ -21017,7 +21017,7 @@ document.addEventListener("DOMContentLoaded", () => {
             unit: "1 Litre",
             countInStock: 18,
             brand: "Arshith Fresh",
-            image: "https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM.jpg?v=1757334052&width=533",
+            image: "https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM.jpg?v=1757334052&width=533",
             description: "Light, nutrient-dense cold-pressed sunflower oil for light frying and baking.",
             rating: 4.91,
             numReviews: 54,
@@ -21032,7 +21032,7 @@ document.addEventListener("DOMContentLoaded", () => {
             unit: "100 g",
             countInStock: 50,
             brand: "Arshith Fresh",
-            image: "https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-07-08_at_4.04.02_PM_2_ce2dcb8e-81dc-46c5-b343-1a14dff25208.jpg?v=1757334052&width=533",
+            image: "https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-07-08_at_4.04.02_PM_2_ce2dcb8e-81dc-46c5-b343-1a14dff25208.jpg?v=1757334052&width=533",
             description: "Omega-3 rich golden brown flax seeds for everyday smoothies and bowls.",
             rating: 4.9,
             numReviews: 31,
@@ -21047,7 +21047,7 @@ document.addEventListener("DOMContentLoaded", () => {
             unit: "100 g",
             countInStock: 45,
             brand: "Arshith Fresh",
-            image: "https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-07-08_at_4.04.01_PM_6b2e5750-03f7-4a0a-b4e3-9ef639891875.jpg?v=1757333987&width=533",
+            image: "https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-07-08_at_4.04.01_PM_6b2e5750-03f7-4a0a-b4e3-9ef639891875.jpg?v=1757333987&width=533",
             description: "High-fiber superfood chia seeds, 100% natural and clean.",
             rating: 4.91,
             numReviews: 35,
@@ -21062,7 +21062,7 @@ document.addEventListener("DOMContentLoaded", () => {
             unit: "100 g",
             countInStock: 40,
             brand: "Arshith Fresh",
-            image: "https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-07-08_at_4.19.01_PM_2_717030b8-c8a8-40a4-bdf0-7e516dec3029.jpg?v=1757334045&width=533",
+            image: "https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-07-08_at_4.19.01_PM_2_717030b8-c8a8-40a4-bdf0-7e516dec3029.jpg?v=1757334045&width=533",
             description: "Authentic Andhra style homemade roasted chana dal podi with ghee flavor.",
             rating: 5,
             numReviews: 31,
@@ -21077,7 +21077,7 @@ document.addEventListener("DOMContentLoaded", () => {
             unit: "100 g",
             countInStock: 35,
             brand: "Arshith Fresh",
-            image: "https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-07-08_at_4.19.01_PM_3_6262e177-7c59-4137-afc4-5d486daa9175.jpg?v=1757334046&width=533",
+            image: "https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-07-08_at_4.19.01_PM_3_6262e177-7c59-4137-afc4-5d486daa9175.jpg?v=1757334046&width=533",
             description: "Spicy, pungent country garlic podi blended with red chillies and cumin.",
             rating: 4.97,
             numReviews: 38,
@@ -21285,7 +21285,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 title: name,
                 name: name,
                 price: Number(price) || 0,
-                image: image || "https://arshithfresh.com/cdn/shop/collections/spice_200x200_crop_center.png?v=1746963495",
+                image: image || "https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/spice_200x200_crop_center.png?v=1746963495",
                 quantity: Number(qty)
             });
         }
@@ -21361,7 +21361,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const safeNameForJs = rawName.replace(/['"\\]/g, "\\$&");
             const price = Number(p.price || p.salePrice || p.currentPrice || 30);
             const originalPrice = Number(p.originalPrice || p.regularPrice || p.mrp || Math.round(price * 1.25));
-            const image = p.image || (p.images && p.images[0] ? (typeof p.images[0] === 'object' ? p.images[0].url : p.images[0]) : '') || p.img || p.imageUrl || "https://arshithfresh.com/cdn/shop/collections/spice_200x200_crop_center.png?v=1746963495";
+            const image = p.image || (p.images && p.images[0] ? (typeof p.images[0] === 'object' ? p.images[0].url : p.images[0]) : '') || p.img || p.imageUrl || "https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/spice_200x200_crop_center.png?v=1746963495";
             const safeImgForJs = image.replace(/['"\\]/g, "\\$&");
             
             let secondImage = '';
@@ -21375,7 +21375,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const discount = originalPrice > price ? Math.round(((originalPrice - price) / originalPrice) * 100) : 0;
             const reviewsCount = p.reviewsCount || Math.floor(Math.random() * 20) + 25;
-            const fallbackImg = "https://arshithfresh.com/cdn/shop/collections/spice_200x200_crop_center.png?v=1746963495";
+            const fallbackImg = "https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/spice_200x200_crop_center.png?v=1746963495";
             const id = p._id || p.id || "";
 
             const path = window.location.pathname.toLowerCase();
@@ -21438,12 +21438,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
             slider.innerHTML = collections.map(col => {
                 const title = col.title || "Category";
-                const img = col.image || "https://arshithfresh.com/cdn/shop/collections/spice_200x200_crop_center.png?v=1746963495";
+                const img = col.image || "https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/spice_200x200_crop_center.png?v=1746963495";
                 const slug = col.slug || title.toLowerCase().replace(/\s+/g, '-');
                 return `
                     <div class="category-card" onclick="window.location.href='pages/categories/${slug}.html'">
                         <div class="category-img-container">
-                            <img src="${img}" alt="${title}" class="category-img" onerror="this.src='https://arshithfresh.com/cdn/shop/collections/spice_200x200_crop_center.png?v=1746963495';">
+                            <img src="${img}" alt="${title}" class="category-img" onerror="this.src='https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/spice_200x200_crop_center.png?v=1746963495';">
                         </div>
                         <h4 class="category-name">${title}</h4>
                     </div>
@@ -21514,7 +21514,7 @@ document.addEventListener("DOMContentLoaded", () => {
             allImgs = [p.image];
         }
         if (allImgs.length === 0) {
-            allImgs = ["https://arshithfresh.com/cdn/shop/collections/spice_200x200_crop_center.png?v=1746963495"];
+            allImgs = ["https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/spice_200x200_crop_center.png?v=1746963495"];
         }
 
         const mainImage = allImgs[0];
@@ -21678,7 +21678,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const qInput = document.getElementById('detailQtyInput');
         const qty = qInput ? (Number(qInput.value) || 1) : 1;
-        const pImg = prod.image || (prod.images && prod.images[0] ? (prod.images[0].url || prod.images[0]) : '') || "https://arshithfresh.com/cdn/shop/collections/spice_200x200_crop_center.png?v=1746963495";
+        const pImg = prod.image || (prod.images && prod.images[0] ? (prod.images[0].url || prod.images[0]) : '') || "https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/spice_200x200_crop_center.png?v=1746963495";
         addToStoreCart(
             prod._id || '',
             prod.name || prod.title || 'Arshith Fresh Product',
@@ -21779,7 +21779,7 @@ function initAutoSignupPopup() {
 
     const isSubpage = path.includes('/pages/');
     const isDeep = path.includes('/categories/') || path.includes('/policies/');
-    const logoUrl = 'https://arshithfresh.com/cdn/shop/files/Arshithlogo111.jpg?v=1755685028&width=600';
+    const logoUrl = 'https://cdn.shopify.com/s/files/1/0858/0772/6869/files/Arshithlogo111.jpg?v=1755685028&width=600';
     const loginUrl = isDeep ? '../auth/login.html' : (isSubpage ? 'auth/login.html' : 'pages/auth/login.html');
 
     setTimeout(() => {
@@ -21982,14 +21982,14 @@ function initLiveSearchAutocomplete() {
     let isFetchingProducts = false;
 
     const STARTER_SEARCH_CATALOG = [
-        { _id: 's1', title: 'Granular Buffalo Ghee (Traditional Bilona)', category: 'Ghee and Honey', price: 699, image: 'https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-09-15_at_4.34.52_PM.jpg?v=1757934372&width=533' },
-        { _id: 's2', title: 'Cold Pressed Sunflower Oil (Premium Quality)', category: 'Oils', price: 499, image: 'https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM.jpg?v=1757334052&width=533' },
-        { _id: 's3', title: 'Groundnut Oil (Cold Pressed)', category: 'Oils', price: 349, image: 'https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM_1.jpg?v=1757334051&width=533' },
-        { _id: 's4', title: 'Flax Seeds (Organic & Premium)', category: 'Dry Seeds', price: 29, image: 'https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM_2.jpg?v=1757334051&width=533' },
-        { _id: 's5', title: 'Chia Seeds (High Fiber)', category: 'Dry Seeds', price: 49, image: 'https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM_3.jpg?v=1757334051&width=533' },
-        { _id: 's6', title: 'Raw Wild Forest Honey', category: 'Ghee and Honey', price: 399, image: 'https://arshithfresh.com/cdn/shop/files/4_6d56df69-1c9f-4f05-b1a7-ca631fc7b9aa.png?v=1757334051&width=533' },
-        { _id: 's7', title: 'Cashews (W240 Grade Premium)', category: 'Dry Fruits', price: 899, image: 'https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM.jpg?v=1757334052&width=533' },
-        { _id: 's8', title: 'California Almonds (Badam)', category: 'Dry Fruits', price: 799, image: 'https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM_1.jpg?v=1757334051&width=533' }
+        { _id: 's1', title: 'Granular Buffalo Ghee (Traditional Bilona)', category: 'Ghee and Honey', price: 699, image: 'https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-09-15_at_4.34.52_PM.jpg?v=1757934372&width=533' },
+        { _id: 's2', title: 'Cold Pressed Sunflower Oil (Premium Quality)', category: 'Oils', price: 499, image: 'https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM.jpg?v=1757334052&width=533' },
+        { _id: 's3', title: 'Groundnut Oil (Cold Pressed)', category: 'Oils', price: 349, image: 'https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM_1.jpg?v=1757334051&width=533' },
+        { _id: 's4', title: 'Flax Seeds (Organic & Premium)', category: 'Dry Seeds', price: 29, image: 'https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM_2.jpg?v=1757334051&width=533' },
+        { _id: 's5', title: 'Chia Seeds (High Fiber)', category: 'Dry Seeds', price: 49, image: 'https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM_3.jpg?v=1757334051&width=533' },
+        { _id: 's6', title: 'Raw Wild Forest Honey', category: 'Ghee and Honey', price: 399, image: 'https://cdn.shopify.com/s/files/1/0858/0772/6869/files/4_6d56df69-1c9f-4f05-b1a7-ca631fc7b9aa.png?v=1757334051&width=533' },
+        { _id: 's7', title: 'Cashews (W240 Grade Premium)', category: 'Dry Fruits', price: 899, image: 'https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM.jpg?v=1757334052&width=533' },
+        { _id: 's8', title: 'California Almonds (Badam)', category: 'Dry Fruits', price: 799, image: 'https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM_1.jpg?v=1757334051&width=533' }
     ];
 
     async function loadSearchProducts() {
@@ -22988,7 +22988,7 @@ async function syncHomepageRealRatingsAndReviews() {
             }) : 'Recent';
 
             const prodName = r.productName || (r.productId && r.productId.name) || 'Arshith Fresh Product';
-            const prodImg = (r.productId && r.productId.image) || 'https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM_1.jpg?v=1757334051&width=120';
+            const prodImg = (r.productId && r.productId.image) || 'https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM_1.jpg?v=1757334051&width=120';
             const customerInitial = (r.customerName || 'C').charAt(0).toUpperCase();
 
             return `
@@ -26374,8 +26374,8 @@ const sampleProducts = [
     unit: '1 Litre',
     countInStock: 25,
     brand: 'Arshith Fresh',
-    image: 'https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM_1.jpg?v=1757334051&width=533',
-    hoverImage: 'https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-06-30_at_7.28.42_PM_1_3752719d-4e83-4d00-a8be-0c4d13076c23.jpg?v=1757334051&width=533',
+    image: 'https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM_1.jpg?v=1757334051&width=533',
+    hoverImage: 'https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-06-30_at_7.28.42_PM_1_3752719d-4e83-4d00-a8be-0c4d13076c23.jpg?v=1757334051&width=533',
     description: '100% pure cold-pressed groundnut oil, ideal for healthy everyday cooking.',
     rating: 4.9,
     numReviews: 67,
@@ -26389,8 +26389,8 @@ const sampleProducts = [
     unit: '500 ml',
     countInStock: 30,
     brand: 'Arshith Fresh',
-    image: 'https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM_2.jpg?v=1757334050&width=533',
-    hoverImage: 'https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-06-30_at_7.28.41_PM_887d3105-a7d1-45a3-b1b0-e0054291d902.jpg?v=1757334050&width=533',
+    image: 'https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM_2.jpg?v=1757334050&width=533',
+    hoverImage: 'https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-06-30_at_7.28.41_PM_887d3105-a7d1-45a3-b1b0-e0054291d902.jpg?v=1757334050&width=533',
     description: 'Unrefined, fragrant cold-pressed coconut oil from sun-dried copra.',
     rating: 4.83,
     numReviews: 54,
@@ -26404,8 +26404,8 @@ const sampleProducts = [
     unit: '250 ml',
     countInStock: 20,
     brand: 'Arshith Fresh',
-    image: 'https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-09-15_at_4.34.52_PM.jpg?v=1757934372&width=533',
-    hoverImage: 'https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-06-30_at_7.32.29_PM_2_eb23ab0e-a49c-457d-9dad-00ce2758289c.jpg?v=1757934372&width=533',
+    image: 'https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-09-15_at_4.34.52_PM.jpg?v=1757934372&width=533',
+    hoverImage: 'https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-06-30_at_7.32.29_PM_2_eb23ab0e-a49c-457d-9dad-00ce2758289c.jpg?v=1757934372&width=533',
     description: 'Traditional granular bilona buffalo ghee with rich aroma and taste.',
     rating: 4.91,
     numReviews: 32,
@@ -26419,7 +26419,7 @@ const sampleProducts = [
     unit: '1 Litre',
     countInStock: 18,
     brand: 'Arshith Fresh',
-    image: 'https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM.jpg?v=1757334052&width=533',
+    image: 'https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM.jpg?v=1757334052&width=533',
     description: 'Light, nutrient-dense cold-pressed sunflower oil for light frying and baking.',
     rating: 4.91,
     numReviews: 54,
@@ -26433,7 +26433,7 @@ const sampleProducts = [
     unit: '100 g',
     countInStock: 50,
     brand: 'Arshith Fresh',
-    image: 'https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-07-08_at_4.04.02_PM_2_ce2dcb8e-81dc-46c5-b343-1a14dff25208.jpg?v=1757334052&width=533',
+    image: 'https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-07-08_at_4.04.02_PM_2_ce2dcb8e-81dc-46c5-b343-1a14dff25208.jpg?v=1757334052&width=533',
     description: 'Omega-3 rich golden brown flax seeds for everyday smoothies and bowls.',
     rating: 4.9,
     numReviews: 31,
@@ -26447,7 +26447,7 @@ const sampleProducts = [
     unit: '100 g',
     countInStock: 45,
     brand: 'Arshith Fresh',
-    image: 'https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-07-08_at_4.04.01_PM_6b2e5750-03f7-4a0a-b4e3-9ef639891875.jpg?v=1757333987&width=533',
+    image: 'https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-07-08_at_4.04.01_PM_6b2e5750-03f7-4a0a-b4e3-9ef639891875.jpg?v=1757333987&width=533',
     description: 'High-fiber superfood chia seeds, 100% natural and clean.',
     rating: 4.91,
     numReviews: 35,
@@ -26461,7 +26461,7 @@ const sampleProducts = [
     unit: '100 g',
     countInStock: 40,
     brand: 'Arshith Fresh',
-    image: 'https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-07-08_at_4.19.01_PM_2_717030b8-c8a8-40a4-bdf0-7e516dec3029.jpg?v=1757334045&width=533',
+    image: 'https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-07-08_at_4.19.01_PM_2_717030b8-c8a8-40a4-bdf0-7e516dec3029.jpg?v=1757334045&width=533',
     description: 'Authentic Andhra style homemade roasted chana dal podi with ghee flavor.',
     rating: 5.0,
     numReviews: 31,
@@ -26475,7 +26475,7 @@ const sampleProducts = [
     unit: '100 g',
     countInStock: 35,
     brand: 'Arshith Fresh',
-    image: 'https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-07-08_at_4.19.01_PM_3_6262e177-7c59-4137-afc4-5d486daa9175.jpg?v=1757334046&width=533',
+    image: 'https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-07-08_at_4.19.01_PM_3_6262e177-7c59-4137-afc4-5d486daa9175.jpg?v=1757334046&width=533',
     description: 'Spicy, pungent country garlic podi blended with red chillies and cumin.',
     rating: 4.97,
     numReviews: 38,
@@ -27515,10 +27515,10 @@ module.exports = {
     <meta property="og:description"
         content="Our e-commerce solutions are designed to help businesses of all sizes build, manage, and scale their online stores with ease, efficiency, and confidence.">
     <meta property="og:image"
-        content="https://arshithfresh.com/cdn/shop/files/Arshithlogo111.jpg?height=628&pad_color=ffffff&v=1755685028&width=1200">
+        content="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/Arshithlogo111.jpg?height=628&pad_color=ffffff&v=1755685028&width=1200">
 
     <link rel="icon" type="image/png"
-        href="https://arshithfresh.com/cdn/shop/files/ccccccccccccccccc.jpg?crop=center&height=32&v=1771505716&width=32">
+        href="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/ccccccccccccccccc.jpg?crop=center&height=32&v=1771505716&width=32">
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -27563,7 +27563,7 @@ module.exports = {
 
             <div class="header-logo">
                 <a href="/">
-                    <img src="https://arshithfresh.com/cdn/shop/files/Arshithlogo111.jpg?v=1755685028&width=600"
+                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/Arshithlogo111.jpg?v=1755685028&width=600"
                         alt="Arshith Fresh Logo" class="logo-img">
                 </a>
             </div>
@@ -27691,49 +27691,49 @@ module.exports = {
             <div class="categories-grid">
                 <a href="pages/categories/oils-natural-extracts.html" class="category-card">
                     <div class="category-img-container">
-                        <img src="https://arshithfresh.com/cdn/shop/collections/oil_n_natural_extract_200x200_crop_center.jpg?v=1746964936"
+                        <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/oil_n_natural_extract_200x200_crop_center.jpg?v=1746964936"
                             alt="Oils & Natural Extracts">
                     </div>
                     <h3 class="category-name">Oils & Natural Extracts</h3>
                 </a>
                 <a href="pages/categories/dry-fruits-nuts.html" class="category-card">
                     <div class="category-img-container">
-                        <img src="https://arshithfresh.com/cdn/shop/collections/seeds_dry_fruits_nuts_webp_200x200_crop_center.jpg?v=1746963459"
+                        <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/seeds_dry_fruits_nuts_webp_200x200_crop_center.jpg?v=1746963459"
                             alt="Dry Fruits & Nuts">
                     </div>
                     <h3 class="category-name">Dry Fruits & Nuts</h3>
                 </a>
                 <a href="pages/categories/dry-seeds.html" class="category-card">
                     <div class="category-img-container">
-                        <img src="https://arshithfresh.com/cdn/shop/collections/dry_seeds_200x200_crop_center.jpg?v=1746963515"
+                        <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/dry_seeds_200x200_crop_center.jpg?v=1746963515"
                             alt="Dry Seeds">
                     </div>
                     <h3 class="category-name">Dry Seeds</h3>
                 </a>
                 <a href="pages/categories/ghee-and-honey.html" class="category-card">
                     <div class="category-img-container">
-                        <img src="https://arshithfresh.com/cdn/shop/collections/ghee_1_200x200_crop_center.jpg?v=1746964905"
+                        <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/ghee_1_200x200_crop_center.jpg?v=1746964905"
                             alt="Ghee and Honey">
                     </div>
                     <h3 class="category-name">Ghee and Honey</h3>
                 </a>
                 <a href="pages/categories/cooking-essentials.html" class="category-card">
                     <div class="category-img-container">
-                        <img src="https://arshithfresh.com/cdn/shop/collections/groceries_200x200_crop_center.jpg?v=1746965740"
+                        <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/groceries_200x200_crop_center.jpg?v=1746965740"
                             alt="Cooking Essentials">
                     </div>
                     <h3 class="category-name">Cooking Essentials</h3>
                 </a>
                 <a href="pages/categories/spices.html" class="category-card">
                     <div class="category-img-container">
-                        <img src="https://arshithfresh.com/cdn/shop/collections/spice_200x200_crop_center.png?v=1746963495"
+                        <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/spice_200x200_crop_center.png?v=1746963495"
                             alt="Spices">
                     </div>
                     <h3 class="category-name">Spices</h3>
                 </a>
                 <a href="pages/categories/spice-powders-podulu.html" class="category-card">
                     <div class="category-img-container">
-                        <img src="https://arshithfresh.com/cdn/shop/collections/powders_200x200_crop_center.jpg?v=1743477019"
+                        <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/powders_200x200_crop_center.jpg?v=1743477019"
                             alt="Spice Powders (Podulu)">
                     </div>
                     <h3 class="category-name">Spice Powders (Podulu)</h3>
@@ -27755,9 +27755,9 @@ module.exports = {
                         <div class="product-card">
                             <a href="pages/product.html?id=groundnut-oil-premium" class="product-card-link">
                                 <div class="product-image-container">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM_1.jpg?v=1757334051&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM_1.jpg?v=1757334051&width=533"
                                         alt="Groundnut Oil" class="primary-img">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-06-30_at_7.28.42_PM_1_3752719d-4e83-4d00-a8be-0c4d13076c23.jpg?v=1757334051&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-06-30_at_7.28.42_PM_1_3752719d-4e83-4d00-a8be-0c4d13076c23.jpg?v=1757334051&width=533"
                                         alt="Groundnut Oil Hover" class="hover-img">
                                     <span class="card-discount-tag">26% Off</span>
                                 </div>
@@ -27779,9 +27779,9 @@ module.exports = {
                         <div class="product-card">
                             <a href="pages/product.html?id=coconut-oil-premium" class="product-card-link">
                                 <div class="product-image-container">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM_2.jpg?v=1757334050&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM_2.jpg?v=1757334050&width=533"
                                         alt="Coconut Oil" class="primary-img">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-06-30_at_7.28.41_PM_887d3105-a7d1-45a3-b1b0-e0054291d902.jpg?v=1757334050&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-06-30_at_7.28.41_PM_887d3105-a7d1-45a3-b1b0-e0054291d902.jpg?v=1757334050&width=533"
                                         alt="Coconut Oil Hover" class="hover-img">
                                     <span class="card-discount-tag">23% Off</span>
                                 </div>
@@ -27804,9 +27804,9 @@ module.exports = {
                             <a href="pages/product.html?id=chana-dal-spice-powderpappula-podi-premium"
                                 class="product-card-link">
                                 <div class="product-image-container">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-07-08_at_4.19.01_PM_2_717030b8-c8a8-40a4-bdf0-7e516dec3029.jpg?v=1757334045&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-07-08_at_4.19.01_PM_2_717030b8-c8a8-40a4-bdf0-7e516dec3029.jpg?v=1757334045&width=533"
                                         alt="Chana Dal Spice Powder" class="primary-img">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-06-30_at_8.11.37_PM_c2bafc14-a54c-4d90-ad91-a96218301ccf.jpg?v=1757334045&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-06-30_at_8.11.37_PM_c2bafc14-a54c-4d90-ad91-a96218301ccf.jpg?v=1757334045&width=533"
                                         alt="Chana Dal Spice Powder Hover" class="hover-img">
                                     <span class="card-discount-tag">27% Off</span>
                                 </div>
@@ -27828,9 +27828,9 @@ module.exports = {
                         <div class="product-card">
                             <a href="pages/product.html?id=sunflower-oil-premium" class="product-card-link">
                                 <div class="product-image-container">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM.jpg?v=1757334052&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM.jpg?v=1757334052&width=533"
                                         alt="Sunflower Oil" class="primary-img">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-06-28_at_4.14.16_PM_1_ee159cd3-c09a-443d-a28c-6c4b116ce904.jpg?v=1757334052&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-06-28_at_4.14.16_PM_1_ee159cd3-c09a-443d-a28c-6c4b116ce904.jpg?v=1757334052&width=533"
                                         alt="Sunflower Oil Hover" class="hover-img">
                                     <span class="card-discount-tag">18% Off</span>
                                 </div>
@@ -27852,9 +27852,9 @@ module.exports = {
                         <div class="product-card">
                             <a href="pages/product.html?id=kobbari-karam-podi-premium" class="product-card-link">
                                 <div class="product-image-container">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-07-08_at_4.19.00_PM_33a6719d-7dd6-4772-add2-2a37e2461d57.jpg?v=1757334044&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-07-08_at_4.19.00_PM_33a6719d-7dd6-4772-add2-2a37e2461d57.jpg?v=1757334044&width=533"
                                         alt="Kobbari Karam Podi" class="primary-img">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-06-30_at_8.11.38_PM_1_c7c68b45-ca76-4b30-b6dc-d9cc22cbfe3a.jpg?v=1757334044&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-06-30_at_8.11.38_PM_1_c7c68b45-ca76-4b30-b6dc-d9cc22cbfe3a.jpg?v=1757334044&width=533"
                                         alt="Kobbari Karam Podi Hover" class="hover-img">
                                     <span class="card-discount-tag">27% Off</span>
                                 </div>
@@ -27876,9 +27876,9 @@ module.exports = {
                         <div class="product-card">
                             <a href="pages/product.html?id=pure-buffalo-ghee-premium" class="product-card-link">
                                 <div class="product-image-container">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-09-15_at_4.34.52_PM.jpg?v=1757934372&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-09-15_at_4.34.52_PM.jpg?v=1757934372&width=533"
                                         alt="Pure Buffalo Ghee" class="primary-img">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-06-30_at_7.32.29_PM_2_eb23ab0e-a49c-457d-9dad-00ce2758289c.jpg?v=1757934372&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-06-30_at_7.32.29_PM_2_eb23ab0e-a49c-457d-9dad-00ce2758289c.jpg?v=1757934372&width=533"
                                         alt="Pure Buffalo Ghee Hover" class="hover-img">
                                     <span class="card-discount-tag">23% Off</span>
                                 </div>
@@ -27900,9 +27900,9 @@ module.exports = {
                         <div class="product-card">
                             <a href="pages/product.html?id=nalla-karam-podi-premium" class="product-card-link">
                                 <div class="product-image-container">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-07-08_at_4.19.02_PM_c823be1b-85bf-4371-8236-9e09b3af2ef5.jpg?v=1757334045&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-07-08_at_4.19.02_PM_c823be1b-85bf-4371-8236-9e09b3af2ef5.jpg?v=1757334045&width=533"
                                         alt="Nalla Karam Podi" class="primary-img">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-06-30_at_8.11.37_PM_1_0fc408cf-b6bb-4f12-b4ef-41cfefa89e40.jpg?v=1757334045&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-06-30_at_8.11.37_PM_1_0fc408cf-b6bb-4f12-b4ef-41cfefa89e40.jpg?v=1757334045&width=533"
                                         alt="Nalla Karam Hover" class="hover-img">
                                     <span class="card-discount-tag">27% Off</span>
                                 </div>
@@ -27924,9 +27924,9 @@ module.exports = {
                         <div class="product-card">
                             <a href="pages/product.html?id=garlic-powdervelluli-karam-podi-premium" class="product-card-link">
                                 <div class="product-image-container">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-07-08_at_4.19.01_PM_3_6262e177-7c59-4137-afc4-5d486daa9175.jpg?v=1757334046&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-07-08_at_4.19.01_PM_3_6262e177-7c59-4137-afc4-5d486daa9175.jpg?v=1757334046&width=533"
                                         alt="Garlic Powder" class="primary-img">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-07-08_at_4.19.01_PM_443a54ed-b6f7-46fb-8fc3-ba74bf06cc93.jpg?v=1757334046&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-07-08_at_4.19.01_PM_443a54ed-b6f7-46fb-8fc3-ba74bf06cc93.jpg?v=1757334046&width=533"
                                         alt="Garlic Powder Hover" class="hover-img">
                                     <span class="card-discount-tag">27% Off</span>
                                 </div>
@@ -28009,9 +28009,9 @@ module.exports = {
                         <div class="product-card">
                             <a href="https://arshithfresh.com/products/sunflower-oil-premium" class="product-card-link">
                                 <div class="product-image-container">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM.jpg?v=1757334052&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM.jpg?v=1757334052&width=533"
                                         alt="Sunflower Oil" class="primary-img">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-06-28_at_4.14.16_PM_1_ee159cd3-c09a-443d-a28c-6c4b116ce904.jpg?v=1757334052&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-06-28_at_4.14.16_PM_1_ee159cd3-c09a-443d-a28c-6c4b116ce904.jpg?v=1757334052&width=533"
                                         alt="Sunflower Oil Hover" class="hover-img">
                                     <span class="card-discount-tag">18% Off</span>
                                 </div>
@@ -28033,9 +28033,9 @@ module.exports = {
                         <div class="product-card">
                             <a href="https://arshithfresh.com/products/groundnut-oil-premium" class="product-card-link">
                                 <div class="product-image-container">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM_1.jpg?v=1757334051&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM_1.jpg?v=1757334051&width=533"
                                         alt="Groundnut Oil" class="primary-img">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-06-30_at_7.28.42_PM_1_3752719d-4e83-4d00-a8be-0c4d13076c23.jpg?v=1757334051&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-06-30_at_7.28.42_PM_1_3752719d-4e83-4d00-a8be-0c4d13076c23.jpg?v=1757334051&width=533"
                                         alt="Groundnut Oil Hover" class="hover-img">
                                     <span class="card-discount-tag">26% Off</span>
                                 </div>
@@ -28057,9 +28057,9 @@ module.exports = {
                         <div class="product-card">
                             <a href="https://arshithfresh.com/products/flax-seeds-premium" class="product-card-link">
                                 <div class="product-image-container">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-07-08_at_4.04.02_PM_2_ce2dcb8e-81dc-46c5-b343-1a14dff25208.jpg?v=1757334052&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-07-08_at_4.04.02_PM_2_ce2dcb8e-81dc-46c5-b343-1a14dff25208.jpg?v=1757334052&width=533"
                                         alt="Flax Seeds" class="primary-img">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-07-02_at_2.00.16_PM_2_4f6b641a-6fe0-4060-a49a-3fbd827f8271.jpg?v=1757334053&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-07-02_at_2.00.16_PM_2_4f6b641a-6fe0-4060-a49a-3fbd827f8271.jpg?v=1757334053&width=533"
                                         alt="Flax Seeds Hover" class="hover-img">
                                     <span class="card-discount-tag">21% Off</span>
                                 </div>
@@ -28081,9 +28081,9 @@ module.exports = {
                         <div class="product-card">
                             <a href="https://arshithfresh.com/products/chia-seeds-premium" class="product-card-link">
                                 <div class="product-image-container">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-07-08_at_4.04.01_PM_6b2e5750-03f7-4a0a-b4e3-9ef639891875.jpg?v=1757333987&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-07-08_at_4.04.01_PM_6b2e5750-03f7-4a0a-b4e3-9ef639891875.jpg?v=1757333987&width=533"
                                         alt="Chia Seeds" class="primary-img">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-07-04_at_9.43.11_AM_88a83afd-35c7-4178-ad6f-170645b5294e.jpg?v=1757333987&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-07-04_at_9.43.11_AM_88a83afd-35c7-4178-ad6f-170645b5294e.jpg?v=1757333987&width=533"
                                         alt="Chia Seeds Hover" class="hover-img">
                                     <span class="card-discount-tag">8% Off</span>
                                 </div>
@@ -28105,9 +28105,9 @@ module.exports = {
                         <div class="product-card">
                             <a href="https://arshithfresh.com/products/pumpkin-seeds-premium" class="product-card-link">
                                 <div class="product-image-container">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-07-08_at_4.04.02_PM_75dca399-7bd1-4c42-a209-50572b825bbe.jpg?v=1757334052&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-07-08_at_4.04.02_PM_75dca399-7bd1-4c42-a209-50572b825bbe.jpg?v=1757334052&width=533"
                                         alt="Pumpkin Seeds" class="primary-img">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-06-30_at_7.43.35_PM_19a86791-951c-43dc-a1d8-a901b4762faf.jpg?v=1757334053&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-06-30_at_7.43.35_PM_19a86791-951c-43dc-a1d8-a901b4762faf.jpg?v=1757334053&width=533"
                                         alt="Pumpkin Seeds Hover" class="hover-img">
                                     <span class="card-discount-tag">14% Off</span>
                                 </div>
@@ -28130,9 +28130,9 @@ module.exports = {
                             <a href="https://arshithfresh.com/products/sunflower-seeds-premium"
                                 class="product-card-link">
                                 <div class="product-image-container">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-07-08_at_4.04.03_PM_1_6a153ddd-2028-47c7-8388-3b9f9c660240.jpg?v=1757333989&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-07-08_at_4.04.03_PM_1_6a153ddd-2028-47c7-8388-3b9f9c660240.jpg?v=1757333989&width=533"
                                         alt="Sunflower Seeds" class="primary-img">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-06-30_at_7.43.36_PM_65a6bce3-18ec-4f09-a579-a554b2d9e336.jpg?v=1757333989&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-06-30_at_7.43.36_PM_65a6bce3-18ec-4f09-a579-a554b2d9e336.jpg?v=1757333989&width=533"
                                         alt="Sunflower Seeds Hover" class="hover-img">
                                     <span class="card-discount-tag">21% Off</span>
                                 </div>
@@ -28155,9 +28155,9 @@ module.exports = {
                             <a href="https://arshithfresh.com/products/watermelon-seeds-premium"
                                 class="product-card-link">
                                 <div class="product-image-container">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-07-08_at_4.04.03_PM_97f038b4-8e5f-4d8c-92db-2f4ea8bd24c0.jpg?v=1757333989&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-07-08_at_4.04.03_PM_97f038b4-8e5f-4d8c-92db-2f4ea8bd24c0.jpg?v=1757333989&width=533"
                                         alt="Watermelon Seeds" class="primary-img">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-06-30_at_8.19.19_PM_2cfd8d9f-66d1-4abb-bc5d-edf3a4b587e8.jpg?v=1757333989&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-06-30_at_8.19.19_PM_2cfd8d9f-66d1-4abb-bc5d-edf3a4b587e8.jpg?v=1757333989&width=533"
                                         alt="Watermelon Seeds Hover" class="hover-img">
                                     <span class="card-discount-tag">12% Off</span>
                                 </div>
@@ -28179,9 +28179,9 @@ module.exports = {
                         <div class="product-card">
                             <a href="https://arshithfresh.com/products/sabja-seeds-premium" class="product-card-link">
                                 <div class="product-image-container">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-07-08_at_4.04.02_PM_1_50ee6a3f-891c-482c-95cd-e8fb3bace709.jpg?v=1757333999&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-07-08_at_4.04.02_PM_1_50ee6a3f-891c-482c-95cd-e8fb3bace709.jpg?v=1757333999&width=533"
                                         alt="Sabja Seeds" class="primary-img">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-07-02_at_2.00.11_PM_1_e1ca0568-b1c3-4aac-87b5-07791bc44e34.jpg?v=1757334000&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-07-02_at_2.00.11_PM_1_e1ca0568-b1c3-4aac-87b5-07791bc44e34.jpg?v=1757334000&width=533"
                                         alt="Sabja Seeds Hover" class="hover-img">
                                     <span class="card-discount-tag">22% Off</span>
                                 </div>
@@ -28241,9 +28241,9 @@ module.exports = {
                         <div class="product-card">
                             <a href="https://arshithfresh.com/products/groundnut-oil-premium" class="product-card-link">
                                 <div class="product-image-container">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM_1.jpg?v=1757334051&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM_1.jpg?v=1757334051&width=533"
                                         alt="Groundnut Oil" class="primary-img">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-06-30_at_7.28.42_PM_1_3752719d-4e83-4d00-a8be-0c4d13076c23.jpg?v=1757334051&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-06-30_at_7.28.42_PM_1_3752719d-4e83-4d00-a8be-0c4d13076c23.jpg?v=1757334051&width=533"
                                         alt="Groundnut Oil Hover" class="hover-img">
                                     <span class="card-discount-tag">26% Off</span>
                                 </div>
@@ -28265,9 +28265,9 @@ module.exports = {
                         <div class="product-card">
                             <a href="https://arshithfresh.com/products/sunflower-oil-premium" class="product-card-link">
                                 <div class="product-image-container">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM.jpg?v=1757334052&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM.jpg?v=1757334052&width=533"
                                         alt="Sunflower Oil" class="primary-img">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-06-28_at_4.14.16_PM_1_ee159cd3-c09a-443d-a28c-6c4b116ce904.jpg?v=1757334052&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-06-28_at_4.14.16_PM_1_ee159cd3-c09a-443d-a28c-6c4b116ce904.jpg?v=1757334052&width=533"
                                         alt="Sunflower Oil Hover" class="hover-img">
                                     <span class="card-discount-tag">18% Off</span>
                                 </div>
@@ -28289,9 +28289,9 @@ module.exports = {
                         <div class="product-card">
                             <a href="https://arshithfresh.com/products/sesame-oil-premium" class="product-card-link">
                                 <div class="product-image-container">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-08-06_at_4.24.45_PM.jpg?v=1757334050&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-08-06_at_4.24.45_PM.jpg?v=1757334050&width=533"
                                         alt="Sesame Oil" class="primary-img">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-06-30_at_8.00.57_PM_64984681-9604-4e2d-9310-2e3b9187bec1.jpg?v=1757334050&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-06-30_at_8.00.57_PM_64984681-9604-4e2d-9310-2e3b9187bec1.jpg?v=1757334050&width=533"
                                         alt="Sesame Oil Hover" class="hover-img">
                                     <span class="card-discount-tag">20% Off</span>
                                 </div>
@@ -28313,9 +28313,9 @@ module.exports = {
                         <div class="product-card">
                             <a href="https://arshithfresh.com/products/castor-oil-premium" class="product-card-link">
                                 <div class="product-image-container">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM_3.jpg?v=1757334049&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM_3.jpg?v=1757334049&width=533"
                                         alt="Castor Oil" class="primary-img">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-06-30_at_7.28.40_PM_1_73d71147-06da-4205-b360-66ad1642a18c.jpg?v=1757334049&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-06-30_at_7.28.40_PM_1_73d71147-06da-4205-b360-66ad1642a18c.jpg?v=1757334049&width=533"
                                         alt="Castor Oil Hover" class="hover-img">
                                     <span class="card-discount-tag">20% Off</span>
                                 </div>
@@ -28337,9 +28337,9 @@ module.exports = {
                         <div class="product-card">
                             <a href="https://arshithfresh.com/products/coconut-oil-premium" class="product-card-link">
                                 <div class="product-image-container">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM_2.jpg?v=1757334050&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM_2.jpg?v=1757334050&width=533"
                                         alt="Coconut Oil" class="primary-img">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-06-30_at_7.28.41_PM_887d3105-a7d1-45a3-b1b0-e0054291d902.jpg?v=1757334050&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-06-30_at_7.28.41_PM_887d3105-a7d1-45a3-b1b0-e0054291d902.jpg?v=1757334050&width=533"
                                         alt="Coconut Oil Hover" class="hover-img">
                                     <span class="card-discount-tag">23% Off</span>
                                 </div>
@@ -28361,9 +28361,9 @@ module.exports = {
                         <div class="product-card">
                             <a href="https://arshithfresh.com/products/mustard-oil-premium" class="product-card-link">
                                 <div class="product-image-container">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-08-06_at_4.24.45_PM.jpg?v=1757334050&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-08-06_at_4.24.45_PM.jpg?v=1757334050&width=533"
                                         alt="Mustard Oil" class="primary-img">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-06-30_at_8.00.57_PM_64984681-9604-4e2d-9310-2e3b9187bec1.jpg?v=1757334050&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-06-30_at_8.00.57_PM_64984681-9604-4e2d-9310-2e3b9187bec1.jpg?v=1757334050&width=533"
                                         alt="Mustard Oil Hover" class="hover-img">
                                     <span class="card-discount-tag">20% Off</span>
                                 </div>
@@ -28385,9 +28385,9 @@ module.exports = {
                         <div class="product-card">
                             <a href="https://arshithfresh.com/products/neem-oil-premium" class="product-card-link">
                                 <div class="product-image-container">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM_3.jpg?v=1757334049&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM_3.jpg?v=1757334049&width=533"
                                         alt="Neem Oil" class="primary-img">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-06-30_at_7.28.40_PM_1_73d71147-06da-4205-b360-66ad1642a18c.jpg?v=1757334049&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-06-30_at_7.28.40_PM_1_73d71147-06da-4205-b360-66ad1642a18c.jpg?v=1757334049&width=533"
                                         alt="Neem Oil Hover" class="hover-img">
                                     <span class="card-discount-tag">25% Off</span>
                                 </div>
@@ -28409,9 +28409,9 @@ module.exports = {
                         <div class="product-card">
                             <a href="https://arshithfresh.com/products/almond-oil-premium" class="product-card-link">
                                 <div class="product-image-container">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM_2.jpg?v=1757334050&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM_2.jpg?v=1757334050&width=533"
                                         alt="Almond Oil" class="primary-img">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-06-30_at_7.28.41_PM_887d3105-a7d1-45a3-b1b0-e0054291d902.jpg?v=1757334050&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-06-30_at_7.28.41_PM_887d3105-a7d1-45a3-b1b0-e0054291d902.jpg?v=1757334050&width=533"
                                         alt="Almond Oil Hover" class="hover-img">
                                     <span class="card-discount-tag">20% Off</span>
                                 </div>
@@ -28471,9 +28471,9 @@ module.exports = {
                         <div class="product-card">
                             <a href="https://arshithfresh.com/products/cashew-nuts-premium" class="product-card-link">
                                 <div class="product-image-container">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-05-22_at_7.45.38_PM_83923da9-b703-43bd-ae6f-6bb812afa6ba.jpg?v=1757334003&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-05-22_at_7.45.38_PM_83923da9-b703-43bd-ae6f-6bb812afa6ba.jpg?v=1757334003&width=533"
                                         alt="Cashews" class="primary-img">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-07-01_at_11.45.20_AM_2927d0dd-ed7b-43f7-8eb3-0fa0fd2e9a33.jpg?v=1757334004&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-07-01_at_11.45.20_AM_2927d0dd-ed7b-43f7-8eb3-0fa0fd2e9a33.jpg?v=1757334004&width=533"
                                         alt="Cashews Hover" class="hover-img">
                                     <span class="card-discount-tag">25% Off</span>
                                 </div>
@@ -28495,9 +28495,9 @@ module.exports = {
                         <div class="product-card">
                             <a href="https://arshithfresh.com/products/almonds-premium" class="product-card-link">
                                 <div class="product-image-container">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-07-08_at_4.52.28_PM_2112456d-40bc-4ca8-a380-52828943ee32.jpg?v=1757334003&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-07-08_at_4.52.28_PM_2112456d-40bc-4ca8-a380-52828943ee32.jpg?v=1757334003&width=533"
                                         alt="Almonds" class="primary-img">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-06-30_at_9.53.36_AM_e4a9990f-ccf1-4aa3-a944-45faa606db78.jpg?v=1757334003&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-06-30_at_9.53.36_AM_e4a9990f-ccf1-4aa3-a944-45faa606db78.jpg?v=1757334003&width=533"
                                         alt="Almonds Hover" class="hover-img">
                                     <span class="card-discount-tag">21% Off</span>
                                 </div>
@@ -28520,9 +28520,9 @@ module.exports = {
                             <a href="https://arshithfresh.com/products/figsdry-anjeer-premium"
                                 class="product-card-link">
                                 <div class="product-image-container">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-05-16_at_6.03.06_PM_34ff0f49-adf5-47c3-979c-8e5ab7a6db71.jpg?v=1757334000&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-05-16_at_6.03.06_PM_34ff0f49-adf5-47c3-979c-8e5ab7a6db71.jpg?v=1757334000&width=533"
                                         alt="Figs" class="primary-img">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-06-30_at_9.53.33_AM_2_-_Copy_7c457949-8471-48e0-a565-df11eec16963.jpg?v=1757334000&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-06-30_at_9.53.33_AM_2_-_Copy_7c457949-8471-48e0-a565-df11eec16963.jpg?v=1757334000&width=533"
                                         alt="Figs Hover" class="hover-img">
                                     <span class="card-discount-tag">21% Off</span>
                                 </div>
@@ -28544,9 +28544,9 @@ module.exports = {
                         <div class="product-card">
                             <a href="https://arshithfresh.com/products/pistachio-premium" class="product-card-link">
                                 <div class="product-image-container">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-05-22_at_7.45.30_PM_6c318297-0c92-4757-979e-e2f0cfce82b1.jpg?v=1757333991&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-05-22_at_7.45.30_PM_6c318297-0c92-4757-979e-e2f0cfce82b1.jpg?v=1757333991&width=533"
                                         alt="Pistachio" class="primary-img">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-06-30_at_9.53.35_AM_2_-_Copy_6e558aaf-9cbf-4afa-bb29-1d03db66a34d.jpg?v=1757333991&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-06-30_at_9.53.35_AM_2_-_Copy_6e558aaf-9cbf-4afa-bb29-1d03db66a34d.jpg?v=1757333991&width=533"
                                         alt="Pistachio Hover" class="hover-img">
                                     <span class="card-discount-tag">20% Off</span>
                                 </div>
@@ -28568,9 +28568,9 @@ module.exports = {
                         <div class="product-card">
                             <a href="https://arshithfresh.com/products/walnuts-premium" class="product-card-link">
                                 <div class="product-image-container">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-07-08_at_4.52.28_PM_2_372210ff-499e-4854-b1ba-7ac50bb3a105.jpg?v=1757334002&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-07-08_at_4.52.28_PM_2_372210ff-499e-4854-b1ba-7ac50bb3a105.jpg?v=1757334002&width=533"
                                         alt="Walnuts" class="primary-img">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-06-30_at_9.53.34_AM_bd399ac2-3177-4f8d-b549-0988071161ae.jpg?v=1757334002&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-06-30_at_9.53.34_AM_bd399ac2-3177-4f8d-b549-0988071161ae.jpg?v=1757334002&width=533"
                                         alt="Walnuts Hover" class="hover-img">
                                     <span class="card-discount-tag">29% Off</span>
                                 </div>
@@ -28592,9 +28592,9 @@ module.exports = {
                         <div class="product-card">
                             <a href="https://arshithfresh.com/products/raisins-premium" class="product-card-link">
                                 <div class="product-image-container">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-05-23_at_11.08.13_AM_4544f222-c407-433a-b6a9-1bdaf1c17e70.jpg?v=1757334001&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-05-23_at_11.08.13_AM_4544f222-c407-433a-b6a9-1bdaf1c17e70.jpg?v=1757334001&width=533"
                                         alt="Raisins" class="primary-img">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-07-03_at_4.21.41_PM_51b21c24-d44d-4a17-9cb4-9e8ce025d2e1.jpg?v=1757334001&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-07-03_at_4.21.41_PM_51b21c24-d44d-4a17-9cb4-9e8ce025d2e1.jpg?v=1757334001&width=533"
                                         alt="Raisins Hover" class="hover-img">
                                     <span class="card-discount-tag">7% Off</span>
                                 </div>
@@ -28616,9 +28616,9 @@ module.exports = {
                         <div class="product-card">
                             <a href="https://arshithfresh.com/products/dates-premium" class="product-card-link">
                                 <div class="product-image-container">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-07-08_at_5.03.23_PM_21ec1f88-8a08-488f-a8ce-1967e45fef85.jpg?v=1757333990&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-07-08_at_5.03.23_PM_21ec1f88-8a08-488f-a8ce-1967e45fef85.jpg?v=1757333990&width=533"
                                         alt="Dates" class="primary-img">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-07-01_at_11.44.26_AM_ee10a09d-9a22-4116-ac94-d36c3e989f6e.jpg?v=1757333990&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-07-01_at_11.44.26_AM_ee10a09d-9a22-4116-ac94-d36c3e989f6e.jpg?v=1757333990&width=533"
                                         alt="Dates Hover" class="hover-img">
                                     <span class="card-discount-tag">14% Off</span>
                                 </div>
@@ -28641,9 +28641,9 @@ module.exports = {
                             <a href="https://arshithfresh.com/products/ground-nutsraw-premium"
                                 class="product-card-link">
                                 <div class="product-image-container">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-07-08_at_4.52.28_PM_1_18442075-b578-4cf6-9c7a-04955b5197b7.jpg?v=1757334056&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-07-08_at_4.52.28_PM_1_18442075-b578-4cf6-9c7a-04955b5197b7.jpg?v=1757334056&width=533"
                                         alt="Raw Groundnuts" class="primary-img">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-07-05_at_10.50.53_AM_49ea271e-21eb-4b1c-8edf-48ea811519e3.jpg?v=1757334056&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-07-05_at_10.50.53_AM_49ea271e-21eb-4b1c-8edf-48ea811519e3.jpg?v=1757334056&width=533"
                                         alt="Raw Groundnuts Hover" class="hover-img">
                                     <span class="card-discount-tag">11% Off</span>
                                 </div>
@@ -28681,9 +28681,9 @@ module.exports = {
                             <a href="https://arshithfresh.com/products/garlic-powdervelluli-karam-podi-premium"
                                 class="product-card-link">
                                 <div class="product-image-container">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-07-08_at_4.19.01_PM_3_6262e177-7c59-4137-afc4-5d486daa9175.jpg?v=1757334046&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-07-08_at_4.19.01_PM_3_6262e177-7c59-4137-afc4-5d486daa9175.jpg?v=1757334046&width=533"
                                         alt="Garlic Powder" class="primary-img">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-07-08_at_4.19.01_PM_443a54ed-b6f7-46fb-8fc3-ba74bf06cc93.jpg?v=1757334046&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-07-08_at_4.19.01_PM_443a54ed-b6f7-46fb-8fc3-ba74bf06cc93.jpg?v=1757334046&width=533"
                                         alt="Garlic Powder Hover" class="hover-img">
                                     <span class="card-discount-tag">27% Off</span>
                                 </div>
@@ -28706,9 +28706,9 @@ module.exports = {
                             <a href="https://arshithfresh.com/products/chana-dal-spice-powderpappula-podi-premium"
                                 class="product-card-link">
                                 <div class="product-image-container">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-07-08_at_4.19.01_PM_2_717030b8-c8a8-40a4-bdf0-7e516dec3029.jpg?v=1757334045&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-07-08_at_4.19.01_PM_2_717030b8-c8a8-40a4-bdf0-7e516dec3029.jpg?v=1757334045&width=533"
                                         alt="Chana Dal Powder" class="primary-img">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-06-30_at_8.11.37_PM_c2bafc14-a54c-4d90-ad91-a96218301ccf.jpg?v=1757334045&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-06-30_at_8.11.37_PM_c2bafc14-a54c-4d90-ad91-a96218301ccf.jpg?v=1757334045&width=533"
                                         alt="Chana Dal Hover" class="hover-img">
                                     <span class="card-discount-tag">27% Off</span>
                                 </div>
@@ -28731,9 +28731,9 @@ module.exports = {
                             <a href="https://arshithfresh.com/products/nalla-karam-podi-premium"
                                 class="product-card-link">
                                 <div class="product-image-container">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-07-08_at_4.19.02_PM_c823be1b-85bf-4371-8236-9e09b3af2ef5.jpg?v=1757334045&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-07-08_at_4.19.02_PM_c823be1b-85bf-4371-8236-9e09b3af2ef5.jpg?v=1757334045&width=533"
                                         alt="Nalla Karam" class="primary-img">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-06-30_at_8.11.37_PM_1_0fc408cf-b6bb-4f12-b4ef-41cfefa89e40.jpg?v=1757334045&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-06-30_at_8.11.37_PM_1_0fc408cf-b6bb-4f12-b4ef-41cfefa89e40.jpg?v=1757334045&width=533"
                                         alt="Nalla Karam Hover" class="hover-img">
                                     <span class="card-discount-tag">27% Off</span>
                                 </div>
@@ -28756,9 +28756,9 @@ module.exports = {
                             <a href="https://arshithfresh.com/products/kobbari-karam-podi-premium"
                                 class="product-card-link">
                                 <div class="product-image-container">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-07-08_at_4.19.00_PM_33a6719d-7dd6-4772-add2-2a37e2461d57.jpg?v=1757334044&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-07-08_at_4.19.00_PM_33a6719d-7dd6-4772-add2-2a37e2461d57.jpg?v=1757334044&width=533"
                                         alt="Kobbari Karam" class="primary-img">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-06-30_at_8.11.38_PM_1_c7c68b45-ca76-4b30-b6dc-d9cc22cbfe3a.jpg?v=1757334044&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-06-30_at_8.11.38_PM_1_c7c68b45-ca76-4b30-b6dc-d9cc22cbfe3a.jpg?v=1757334044&width=533"
                                         alt="Kobbari Karam Hover" class="hover-img">
                                     <span class="card-discount-tag">27% Off</span>
                                 </div>
@@ -28781,9 +28781,9 @@ module.exports = {
                             <a href="https://arshithfresh.com/products/karivepaku-karam-podi-premium"
                                 class="product-card-link">
                                 <div class="product-image-container">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-07-08_at_4.19.01_PM_1_445e71a6-1753-4790-b36c-6606bfbd7414.jpg?v=1757334043&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-07-08_at_4.19.01_PM_1_445e71a6-1753-4790-b36c-6606bfbd7414.jpg?v=1757334043&width=533"
                                         alt="Karivepaku Karam" class="primary-img">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-07-04_at_9.44.36_AM_b473978a-44b3-4da2-a619-4863c0fc1e5b.jpg?v=1757334043&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-07-04_at_9.44.36_AM_b473978a-44b3-4da2-a619-4863c0fc1e5b.jpg?v=1757334043&width=533"
                                         alt="Karivepaku Karam Hover" class="hover-img">
                                     <span class="card-discount-tag">27% Off</span>
                                 </div>
@@ -28806,9 +28806,9 @@ module.exports = {
                             <a href="https://arshithfresh.com/products/garam-masala-powder-premium"
                                 class="product-card-link">
                                 <div class="product-image-container">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-07-04_at_9.48.34_AM_09536c73-bd98-4941-8a08-584934747509.jpg?v=1757334043&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-07-04_at_9.48.34_AM_09536c73-bd98-4941-8a08-584934747509.jpg?v=1757334043&width=533"
                                         alt="Garam Masala" class="primary-img">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-07-04_at_9.44.36_AM_b473978a-44b3-4da2-a619-4863c0fc1e5b.jpg?v=1757334043&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-07-04_at_9.44.36_AM_b473978a-44b3-4da2-a619-4863c0fc1e5b.jpg?v=1757334043&width=533"
                                         alt="Garam Masala Hover" class="hover-img">
                                     <span class="card-discount-tag">28% Off</span>
                                 </div>
@@ -28830,9 +28830,9 @@ module.exports = {
                         <div class="product-card">
                             <a href="https://arshithfresh.com/products/pepper-powder-premium" class="product-card-link">
                                 <div class="product-image-container">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-07-05_at_11.04.27_AM_fdc73816-1464-4430-93ba-4bde3c52f6ad.jpg?v=1757334023&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-07-05_at_11.04.27_AM_fdc73816-1464-4430-93ba-4bde3c52f6ad.jpg?v=1757334023&width=533"
                                         alt="Pepper Powder" class="primary-img">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-07-04_at_9.48.34_AM_09536c73-bd98-4941-8a08-584934747509.jpg?v=1757334043&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-07-04_at_9.48.34_AM_09536c73-bd98-4941-8a08-584934747509.jpg?v=1757334043&width=533"
                                         alt="Pepper Powder Hover" class="hover-img">
                                     <span class="card-discount-tag">27% Off</span>
                                 </div>
@@ -28855,9 +28855,9 @@ module.exports = {
                             <a href="https://arshithfresh.com/products/coriander-powder-premium"
                                 class="product-card-link">
                                 <div class="product-image-container">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-07-05_at_11.03.37_AM_ed07471b-5860-4bfe-b13e-b611c8a1ce87.jpg?v=1757334022&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-07-05_at_11.03.37_AM_ed07471b-5860-4bfe-b13e-b611c8a1ce87.jpg?v=1757334022&width=533"
                                         alt="Coriander Powder" class="primary-img">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-07-05_at_11.05.41_AM_3a73c340-26b7-49a8-8fa3-a6ee784d219a.jpg?v=1757333982&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-07-05_at_11.05.41_AM_3a73c340-26b7-49a8-8fa3-a6ee784d219a.jpg?v=1757333982&width=533"
                                         alt="Coriander Powder Hover" class="hover-img">
                                     <span class="card-discount-tag">29% Off</span>
                                 </div>
@@ -28895,9 +28895,9 @@ module.exports = {
                             <a href="https://arshithfresh.com/products/watermelon-seeds-premium"
                                 class="product-card-link">
                                 <div class="product-image-container">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-07-08_at_4.04.03_PM_97f038b4-8e5f-4d8c-92db-2f4ea8bd24c0.jpg?v=1757333989&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-07-08_at_4.04.03_PM_97f038b4-8e5f-4d8c-92db-2f4ea8bd24c0.jpg?v=1757333989&width=533"
                                         alt="Watermelon Seeds" class="primary-img">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-06-30_at_8.19.19_PM_2cfd8d9f-66d1-4abb-bc5d-edf3a4b587e8.jpg?v=1757333989&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-06-30_at_8.19.19_PM_2cfd8d9f-66d1-4abb-bc5d-edf3a4b587e8.jpg?v=1757333989&width=533"
                                         alt="Watermelon Seeds Hover" class="hover-img">
                                     <span class="card-discount-tag">12% Off</span>
                                 </div>
@@ -28919,9 +28919,9 @@ module.exports = {
                         <div class="product-card">
                             <a href="https://arshithfresh.com/products/pumpkin-seeds-premium" class="product-card-link">
                                 <div class="product-image-container">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-07-08_at_4.04.02_PM_75dca399-7bd1-4c42-a209-50572b825bbe.jpg?v=1757334052&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-07-08_at_4.04.02_PM_75dca399-7bd1-4c42-a209-50572b825bbe.jpg?v=1757334052&width=533"
                                         alt="Pumpkin Seeds" class="primary-img">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-06-30_at_7.43.35_PM_19a86791-951c-43dc-a1d8-a901b4762faf.jpg?v=1757334053&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-06-30_at_7.43.35_PM_19a86791-951c-43dc-a1d8-a901b4762faf.jpg?v=1757334053&width=533"
                                         alt="Pumpkin Seeds Hover" class="hover-img">
                                     <span class="card-discount-tag">14% Off</span>
                                 </div>
@@ -28944,9 +28944,9 @@ module.exports = {
                             <a href="https://arshithfresh.com/products/sunflower-seeds-premium"
                                 class="product-card-link">
                                 <div class="product-image-container">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-07-08_at_4.04.03_PM_1_6a153ddd-2028-47c7-8388-3b9f9c660240.jpg?v=1757333989&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-07-08_at_4.04.03_PM_1_6a153ddd-2028-47c7-8388-3b9f9c660240.jpg?v=1757333989&width=533"
                                         alt="Sunflower Seeds" class="primary-img">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-06-30_at_7.43.36_PM_65a6bce3-18ec-4f09-a579-a554b2d9e336.jpg?v=1757333989&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-06-30_at_7.43.36_PM_65a6bce3-18ec-4f09-a579-a554b2d9e336.jpg?v=1757333989&width=533"
                                         alt="Sunflower Seeds Hover" class="hover-img">
                                     <span class="card-discount-tag">21% Off</span>
                                 </div>
@@ -28968,9 +28968,9 @@ module.exports = {
                         <div class="product-card">
                             <a href="https://arshithfresh.com/products/flax-seeds-premium" class="product-card-link">
                                 <div class="product-image-container">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-07-08_at_4.04.02_PM_2_ce2dcb8e-81dc-46c5-b343-1a14dff25208.jpg?v=1757334053&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-07-08_at_4.04.02_PM_2_ce2dcb8e-81dc-46c5-b343-1a14dff25208.jpg?v=1757334053&width=533"
                                         alt="Flax Seeds" class="primary-img">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-07-02_at_2.00.16_PM_2_4f6b641a-6fe0-4060-a49a-3fbd827f8271.jpg?v=1757334053&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-07-02_at_2.00.16_PM_2_4f6b641a-6fe0-4060-a49a-3fbd827f8271.jpg?v=1757334053&width=533"
                                         alt="Flax Seeds Hover" class="hover-img">
                                     <span class="card-discount-tag">25% Off</span>
                                 </div>
@@ -28993,7 +28993,7 @@ module.exports = {
                             <a href="https://arshithfresh.com/products/chia-seeds-premium" class="product-card-link"
                                 target="_blank">
                                 <div class="product-image-container">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-07-04_at_9.43.11_AM_88a83afd-35c7-4178-ad6f-170645b5294e.jpg?v=1757333987&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-07-04_at_9.43.11_AM_88a83afd-35c7-4178-ad6f-170645b5294e.jpg?v=1757333987&width=533"
                                         alt="Chia Seeds" class="primary-img">
                                     <span class="card-discount-tag">17% Off</span>
                                 </div>
@@ -29016,7 +29016,7 @@ module.exports = {
                             <a href="https://arshithfresh.com/products/sabja-seeds-premium" class="product-card-link"
                                 target="_blank">
                                 <div class="product-image-container">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-07-02_at_2.00.11_PM_1_e1ca0568-b1c3-4aac-87b5-07791bc44e34.jpg?v=1757334000&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-07-02_at_2.00.11_PM_1_e1ca0568-b1c3-4aac-87b5-07791bc44e34.jpg?v=1757334000&width=533"
                                         alt="Sabja Seeds" class="primary-img">
                                     <span class="card-discount-tag">20% Off</span>
                                 </div>
@@ -29039,7 +29039,7 @@ module.exports = {
                             <a href="https://arshithfresh.com/products/poppy-seeds-premium" class="product-card-link"
                                 target="_blank">
                                 <div class="product-image-container">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-05-22_at_2.34.06_PM_a31b633d-23d9-4314-9b5b-8dcdd932dab6.jpg?v=1757334024&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-05-22_at_2.34.06_PM_a31b633d-23d9-4314-9b5b-8dcdd932dab6.jpg?v=1757334024&width=533"
                                         alt="Poppy Seeds" class="primary-img">
                                     <span class="card-discount-tag">23% Off</span>
                                 </div>
@@ -29062,7 +29062,7 @@ module.exports = {
                             <a href="https://arshithfresh.com/products/sesame-seeds-premium" class="product-card-link"
                                 target="_blank">
                                 <div class="product-image-container">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-07-04_at_9.43.00_AM_-_Copy_ac6c63f6-9657-46dd-a729-82f10320c447.jpg?v=1757333988&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-07-04_at_9.43.00_AM_-_Copy_ac6c63f6-9657-46dd-a729-82f10320c447.jpg?v=1757333988&width=533"
                                         alt="Sesame Seeds" class="primary-img">
                                     <span class="card-discount-tag">22% Off</span>
                                 </div>
@@ -29099,9 +29099,9 @@ module.exports = {
                         <div class="product-card">
                             <a href="https://arshithfresh.com/products/cloves-premium" class="product-card-link">
                                 <div class="product-image-container">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-05-12_at_12.33.17_PM_e7455739-c811-4135-8760-da32b445f0f0.jpg?v=1757333998&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-05-12_at_12.33.17_PM_e7455739-c811-4135-8760-da32b445f0f0.jpg?v=1757333998&width=533"
                                         alt="Cloves" class="primary-img">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-07-01_at_7.59.09_PM_d713ec77-5974-4551-9346-b1e592b0a512.jpg?v=1757333998&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-07-01_at_7.59.09_PM_d713ec77-5974-4551-9346-b1e592b0a512.jpg?v=1757333998&width=533"
                                         alt="Cloves Hover" class="hover-img">
                                     <span class="card-discount-tag">22% Off</span>
                                 </div>
@@ -29123,9 +29123,9 @@ module.exports = {
                         <div class="product-card">
                             <a href="https://arshithfresh.com/products/cardamom-premium" class="product-card-link">
                                 <div class="product-image-container">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-05-12_at_12.41.25_PM_dd385152-2aab-4061-9f20-60f6b9fec186.jpg?v=1757333997&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-05-12_at_12.41.25_PM_dd385152-2aab-4061-9f20-60f6b9fec186.jpg?v=1757333997&width=533"
                                         alt="Cardamom" class="primary-img">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-07-01_at_7.59.10_PM_c6567ba5-d81e-4691-a4be-331305e3f75c.jpg?v=1757333998&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-07-01_at_7.59.10_PM_c6567ba5-d81e-4691-a4be-331305e3f75c.jpg?v=1757333998&width=533"
                                         alt="Cardamom Hover" class="hover-img">
                                     <span class="card-discount-tag">21% Off</span>
                                 </div>
@@ -29147,9 +29147,9 @@ module.exports = {
                         <div class="product-card">
                             <a href="https://arshithfresh.com/products/mix-masala-premium" class="product-card-link">
                                 <div class="product-image-container">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/biriyani_masala_mix_0ea70b9d-998e-45e0-88e4-dd70361ffe2e.jpg?v=1757333993&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/biriyani_masala_mix_0ea70b9d-998e-45e0-88e4-dd70361ffe2e.jpg?v=1757333993&width=533"
                                         alt="Mix Masala" class="primary-img">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-07-01_at_10.16.09_PM_758e91ab-7cdb-4df9-823b-34809ffe2742.jpg?v=1757333993&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-07-01_at_10.16.09_PM_758e91ab-7cdb-4df9-823b-34809ffe2742.jpg?v=1757333993&width=533"
                                         alt="Mix Masala Hover" class="hover-img">
                                     <span class="card-discount-tag">25% Off</span>
                                 </div>
@@ -29171,9 +29171,9 @@ module.exports = {
                         <div class="product-card">
                             <a href="https://arshithfresh.com/products/cinnamon-premium" class="product-card-link">
                                 <div class="product-image-container">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/cinnamon_bd2c52bb-d2df-4d09-baca-93aab2223e68.jpg?v=1757333965&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/cinnamon_bd2c52bb-d2df-4d09-baca-93aab2223e68.jpg?v=1757333965&width=533"
                                         alt="Cinnamon" class="primary-img">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-07-12_at_11.48.48_AM.jpg?v=1757333965&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-07-12_at_11.48.48_AM.jpg?v=1757333965&width=533"
                                         alt="Cinnamon Hover" class="hover-img">
                                     <span class="card-discount-tag">22% Off</span>
                                 </div>
@@ -29196,7 +29196,7 @@ module.exports = {
                             <a href="https://arshithfresh.com/products/star-anise-premium" class="product-card-link"
                                 target="_blank">
                                 <div class="product-image-container">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-07-01_at_7.59.12_PM_2_a7222bbd-81fe-4bd2-8e22-c0f5fb85fadd.jpg?v=1757334019&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-07-01_at_7.59.12_PM_2_a7222bbd-81fe-4bd2-8e22-c0f5fb85fadd.jpg?v=1757334019&width=533"
                                         alt="Star Anise" class="primary-img">
                                     <span class="card-discount-tag">20% Off</span>
                                 </div>
@@ -29219,7 +29219,7 @@ module.exports = {
                             <a href="https://arshithfresh.com/products/coriander-premium" class="product-card-link"
                                 target="_blank">
                                 <div class="product-image-container">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-07-01_at_8.01.42_PM_54cc4ece-2494-45d1-b46e-b7eab45e48bd.jpg?v=1757333995&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-07-01_at_8.01.42_PM_54cc4ece-2494-45d1-b46e-b7eab45e48bd.jpg?v=1757333995&width=533"
                                         alt="Coriander" class="primary-img">
                                     <span class="card-discount-tag">23% Off</span>
                                 </div>
@@ -29242,7 +29242,7 @@ module.exports = {
                             <a href="https://arshithfresh.com/products/cumin-premium" class="product-card-link"
                                 target="_blank">
                                 <div class="product-image-container">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-07-01_at_7.59.10_PM_2_603e588c-f12a-4d13-9d05-e88fdbaf0106.jpg?v=1757333994&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-07-01_at_7.59.10_PM_2_603e588c-f12a-4d13-9d05-e88fdbaf0106.jpg?v=1757333994&width=533"
                                         alt="Cumin" class="primary-img">
                                     <span class="card-discount-tag">25% Off</span>
                                 </div>
@@ -29265,7 +29265,7 @@ module.exports = {
                             <a href="https://arshithfresh.com/products/black-pepper-premium" class="product-card-link"
                                 target="_blank">
                                 <div class="product-image-container">
-                                    <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-07-01_at_7.59.11_PM_1_30a1bf5b-4da7-42a6-92d6-9f209d0d91c0.jpg?v=1757333996&width=533"
+                                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-07-01_at_7.59.11_PM_1_30a1bf5b-4da7-42a6-92d6-9f209d0d91c0.jpg?v=1757333996&width=533"
                                         alt="Black Pepper" class="primary-img">
                                     <span class="card-discount-tag">26% Off</span>
                                 </div>
@@ -29687,7 +29687,7 @@ module.exports = {
 
             <div class="header-logo">
                 <a href="../index.html">
-                    <img src="https://arshithfresh.com/cdn/shop/files/Arshithlogo111.jpg?v=1755685028&width=600"
+                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/Arshithlogo111.jpg?v=1755685028&width=600"
                         alt="Arshith Fresh Logo" class="logo-img">
                 </a>
             </div>
@@ -30070,7 +30070,7 @@ module.exports = {
 
             <div class="header-logo">
                 <a href="../../index.html">
-                    <img src="https://arshithfresh.com/cdn/shop/files/Arshithlogo111.jpg?v=1755685028&width=600"
+                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/Arshithlogo111.jpg?v=1755685028&width=600"
                         alt="Arshith Fresh Logo" class="logo-img">
                 </a>
             </div>
@@ -30506,7 +30506,7 @@ module.exports = {
 
             <div class="header-logo">
                 <a href="../../index.html">
-                    <img src="https://arshithfresh.com/cdn/shop/files/Arshithlogo111.jpg?v=1755685028&width=600"
+                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/Arshithlogo111.jpg?v=1755685028&width=600"
                         alt="Arshith Fresh Logo" class="logo-img">
                 </a>
             </div>
@@ -30877,7 +30877,7 @@ module.exports = {
 
             <div class="header-logo">
                 <a href="../../index.html">
-                    <img src="https://arshithfresh.com/cdn/shop/files/Arshithlogo111.jpg?v=1755685028&width=600"
+                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/Arshithlogo111.jpg?v=1755685028&width=600"
                         alt="Arshith Fresh Logo" class="logo-img">
                 </a>
             </div>
@@ -31336,7 +31336,7 @@ module.exports = {
 
             <div class="header-logo">
                 <a href="../../index.html">
-                    <img src="https://arshithfresh.com/cdn/shop/files/Arshithlogo111.jpg?v=1755685028&width=600"
+                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/Arshithlogo111.jpg?v=1755685028&width=600"
                         alt="Arshith Fresh Logo" class="logo-img">
                 </a>
             </div>
@@ -31767,7 +31767,7 @@ module.exports = {
         <div class="header-container">
             <div class="header-logo">
                 <a href="../../index.html">
-                    <img src="https://arshithfresh.com/cdn/shop/files/Arshithlogo111.jpg?v=1755685028&width=600"
+                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/Arshithlogo111.jpg?v=1755685028&width=600"
                         alt="Arshith Fresh Logo" class="logo-img">
                 </a>
             </div>
@@ -31979,7 +31979,7 @@ module.exports = {
 
             <div class="header-logo">
                 <a href="../index.html">
-                    <img src="https://arshithfresh.com/cdn/shop/files/Arshithlogo111.jpg?v=1755685028&width=600" alt="Arshith Fresh Logo" class="logo-img">
+                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/Arshithlogo111.jpg?v=1755685028&width=600" alt="Arshith Fresh Logo" class="logo-img">
                 </a>
             </div>
 
@@ -32278,7 +32278,7 @@ module.exports = {
 
             <div class="header-logo">
                 <a href="../index.html">
-                    <img src="https://arshithfresh.com/cdn/shop/files/Arshithlogo111.jpg?v=1755685028&width=600"
+                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/Arshithlogo111.jpg?v=1755685028&width=600"
                         alt="Arshith Fresh Logo" class="logo-img">
                 </a>
             </div>
@@ -32518,7 +32518,7 @@ module.exports = {
                             return `
                                 <div class="cart-row-item">
                                     <div class="cart-col-product">
-                                        <img src="${item.image || 'https://arshithfresh.com/cdn/shop/files/4_6d56df69-1c9f-4f05-b1a7-ca631fc7b9aa.png'}" alt="${item.title}" class="cart-product-img">
+                                        <img src="${item.image || 'https://cdn.shopify.com/s/files/1/0858/0772/6869/files/4_6d56df69-1c9f-4f05-b1a7-ca631fc7b9aa.png'}" alt="${item.title}" class="cart-product-img">
                                         <div class="cart-product-details">
                                             <h3 class="cart-item-title">${item.title}</h3>
                                             <div class="cart-item-price">Rs. ${item.price.toFixed(2)}</div>
@@ -32626,7 +32626,7 @@ module.exports = {
 
             <div class="header-logo">
                 <a href="../../index.html">
-                    <img src="https://arshithfresh.com/cdn/shop/files/Arshithlogo111.jpg?v=1755685028&width=600"
+                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/Arshithlogo111.jpg?v=1755685028&width=600"
                         alt="Arshith Fresh Logo" class="logo-img">
                 </a>
             </div>
@@ -32687,35 +32687,35 @@ module.exports = {
         <div class="collections-top-nav-bar">
             <div class="category-circle-row">
                 <a href="../collections.html?category=all" class="category-circle-item">
-                    <div class="circle-img-wrap"><img src="https://arshithfresh.com/cdn/shop/collections/groceries_200x200_crop_center.jpg?v=1746965740" alt="All Products"></div>
+                    <div class="circle-img-wrap"><img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/groceries_200x200_crop_center.jpg?v=1746965740" alt="All Products"></div>
                     <span class="circle-title">All Products</span>
                 </a>
                 <a href="oils-natural-extracts.html" class="category-circle-item">
-                    <div class="circle-img-wrap"><img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM_1.jpg?v=1757334051&width=400" alt="Oils"></div>
+                    <div class="circle-img-wrap"><img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM_1.jpg?v=1757334051&width=400" alt="Oils"></div>
                     <span class="circle-title">Oils</span>
                 </a>
                 <a href="dry-fruits-nuts.html" class="category-circle-item">
-                    <div class="circle-img-wrap"><img src="https://arshithfresh.com/cdn/shop/collections/seeds_dry_fruits_nuts_webp_200x200_crop_center.jpg?v=1746963459" alt="Dry Fruits & Nuts"></div>
+                    <div class="circle-img-wrap"><img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/seeds_dry_fruits_nuts_webp_200x200_crop_center.jpg?v=1746963459" alt="Dry Fruits & Nuts"></div>
                     <span class="circle-title">Dry Fruits &amp; Nuts</span>
                 </a>
                 <a href="dry-seeds.html" class="category-circle-item">
-                    <div class="circle-img-wrap"><img src="https://arshithfresh.com/cdn/shop/collections/dry_seeds_200x200_crop_center.jpg?v=1746963515" alt="Seeds"></div>
+                    <div class="circle-img-wrap"><img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/dry_seeds_200x200_crop_center.jpg?v=1746963515" alt="Seeds"></div>
                     <span class="circle-title">Seeds</span>
                 </a>
                 <a href="ghee-and-honey.html" class="category-circle-item">
-                    <div class="circle-img-wrap"><img src="https://arshithfresh.com/cdn/shop/collections/ghee_1_200x200_crop_center.jpg?v=1746964905" alt="Ghee & Honey"></div>
+                    <div class="circle-img-wrap"><img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/ghee_1_200x200_crop_center.jpg?v=1746964905" alt="Ghee & Honey"></div>
                     <span class="circle-title">Ghee &amp; Honey</span>
                 </a>
                 <a href="cooking-essentials.html" class="category-circle-item active">
-                    <div class="circle-img-wrap"><img src="https://arshithfresh.com/cdn/shop/collections/groceries_200x200_crop_center.jpg?v=1746965740" alt="Cooking Essentials"></div>
+                    <div class="circle-img-wrap"><img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/groceries_200x200_crop_center.jpg?v=1746965740" alt="Cooking Essentials"></div>
                     <span class="circle-title">Cooking Essentials</span>
                 </a>
                 <a href="spices.html" class="category-circle-item">
-                    <div class="circle-img-wrap"><img src="https://arshithfresh.com/cdn/shop/collections/spice_200x200_crop_center.png?v=1746963495" alt="Spices"></div>
+                    <div class="circle-img-wrap"><img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/spice_200x200_crop_center.png?v=1746963495" alt="Spices"></div>
                     <span class="circle-title">Spices</span>
                 </a>
                 <a href="spice-powders-podulu.html" class="category-circle-item">
-                    <div class="circle-img-wrap"><img src="https://arshithfresh.com/cdn/shop/collections/powders_200x200_crop_center.jpg?v=1743477019" alt="Spice Powders"></div>
+                    <div class="circle-img-wrap"><img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/powders_200x200_crop_center.jpg?v=1743477019" alt="Spice Powders"></div>
                     <span class="circle-title">Spice Powders</span>
                 </a>
             </div>
@@ -32929,7 +32929,7 @@ module.exports = {
 
             <div class="header-logo">
                 <a href="../../index.html">
-                    <img src="https://arshithfresh.com/cdn/shop/files/Arshithlogo111.jpg?v=1755685028&width=600"
+                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/Arshithlogo111.jpg?v=1755685028&width=600"
                         alt="Arshith Fresh Logo" class="logo-img">
                 </a>
             </div>
@@ -32990,35 +32990,35 @@ module.exports = {
         <div class="collections-top-nav-bar">
             <div class="category-circle-row">
                 <a href="../collections.html?category=all" class="category-circle-item">
-                    <div class="circle-img-wrap"><img src="https://arshithfresh.com/cdn/shop/collections/groceries_200x200_crop_center.jpg?v=1746965740" alt="All Products"></div>
+                    <div class="circle-img-wrap"><img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/groceries_200x200_crop_center.jpg?v=1746965740" alt="All Products"></div>
                     <span class="circle-title">All Products</span>
                 </a>
                 <a href="oils-natural-extracts.html" class="category-circle-item">
-                    <div class="circle-img-wrap"><img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM_1.jpg?v=1757334051&width=400" alt="Oils"></div>
+                    <div class="circle-img-wrap"><img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM_1.jpg?v=1757334051&width=400" alt="Oils"></div>
                     <span class="circle-title">Oils</span>
                 </a>
                 <a href="dry-fruits-nuts.html" class="category-circle-item active">
-                    <div class="circle-img-wrap"><img src="https://arshithfresh.com/cdn/shop/collections/seeds_dry_fruits_nuts_webp_200x200_crop_center.jpg?v=1746963459" alt="Dry Fruits & Nuts"></div>
+                    <div class="circle-img-wrap"><img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/seeds_dry_fruits_nuts_webp_200x200_crop_center.jpg?v=1746963459" alt="Dry Fruits & Nuts"></div>
                     <span class="circle-title">Dry Fruits &amp; Nuts</span>
                 </a>
                 <a href="dry-seeds.html" class="category-circle-item">
-                    <div class="circle-img-wrap"><img src="https://arshithfresh.com/cdn/shop/collections/dry_seeds_200x200_crop_center.jpg?v=1746963515" alt="Seeds"></div>
+                    <div class="circle-img-wrap"><img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/dry_seeds_200x200_crop_center.jpg?v=1746963515" alt="Seeds"></div>
                     <span class="circle-title">Seeds</span>
                 </a>
                 <a href="ghee-and-honey.html" class="category-circle-item">
-                    <div class="circle-img-wrap"><img src="https://arshithfresh.com/cdn/shop/collections/ghee_1_200x200_crop_center.jpg?v=1746964905" alt="Ghee & Honey"></div>
+                    <div class="circle-img-wrap"><img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/ghee_1_200x200_crop_center.jpg?v=1746964905" alt="Ghee & Honey"></div>
                     <span class="circle-title">Ghee &amp; Honey</span>
                 </a>
                 <a href="cooking-essentials.html" class="category-circle-item">
-                    <div class="circle-img-wrap"><img src="https://arshithfresh.com/cdn/shop/collections/groceries_200x200_crop_center.jpg?v=1746965740" alt="Cooking Essentials"></div>
+                    <div class="circle-img-wrap"><img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/groceries_200x200_crop_center.jpg?v=1746965740" alt="Cooking Essentials"></div>
                     <span class="circle-title">Cooking Essentials</span>
                 </a>
                 <a href="spices.html" class="category-circle-item">
-                    <div class="circle-img-wrap"><img src="https://arshithfresh.com/cdn/shop/collections/spice_200x200_crop_center.png?v=1746963495" alt="Spices"></div>
+                    <div class="circle-img-wrap"><img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/spice_200x200_crop_center.png?v=1746963495" alt="Spices"></div>
                     <span class="circle-title">Spices</span>
                 </a>
                 <a href="spice-powders-podulu.html" class="category-circle-item">
-                    <div class="circle-img-wrap"><img src="https://arshithfresh.com/cdn/shop/collections/powders_200x200_crop_center.jpg?v=1743477019" alt="Spice Powders"></div>
+                    <div class="circle-img-wrap"><img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/powders_200x200_crop_center.jpg?v=1743477019" alt="Spice Powders"></div>
                     <span class="circle-title">Spice Powders</span>
                 </a>
             </div>
@@ -33251,7 +33251,7 @@ module.exports = {
 
             <div class="header-logo">
                 <a href="../../index.html">
-                    <img src="https://arshithfresh.com/cdn/shop/files/Arshithlogo111.jpg?v=1755685028&width=600"
+                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/Arshithlogo111.jpg?v=1755685028&width=600"
                         alt="Arshith Fresh Logo" class="logo-img">
                 </a>
             </div>
@@ -33312,35 +33312,35 @@ module.exports = {
         <div class="collections-top-nav-bar">
             <div class="category-circle-row">
                 <a href="../collections.html?category=all" class="category-circle-item">
-                    <div class="circle-img-wrap"><img src="https://arshithfresh.com/cdn/shop/collections/groceries_200x200_crop_center.jpg?v=1746965740" alt="All Products"></div>
+                    <div class="circle-img-wrap"><img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/groceries_200x200_crop_center.jpg?v=1746965740" alt="All Products"></div>
                     <span class="circle-title">All Products</span>
                 </a>
                 <a href="oils-natural-extracts.html" class="category-circle-item">
-                    <div class="circle-img-wrap"><img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM_1.jpg?v=1757334051&width=400" alt="Oils"></div>
+                    <div class="circle-img-wrap"><img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM_1.jpg?v=1757334051&width=400" alt="Oils"></div>
                     <span class="circle-title">Oils</span>
                 </a>
                 <a href="dry-fruits-nuts.html" class="category-circle-item">
-                    <div class="circle-img-wrap"><img src="https://arshithfresh.com/cdn/shop/collections/seeds_dry_fruits_nuts_webp_200x200_crop_center.jpg?v=1746963459" alt="Dry Fruits & Nuts"></div>
+                    <div class="circle-img-wrap"><img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/seeds_dry_fruits_nuts_webp_200x200_crop_center.jpg?v=1746963459" alt="Dry Fruits & Nuts"></div>
                     <span class="circle-title">Dry Fruits &amp; Nuts</span>
                 </a>
                 <a href="dry-seeds.html" class="category-circle-item active">
-                    <div class="circle-img-wrap"><img src="https://arshithfresh.com/cdn/shop/collections/dry_seeds_200x200_crop_center.jpg?v=1746963515" alt="Seeds"></div>
+                    <div class="circle-img-wrap"><img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/dry_seeds_200x200_crop_center.jpg?v=1746963515" alt="Seeds"></div>
                     <span class="circle-title">Seeds</span>
                 </a>
                 <a href="ghee-and-honey.html" class="category-circle-item">
-                    <div class="circle-img-wrap"><img src="https://arshithfresh.com/cdn/shop/collections/ghee_1_200x200_crop_center.jpg?v=1746964905" alt="Ghee & Honey"></div>
+                    <div class="circle-img-wrap"><img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/ghee_1_200x200_crop_center.jpg?v=1746964905" alt="Ghee & Honey"></div>
                     <span class="circle-title">Ghee &amp; Honey</span>
                 </a>
                 <a href="cooking-essentials.html" class="category-circle-item">
-                    <div class="circle-img-wrap"><img src="https://arshithfresh.com/cdn/shop/collections/groceries_200x200_crop_center.jpg?v=1746965740" alt="Cooking Essentials"></div>
+                    <div class="circle-img-wrap"><img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/groceries_200x200_crop_center.jpg?v=1746965740" alt="Cooking Essentials"></div>
                     <span class="circle-title">Cooking Essentials</span>
                 </a>
                 <a href="spices.html" class="category-circle-item">
-                    <div class="circle-img-wrap"><img src="https://arshithfresh.com/cdn/shop/collections/spice_200x200_crop_center.png?v=1746963495" alt="Spices"></div>
+                    <div class="circle-img-wrap"><img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/spice_200x200_crop_center.png?v=1746963495" alt="Spices"></div>
                     <span class="circle-title">Spices</span>
                 </a>
                 <a href="spice-powders-podulu.html" class="category-circle-item">
-                    <div class="circle-img-wrap"><img src="https://arshithfresh.com/cdn/shop/collections/powders_200x200_crop_center.jpg?v=1743477019" alt="Spice Powders"></div>
+                    <div class="circle-img-wrap"><img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/powders_200x200_crop_center.jpg?v=1743477019" alt="Spice Powders"></div>
                     <span class="circle-title">Spice Powders</span>
                 </a>
             </div>
@@ -33554,7 +33554,7 @@ module.exports = {
 
             <div class="header-logo">
                 <a href="../../index.html">
-                    <img src="https://arshithfresh.com/cdn/shop/files/Arshithlogo111.jpg?v=1755685028&width=600"
+                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/Arshithlogo111.jpg?v=1755685028&width=600"
                         alt="Arshith Fresh Logo" class="logo-img">
                 </a>
             </div>
@@ -33615,35 +33615,35 @@ module.exports = {
         <div class="collections-top-nav-bar">
             <div class="category-circle-row">
                 <a href="../collections.html?category=all" class="category-circle-item">
-                    <div class="circle-img-wrap"><img src="https://arshithfresh.com/cdn/shop/collections/groceries_200x200_crop_center.jpg?v=1746965740" alt="All Products"></div>
+                    <div class="circle-img-wrap"><img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/groceries_200x200_crop_center.jpg?v=1746965740" alt="All Products"></div>
                     <span class="circle-title">All Products</span>
                 </a>
                 <a href="oils-natural-extracts.html" class="category-circle-item">
-                    <div class="circle-img-wrap"><img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM_1.jpg?v=1757334051&width=400" alt="Oils"></div>
+                    <div class="circle-img-wrap"><img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM_1.jpg?v=1757334051&width=400" alt="Oils"></div>
                     <span class="circle-title">Oils</span>
                 </a>
                 <a href="dry-fruits-nuts.html" class="category-circle-item">
-                    <div class="circle-img-wrap"><img src="https://arshithfresh.com/cdn/shop/collections/seeds_dry_fruits_nuts_webp_200x200_crop_center.jpg?v=1746963459" alt="Dry Fruits & Nuts"></div>
+                    <div class="circle-img-wrap"><img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/seeds_dry_fruits_nuts_webp_200x200_crop_center.jpg?v=1746963459" alt="Dry Fruits & Nuts"></div>
                     <span class="circle-title">Dry Fruits &amp; Nuts</span>
                 </a>
                 <a href="dry-seeds.html" class="category-circle-item">
-                    <div class="circle-img-wrap"><img src="https://arshithfresh.com/cdn/shop/collections/dry_seeds_200x200_crop_center.jpg?v=1746963515" alt="Seeds"></div>
+                    <div class="circle-img-wrap"><img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/dry_seeds_200x200_crop_center.jpg?v=1746963515" alt="Seeds"></div>
                     <span class="circle-title">Seeds</span>
                 </a>
                 <a href="ghee-and-honey.html" class="category-circle-item active">
-                    <div class="circle-img-wrap"><img src="https://arshithfresh.com/cdn/shop/collections/ghee_1_200x200_crop_center.jpg?v=1746964905" alt="Ghee & Honey"></div>
+                    <div class="circle-img-wrap"><img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/ghee_1_200x200_crop_center.jpg?v=1746964905" alt="Ghee & Honey"></div>
                     <span class="circle-title">Ghee &amp; Honey</span>
                 </a>
                 <a href="cooking-essentials.html" class="category-circle-item">
-                    <div class="circle-img-wrap"><img src="https://arshithfresh.com/cdn/shop/collections/groceries_200x200_crop_center.jpg?v=1746965740" alt="Cooking Essentials"></div>
+                    <div class="circle-img-wrap"><img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/groceries_200x200_crop_center.jpg?v=1746965740" alt="Cooking Essentials"></div>
                     <span class="circle-title">Cooking Essentials</span>
                 </a>
                 <a href="spices.html" class="category-circle-item">
-                    <div class="circle-img-wrap"><img src="https://arshithfresh.com/cdn/shop/collections/spice_200x200_crop_center.png?v=1746963495" alt="Spices"></div>
+                    <div class="circle-img-wrap"><img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/spice_200x200_crop_center.png?v=1746963495" alt="Spices"></div>
                     <span class="circle-title">Spices</span>
                 </a>
                 <a href="spice-powders-podulu.html" class="category-circle-item">
-                    <div class="circle-img-wrap"><img src="https://arshithfresh.com/cdn/shop/collections/powders_200x200_crop_center.jpg?v=1743477019" alt="Spice Powders"></div>
+                    <div class="circle-img-wrap"><img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/powders_200x200_crop_center.jpg?v=1743477019" alt="Spice Powders"></div>
                     <span class="circle-title">Spice Powders</span>
                 </a>
             </div>
@@ -33858,7 +33858,7 @@ module.exports = {
 
             <div class="header-logo">
                 <a href="../../index.html">
-                    <img src="https://arshithfresh.com/cdn/shop/files/Arshithlogo111.jpg?v=1755685028&width=600"
+                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/Arshithlogo111.jpg?v=1755685028&width=600"
                         alt="Arshith Fresh Logo" class="logo-img">
                 </a>
             </div>
@@ -33920,49 +33920,49 @@ module.exports = {
             <div class="category-circle-row">
                 <a href="../collections.html?category=all" class="category-circle-item">
                     <div class="circle-img-wrap">
-                        <img src="https://arshithfresh.com/cdn/shop/collections/groceries_200x200_crop_center.jpg?v=1746965740" alt="All Products">
+                        <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/groceries_200x200_crop_center.jpg?v=1746965740" alt="All Products">
                     </div>
                     <span class="circle-title">All Products</span>
                 </a>
                 <a href="oils-natural-extracts.html" class="category-circle-item active">
                     <div class="circle-img-wrap">
-                        <img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM_1.jpg?v=1757334051&width=400" alt="Oils">
+                        <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM_1.jpg?v=1757334051&width=400" alt="Oils">
                     </div>
                     <span class="circle-title">Oils</span>
                 </a>
                 <a href="dry-fruits-nuts.html" class="category-circle-item">
                     <div class="circle-img-wrap">
-                        <img src="https://arshithfresh.com/cdn/shop/collections/seeds_dry_fruits_nuts_webp_200x200_crop_center.jpg?v=1746963459" alt="Dry Fruits & Nuts">
+                        <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/seeds_dry_fruits_nuts_webp_200x200_crop_center.jpg?v=1746963459" alt="Dry Fruits & Nuts">
                     </div>
                     <span class="circle-title">Dry Fruits &amp; Nuts</span>
                 </a>
                 <a href="dry-seeds.html" class="category-circle-item">
                     <div class="circle-img-wrap">
-                        <img src="https://arshithfresh.com/cdn/shop/collections/dry_seeds_200x200_crop_center.jpg?v=1746963515" alt="Seeds">
+                        <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/dry_seeds_200x200_crop_center.jpg?v=1746963515" alt="Seeds">
                     </div>
                     <span class="circle-title">Seeds</span>
                 </a>
                 <a href="ghee-and-honey.html" class="category-circle-item">
                     <div class="circle-img-wrap">
-                        <img src="https://arshithfresh.com/cdn/shop/collections/ghee_1_200x200_crop_center.jpg?v=1746964905" alt="Ghee & Honey">
+                        <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/ghee_1_200x200_crop_center.jpg?v=1746964905" alt="Ghee & Honey">
                     </div>
                     <span class="circle-title">Ghee &amp; Honey</span>
                 </a>
                 <a href="cooking-essentials.html" class="category-circle-item">
                     <div class="circle-img-wrap">
-                        <img src="https://arshithfresh.com/cdn/shop/collections/groceries_200x200_crop_center.jpg?v=1746965740" alt="Cooking Essentials">
+                        <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/groceries_200x200_crop_center.jpg?v=1746965740" alt="Cooking Essentials">
                     </div>
                     <span class="circle-title">Cooking Essentials</span>
                 </a>
                 <a href="spices.html" class="category-circle-item">
                     <div class="circle-img-wrap">
-                        <img src="https://arshithfresh.com/cdn/shop/collections/spice_200x200_crop_center.png?v=1746963495" alt="Spices">
+                        <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/spice_200x200_crop_center.png?v=1746963495" alt="Spices">
                     </div>
                     <span class="circle-title">Spices</span>
                 </a>
                 <a href="spice-powders-podulu.html" class="category-circle-item">
                     <div class="circle-img-wrap">
-                        <img src="https://arshithfresh.com/cdn/shop/collections/powders_200x200_crop_center.jpg?v=1743477019" alt="Spice Powders">
+                        <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/powders_200x200_crop_center.jpg?v=1743477019" alt="Spice Powders">
                     </div>
                     <span class="circle-title">Spice Powders</span>
                 </a>
@@ -34214,7 +34214,7 @@ module.exports = {
 
             <div class="header-logo">
                 <a href="../../index.html">
-                    <img src="https://arshithfresh.com/cdn/shop/files/Arshithlogo111.jpg?v=1755685028&width=600"
+                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/Arshithlogo111.jpg?v=1755685028&width=600"
                         alt="Arshith Fresh Logo" class="logo-img">
                 </a>
             </div>
@@ -34275,35 +34275,35 @@ module.exports = {
         <div class="collections-top-nav-bar">
             <div class="category-circle-row">
                 <a href="../collections.html?category=all" class="category-circle-item">
-                    <div class="circle-img-wrap"><img src="https://arshithfresh.com/cdn/shop/collections/groceries_200x200_crop_center.jpg?v=1746965740" alt="All Products"></div>
+                    <div class="circle-img-wrap"><img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/groceries_200x200_crop_center.jpg?v=1746965740" alt="All Products"></div>
                     <span class="circle-title">All Products</span>
                 </a>
                 <a href="oils-natural-extracts.html" class="category-circle-item">
-                    <div class="circle-img-wrap"><img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM_1.jpg?v=1757334051&width=400" alt="Oils"></div>
+                    <div class="circle-img-wrap"><img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM_1.jpg?v=1757334051&width=400" alt="Oils"></div>
                     <span class="circle-title">Oils</span>
                 </a>
                 <a href="dry-fruits-nuts.html" class="category-circle-item">
-                    <div class="circle-img-wrap"><img src="https://arshithfresh.com/cdn/shop/collections/seeds_dry_fruits_nuts_webp_200x200_crop_center.jpg?v=1746963459" alt="Dry Fruits & Nuts"></div>
+                    <div class="circle-img-wrap"><img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/seeds_dry_fruits_nuts_webp_200x200_crop_center.jpg?v=1746963459" alt="Dry Fruits & Nuts"></div>
                     <span class="circle-title">Dry Fruits &amp; Nuts</span>
                 </a>
                 <a href="dry-seeds.html" class="category-circle-item">
-                    <div class="circle-img-wrap"><img src="https://arshithfresh.com/cdn/shop/collections/dry_seeds_200x200_crop_center.jpg?v=1746963515" alt="Seeds"></div>
+                    <div class="circle-img-wrap"><img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/dry_seeds_200x200_crop_center.jpg?v=1746963515" alt="Seeds"></div>
                     <span class="circle-title">Seeds</span>
                 </a>
                 <a href="ghee-and-honey.html" class="category-circle-item">
-                    <div class="circle-img-wrap"><img src="https://arshithfresh.com/cdn/shop/collections/ghee_1_200x200_crop_center.jpg?v=1746964905" alt="Ghee & Honey"></div>
+                    <div class="circle-img-wrap"><img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/ghee_1_200x200_crop_center.jpg?v=1746964905" alt="Ghee & Honey"></div>
                     <span class="circle-title">Ghee &amp; Honey</span>
                 </a>
                 <a href="cooking-essentials.html" class="category-circle-item">
-                    <div class="circle-img-wrap"><img src="https://arshithfresh.com/cdn/shop/collections/groceries_200x200_crop_center.jpg?v=1746965740" alt="Cooking Essentials"></div>
+                    <div class="circle-img-wrap"><img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/groceries_200x200_crop_center.jpg?v=1746965740" alt="Cooking Essentials"></div>
                     <span class="circle-title">Cooking Essentials</span>
                 </a>
                 <a href="spices.html" class="category-circle-item">
-                    <div class="circle-img-wrap"><img src="https://arshithfresh.com/cdn/shop/collections/spice_200x200_crop_center.png?v=1746963495" alt="Spices"></div>
+                    <div class="circle-img-wrap"><img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/spice_200x200_crop_center.png?v=1746963495" alt="Spices"></div>
                     <span class="circle-title">Spices</span>
                 </a>
                 <a href="spice-powders-podulu.html" class="category-circle-item active">
-                    <div class="circle-img-wrap"><img src="https://arshithfresh.com/cdn/shop/collections/powders_200x200_crop_center.jpg?v=1743477019" alt="Spice Powders"></div>
+                    <div class="circle-img-wrap"><img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/powders_200x200_crop_center.jpg?v=1743477019" alt="Spice Powders"></div>
                     <span class="circle-title">Spice Powders</span>
                 </a>
             </div>
@@ -34536,7 +34536,7 @@ module.exports = {
 
             <div class="header-logo">
                 <a href="../../index.html">
-                    <img src="https://arshithfresh.com/cdn/shop/files/Arshithlogo111.jpg?v=1755685028&width=600"
+                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/Arshithlogo111.jpg?v=1755685028&width=600"
                         alt="Arshith Fresh Logo" class="logo-img">
                 </a>
             </div>
@@ -34597,35 +34597,35 @@ module.exports = {
         <div class="collections-top-nav-bar">
             <div class="category-circle-row">
                 <a href="../collections.html?category=all" class="category-circle-item">
-                    <div class="circle-img-wrap"><img src="https://arshithfresh.com/cdn/shop/collections/groceries_200x200_crop_center.jpg?v=1746965740" alt="All Products"></div>
+                    <div class="circle-img-wrap"><img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/groceries_200x200_crop_center.jpg?v=1746965740" alt="All Products"></div>
                     <span class="circle-title">All Products</span>
                 </a>
                 <a href="oils-natural-extracts.html" class="category-circle-item">
-                    <div class="circle-img-wrap"><img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM_1.jpg?v=1757334051&width=400" alt="Oils"></div>
+                    <div class="circle-img-wrap"><img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM_1.jpg?v=1757334051&width=400" alt="Oils"></div>
                     <span class="circle-title">Oils</span>
                 </a>
                 <a href="dry-fruits-nuts.html" class="category-circle-item">
-                    <div class="circle-img-wrap"><img src="https://arshithfresh.com/cdn/shop/collections/seeds_dry_fruits_nuts_webp_200x200_crop_center.jpg?v=1746963459" alt="Dry Fruits & Nuts"></div>
+                    <div class="circle-img-wrap"><img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/seeds_dry_fruits_nuts_webp_200x200_crop_center.jpg?v=1746963459" alt="Dry Fruits & Nuts"></div>
                     <span class="circle-title">Dry Fruits &amp; Nuts</span>
                 </a>
                 <a href="dry-seeds.html" class="category-circle-item">
-                    <div class="circle-img-wrap"><img src="https://arshithfresh.com/cdn/shop/collections/dry_seeds_200x200_crop_center.jpg?v=1746963515" alt="Seeds"></div>
+                    <div class="circle-img-wrap"><img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/dry_seeds_200x200_crop_center.jpg?v=1746963515" alt="Seeds"></div>
                     <span class="circle-title">Seeds</span>
                 </a>
                 <a href="ghee-and-honey.html" class="category-circle-item">
-                    <div class="circle-img-wrap"><img src="https://arshithfresh.com/cdn/shop/collections/ghee_1_200x200_crop_center.jpg?v=1746964905" alt="Ghee & Honey"></div>
+                    <div class="circle-img-wrap"><img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/ghee_1_200x200_crop_center.jpg?v=1746964905" alt="Ghee & Honey"></div>
                     <span class="circle-title">Ghee &amp; Honey</span>
                 </a>
                 <a href="cooking-essentials.html" class="category-circle-item">
-                    <div class="circle-img-wrap"><img src="https://arshithfresh.com/cdn/shop/collections/groceries_200x200_crop_center.jpg?v=1746965740" alt="Cooking Essentials"></div>
+                    <div class="circle-img-wrap"><img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/groceries_200x200_crop_center.jpg?v=1746965740" alt="Cooking Essentials"></div>
                     <span class="circle-title">Cooking Essentials</span>
                 </a>
                 <a href="spices.html" class="category-circle-item active">
-                    <div class="circle-img-wrap"><img src="https://arshithfresh.com/cdn/shop/collections/spice_200x200_crop_center.png?v=1746963495" alt="Spices"></div>
+                    <div class="circle-img-wrap"><img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/spice_200x200_crop_center.png?v=1746963495" alt="Spices"></div>
                     <span class="circle-title">Spices</span>
                 </a>
                 <a href="spice-powders-podulu.html" class="category-circle-item">
-                    <div class="circle-img-wrap"><img src="https://arshithfresh.com/cdn/shop/collections/powders_200x200_crop_center.jpg?v=1743477019" alt="Spice Powders"></div>
+                    <div class="circle-img-wrap"><img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/powders_200x200_crop_center.jpg?v=1743477019" alt="Spice Powders"></div>
                     <span class="circle-title">Spice Powders</span>
                 </a>
             </div>
@@ -34977,7 +34977,7 @@ module.exports = {
     <!-- TOP HEADER BAR -->
     <header class="checkout-top-bar">
         <a href="../index.html">
-            <img src="https://arshithfresh.com/cdn/shop/files/Arshithlogo111.jpg?v=1755685028&width=600" alt="Arshith Fresh Logo" class="checkout-header-logo-img">
+            <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/Arshithlogo111.jpg?v=1755685028&width=600" alt="Arshith Fresh Logo" class="checkout-header-logo-img">
         </a>
         <a href="cart.html" class="checkout-header-cart-link" title="View Cart">
             <div class="cart-icon-badge">
@@ -35338,7 +35338,7 @@ module.exports = {
                         qty: 1,
                         price: 30.00,
                         weight: "50g",
-                        image: "https://arshithfresh.com/cdn/shop/files/4_6d56df69-1c9f-4f05-b1a7-ca631fc7b9aa.png"
+                        image: "https://cdn.shopify.com/s/files/1/0858/0772/6869/files/4_6d56df69-1c9f-4f05-b1a7-ca631fc7b9aa.png"
                     }
                 ];
             }
@@ -35363,7 +35363,7 @@ module.exports = {
                 <div class="summary-item-row">
                     <div class="summary-item-left">
                         <div class="summary-img-wrap">
-                            <img src="${item.image || 'https://arshithfresh.com/cdn/shop/files/4_6d56df69-1c9f-4f05-b1a7-ca631fc7b9aa.png'}" alt="${item.title || item.name}" class="summary-img">
+                            <img src="${item.image || 'https://cdn.shopify.com/s/files/1/0858/0772/6869/files/4_6d56df69-1c9f-4f05-b1a7-ca631fc7b9aa.png'}" alt="${item.title || item.name}" class="summary-img">
                             <span class="summary-qty-badge">${item.quantity || item.qty || 1}</span>
                         </div>
                         <div>
@@ -35674,7 +35674,7 @@ module.exports = {
                     currency: rzpOrder.currency || "INR",
                     name: "Arshith Fresh",
                     description: "Fresh & Organic Groceries Order",
-                    image: "https://arshithfresh.com/cdn/shop/files/Arshithlogo111.jpg?v=1755685028&width=600",
+                    image: "https://cdn.shopify.com/s/files/1/0858/0772/6869/files/Arshithlogo111.jpg?v=1755685028&width=600",
                     order_id: rzpOrder.id.startsWith("order_mock_") ? undefined : rzpOrder.id,
                     prefill: {
                         name: fullName,
@@ -35842,7 +35842,7 @@ module.exports = {
 
             <div class="header-logo">
                 <a href="../index.html">
-                    <img src="https://arshithfresh.com/cdn/shop/files/Arshithlogo111.jpg?v=1755685028&width=600"
+                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/Arshithlogo111.jpg?v=1755685028&width=600"
                         alt="Arshith Fresh Logo" class="logo-img">
                 </a>
             </div>
@@ -35903,35 +35903,35 @@ module.exports = {
         <div class="collections-top-nav-bar">
             <div class="category-circle-row">
                 <a href="collections.html?category=all" class="category-circle-item active">
-                    <div class="circle-img-wrap"><img src="https://arshithfresh.com/cdn/shop/collections/groceries_200x200_crop_center.jpg?v=1746965740" alt="All Products"></div>
+                    <div class="circle-img-wrap"><img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/groceries_200x200_crop_center.jpg?v=1746965740" alt="All Products"></div>
                     <span class="circle-title">All Products</span>
                 </a>
                 <a href="categories/oils-natural-extracts.html" class="category-circle-item">
-                    <div class="circle-img-wrap"><img src="https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM_1.jpg?v=1757334051&width=400" alt="Oils"></div>
+                    <div class="circle-img-wrap"><img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM_1.jpg?v=1757334051&width=400" alt="Oils"></div>
                     <span class="circle-title">Oils</span>
                 </a>
                 <a href="categories/dry-fruits-nuts.html" class="category-circle-item">
-                    <div class="circle-img-wrap"><img src="https://arshithfresh.com/cdn/shop/collections/seeds_dry_fruits_nuts_webp_200x200_crop_center.jpg?v=1746963459" alt="Dry Fruits & Nuts"></div>
+                    <div class="circle-img-wrap"><img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/seeds_dry_fruits_nuts_webp_200x200_crop_center.jpg?v=1746963459" alt="Dry Fruits & Nuts"></div>
                     <span class="circle-title">Dry Fruits &amp; Nuts</span>
                 </a>
                 <a href="categories/dry-seeds.html" class="category-circle-item">
-                    <div class="circle-img-wrap"><img src="https://arshithfresh.com/cdn/shop/collections/dry_seeds_200x200_crop_center.jpg?v=1746963515" alt="Seeds"></div>
+                    <div class="circle-img-wrap"><img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/dry_seeds_200x200_crop_center.jpg?v=1746963515" alt="Seeds"></div>
                     <span class="circle-title">Seeds</span>
                 </a>
                 <a href="categories/ghee-and-honey.html" class="category-circle-item">
-                    <div class="circle-img-wrap"><img src="https://arshithfresh.com/cdn/shop/collections/ghee_1_200x200_crop_center.jpg?v=1746964905" alt="Ghee & Honey"></div>
+                    <div class="circle-img-wrap"><img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/ghee_1_200x200_crop_center.jpg?v=1746964905" alt="Ghee & Honey"></div>
                     <span class="circle-title">Ghee &amp; Honey</span>
                 </a>
                 <a href="categories/cooking-essentials.html" class="category-circle-item">
-                    <div class="circle-img-wrap"><img src="https://arshithfresh.com/cdn/shop/collections/groceries_200x200_crop_center.jpg?v=1746965740" alt="Cooking Essentials"></div>
+                    <div class="circle-img-wrap"><img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/groceries_200x200_crop_center.jpg?v=1746965740" alt="Cooking Essentials"></div>
                     <span class="circle-title">Cooking Essentials</span>
                 </a>
                 <a href="categories/spices.html" class="category-circle-item">
-                    <div class="circle-img-wrap"><img src="https://arshithfresh.com/cdn/shop/collections/spice_200x200_crop_center.png?v=1746963495" alt="Spices"></div>
+                    <div class="circle-img-wrap"><img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/spice_200x200_crop_center.png?v=1746963495" alt="Spices"></div>
                     <span class="circle-title">Spices</span>
                 </a>
                 <a href="categories/spice-powders-podulu.html" class="category-circle-item">
-                    <div class="circle-img-wrap"><img src="https://arshithfresh.com/cdn/shop/collections/powders_200x200_crop_center.jpg?v=1743477019" alt="Spice Powders"></div>
+                    <div class="circle-img-wrap"><img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/powders_200x200_crop_center.jpg?v=1743477019" alt="Spice Powders"></div>
                     <span class="circle-title">Spice Powders</span>
                 </a>
             </div>
@@ -36140,7 +36140,7 @@ module.exports = {
 
             <div class="header-logo">
                 <a href="../../index.html">
-                    <img src="https://arshithfresh.com/cdn/shop/files/Arshithlogo111.jpg?v=1755685028&width=600" alt="Arshith Fresh Logo" class="logo-img">
+                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/Arshithlogo111.jpg?v=1755685028&width=600" alt="Arshith Fresh Logo" class="logo-img">
                 </a>
             </div>
 
@@ -36376,7 +36376,7 @@ module.exports = {
 
             <div class="header-logo">
                 <a href="../../index.html">
-                    <img src="https://arshithfresh.com/cdn/shop/files/Arshithlogo111.jpg?v=1755685028&width=600" alt="Arshith Fresh Logo" class="logo-img">
+                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/Arshithlogo111.jpg?v=1755685028&width=600" alt="Arshith Fresh Logo" class="logo-img">
                 </a>
             </div>
 
@@ -36601,7 +36601,7 @@ module.exports = {
 
             <div class="header-logo">
                 <a href="../../index.html">
-                    <img src="https://arshithfresh.com/cdn/shop/files/Arshithlogo111.jpg?v=1755685028&width=600" alt="Arshith Fresh Logo" class="logo-img">
+                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/Arshithlogo111.jpg?v=1755685028&width=600" alt="Arshith Fresh Logo" class="logo-img">
                 </a>
             </div>
 
@@ -36831,7 +36831,7 @@ module.exports = {
 
             <div class="header-logo">
                 <a href="../../index.html">
-                    <img src="https://arshithfresh.com/cdn/shop/files/Arshithlogo111.jpg?v=1755685028&width=600" alt="Arshith Fresh Logo" class="logo-img">
+                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/Arshithlogo111.jpg?v=1755685028&width=600" alt="Arshith Fresh Logo" class="logo-img">
                 </a>
             </div>
 
@@ -37571,7 +37571,7 @@ module.exports = {
 
             <div class="header-logo">
                 <a href="../index.html">
-                    <img src="https://arshithfresh.com/cdn/shop/files/Arshithlogo111.jpg?v=1755685028&width=600"
+                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/Arshithlogo111.jpg?v=1755685028&width=600"
                         alt="Arshith Fresh Logo" class="logo-img">
                 </a>
             </div>
@@ -37884,7 +37884,7 @@ module.exports = {
 
             <div class="header-logo">
                 <a href="../index.html">
-                    <img src="https://arshithfresh.com/cdn/shop/files/Arshithlogo111.jpg?v=1755685028&width=600"
+                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/Arshithlogo111.jpg?v=1755685028&width=600"
                         alt="Arshith Fresh Logo" class="logo-img">
                 </a>
             </div>
@@ -38277,7 +38277,7 @@ module.exports = {
                             ${(activeOrder.orderItems || []).map(item => `
                                 <div style="display: flex; justify-content: space-between; align-items: center; font-size: 14px;">
                                     <div style="display: flex; align-items: center; gap: 12px;">
-                                        <img src="${item.image || 'https://arshithfresh.com/cdn/shop/collections/spice_200x200_crop_center.png?v=1746963495'}" style="width: 46px; height: 46px; border-radius: 8px; object-fit: cover; border: 1px solid #e2e8f0;">
+                                        <img src="${item.image || 'https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/spice_200x200_crop_center.png?v=1746963495'}" style="width: 46px; height: 46px; border-radius: 8px; object-fit: cover; border: 1px solid #e2e8f0;">
                                         <div>
                                             <div style="font-weight: 700; color: #1e293b;">${item.name || item.title}</div>
                                             <div style="font-size: 12px; color: #64748b;">Qty: ${item.qty || item.quantity || 1} • ${item.unit || '1 kg'}</div>
@@ -38470,13 +38470,13 @@ module.exports = {
                                                 } catch(e) {}
 
                                                 const itemNameEscaped = (item.name || item.title || 'Fresh Product').replace(/'/g, "\\'").replace(/"/g, '&quot;');
-                                                const itemImgEscaped = (item.image || 'https://arshithfresh.com/cdn/shop/collections/spice_200x200_crop_center.png?v=1746963495').replace(/'/g, "\\'");
+                                                const itemImgEscaped = (item.image || 'https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/spice_200x200_crop_center.png?v=1746963495').replace(/'/g, "\\'");
                                                 const itemTotalMoney = ((item.price || 0) * (item.qty || item.quantity || 1)).toFixed(2);
 
                                                 return `
                                                     <div style="display: flex; justify-content: space-between; align-items: center; font-size: 14px; padding-bottom: 10px; border-bottom: 1px dashed #f1f5f9;">
                                                         <div style="display: flex; align-items: center; gap: 12px;">
-                                                            <img src="${item.image || 'https://arshithfresh.com/cdn/shop/collections/spice_200x200_crop_center.png?v=1746963495'}" style="width: 46px; height: 46px; border-radius: 8px; object-fit: cover; border: 1px solid #e2e8f0;">
+                                                            <img src="${item.image || 'https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/spice_200x200_crop_center.png?v=1746963495'}" style="width: 46px; height: 46px; border-radius: 8px; object-fit: cover; border: 1px solid #e2e8f0;">
                                                             <div>
                                                                 <div style="font-weight: 600; color: #1e293b;">${item.name || item.title}</div>
                                                                 <div style="font-size: 12px; color: #64748b; margin-top: 2px;">Qty: ${item.qty || item.quantity || 1} • ${item.unit || '1 kg'}</div>
@@ -38901,7 +38901,7 @@ module.exports = {
             <!-- Modal Header -->
             <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 18px;">
                 <div style="display: flex; align-items: center; gap: 14px;">
-                    <img id="popupProdImg" src="https://arshithfresh.com/cdn/shop/collections/spice_200x200_crop_center.png?v=1746963495" style="width: 52px; height: 52px; border-radius: 10px; object-fit: cover; border: 1.5px solid #e2e8f0; background: #fafbfc;">
+                    <img id="popupProdImg" src="https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/spice_200x200_crop_center.png?v=1746963495" style="width: 52px; height: 52px; border-radius: 10px; object-fit: cover; border: 1.5px solid #e2e8f0; background: #fafbfc;">
                     <div>
                         <h3 id="popupProdTitle" style="margin: 0 0 3px 0; font-size: 16.5px; color: #0f172a; font-weight: 800; line-height: 1.3;">Product Name</h3>
                         <span id="popupProdPrice" style="font-size: 14px; font-weight: 700; color: #0f7139;">₹0.00</span>
@@ -39002,7 +39002,7 @@ module.exports = {
 
             <div class="header-logo">
                 <a href="../index.html">
-                    <img src="https://arshithfresh.com/cdn/shop/files/Arshithlogo111.jpg?v=1755685028&width=600"
+                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/Arshithlogo111.jpg?v=1755685028&width=600"
                         alt="Arshith Fresh Logo" class="logo-img">
                 </a>
             </div>
@@ -39310,7 +39310,7 @@ module.exports = {
 
             <div class="header-logo">
                 <a href="../index.html">
-                    <img src="https://arshithfresh.com/cdn/shop/files/Arshithlogo111.jpg?v=1755685028&width=600" alt="Arshith Fresh Logo" class="logo-img">
+                    <img src="https://cdn.shopify.com/s/files/1/0858/0772/6869/files/Arshithlogo111.jpg?v=1755685028&width=600" alt="Arshith Fresh Logo" class="logo-img">
                 </a>
             </div>
 

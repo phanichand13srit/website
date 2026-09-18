@@ -209,49 +209,49 @@ const sampleCollections = [
   { 
     title: 'Oils', 
     description: 'Wood Pressed & Cold Pressed Oils', 
-    image: 'https://arshithfresh.com/cdn/shop/collections/oil_n_natural_extract_200x200_crop_center.jpg?v=1746964936',
+    image: 'https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/oil_n_natural_extract_200x200_crop_center.jpg?v=1746964936',
     conditionsSummary: 'Tag includes Oils',
     subcategories: ['Cold-Pressed Groundnut Oil', 'Wood-Pressed Sesame Oil', 'Coconut Oil', 'Sunflower Oil', 'Mustard Oil', 'Castor Oil']
   },
   { 
     title: 'Dry Fruits', 
     description: 'Almonds, Cashews, Walnuts & Raisins', 
-    image: 'https://arshithfresh.com/cdn/shop/collections/seeds_dry_fruits_nuts_webp_200x200_crop_center.jpg?v=1746963459',
+    image: 'https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/seeds_dry_fruits_nuts_webp_200x200_crop_center.jpg?v=1746963459',
     conditionsSummary: 'Tag includes Dry Fruits',
     subcategories: ['Almonds (Badam)', 'Cashews (Kaju)', 'Dates (Khajoor)', 'Walnuts (Akhrot)', 'Pistachios (Pista)', 'Raisins (Kismis)', 'Dry Figs (Anjeer)']
   },
   { 
     title: 'Seeds', 
     description: 'Chia, Flax, Pumpkin & Sunflower Seeds', 
-    image: 'https://arshithfresh.com/cdn/shop/collections/dry_seeds_200x200_crop_center.jpg?v=1746963515',
+    image: 'https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/dry_seeds_200x200_crop_center.jpg?v=1746963515',
     conditionsSummary: 'Tag includes Seeds',
     subcategories: ['Chia Seeds', 'Flax Seeds', 'Pumpkin Seeds', 'Sunflower Seeds', 'Watermelon Seeds', 'Sesame Seeds (Til)']
   },
   { 
     title: 'Ghee & Honey', 
     description: 'Pure Buffalo Ghee & Wild Forest Honey', 
-    image: 'https://arshithfresh.com/cdn/shop/collections/ghee_1_200x200_crop_center.jpg?v=1746964905',
+    image: 'https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/ghee_1_200x200_crop_center.jpg?v=1746964905',
     conditionsSummary: 'Tag includes Ghee',
     subcategories: ['Pure Desi Cow Ghee', 'Pure Buffalo Ghee', 'Raw Wild Forest Honey', 'Organic Honeycomb']
   },
   { 
     title: 'Cooking Essentials', 
     description: 'Daily Kitchen Essentials', 
-    image: 'https://arshithfresh.com/cdn/shop/collections/groceries_200x200_crop_center.jpg?v=1746965740',
+    image: 'https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/groceries_200x200_crop_center.jpg?v=1746965740',
     conditionsSummary: 'Tag includes Essentials',
     subcategories: ['Cold-Pressed Cooking Oils', 'Rock Salt / Himalayan Pink Salt', 'Natural Organic Jaggery / Bellam', 'Country Tamarind / Chintapandu']
   },
   { 
     title: 'Spices', 
     description: 'Whole authentic spices', 
-    image: 'https://arshithfresh.com/cdn/shop/collections/spice_200x200_crop_center.png?v=1746963495',
+    image: 'https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/spice_200x200_crop_center.png?v=1746963495',
     conditionsSummary: 'Tag includes Spices',
     subcategories: ['Whole Spices', 'Black Pepper', 'Green Cardamom (Elaichi)', 'Cloves (Lavangam)', 'Cinnamon (Dalchina Chekka)', 'Cumin Seeds (Jeera)', 'Mustard Seeds (Avalu)']
   },
   { 
     title: 'Spice Powders', 
     description: 'Traditional homemade Andhra podulu', 
-    image: 'https://arshithfresh.com/cdn/shop/collections/powders_200x200_crop_center.jpg?v=1743477019',
+    image: 'https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/powders_200x200_crop_center.jpg?v=1743477019',
     conditionsSummary: 'Tag includes Powders',
     subcategories: ['Chana Dal Podi (Pappula Podi)', 'Garlic Podi (Vellulli Karam)', 'Kandi Podi', 'Karivepaku Podi (Curry Leaf)', 'Flax Seed Podi', 'Sambar & Rasam Powder']
   },
