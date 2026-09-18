@@ -8090,16 +8090,35 @@ body {
 }
 
 @media screen and (max-width: 768px) {
+    .categories-section {
+        padding: 0 12px !important;
+        margin: 24px auto 32px !important;
+    }
     .categories-grid {
         display: flex !important;
+        justify-content: flex-start !important;
+        align-items: stretch !important;
         overflow-x: auto !important;
         scroll-snap-type: x mandatory !important;
-        padding-bottom: 12px !important;
+        padding: 6px 16px 16px 16px !important;
+        margin: 0 -12px !important;
         gap: 12px !important;
         -webkit-overflow-scrolling: touch !important;
+        scrollbar-width: thin;
+    }
+    .categories-grid::-webkit-scrollbar {
+        height: 4px;
+    }
+    .categories-grid::-webkit-scrollbar-track {
+        background: #f1f5f9;
+        border-radius: 4px;
+    }
+    .categories-grid::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 4px;
     }
     .category-card {
-        flex: 0 0 140px !important;
+        flex: 0 0 130px !important;
         scroll-snap-align: start !important;
         padding: 16px 8px 14px !important;
         min-height: 165px !important;
@@ -8593,21 +8612,26 @@ body {
     }
 
     .categories-grid {
-        grid-template-columns: repeat(2, 1fr) !important;
-        gap: 12px !important;
+        display: flex !important;
+        justify-content: flex-start !important;
+        align-items: stretch !important;
+        overflow-x: auto !important;
+        gap: 10px !important;
     }
 
     .category-card {
-        padding: 12px 8px !important;
+        padding: 12px 6px !important;
     }
 
     .category-img-container {
-        width: 72px !important;
-        height: 72px !important;
+        width: 68px !important;
+        height: 68px !important;
+        min-width: 68px !important;
+        min-height: 68px !important;
     }
 
     .category-name {
-        font-size: 12px !important;
+        font-size: 11.5px !important;
     }
 
     .banner-highlight {
