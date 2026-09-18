@@ -428,8 +428,8 @@ document.addEventListener("DOMContentLoaded", () => {
             unit: "1 Litre",
             countInStock: 25,
             brand: "Arshith Fresh",
-            image: "https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM_1.jpg?v=1757334051&width=533",
-            hoverImage: "https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-06-30_at_7.28.42_PM_1_3752719d-4e83-4d00-a8be-0c4d13076c23.jpg?v=1757334051&width=533",
+            image: "https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM_1.jpg?v=1757334051&width=533",
+            hoverImage: "https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-06-30_at_7.28.42_PM_1_3752719d-4e83-4d00-a8be-0c4d13076c23.jpg?v=1757334051&width=533",
             description: "100% pure cold-pressed groundnut oil, ideal for healthy everyday cooking.",
             rating: 4.9,
             numReviews: 67,
@@ -444,8 +444,8 @@ document.addEventListener("DOMContentLoaded", () => {
             unit: "500 ml",
             countInStock: 30,
             brand: "Arshith Fresh",
-            image: "https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM_2.jpg?v=1757334050&width=533",
-            hoverImage: "https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-06-30_at_7.28.41_PM_887d3105-a7d1-45a3-b1b0-e0054291d902.jpg?v=1757334050&width=533",
+            image: "https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM_2.jpg?v=1757334050&width=533",
+            hoverImage: "https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-06-30_at_7.28.41_PM_887d3105-a7d1-45a3-b1b0-e0054291d902.jpg?v=1757334050&width=533",
             description: "Unrefined, fragrant cold-pressed coconut oil from sun-dried copra.",
             rating: 4.83,
             numReviews: 54,
@@ -460,8 +460,8 @@ document.addEventListener("DOMContentLoaded", () => {
             unit: "250 ml",
             countInStock: 20,
             brand: "Arshith Fresh",
-            image: "https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-09-15_at_4.34.52_PM.jpg?v=1757934372&width=533",
-            hoverImage: "https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-06-30_at_7.32.29_PM_2_eb23ab0e-a49c-457d-9dad-00ce2758289c.jpg?v=1757934372&width=533",
+            image: "https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-09-15_at_4.34.52_PM.jpg?v=1757934372&width=533",
+            hoverImage: "https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-06-30_at_7.32.29_PM_2_eb23ab0e-a49c-457d-9dad-00ce2758289c.jpg?v=1757934372&width=533",
             description: "Traditional granular bilona buffalo ghee with rich aroma and taste.",
             rating: 4.91,
             numReviews: 32,
@@ -476,7 +476,7 @@ document.addEventListener("DOMContentLoaded", () => {
             unit: "1 Litre",
             countInStock: 18,
             brand: "Arshith Fresh",
-            image: "https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM.jpg?v=1757334052&width=533",
+            image: "https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM.jpg?v=1757334052&width=533",
             description: "Light, nutrient-dense cold-pressed sunflower oil for light frying and baking.",
             rating: 4.91,
             numReviews: 54,
@@ -491,7 +491,7 @@ document.addEventListener("DOMContentLoaded", () => {
             unit: "100 g",
             countInStock: 50,
             brand: "Arshith Fresh",
-            image: "https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-07-08_at_4.04.02_PM_2_ce2dcb8e-81dc-46c5-b343-1a14dff25208.jpg?v=1757334052&width=533",
+            image: "https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-07-08_at_4.04.02_PM_2_ce2dcb8e-81dc-46c5-b343-1a14dff25208.jpg?v=1757334052&width=533",
             description: "Omega-3 rich golden brown flax seeds for everyday smoothies and bowls.",
             rating: 4.9,
             numReviews: 31,
@@ -506,7 +506,7 @@ document.addEventListener("DOMContentLoaded", () => {
             unit: "100 g",
             countInStock: 45,
             brand: "Arshith Fresh",
-            image: "https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-07-08_at_4.04.01_PM_6b2e5750-03f7-4a0a-b4e3-9ef639891875.jpg?v=1757333987&width=533",
+            image: "https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-07-08_at_4.04.01_PM_6b2e5750-03f7-4a0a-b4e3-9ef639891875.jpg?v=1757333987&width=533",
             description: "High-fiber superfood chia seeds, 100% natural and clean.",
             rating: 4.91,
             numReviews: 35,
@@ -521,7 +521,7 @@ document.addEventListener("DOMContentLoaded", () => {
             unit: "100 g",
             countInStock: 40,
             brand: "Arshith Fresh",
-            image: "https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-07-08_at_4.19.01_PM_2_717030b8-c8a8-40a4-bdf0-7e516dec3029.jpg?v=1757334045&width=533",
+            image: "https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-07-08_at_4.19.01_PM_2_717030b8-c8a8-40a4-bdf0-7e516dec3029.jpg?v=1757334045&width=533",
             description: "Authentic Andhra style homemade roasted chana dal podi with ghee flavor.",
             rating: 5,
             numReviews: 31,
@@ -536,7 +536,7 @@ document.addEventListener("DOMContentLoaded", () => {
             unit: "100 g",
             countInStock: 35,
             brand: "Arshith Fresh",
-            image: "https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-07-08_at_4.19.01_PM_3_6262e177-7c59-4137-afc4-5d486daa9175.jpg?v=1757334046&width=533",
+            image: "https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-07-08_at_4.19.01_PM_3_6262e177-7c59-4137-afc4-5d486daa9175.jpg?v=1757334046&width=533",
             description: "Spicy, pungent country garlic podi blended with red chillies and cumin.",
             rating: 4.97,
             numReviews: 38,
@@ -1070,7 +1070,8 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         try {
-            const res = await fetch("http://localhost:5000/api/collections");
+            const apiHost = typeof getApiHost === 'function' ? getApiHost() : (window.location.origin.startsWith('http') ? window.location.origin : 'http://localhost:5000');
+            const res = await fetch(`${apiHost}/api/collections`);
             if (!res.ok) return;
             const collections = await res.json();
             if (!collections || collections.length === 0) return;
@@ -1098,11 +1099,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const urlParams = new URLSearchParams(window.location.search);
         const productId = urlParams.get("id");
+        const apiHost = typeof getApiHost === 'function' ? getApiHost() : (window.location.origin.startsWith('http') ? window.location.origin : 'http://localhost:5000');
 
         if (!productId) {
             // If no ID passed in URL, fetch the first available product as default
             try {
-                const res = await fetch("http://localhost:5000/api/products");
+                const res = await fetch(`${apiHost}/api/products`);
                 if (res.ok) {
                     const products = await res.json();
                     if (products.length > 0) {
@@ -1115,7 +1117,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         try {
-            const res = await fetch(`http://localhost:5000/api/products/${productId}`);
+            const res = await fetch(`${apiHost}/api/products/${productId}`);
             if (res.ok) {
                 const p = await res.json();
                 renderSingleProductDetail(p, viewContainer);
@@ -1123,7 +1125,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             // Resilient Fallback: If direct ID failed, fetch product list and search
-            const allRes = await fetch("http://localhost:5000/api/products");
+            const allRes = await fetch(`${apiHost}/api/products`);
             if (allRes.ok) {
                 const list = await allRes.json();
                 if (list.length > 0) {
@@ -2016,14 +2018,14 @@ function initLiveSearchAutocomplete() {
     let isFetchingProducts = false;
 
     const STARTER_SEARCH_CATALOG = [
-        { _id: 's1', title: 'Granular Buffalo Ghee (Traditional Bilona)', category: 'Ghee and Honey', price: 699, image: 'https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-09-15_at_4.34.52_PM.jpg?v=1757934372&width=533' },
-        { _id: 's2', title: 'Cold Pressed Sunflower Oil (Premium Quality)', category: 'Oils', price: 499, image: 'https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM.jpg?v=1757334052&width=533' },
-        { _id: 's3', title: 'Groundnut Oil (Cold Pressed)', category: 'Oils', price: 349, image: 'https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM_1.jpg?v=1757334051&width=533' },
-        { _id: 's4', title: 'Flax Seeds (Organic & Premium)', category: 'Dry Seeds', price: 29, image: 'https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM_2.jpg?v=1757334051&width=533' },
-        { _id: 's5', title: 'Chia Seeds (High Fiber)', category: 'Dry Seeds', price: 49, image: 'https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM_3.jpg?v=1757334051&width=533' },
-        { _id: 's6', title: 'Raw Wild Forest Honey', category: 'Ghee and Honey', price: 399, image: 'https://arshithfresh.com/cdn/shop/files/4_6d56df69-1c9f-4f05-b1a7-ca631fc7b9aa.png?v=1757334051&width=533' },
-        { _id: 's7', title: 'Cashews (W240 Grade Premium)', category: 'Dry Fruits', price: 899, image: 'https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM.jpg?v=1757334052&width=533' },
-        { _id: 's8', title: 'California Almonds (Badam)', category: 'Dry Fruits', price: 799, image: 'https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM_1.jpg?v=1757334051&width=533' }
+        { _id: 's1', title: 'Granular Buffalo Ghee (Traditional Bilona)', category: 'Ghee and Honey', price: 699, image: 'https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-09-15_at_4.34.52_PM.jpg?v=1757934372&width=533' },
+        { _id: 's2', title: 'Cold Pressed Sunflower Oil (Premium Quality)', category: 'Oils', price: 499, image: 'https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM.jpg?v=1757334052&width=533' },
+        { _id: 's3', title: 'Groundnut Oil (Cold Pressed)', category: 'Oils', price: 349, image: 'https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM_1.jpg?v=1757334051&width=533' },
+        { _id: 's4', title: 'Flax Seeds (Organic & Premium)', category: 'Dry Seeds', price: 29, image: 'https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM_2.jpg?v=1757334051&width=533' },
+        { _id: 's5', title: 'Chia Seeds (High Fiber)', category: 'Dry Seeds', price: 49, image: 'https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM_3.jpg?v=1757334051&width=533' },
+        { _id: 's6', title: 'Raw Wild Forest Honey', category: 'Ghee and Honey', price: 399, image: 'https://cdn.shopify.com/s/files/1/0858/0772/6869/files/4_6d56df69-1c9f-4f05-b1a7-ca631fc7b9aa.png?v=1757334051&width=533' },
+        { _id: 's7', title: 'Cashews (W240 Grade Premium)', category: 'Dry Fruits', price: 899, image: 'https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM.jpg?v=1757334052&width=533' },
+        { _id: 's8', title: 'California Almonds (Badam)', category: 'Dry Fruits', price: 799, image: 'https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM_1.jpg?v=1757334051&width=533' }
     ];
 
     async function loadSearchProducts() {
@@ -3044,7 +3046,7 @@ async function syncHomepageRealRatingsAndReviews() {
             }) : 'Recent';
 
             const prodName = r.productName || (r.productId && r.productId.name) || 'Arshith Fresh Product';
-            const prodImg = (r.productId && r.productId.image) || 'https://arshithfresh.com/cdn/shop/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM_1.jpg?v=1757334051&width=120';
+            const prodImg = (r.productId && r.productId.image) || 'https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM_1.jpg?v=1757334051&width=120';
             const customerInitial = (r.customerName || 'C').charAt(0).toUpperCase();
 
             return `
@@ -3164,7 +3166,7 @@ function toggleWishlistFromCard(id, name, price, image, btnElement) {
             _id: String(id),
             name: name || 'Arshith Fresh Product',
             price: Number(price) || 0,
-            image: image || 'https://arshithfresh.com/cdn/shop/files/4_6d56df69-1c9f-4f05-b1a7-ca631fc7b9aa.png',
+            image: image || 'https://cdn.shopify.com/s/files/1/0858/0772/6869/files/4_6d56df69-1c9f-4f05-b1a7-ca631fc7b9aa.png',
             weight: 'Standard'
         });
         saveStoredWishlist(wishlist);
@@ -3219,7 +3221,7 @@ function toggleWishlist(product) {
             _id: prodId,
             name: product.name || product.title || 'Arshith Fresh Product',
             price: Number(product.price) || 0,
-            image: product.image || 'https://arshithfresh.com/cdn/shop/files/4_6d56df69-1c9f-4f05-b1a7-ca631fc7b9aa.png',
+            image: product.image || 'https://cdn.shopify.com/s/files/1/0858/0772/6869/files/4_6d56df69-1c9f-4f05-b1a7-ca631fc7b9aa.png',
             weight: product.weight || product.unit || 'Standard'
         });
         saveStoredWishlist(wishlist);
@@ -3296,7 +3298,7 @@ function renderWishlistDrawerContent() {
 
     container.innerHTML = items.map(item => `
         <div style="display:flex;align-items:center;gap:12px;padding:12px;background:#ffffff;border:1px solid #e2e8f0;border-radius:10px;margin-bottom:10px;box-shadow:0 1px 3px rgba(0,0,0,0.04);">
-            <img src="${item.image || 'https://arshithfresh.com/cdn/shop/files/4_6d56df69-1c9f-4f05-b1a7-ca631fc7b9aa.png'}" alt="${escapeHtml(item.name)}" style="width:55px;height:55px;border-radius:8px;object-fit:cover;border:1px solid #f1f5f9;background:#fafbfc;">
+            <img src="${item.image || 'https://cdn.shopify.com/s/files/1/0858/0772/6869/files/4_6d56df69-1c9f-4f05-b1a7-ca631fc7b9aa.png'}" alt="${escapeHtml(item.name)}" style="width:55px;height:55px;border-radius:8px;object-fit:cover;border:1px solid #f1f5f9;background:#fafbfc;">
             <div style="flex:1;min-width:0;">
                 <h4 style="margin:0 0 3px 0;font-size:13px;font-weight:700;color:#0f172a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escapeHtml(item.name)}</h4>
                 <div style="font-size:13.5px;font-weight:800;color:#0f7139;margin-bottom:6px;">₹${Number(item.price).toFixed(2)}</div>
