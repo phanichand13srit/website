@@ -1,3 +1,17 @@
+
+window.getApiHost = function() {
+    if (typeof window !== 'undefined' && window.location && window.location.origin) {
+        const origin = window.location.origin;
+        if (origin.startsWith('http://localhost') || origin.startsWith('http://127.0.0.1')) {
+            return 'http://localhost:5000';
+        }
+        if (origin.startsWith('http://') || origin.startsWith('https://')) {
+            return origin;
+        }
+    }
+    return '';
+};
+
 /* JavaScript Behaviors for Arshith Fresh Replica */
 
 // Global Toast Notification Helper
@@ -1337,7 +1351,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!relatedGrid) return;
 
         try {
-            const res = await fetch("http://localhost:5000/api/products");
+            const res = await fetch("/api/products");
             if (!res.ok) return;
             const allProducts = await res.json();
             const related = allProducts.filter(item => item._id !== currentProduct._id && item.category === currentProduct.category).slice(0, 4);
@@ -1872,7 +1886,7 @@ async function handleModalSignup(e) {
     btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Creating Account...';
 
     try {
-        const res = await fetch('http://localhost:5000/api/users/register', {
+        const res = await fetch('/api/users/register', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ name, email, password })
@@ -2033,7 +2047,7 @@ function initLiveSearchAutocomplete() {
         if (isFetchingProducts) return;
         isFetchingProducts = true;
         try {
-            let res = await fetch('http://localhost:5000/api/products');
+            let res = await fetch('/api/products');
             if (!res.ok) res = await fetch('/api/products');
             if (res.ok) {
                 const data = await res.json();
@@ -2323,7 +2337,7 @@ async function fetchAndRenderAmazonReviews() {
     amazonReviewState.isLoading = true;
 
     try {
-        let url = `http://localhost:5000/api/reviews/product/${encodeURIComponent(amazonReviewState.productId)}?sort=${amazonReviewState.currentSort}`;
+        let url = `/api/reviews/product/${encodeURIComponent(amazonReviewState.productId)}?sort=${amazonReviewState.currentSort}`;
         if (amazonReviewState.currentFilterRating) {
             url += `&rating=${amazonReviewState.currentFilterRating}`;
         }
@@ -2821,7 +2835,7 @@ window.handleAmazonReviewFormSubmit = async function(event) {
         let res, data;
         if (amazonReviewState.editingReviewId) {
             // Update existing review
-            res = await fetch(`http://localhost:5000/api/reviews/${amazonReviewState.editingReviewId}`, {
+            res = await fetch(`/api/reviews/${amazonReviewState.editingReviewId}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
@@ -2829,7 +2843,7 @@ window.handleAmazonReviewFormSubmit = async function(event) {
             data = await res.json();
         } else {
             // Create new review
-            res = await fetch(`http://localhost:5000/api/reviews`, {
+            res = await fetch(`/api/reviews`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
@@ -2884,7 +2898,7 @@ window.toggleAmazonHelpfulVote = async function(reviewId) {
     localStorage.setItem('arshith_voter_id', voterId);
 
     try {
-        const res = await fetch(`http://localhost:5000/api/reviews/${reviewId}/helpful`, {
+        const res = await fetch(`/api/reviews/${reviewId}/helpful`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ userIdentifier: voterId })
@@ -2931,7 +2945,7 @@ window.deleteAmazonOwnReview = async function(reviewId) {
     } catch (e) {}
 
     try {
-        const res = await fetch(`http://localhost:5000/api/reviews/${reviewId}`, {
+        const res = await fetch(`/api/reviews/${reviewId}`, {
             method: 'DELETE',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ customerEmail: currentUser ? currentUser.email : '' })
@@ -2969,7 +2983,7 @@ window.closeAmazonReviewLightbox = function() {
 async function syncHomepageRealRatingsAndReviews() {
     // 1. Fetch Real Products from Backend
     try {
-        const prodRes = await fetch('http://localhost:5000/api/products');
+        const prodRes = await fetch('/api/products');
         if (prodRes.ok) {
             const products = await prodRes.json();
             if (Array.isArray(products) && products.length > 0) {
@@ -3020,7 +3034,7 @@ async function syncHomepageRealRatingsAndReviews() {
     if (!reviewsGrid) return;
 
     try {
-        const revRes = await fetch('http://localhost:5000/api/reviews/latest?limit=8');
+        const revRes = await fetch('/api/reviews/latest?limit=8');
         if (!revRes.ok) throw new Error('API ' + revRes.status);
         const revData = await revRes.json();
         const reviews = revData.reviews || [];
