@@ -343,7 +343,7 @@
       products.forEach(p => {
         const title = p.name || p.title || 'Product';
         const stock = Number(p.countInStock !== undefined ? p.countInStock : (p.stock || 0));
-        const imgUrl = (p.images && p.images[0] && p.images[0].url) || p.image || 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=80';
+        const imgUrl = (p.images && p.images[0] && p.images[0].url) || p.image || 'https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/spice_200x200_crop_center.png?v=1746963495';
 
         let statusBadgeHtml = '';
         let stockInputClass = 'stock-input';
@@ -374,7 +374,7 @@
           <td><input type="checkbox" class="custom-checkbox row-checkbox" value="${p._id}"></td>
           <td>
             <div class="table-product-item">
-              <img src="${imgUrl}" class="table-product-thumb" alt="${title}" onerror="this.src='https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=80';">
+              <img src="${imgUrl}" class="table-product-thumb" alt="${title}" onerror="this.src='https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/spice_200x200_crop_center.png?v=1746963495';">
               <div>
                 <span class="table-product-name" style="font-weight: 600;">${title}</span>
                 <div style="font-size: 11.5px; color: #64748b;">${p.subcategory || p.category || ''}</div>

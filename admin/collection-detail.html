@@ -314,14 +314,14 @@
         function getCollectionImage(col) {
           if (col.image && col.image.trim() !== '') return col.image;
           const title = (col.title || col.name || '').toLowerCase();
-          if (title.includes('oil')) return '../assets/images/banners/oils_banner_hero_golden.png';
-          if (title.includes('dry fruit') || title.includes('nut') || title.includes('badam') || title.includes('kaju')) return 'https://images.unsplash.com/photo-1608797178974-15b35a64ede9?w=300&auto=format&fit=crop&q=80';
-          if (title.includes('seed')) return '../assets/images/banners/seeds_banner_blue_bowls.png';
-          if (title.includes('ghee') || title.includes('honey')) return '../assets/images/banners/ghee_honey_banner_jars.png';
-          if (title.includes('cooking') || title.includes('essential')) return '../assets/images/banners/cooking_essentials_banner_pouches.png';
-          if (title.includes('powder') || title.includes('podi')) return '../assets/images/banners/spice_powders_banner_pouches.png';
-          if (title.includes('spice')) return '../assets/images/banners/spices_banner_pouches.png';
-          return 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=300&auto=format&fit=crop&q=80';
+          if (title.includes('oil')) return 'https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/oil_n_natural_extract_200x200_crop_center.jpg?v=1746964936';
+          if (title.includes('dry fruit') || title.includes('nut') || title.includes('badam') || title.includes('kaju')) return 'https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/seeds_dry_fruits_nuts_webp_200x200_crop_center.jpg?v=1746963459';
+          if (title.includes('seed')) return 'https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/dry_seeds_200x200_crop_center.jpg?v=1746963515';
+          if (title.includes('ghee') || title.includes('honey')) return 'https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/ghee_1_200x200_crop_center.jpg?v=1746964905';
+          if (title.includes('cooking') || title.includes('essential')) return 'https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/groceries_200x200_crop_center.jpg?v=1746965740';
+          if (title.includes('powder') || title.includes('podi')) return 'https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/powders_200x200_crop_center.jpg?v=1743477019';
+          if (title.includes('spice')) return 'https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/spice_200x200_crop_center.png?v=1746963495';
+          return 'https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/spice_200x200_crop_center.png?v=1746963495';
         }
 
         document.getElementById('collectionHeading').textContent = col.title;
@@ -357,13 +357,13 @@
               statusClass = 'status-pill low-stock';
               statusText = `Low Stock (${stock})`;
             }
-            const imgUrl = p.image || 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=300&auto=format&fit=crop&q=60';
+            const imgUrl = p.image || 'https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/spice_200x200_crop_center.png?v=1746963495';
             const title = p.name || 'Product';
             
             return `
             <a href="product-detail.html?id=${p._id}" class="col-product-card" title="Click to edit ${title}">
               <div class="col-product-img-wrapper" style="position:relative;">
-                <img src="${imgUrl}" alt="${title}" onerror="this.src='https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=300';">
+                <img src="${imgUrl}" alt="${title}" onerror="this.src='https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/spice_200x200_crop_center.png?v=1746963495';">
                 <span class="${statusClass}" style="position:absolute; top:8px; left:8px; font-size:11px; padding:2px 8px;">${statusText}</span>
               </div>
               <div class="col-product-info">

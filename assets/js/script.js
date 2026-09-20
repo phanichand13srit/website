@@ -544,82 +544,95 @@ document.addEventListener("DOMContentLoaded", () => {
         },
         {
             _id: "6a910cc273615f661cdfc431",
-            name: "Fresh Malai Paneer (Pure & Soft)",
-            category: "Dairy",
-            subcategory: "Fresh Paneer",
-            price: 95,
-            originalPrice: 120,
-            unit: "200 g",
+            name: "Sesame Oil (Premium Quality)",
+            category: "Oils",
+            price: 148,
+            originalPrice: 185,
+            unit: "500 ml",
             countInStock: 25,
             brand: "Arshith Fresh",
-            image: "https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=500&auto=format&fit=crop&q=80",
-            description: "100% natural, soft, rich cottage cheese made from fresh cow milk.",
-            rating: 4.95,
-            numReviews: 42,
+            image: "https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-08-06_at_4.24.45_PM.jpg?v=1757334050&width=533",
+            hoverImage: "https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-06-30_at_8.00.57_PM_64984681-9604-4e2d-9310-2e3b9187bec1.jpg?v=1757334050&width=533",
+            description: "Traditional cold pressed gingelly sesame oil packed with nutrients and pure flavor.",
+            rating: 4.84,
+            numReviews: 55,
             isFeatured: true
         },
         {
             _id: "6a910cc273615f661cdfc432",
-            name: "Pure Organic Cow Milk (Pasteurized)",
-            category: "Dairy",
-            subcategory: "Pure Cow Milk",
-            price: 42,
-            originalPrice: 50,
-            unit: "500 ml",
-            countInStock: 40,
+            name: "Cashew nuts (Kaju) (Premium Quality)",
+            category: "Dry Fruits",
+            price: 368,
+            originalPrice: 491,
+            unit: "250 g",
+            countInStock: 35,
             brand: "Arshith Fresh",
-            image: "https://images.unsplash.com/photo-1550583724-b2692b85b150?w=500&auto=format&fit=crop&q=80",
-            description: "Farm fresh, unadulterated pure cow milk delivered daily.",
+            image: "https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-05-22_at_7.45.38_PM_83923da9-b703-43bd-ae6f-6bb812afa6ba.jpg?v=1757334003&width=533",
+            hoverImage: "https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-07-01_at_11.45.20_AM_2927d0dd-ed7b-43f7-8eb3-0fa0fd2e9a33.jpg?v=1757334004&width=533",
+            description: "Whole crispy premium cashew nuts rich in antioxidants and healthy fats.",
             rating: 4.88,
-            numReviews: 58,
+            numReviews: 43,
             isFeatured: true
         },
         {
             _id: "6a910cc273615f661cdfc433",
-            name: "Besan Flour (Gram Flour)",
-            category: "Cooking Essentials",
-            subcategory: "Flours & Grains",
-            price: 79,
-            originalPrice: 99,
-            unit: "500 gm",
-            countInStock: 35,
+            name: "Almonds (Badam) (Premium Quality)",
+            category: "Dry Fruits",
+            price: 347,
+            originalPrice: 438,
+            unit: "250 g",
+            countInStock: 40,
             brand: "Arshith Fresh",
-            image: "assets/images/products/besan-flour.jpg",
-            description: "100% naturally pure, freshly delivered stone-ground besan flour for authentic taste.",
-            rating: 4.92,
-            numReviews: 48,
+            image: "https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-07-08_at_4.52.28_PM_2112456d-40bc-4ca8-a380-52828943ee32.jpg?v=1757334003&width=533",
+            hoverImage: "https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-06-30_at_9.53.36_AM_e4a9990f-ccf1-4aa3-a944-45faa606db78.jpg?v=1757334003&width=533",
+            description: "Hand-picked California almonds packed with protein and dietary fiber.",
+            rating: 4.9,
+            numReviews: 40,
             isFeatured: true
         },
         {
             _id: "6a910cc273615f661cdfc434",
-            name: "Kabuli Chana (Cooking Essentials)",
-            category: "Cooking Essentials",
-            subcategory: "Pulses & Legumes",
-            price: 89,
-            originalPrice: 115,
-            unit: "500 gm",
-            countInStock: 30,
+            name: "Figs (Dry Anjeer) (Premium Quality)",
+            category: "Dry Fruits",
+            price: 579,
+            originalPrice: 734,
+            unit: "250 g",
+            countInStock: 20,
             brand: "Arshith Fresh",
-            image: "assets/images/products/kabuli-chana.jpg",
-            description: "Naturally pure, preservative-free premium quality Kabuli Chana packed fresh.",
-            rating: 4.89,
-            numReviews: 39,
+            image: "https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-05-16_at_6.03.06_PM_34ff0f49-adf5-47c3-979c-8e5ab7a6db71.jpg?v=1757334000&width=533",
+            description: "Rich, chewy dried figs naturally packed with iron and calcium.",
+            rating: 4.92,
+            numReviews: 37,
             isFeatured: true
         },
         {
             _id: "6a910cc273615f661cdfc435",
-            name: "Pure Chilli Powder (Cooking Essentials)",
-            category: "Cooking Essentials",
-            subcategory: "Spices & Seasoning",
-            price: 149,
-            originalPrice: 195,
-            unit: "500 gm",
-            countInStock: 45,
+            name: "Cloves (Lavangam)",
+            category: "Spices",
+            price: 119,
+            originalPrice: 150,
+            unit: "100 g",
+            countInStock: 35,
             brand: "Arshith Fresh",
-            image: "assets/images/products/chilli-powder.jpg",
-            description: "100% natural, preservative-free authentic red chilli powder with rich aroma and flavour.",
-            rating: 4.95,
-            numReviews: 56,
+            image: "https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-07-08_at_4.19.02_PM_1_211516e8-ea8c-4a34-8c88-e925b3ea66a4.jpg?v=1757334046&width=533",
+            description: "Aromatic handpicked whole cloves full of essential oils.",
+            rating: 4.92,
+            numReviews: 36,
+            isFeatured: true
+        },
+        {
+            _id: "6a910cc273615f661cdfc436",
+            name: "Himalayan Pink Rock Salt",
+            category: "Cooking Essentials",
+            price: 89,
+            originalPrice: 120,
+            unit: "1 kg",
+            countInStock: 40,
+            brand: "Arshith Fresh",
+            image: "https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/groceries_200x200_crop_center.jpg?v=1746965740",
+            description: "100% natural, unrefined pure mineral Himalayan rock salt.",
+            rating: 4.92,
+            numReviews: 45,
             isFeatured: true
         }
     ];
@@ -644,13 +657,6 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!apiProducts || apiProducts.length === 0) {
                 apiProducts = FALLBACK_STOREFRONT_PRODUCTS;
             }
-
-            const homeGrids = document.querySelectorAll(".products-carousel-section .products-grid");
-            homeGrids.forEach(grid => {
-                if (apiProducts && apiProducts.length > 0) {
-                    grid.innerHTML = apiProducts.map(p => createProductCardHTML(p)).join('');
-                }
-            });
 
             const path = window.location.pathname.toLowerCase();
             const colGrid = document.getElementById("collectionsProductGrid");
@@ -1062,8 +1068,6 @@ document.addEventListener("DOMContentLoaded", () => {
             if (t.includes('seed')) return 'https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/dry_seeds_200x200_crop_center.jpg?v=1746963515';
             if (t.includes('ghee') || t.includes('honey')) return 'https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/ghee_1_200x200_crop_center.jpg?v=1746964905';
             if (t.includes('cooking') || t.includes('essential')) return 'https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/groceries_200x200_crop_center.jpg?v=1746965740';
-            if (t.includes('vegetable') || t.includes('veggie')) return 'https://images.unsplash.com/photo-1540420773420-3366772f4999?w=500&auto=format&fit=crop&q=80';
-            if (t.includes('dairy') || t.includes('milk') || t.includes('paneer') || t.includes('curd')) return 'https://images.unsplash.com/photo-1550583724-b2692b85b150?w=500&auto=format&fit=crop&q=80';
             if (t.includes('powder') || t.includes('podi')) return 'https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/powders_200x200_crop_center.jpg?v=1743477019';
             if (t.includes('spice')) return 'https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/spice_200x200_crop_center.png?v=1746963495';
             return col && col.image ? col.image : 'https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/spice_200x200_crop_center.png?v=1746963495';
@@ -2182,14 +2186,14 @@ function initLiveSearchAutocomplete() {
                 html += `<div class="search-suggestion-header">Matching Products</div>`;
                 matchingProducts.forEach(p => {
                     const prodTitle = p.title || p.name || 'Product';
-                    const img = (p.images && p.images.length > 0) ? p.images[0].url : (p.image || 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=100');
+                    const img = (p.images && p.images.length > 0) ? p.images[0].url : (p.image || 'https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/spice_200x200_crop_center.png?v=1746963495');
                     const price = p.price ? `₹${p.price}` : '';
                     const catName = p.category || 'General';
                     const detailUrl = `${prefix}pages/product.html?id=${p._id}`;
 
                     html += `
                         <a href="${detailUrl}" class="search-suggestion-item">
-                            <img src="${img}" class="search-suggestion-thumb" alt="${escapeHtml(prodTitle)}" onerror="this.src='https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=100';">
+                            <img src="${img}" class="search-suggestion-thumb" alt="${escapeHtml(prodTitle)}" onerror="this.src='https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/spice_200x200_crop_center.png?v=1746963495';">
                             <div class="search-suggestion-info">
                                 <div class="search-suggestion-title">${highlightMatch(prodTitle, query)}</div>
                                 <div class="search-suggestion-meta">
@@ -2482,9 +2486,9 @@ function renderAmazonReviewsUI(container) {
     // Fallback demo images if none in reviews
     if (allCustomerImages.length === 0) {
         allCustomerImages.push(
-            'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=300&auto=format&fit=crop&q=60',
-            'https://images.unsplash.com/photo-1540420773420-3366772f4999?w=300&auto=format&fit=crop&q=60',
-            'https://images.unsplash.com/photo-1615485290382-441e4d049cb5?w=300&auto=format&fit=crop&q=60'
+            'https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM_1.jpg?v=1757334051&width=533',
+            'https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-09-15_at_4.34.52_PM.jpg?v=1757934372&width=533',
+            'https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-07-08_at_4.19.01_PM_2_717030b8-c8a8-40a4-bdf0-7e516dec3029.jpg?v=1757334045&width=533'
         );
     }
 

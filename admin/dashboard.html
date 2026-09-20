@@ -926,7 +926,7 @@
           category: p.category || 'General',
           units: 0,
           revenue: 0,
-          img: (p.images && p.images[0] && p.images[0].url) || p.image || 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=80',
+          img: (p.images && p.images[0] && p.images[0].url) || p.image || 'https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/spice_200x200_crop_center.png?v=1746963495',
           stock: Number(p.countInStock || 0)
         };
       });
@@ -949,7 +949,7 @@
                 category: 'General',
                 units: qty,
                 revenue: (qty * price),
-                img: item.image || 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=80',
+                img: item.image || 'https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/spice_200x200_crop_center.png?v=1746963495',
                 stock: 10
               };
             }
@@ -974,7 +974,7 @@
           <div class="top-product-item">
             <div class="top-product-left">
               <div class="top-product-rank ${rankClass}">#${idx + 1}</div>
-              <img src="${p.img}" class="top-product-thumb" alt="${p.name}" onerror="this.src='https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=80';">
+              <img src="${p.img}" class="top-product-thumb" alt="${p.name}" onerror="this.src='https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/spice_200x200_crop_center.png?v=1746963495';">
               <div class="top-product-info">
                 <span class="top-product-name">${p.name}</span>
                 <span class="top-product-meta">${p.category} &bull; ${p.stock} in stock</span>

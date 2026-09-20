@@ -781,15 +781,21 @@
 
         @media (max-width: 900px) {
             .checkout-main-grid {
-                grid-template-columns: 1fr;
+                grid-template-columns: 1fr !important;
+                gap: 20px !important;
+                padding: 0 12px !important;
             }
             .checkout-form-pane {
-                padding: 24px;
-                order: 2;
+                padding: 20px 16px !important;
+                order: 2 !important;
+                width: 100% !important;
+                box-sizing: border-box !important;
             }
             .checkout-summary-pane {
-                padding: 24px;
-                order: 1;
+                padding: 20px 14px !important;
+                order: 1 !important;
+                width: 100% !important;
+                box-sizing: border-box !important;
             }
         }
 
@@ -1867,8 +1873,11 @@
     background: #ffffff !important;
     border: 1px solid #e2e8f0 !important;
     border-radius: 16px !important;
-    padding: 20px !important;
+    padding: 0 !important;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03) !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
 }
 
 .bill-details-title {
@@ -1876,5 +1885,102 @@
     font-size: 15px !important;
     font-weight: 800 !important;
     color: #1a202c !important;
-    margin: 0 0 12px 0 !important;
+    padding: 16px 18px 8px 18px !important;
+    margin: 0 !important;
+}
+
+.bill-details-list {
+    padding: 6px 18px 16px 18px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+}
+
+.bill-row {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 10px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+.bill-row-label {
+    display: flex !important;
+    align-items: center !important;
+    gap: 7px !important;
+    font-weight: 500 !important;
+    flex-wrap: wrap !important;
+    min-width: 0 !important;
+}
+
+.bill-row-value {
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    font-weight: 700 !important;
+    color: #1e293b !important;
+    flex-shrink: 0 !important;
+    white-space: nowrap !important;
+    margin-left: auto !important;
+}
+
+.bill-savings-banner {
+    background: #e0edff !important;
+    position: relative !important;
+    width: 100% !important;
+    margin-top: 4px !important;
+}
+
+.bill-savings-content {
+    padding: 10px 18px 14px 18px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    color: #2563eb !important;
+    font-size: 14px !important;
+    font-weight: 700 !important;
+}
+
+.bill-savings-content strong {
+    font-size: 16px !important;
+    font-weight: 800 !important;
+    flex-shrink: 0 !important;
+    white-space: nowrap !important;
+}
+
+@media (max-width: 480px) {
+    .checkout-main-grid {
+        padding: 0 6px !important;
+        margin: 10px auto !important;
+    }
+    .checkout-summary-pane,
+    .checkout-form-pane {
+        padding: 14px 10px !important;
+        border-radius: 14px !important;
+    }
+    .bill-details-list {
+        padding: 6px 12px 14px 12px !important;
+        gap: 10px !important;
+    }
+    .bill-details-title {
+        padding: 14px 12px 6px 12px !important;
+    }
+    .bill-savings-content {
+        padding: 10px 12px 14px 12px !important;
+    }
+    .bill-row-label {
+        font-size: 12.5px !important;
+        gap: 5px !important;
+    }
+    .bill-saved-pill {
+        font-size: 10px !important;
+        padding: 1px 6px !important;
+    }
+    .bill-row-value {
+        font-size: 12.5px !important;
+    }
+    .bill-grand-price {
+        font-size: 15px !important;
+    }
 }

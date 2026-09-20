@@ -17,7 +17,7 @@ function formatProduct(p) {
   } else if (obj.image) {
     obj.images = [{ url: obj.image }];
   } else {
-    obj.images = [{ url: 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=100&auto=format&fit=crop&q=60' }];
+    obj.images = [{ url: 'https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/spice_200x200_crop_center.png?v=1746963495' }];
   }
   return obj;
 }

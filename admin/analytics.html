@@ -583,12 +583,12 @@
 
       container.innerHTML = top.map((p, i) => {
         const rankClass = i === 0 ? 'rank-gold' : i === 1 ? 'rank-silver' : i === 2 ? 'rank-bronze' : '';
-        const imgSrc = p.image || 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=80';
+        const imgSrc = p.image || 'https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/spice_200x200_crop_center.png?v=1746963495';
         return `
           <div class="leader-item">
             <div class="leader-left">
               <div class="leader-rank ${rankClass}">#${i+1}</div>
-              <img src="${imgSrc}" class="leader-thumb" alt="${p.name}" onerror="this.src='https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=80';">
+              <img src="${imgSrc}" class="leader-thumb" alt="${p.name}" onerror="this.src='https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/spice_200x200_crop_center.png?v=1746963495';">
               <div class="leader-info">
                 <span class="leader-name">${p.name}</span>
                 <span class="leader-meta">${p.category} · ${p.stock} in stock · ₹${p.price}/unit</span>

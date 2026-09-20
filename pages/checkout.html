@@ -21,394 +21,1104 @@
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
     <style>
-        .payment-option-card {
-            border: 1.5px solid #e5e7eb;
-            border-radius: 8px;
-            margin-bottom: 12px;
-            overflow: hidden;
-            transition: border-color 0.2s, box-shadow 0.2s;
-            cursor: pointer;
+        /* GLOBAL RESET & BOX SIZING */
+        *, *::before, *::after {
+            box-sizing: border-box !important;
         }
-        .payment-option-card.selected {
-            border-color: #0f7139;
-            box-shadow: 0 0 0 1px #0f7139;
-            background-color: #fbfdfb;
+
+        html, body {
+            width: 100% !important;
+            max-width: 100vw !important;
+            overflow-x: hidden !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            font-family: 'Plus Jakarta Sans', sans-serif !important;
+            background-color: #f6f8f1 !important;
+            -webkit-font-smoothing: antialiased;
         }
-        .payment-option-header {
+
+        .checkout-top-bar {
+            background-color: #ffffff;
+            border-bottom: 1px solid #e5e7eb;
+            padding: 12px 24px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 14px 16px;
-            background: #ffffff;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-sizing: border-box;
+            width: 100%;
         }
-        .payment-option-left {
+
+        .checkout-header-logo-img {
+            height: 42px;
+            object-fit: contain;
+        }
+
+        .cart-icon-badge {
+            position: relative;
             display: flex;
             align-items: center;
-            gap: 12px;
+            justify-content: center;
+            padding: 4px;
         }
-        .payment-radio-circle {
+
+        .cart-badge-num {
+            position: absolute;
+            top: -4px;
+            right: -6px;
+            background: #0f7139;
+            color: #ffffff;
+            font-size: 10px;
+            font-weight: 700;
             width: 18px;
             height: 18px;
             border-radius: 50%;
-            border: 2px solid #9ca3af;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.2s;
-        }
-        .payment-option-card.selected .payment-radio-circle {
-            border-color: #0f7139;
-        }
-        .payment-radio-inner {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background-color: transparent;
-            transition: all 0.2s;
-        }
-        .payment-option-card.selected .payment-radio-inner {
-            background-color: #0f7139;
-        }
-        .payment-name {
-            font-size: 14px;
-            font-weight: 600;
-            color: #1f2937;
-        }
-        .payment-option-body {
-            padding: 14px 16px;
-            background: #f9fafb;
-            border-top: 1px solid #f3f4f6;
-            font-size: 13px;
-            color: #4b5563;
-            line-height: 1.5;
-            display: none;
-        }
-        .payment-option-card.selected .payment-option-body {
-            display: block;
-        }
-        .pay-now-btn:disabled {
-            background-color: #9ca3af !important;
-            cursor: not-allowed;
-        }
-        .order-success-modal {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.6);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 99999;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
-        }
-        .order-success-modal.show {
-            opacity: 1;
-            pointer-events: auto;
-        }
-        .order-success-box {
-            background: #ffffff;
-            border-radius: 12px;
-            max-width: 480px;
-            width: 90%;
-            padding: 32px 24px;
-            text-align: center;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-            animation: slideUp 0.3s ease;
-        }
-        @keyframes slideUp {
-            from { transform: translateY(20px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-        .success-icon-circle {
-            width: 64px;
-            height: 64px;
-            background: #dcfce7;
-            color: #166534;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 32px;
-            margin: 0 auto 16px;
-        }
-        .success-title {
-            font-size: 22px;
-            font-weight: 700;
-            color: #111827;
-            margin-bottom: 8px;
-        }
-        .success-desc {
-            font-size: 14px;
-            color: #6b7280;
-            margin-bottom: 20px;
-            line-height: 1.5;
-        }
-        .order-info-pill {
-            background: #f3f4f6;
-            padding: 10px 16px;
-            border-radius: 8px;
-            font-size: 13px;
-            color: #374151;
-            margin-bottom: 24px;
-            text-align: left;
-        }
-        .order-info-pill div {
-            margin: 4px 0;
-        }
-        .btn-continue-store {
-            display: inline-block;
-            width: 100%;
-            background: #0f7139;
-            color: #ffffff;
-            font-weight: 600;
-            padding: 12px;
-            border-radius: 6px;
-            text-decoration: none;
-            font-size: 15px;
-            transition: background 0.2s;
-        }
-        .btn-continue-store:hover {
-            background: #0b3718;
         }
 
-        /* CLASSIC IMPULSE ADD-ONS STYLING */
-        /* MODERN E-COMMERCE CHECKOUT ADD-ONS CAROUSEL */
+        /* MAIN TWO COLUMN GRID */
+        .checkout-main-grid {
+            display: grid !important;
+            grid-template-columns: 52% 48% !important;
+            max-width: 1200px !important;
+            margin: 24px auto !important;
+            padding: 0 16px !important;
+            gap: 24px !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+        }
+
+        /* LEFT COLUMN FORM PANE */
+        .checkout-form-pane {
+            background: #ffffff !important;
+            border: 1px solid #e2e8f0 !important;
+            border-radius: 18px !important;
+            padding: 28px 24px !important;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03) !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+            min-width: 0 !important;
+        }
+
+        /* RIGHT COLUMN ORDER SUMMARY PANE */
+        .checkout-summary-pane {
+            background-color: #eaf1de !important;
+            border: 1px solid #d8e4c8 !important;
+            border-radius: 18px !important;
+            padding: 24px 20px !important;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03) !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+            min-width: 0 !important;
+        }
+
+        .checkout-section-title {
+            font-family: 'Plus Jakarta Sans', sans-serif !important;
+            font-size: 16px !important;
+            font-weight: 800 !important;
+            color: #0f172a !important;
+            letter-spacing: -0.2px !important;
+            border-bottom: 1px solid #f1f5f9 !important;
+            padding-bottom: 8px !important;
+            margin-bottom: 14px !important;
+            display: flex !important;
+            justify-content: space-between !important;
+            align-items: center !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+        }
+
+        .signin-link {
+            color: #0f7139 !important;
+            font-size: 13.5px !important;
+            text-decoration: underline !important;
+            font-weight: 600 !important;
+        }
+
+        .input-icon-wrap {
+            position: relative !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+        }
+
+        .input-icon-right {
+            position: absolute !important;
+            right: 14px !important;
+            top: 50% !important;
+            transform: translateY(-50%) !important;
+            color: #94a3b8 !important;
+            font-size: 14px !important;
+            pointer-events: none !important;
+        }
+
+        .form-input-control, .form-select-control {
+            width: 100% !important;
+            height: 44px !important;
+            border: 1.5px solid #cbd5e1 !important;
+            border-radius: 10px !important;
+            padding: 0 14px !important;
+            font-size: 13.5px !important;
+            font-family: 'Plus Jakarta Sans', sans-serif !important;
+            color: #1e293b !important;
+            background: #f8fafc !important;
+            transition: all 0.2s ease !important;
+            box-sizing: border-box !important;
+            outline: none !important;
+        }
+
+        .form-input-control:focus, .form-select-control:focus {
+            border-color: #0f7139 !important;
+            background: #ffffff !important;
+            box-shadow: 0 0 0 3px rgba(15, 113, 57, 0.12) !important;
+        }
+
+        .dual-inputs-grid {
+            display: grid !important;
+            grid-template-columns: 1fr 1fr !important;
+            gap: 12px !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+            margin-top: 12px !important;
+        }
+
+        .triple-inputs-grid {
+            display: grid !important;
+            grid-template-columns: 1fr 1fr 1fr !important;
+            gap: 10px !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+            margin-top: 12px !important;
+        }
+
+        .checkbox-row {
+            display: flex !important;
+            align-items: center !important;
+            gap: 8px !important;
+            margin-top: 12px !important;
+            font-size: 13px !important;
+            color: #334155 !important;
+            cursor: pointer !important;
+            user-select: none !important;
+        }
+
+        /* PAYMENT SECTION STYLING */
+        .payment-option-card {
+            border: 1.5px solid #e2e8f0 !important;
+            border-radius: 12px !important;
+            margin-bottom: 10px !important;
+            overflow: hidden !important;
+            transition: all 0.2s ease !important;
+            cursor: pointer !important;
+            background: #ffffff !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+        }
+
+        .payment-option-card.selected {
+            border-color: #0f7139 !important;
+            box-shadow: 0 0 0 1.5px #0f7139 !important;
+            background-color: #fbfdfb !important;
+        }
+
+        .payment-option-header {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            padding: 12px 14px !important;
+            background: #ffffff !important;
+            gap: 8px !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+        }
+
+        .payment-option-left {
+            display: flex !important;
+            align-items: center !important;
+            gap: 10px !important;
+            min-width: 0 !important;
+            flex: 1 1 auto !important;
+        }
+
+        .payment-radio-circle {
+            width: 18px !important;
+            height: 18px !important;
+            min-width: 18px !important;
+            min-height: 18px !important;
+            border-radius: 50% !important;
+            border: 2px solid #94a3b8 !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            transition: all 0.2s !important;
+        }
+
+        .payment-option-card.selected .payment-radio-circle {
+            border-color: #0f7139 !important;
+        }
+
+        .payment-radio-inner {
+            width: 8px !important;
+            height: 8px !important;
+            border-radius: 50% !important;
+            background-color: transparent !important;
+            transition: all 0.2s !important;
+        }
+
+        .payment-option-card.selected .payment-radio-inner {
+            background-color: #0f7139 !important;
+        }
+
+        .payment-name {
+            font-size: 13px !important;
+            font-weight: 700 !important;
+            color: #1e293b !important;
+            line-height: 1.3 !important;
+        }
+
+        .payment-badges {
+            display: flex !important;
+            gap: 4px !important;
+            align-items: center !important;
+            flex-shrink: 0 !important;
+        }
+
+        .payment-option-body {
+            padding: 12px 14px !important;
+            background: #f8fafc !important;
+            border-top: 1px solid #f1f5f9 !important;
+            font-size: 12.5px !important;
+            color: #475569 !important;
+            line-height: 1.5 !important;
+            display: none;
+            width: 100% !important;
+            box-sizing: border-box !important;
+        }
+
+        .payment-option-card.selected .payment-option-body {
+            display: block !important;
+        }
+
+        /* BILLING ADDRESS BOX */
+        .billing-options-box {
+            border: 1.5px solid #e2e8f0 !important;
+            border-radius: 12px !important;
+            overflow: hidden !important;
+            background: #ffffff !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+        }
+
+        .billing-option-row {
+            display: flex !important;
+            align-items: center !important;
+            gap: 10px !important;
+            padding: 13px 14px !important;
+            cursor: pointer !important;
+            font-size: 13.5px !important;
+            transition: background 0.15s ease !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+        }
+
+        .billing-option-row:not(:last-child) {
+            border-bottom: 1px solid #f1f5f9 !important;
+        }
+
+        .billing-option-row.selected {
+            background-color: #fbfdfb !important;
+        }
+
+        .radio-dot-active {
+            width: 16px !important;
+            height: 16px !important;
+            min-width: 16px !important;
+            border-radius: 50% !important;
+            border: 5px solid #0f7139 !important;
+            background: #ffffff !important;
+            box-sizing: border-box !important;
+        }
+
+        .radio-dot-inactive {
+            width: 16px !important;
+            height: 16px !important;
+            min-width: 16px !important;
+            border-radius: 50% !important;
+            border: 2px solid #cbd5e1 !important;
+            background: #ffffff !important;
+            box-sizing: border-box !important;
+        }
+
+        .pay-now-btn {
+            background: #0f7139 !important;
+            color: #ffffff !important;
+            font-family: 'Plus Jakarta Sans', sans-serif !important;
+            font-size: 15px !important;
+            font-weight: 800 !important;
+            letter-spacing: 0.3px !important;
+            border-radius: 12px !important;
+            padding: 15px !important;
+            width: 100% !important;
+            border: none !important;
+            cursor: pointer !important;
+            box-shadow: 0 4px 16px rgba(15, 113, 57, 0.3) !important;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            box-sizing: border-box !important;
+            margin-top: 24px !important;
+        }
+
+        .pay-now-btn:hover {
+            background: #094723 !important;
+            transform: translateY(-2px) !important;
+            box-shadow: 0 8px 24px rgba(15, 113, 57, 0.4) !important;
+        }
+
+        .pay-now-btn:disabled {
+            background-color: #94a3b8 !important;
+            cursor: not-allowed !important;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        /* ADD-ONS SECTION & CAROUSEL STYLING */
         .checkout-addons-box {
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
-            border-radius: 16px;
-            padding: 14px 16px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
-            position: relative;
+            background: #ffffff !important;
+            border: 1px solid #e2ebd6 !important;
+            border-radius: 16px !important;
+            padding: 14px 14px !important;
+            margin-bottom: 16px !important;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03) !important;
+            position: relative !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+            overflow: hidden !important;
         }
 
         .checkout-addons-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 12px;
-            padding-bottom: 8px;
-            border-bottom: 1px dashed #e2e8f0;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            margin-bottom: 10px !important;
+            padding-bottom: 8px !important;
+            border-bottom: 1px dashed #e2ebd6 !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
         }
 
         .checkout-addons-title {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 13.5px;
-            font-weight: 700;
-            color: #0f172a;
+            display: flex !important;
+            align-items: center !important;
+            gap: 6px !important;
+            font-size: 13.5px !important;
+            font-weight: 700 !important;
+            color: #0f172a !important;
         }
 
         .checkout-addons-badge {
-            background: #dcfce7;
-            color: #0f7139;
-            font-size: 10px;
-            font-weight: 700;
-            padding: 2px 7px;
-            border-radius: 10px;
-            text-transform: uppercase;
+            background: #dcfce7 !important;
+            color: #0f7139 !important;
+            font-size: 10px !important;
+            font-weight: 800 !important;
+            padding: 2px 7px !important;
+            border-radius: 10px !important;
+            text-transform: uppercase !important;
+        }
+
+        .addons-nav-arrows {
+            display: flex !important;
+            align-items: center !important;
+            gap: 6px !important;
+        }
+
+        .addon-nav-arrow {
+            width: 28px !important;
+            height: 28px !important;
+            border-radius: 50% !important;
+            background: #ffffff !important;
+            border: 1.5px solid #0f7139 !important;
+            color: #0f7139 !important;
+            font-size: 16px !important;
+            font-weight: 800 !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            cursor: pointer !important;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            line-height: 1 !important;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06) !important;
+            padding: 0 !important;
+        }
+
+        .addon-nav-arrow:hover {
+            background: #0f7139 !important;
+            color: #ffffff !important;
+            transform: scale(1.08) !important;
+            box-shadow: 0 3px 8px rgba(15, 113, 57, 0.25) !important;
+        }
+
+        .addon-nav-arrow:active {
+            transform: scale(0.95) !important;
         }
 
         .addons-carousel-wrapper {
-            position: relative;
-            display: flex;
-            align-items: center;
-        }
-
-        .addon-scroll-btn {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: #ffffff;
-            border: 1px solid #cbd5e1;
-            color: #0f7139;
-            font-size: 18px;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            z-index: 10;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            line-height: 1;
-        }
-
-        .addon-scroll-btn.btn-left {
-            left: -12px;
-        }
-
-        .addon-scroll-btn.btn-right {
-            right: -12px;
-        }
-
-        .addon-scroll-btn:hover {
-            background: #0f7139;
-            color: #ffffff;
-            border-color: #0f7139;
-            transform: translateY(-50%) scale(1.1);
-            box-shadow: 0 6px 16px rgba(15, 113, 57, 0.3);
-        }
-
-        .addon-scroll-btn:active {
-            transform: translateY(-50%) scale(0.95);
+            position: relative !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+            overflow: hidden !important;
         }
 
         .addons-list {
-            display: flex;
-            flex-direction: row;
-            gap: 10px;
-            overflow-x: auto;
-            scroll-snap-type: x mandatory;
-            scroll-behavior: smooth;
-            padding: 4px 2px 8px 2px;
-            scrollbar-width: none;
-            -ms-overflow-style: none;
-            -webkit-overflow-scrolling: touch;
+            display: flex !important;
+            flex-direction: row !important;
+            gap: 10px !important;
+            overflow-x: auto !important;
+            scroll-snap-type: x mandatory !important;
+            scroll-behavior: smooth !important;
+            padding: 4px 2px 8px 2px !important;
+            scrollbar-width: thin !important;
+            -webkit-overflow-scrolling: touch !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+            cursor: grab !important;
+            user-select: none !important;
+        }
+
+        .addons-list:active {
+            cursor: grabbing !important;
         }
 
         .addons-list::-webkit-scrollbar {
-            display: none;
+            height: 4px !important;
+        }
+
+        .addons-list::-webkit-scrollbar-thumb {
+            background: #cbd5e1 !important;
+            border-radius: 4px !important;
         }
 
         .addon-item-card {
-            flex: 0 0 148px;
-            scroll-snap-align: start;
-            background: #ffffff;
-            border: 1px solid #e2ebd6;
-            border-radius: 12px;
-            padding: 10px 8px 8px 8px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            position: relative;
-            transition: all 0.2s ease;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+            flex: 0 0 144px !important;
+            min-width: 144px !important;
+            scroll-snap-align: start !important;
+            background: #ffffff !important;
+            border: 1px solid #e2ebd6 !important;
+            border-radius: 12px !important;
+            padding: 10px 8px 8px 8px !important;
+            display: flex !important;
+            flex-direction: column !important;
+            justify-content: space-between !important;
+            position: relative !important;
+            transition: all 0.2s ease !important;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02) !important;
+            box-sizing: border-box !important;
         }
 
         .addon-item-card:hover {
-            border-color: #0f7139;
-            box-shadow: 0 4px 14px rgba(15, 113, 57, 0.12);
-            transform: translateY(-2px);
+            border-color: #0f7139 !important;
+            box-shadow: 0 4px 14px rgba(15, 113, 57, 0.12) !important;
+            transform: translateY(-2px) !important;
         }
 
         .addon-card-badge {
-            position: absolute;
-            top: 6px;
-            left: 6px;
-            background: #ef4444;
-            color: #ffffff;
-            font-size: 9px;
-            font-weight: 800;
-            padding: 1px 5px;
-            border-radius: 4px;
-            z-index: 2;
-            letter-spacing: 0.3px;
+            position: absolute !important;
+            top: 6px !important;
+            left: 6px !important;
+            background: #ef4444 !important;
+            color: #ffffff !important;
+            font-size: 9px !important;
+            font-weight: 800 !important;
+            padding: 1px 5px !important;
+            border-radius: 4px !important;
+            z-index: 2 !important;
+            letter-spacing: 0.3px !important;
         }
 
         .addon-img-box {
-            width: 100%;
-            height: 72px;
-            border-radius: 8px;
-            overflow: hidden;
-            background: #f8fafc;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 8px;
+            width: 100% !important;
+            height: 72px !important;
+            border-radius: 8px !important;
+            overflow: hidden !important;
+            background: #f8fafc !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            margin-bottom: 8px !important;
         }
 
         .addon-img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.3s ease;
+            width: 100% !important;
+            height: 100% !important;
+            object-fit: cover !important;
+            transition: transform 0.3s ease !important;
         }
 
         .addon-item-card:hover .addon-img {
-            transform: scale(1.05);
+            transform: scale(1.05) !important;
         }
 
         .addon-card-body {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-            flex-grow: 1;
-            margin-bottom: 8px;
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 2px !important;
+            flex-grow: 1 !important;
+            margin-bottom: 8px !important;
+            min-width: 0 !important;
         }
 
         .addon-info-title {
-            font-size: 11.5px;
-            font-weight: 700;
-            color: #0f172a;
-            margin: 0;
-            line-height: 1.25;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-            height: 29px;
+            font-size: 11.5px !important;
+            font-weight: 700 !important;
+            color: #0f172a !important;
+            margin: 0 !important;
+            line-height: 1.25 !important;
+            display: -webkit-box !important;
+            -webkit-line-clamp: 2 !important;
+            -webkit-box-orient: vertical !important;
+            overflow: hidden !important;
+            height: 29px !important;
         }
 
         .addon-info-meta {
-            font-size: 10px;
-            color: #64748b;
-            font-weight: 500;
+            font-size: 10px !important;
+            color: #64748b !important;
+            font-weight: 500 !important;
         }
 
         .addon-price-row {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            margin-top: 4px;
+            display: flex !important;
+            align-items: center !important;
+            gap: 4px !important;
+            margin-top: 4px !important;
         }
 
         .addon-curr-price {
-            font-size: 12.5px;
-            font-weight: 800;
-            color: #0f7139;
+            font-size: 12.5px !important;
+            font-weight: 800 !important;
+            color: #0f7139 !important;
         }
 
         .addon-orig-price {
-            font-size: 10px;
-            color: #94a3b8;
-            text-decoration: line-through;
+            font-size: 10px !important;
+            color: #94a3b8 !important;
+            text-decoration: line-through !important;
         }
 
         .addon-add-btn {
-            background: #ffffff;
-            border: 1.5px solid #0f7139;
-            color: #0f7139;
-            font-size: 11px;
-            font-weight: 800;
-            padding: 5px 0;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
+            background: #ffffff !important;
+            border: 1.5px solid #0f7139 !important;
+            color: #0f7139 !important;
+            font-size: 11px !important;
+            font-weight: 800 !important;
+            padding: 5px 0 !important;
+            border-radius: 6px !important;
+            cursor: pointer !important;
+            transition: all 0.2s ease !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.5px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
         }
 
         .addon-add-btn:hover {
-            background: #0f7139;
-            color: #ffffff;
+            background: #0f7139 !important;
+            color: #ffffff !important;
         }
 
         .addon-add-btn.added {
-            background: #0f7139;
-            color: #ffffff;
-            border-color: #0f7139;
-            box-shadow: 0 2px 6px rgba(15, 113, 57, 0.25);
+            background: #0f7139 !important;
+            color: #ffffff !important;
+            border-color: #0f7139 !important;
+            box-shadow: 0 2px 6px rgba(15, 113, 57, 0.25) !important;
+        }
+
+        /* COUPONS & REWARDS CARDS */
+        .discount-code-wrap {
+            display: flex !important;
+            gap: 8px !important;
+            margin-bottom: 12px !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+        }
+
+        .discount-input {
+            flex: 1 !important;
+            min-width: 0 !important;
+            height: 42px !important;
+            background: #ffffff !important;
+            border: 1px solid #cbd5e1 !important;
+            border-radius: 8px !important;
+            padding: 0 12px !important;
+            font-size: 13.5px !important;
+            outline: none !important;
+            box-sizing: border-box !important;
+        }
+
+        .discount-apply-btn {
+            height: 42px !important;
+            padding: 0 18px !important;
+            background: #0f7139 !important;
+            border: none !important;
+            border-radius: 8px !important;
+            color: #ffffff !important;
+            font-size: 13.5px !important;
+            font-weight: 700 !important;
+            cursor: pointer !important;
+            flex-shrink: 0 !important;
+        }
+
+        .available-coupons-box {
+            background: #ffffff !important;
+            border: 1px solid #e2e8f0 !important;
+            border-radius: 12px !important;
+            padding: 12px 14px !important;
+            box-sizing: border-box !important;
+            width: 100% !important;
+            margin-top: 10px !important;
+        }
+
+        .available-coupons-header {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            cursor: pointer !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+        }
+
+        .coupons-header-left {
+            display: flex !important;
+            align-items: center !important;
+            gap: 6px !important;
+            font-size: 13px !important;
+            font-weight: 700 !important;
+            color: #1e293b !important;
+        }
+
+        .coupons-count-badge {
+            background: #dcfce7 !important;
+            color: #0f7139 !important;
+            font-size: 11px !important;
+            font-weight: 700 !important;
+            padding: 2px 7px !important;
+            border-radius: 10px !important;
+        }
+
+        .coupons-toggle-btn {
+            display: flex !important;
+            align-items: center !important;
+            gap: 4px !important;
+            font-size: 11.5px !important;
+            color: #0f7139 !important;
+            font-weight: 600 !important;
+        }
+
+        .fresh-coins-loyalty-card {
+            background: #fffbeb !important;
+            border: 1.5px solid #fde68a !important;
+            border-radius: 14px !important;
+            padding: 14px !important;
+            margin-top: 12px !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+        }
+
+        .fresh-coins-header {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            margin-bottom: 8px !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+        }
+
+        .fresh-coins-title-wrap {
+            display: flex !important;
+            align-items: center !important;
+            gap: 8px !important;
+        }
+
+        .fresh-coins-title {
+            font-size: 13px !important;
+            font-weight: 700 !important;
+            color: #78350f !important;
+            margin: 0 !important;
+        }
+
+        .fresh-coins-sub {
+            font-size: 10.5px !important;
+            color: #92400e !important;
+            margin: 0 !important;
+        }
+
+        .earned-coins-tag {
+            background: #fef3c7 !important;
+            color: #b45309 !important;
+            font-size: 11px !important;
+            font-weight: 800 !important;
+            padding: 2px 8px !important;
+            border-radius: 10px !important;
+            border: 1px solid #fde68a !important;
+        }
+
+        /* BILL DETAILS CARD STYLING */
+        .bill-details-card {
+            background: #ffffff !important;
+            border: 1px solid #e2e8f0 !important;
+            border-radius: 16px !important;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03) !important;
+            margin-top: 14px !important;
+            overflow: hidden !important;
+            box-sizing: border-box !important;
+            width: 100% !important;
+            padding: 0 !important;
+        }
+
+        .bill-details-title {
+            font-size: 15px !important;
+            font-weight: 800 !important;
+            color: #1e293b !important;
+            padding: 16px 16px 8px 16px !important;
+            margin: 0 !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+        }
+
+        .bill-details-list {
+            padding: 4px 16px 16px 16px !important;
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 11px !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+        }
+
+        .bill-row {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            gap: 8px !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+            font-size: 13.5px !important;
+            color: #334155 !important;
+        }
+
+        .bill-row-label {
+            display: flex !important;
+            align-items: center !important;
+            gap: 6px !important;
+            font-weight: 500 !important;
+            flex-wrap: wrap !important;
+            min-width: 0 !important;
+            flex: 1 1 auto !important;
+        }
+
+        .bill-icon {
+            font-size: 14px !important;
+        }
+
+        .bill-info-icon {
+            font-size: 10px !important;
+            color: #64748b !important;
+            border: 1px solid #cbd5e1 !important;
+            border-radius: 50% !important;
+            width: 14px !important;
+            height: 14px !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            cursor: pointer !important;
+        }
+
+        .bill-saved-pill {
+            background: #e0edff !important;
+            color: #2563eb !important;
+            font-size: 10.5px !important;
+            font-weight: 700 !important;
+            padding: 1.5px 7px !important;
+            border-radius: 6px !important;
+        }
+
+        .bill-row-value {
+            display: flex !important;
+            align-items: center !important;
+            gap: 6px !important;
+            font-weight: 700 !important;
+            color: #1e293b !important;
+            flex: 0 0 auto !important;
+            white-space: nowrap !important;
+            margin-left: auto !important;
+            text-align: right !important;
+        }
+
+        .bill-mrp-crossed {
+            text-decoration: line-through !important;
+            color: #94a3b8 !important;
+            font-weight: 400 !important;
+            font-size: 12.5px !important;
+        }
+
+        .bill-free-text {
+            color: #2563eb !important;
+            font-weight: 800 !important;
+            font-size: 13px !important;
+        }
+
+        .grand-total-bill-row {
+            padding-top: 12px !important;
+            border-top: 1px dashed #cbd5e1 !important;
+            font-weight: 700 !important;
+        }
+
+        .grand-total-bill-row .bill-row-label {
+            font-size: 15px !important;
+            font-weight: 800 !important;
+            color: #0f172a !important;
+        }
+
+        .bill-grand-price {
+            font-size: 17px !important;
+            font-weight: 800 !important;
+            color: #0f172a !important;
+        }
+
+        /* WAVY TOTAL SAVINGS BANNER */
+        .bill-savings-banner {
+            background: #e0edff !important;
+            position: relative !important;
+            width: 100% !important;
+            margin-top: 4px !important;
+            box-sizing: border-box !important;
+            overflow: hidden !important;
+        }
+
+        .wavy-top-divider {
+            width: 100% !important;
+            overflow: hidden !important;
+            line-height: 0 !important;
+        }
+
+        .wavy-top-divider svg {
+            display: block !important;
+            width: 100% !important;
+            height: 10px !important;
+            fill: #e0edff !important;
+        }
+
+        .bill-savings-content {
+            padding: 10px 16px 14px 16px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            color: #2563eb !important;
+            font-size: 14px !important;
+            font-weight: 700 !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+        }
+
+        .bill-savings-content strong {
+            font-size: 16px !important;
+            font-weight: 800 !important;
+            flex: 0 0 auto !important;
+            white-space: nowrap !important;
+        }
+
+        /* FEED NEEDY PEOPLE CARD */
+        .feed-needy-card {
+            background: #f0fdf4 !important;
+            border: 1.5px dashed #86efac !important;
+            border-radius: 14px !important;
+            padding: 14px !important;
+            margin-top: 12px !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+        }
+
+        .feed-needy-header {
+            display: flex !important;
+            align-items: flex-start !important;
+            justify-content: space-between !important;
+            margin-bottom: 10px !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+        }
+
+        .feed-needy-title-wrap {
+            display: flex !important;
+            align-items: center !important;
+            gap: 8px !important;
+        }
+
+        .feed-needy-title {
+            font-size: 13.5px !important;
+            font-weight: 700 !important;
+            color: #166534 !important;
+            margin: 0 !important;
+        }
+
+        .feed-needy-subtitle {
+            font-size: 11px !important;
+            color: #15803d !important;
+            margin: 2px 0 0 0 !important;
+        }
+
+        .feed-needy-options {
+            display: flex !important;
+            gap: 8px !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+        }
+
+        .feed-chip {
+            flex: 1 !important;
+            padding: 7px 0 !important;
+            border-radius: 8px !important;
+            border: 1px solid #86efac !important;
+            background: #ffffff !important;
+            color: #166534 !important;
+            font-weight: 700 !important;
+            font-size: 12px !important;
+            cursor: pointer !important;
+            text-align: center !important;
+            transition: all 0.2s ease !important;
+        }
+
+        .feed-chip.selected {
+            background: #166534 !important;
+            color: #ffffff !important;
+            border-color: #166534 !important;
+        }
+
+        /* RESPONSIVE BREAKPOINTS */
+        @media (max-width: 900px) {
+            .checkout-main-grid {
+                display: flex !important;
+                flex-direction: column !important;
+                padding: 0 10px !important;
+                margin: 10px auto !important;
+                gap: 16px !important;
+                width: 100% !important;
+            }
+            .checkout-summary-pane {
+                order: 1 !important;
+                padding: 16px 12px !important;
+                border-radius: 16px !important;
+                width: 100% !important;
+            }
+            .checkout-form-pane {
+                order: 2 !important;
+                padding: 20px 14px !important;
+                border-radius: 16px !important;
+                width: 100% !important;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .triple-inputs-grid {
+                grid-template-columns: 1fr !important;
+                gap: 8px !important;
+            }
+            .dual-inputs-grid {
+                grid-template-columns: 1fr !important;
+                gap: 8px !important;
+            }
+            .checkout-form-pane, .checkout-summary-pane {
+                padding: 14px 10px !important;
+            }
+            .bill-details-list, .bill-details-title, .bill-savings-content {
+                padding-left: 12px !important;
+                padding-right: 12px !important;
+            }
+            .payment-name {
+                font-size: 12px !important;
+            }
+        }
+
+        /* MODAL DIALOGS */
+        .order-success-modal {
+            position: fixed !important;
+            inset: 0 !important;
+            background: rgba(0,0,0,0.6) !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            z-index: 99999 !important;
+            opacity: 0 !important;
+            pointer-events: none !important;
+            transition: opacity 0.3s ease !important;
+            padding: 16px !important;
+            box-sizing: border-box !important;
+        }
+        .order-success-modal.show {
+            opacity: 1 !important;
+            pointer-events: auto !important;
+        }
+        .order-success-box {
+            background: #ffffff !important;
+            border-radius: 16px !important;
+            max-width: 480px !important;
+            width: 100% !important;
+            padding: 28px 20px !important;
+            text-align: center !important;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1) !important;
+            box-sizing: border-box !important;
+        }
+        .success-icon-circle {
+            width: 60px !important;
+            height: 60px !important;
+            background: #dcfce7 !important;
+            color: #166534 !important;
+            border-radius: 50% !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            font-size: 28px !important;
+            margin: 0 auto 14px !important;
+        }
+        .success-title {
+            font-size: 20px !important;
+            font-weight: 800 !important;
+            color: #111827 !important;
+            margin-bottom: 8px !important;
+        }
+        .success-desc {
+            font-size: 13.5px !important;
+            color: #64748b !important;
+            margin-bottom: 18px !important;
+            line-height: 1.5 !important;
+        }
+        .order-info-pill {
+            background: #f8fafc !important;
+            border: 1px solid #e2e8f0 !important;
+            padding: 12px 14px !important;
+            border-radius: 10px !important;
+            font-size: 12.5px !important;
+            color: #334155 !important;
+            margin-bottom: 20px !important;
+            text-align: left !important;
+        }
+        .btn-continue-store {
+            display: inline-block !important;
+            width: 100% !important;
+            background: #0f7139 !important;
+            color: #ffffff !important;
+            font-weight: 700 !important;
+            padding: 12px !important;
+            border-radius: 8px !important;
+            text-decoration: none !important;
+            font-size: 14.5px !important;
+            transition: background 0.2s !important;
+            box-sizing: border-box !important;
+        }
+        .btn-continue-store:hover {
+            background: #0b3718 !important;
         }
     </style>
 </head>
@@ -658,12 +1368,14 @@
                         <span>✨ Complete Your Order</span>
                         <span class="checkout-addons-badge">Add-ons</span>
                     </div>
+                    <div class="addons-nav-arrows">
+                        <button type="button" class="addon-nav-arrow" onclick="scrollAddonsList(-1)" title="Previous items" aria-label="Previous items">‹</button>
+                        <button type="button" class="addon-nav-arrow" onclick="scrollAddonsList(1)" title="Next items" aria-label="Next items">›</button>
+                    </div>
                 </div>
                 
                 <div class="addons-carousel-wrapper">
-                    <button type="button" class="addon-scroll-btn btn-left" onclick="scrollAddonsList(-1)" title="Previous items" aria-label="Previous items">‹</button>
                     <div id="checkoutAddonsList" class="addons-list"></div>
-                    <button type="button" class="addon-scroll-btn btn-right" onclick="scrollAddonsList(1)" title="Next items" aria-label="Next items">›</button>
                 </div>
             </div>
 
@@ -1065,7 +1777,7 @@
                 <div class="summary-item-row">
                     <div class="summary-item-left">
                         <div class="summary-img-wrap">
-                            <img src="${item.image || 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=300&auto=format&fit=crop&q=80'}" alt="${item.title || item.name}" class="summary-img" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=300&auto=format&fit=crop&q=80';">
+                            <img src="${item.image || 'https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/spice_200x200_crop_center.png?v=1746963495'}" alt="${item.title || item.name}" class="summary-img" onerror="this.onerror=null; this.src='https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/spice_200x200_crop_center.png?v=1746963495';">
                             <span class="summary-qty-badge">${item.quantity || item.qty || 1}</span>
                         </div>
                         <div>
@@ -1965,6 +2677,39 @@
             }
         }
 
+        function setupAddonsCarouselInteractions() {
+            const list = document.getElementById("checkoutAddonsList");
+            if (!list) return;
+
+            let isDown = false;
+            let startX, scrollLeft;
+
+            list.addEventListener('mousedown', (e) => {
+                isDown = true;
+                list.style.cursor = 'grabbing';
+                startX = e.pageX - list.offsetLeft;
+                scrollLeft = list.scrollLeft;
+            });
+
+            list.addEventListener('mouseleave', () => {
+                isDown = false;
+                list.style.cursor = 'grab';
+            });
+
+            list.addEventListener('mouseup', () => {
+                isDown = false;
+                list.style.cursor = 'grab';
+            });
+
+            list.addEventListener('mousemove', (e) => {
+                if (!isDown) return;
+                e.preventDefault();
+                const x = e.pageX - list.offsetLeft;
+                const walk = (x - startX) * 1.5;
+                list.scrollLeft = scrollLeft - walk;
+            });
+        }
+
         function renderClassicAddons() {
             const container = document.getElementById("checkoutAddonsList");
             if (!container) return;
@@ -2053,6 +2798,7 @@
             await fetchLiveAddonsFromDB();
             renderClassicAddons();
             renderAvailableCoupons();
+            setupAddonsCarouselInteractions();
         });
     </script>
 </body>
