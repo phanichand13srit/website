@@ -2636,7 +2636,7 @@
 
         async function fetchLiveAddonsFromDB() {
             try {
-                let res = await fetch("http://localhost:5000/api/products");
+                let res = await fetch("/api/products");
                 if (!res.ok) res = await fetch("/api/products");
                 if (res.ok) {
                     const products = await res.json();
