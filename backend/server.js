@@ -69,6 +69,16 @@ app.get('/search', (req, res) => {
   res.redirect(`/pages/collections.html?search=${encodeURIComponent(query)}`);
 });
 
+// Explicit product URL routing: /products/:id -> /pages/product.html?id=:id
+app.get('/products/:id', (req, res) => {
+  res.redirect(`/pages/product.html?id=${encodeURIComponent(req.params.id)}`);
+});
+
+// Explicit collection URL routing: /collections/:category -> /pages/collections.html?category=:category
+app.get('/collections/:category', (req, res) => {
+  res.redirect(`/pages/collections.html?category=${encodeURIComponent(req.params.category)}`);
+});
+
 // Start Server
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`\n======================================================`);
