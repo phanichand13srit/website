@@ -1012,7 +1012,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 <!-- LEFT GALLERY -->
                 <div class="product-gallery-side">
                     <div style="position: relative; border-radius: 16px; overflow: hidden; border: 1px solid #e2e8f0; background: #fafbfc; text-align: center; padding: 24px;">
-                        ${discount > 0 ? `<span class="card-discount-tag" style="position: absolute; top: 16px; left: 16px; background: #e11d48; color: #fff; padding: 6px 12px; border-radius: 6px; font-weight: 700; font-size: 13px; letter-spacing: 0.5px;">${discount}% OFF</span>` : ''}
+                        ${discount > 0 ? `<span class="card-discount-tag" style="position: absolute; top: 14px; left: 14px; background: #005d4a; color: #ffffff; padding: 5px 11px; border-radius: 6px; font-weight: 800; font-size: 12px; letter-spacing: 0.3px; z-index: 5; box-shadow: 0 2px 8px rgba(0,93,74,0.25);">${discount}% OFF</span>` : ''}
                         <img src="${mainImage}" alt="${name}" id="mainDetailProductImg" style="width: 100%; max-height: 440px; object-fit: contain; transition: transform 0.3s ease;">
                     </div>
 
