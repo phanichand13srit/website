@@ -8488,17 +8488,21 @@ body {
     justify-content: center !important;
     position: relative !important;
     margin-bottom: 6px !important;
-    padding: 10px 12px !important;
+    padding: 6px !important;
 }
 
 .product-image-container img,
 .product-card img {
-    max-height: 135px !important;
-    width: auto !important;
-    max-width: 90% !important;
+    height: 140px !important;
+    min-height: 140px !important;
+    max-height: 140px !important;
+    width: 100% !important;
+    max-width: 100% !important;
     object-fit: contain !important;
+    object-position: center !important;
     transition: transform 0.3s ease !important;
     margin: 0 auto !important;
+    display: block !important;
 }
 
 .product-card:hover .product-image-container img,
