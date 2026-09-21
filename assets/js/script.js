@@ -1055,14 +1055,14 @@ document.addEventListener("DOMContentLoaded", () => {
                     </div>
 
                     <!-- Specs List -->
-                    <div style="margin-bottom: 22px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 13.5px;">
-                        <div style="background: #fff; border: 1px solid #e2e8f0; padding: 10px 14px; border-radius: 8px;">
-                            <strong style="color:#64748b; font-size:12px; display:block;">UNIT / NET WEIGHT</strong>
-                            <span style="font-weight:600; color:#1e293b;">${unit}</span>
+                    <div style="margin-bottom: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 13.5px; align-items: stretch;">
+                        <div style="background: #fff; border: 1px solid #e2e8f0; padding: 10px 14px; border-radius: 8px; display: flex; flex-direction: column; justify-content: center; min-height: 54px; box-sizing: border-box;">
+                            <strong style="color:#64748b; font-size:11.5px; display:block; text-transform:uppercase; margin-bottom: 2px;">UNIT / NET WEIGHT</strong>
+                            <span style="font-weight:700; color:#1e293b; line-height: 1.2;">${unit}</span>
                         </div>
-                        <div style="background: #fff; border: 1px solid #e2e8f0; padding: 10px 14px; border-radius: 8px;">
-                            <strong style="color:#64748b; font-size:12px; display:block;">AVAILABILITY</strong>
-                            <span style="font-weight:600; color:${isInstock ? '#16a34a' : '#dc2626'};">${isInstock ? `In Stock (${p.countInStock || 15} left)` : 'Out of Stock'}</span>
+                        <div style="background: #fff; border: 1px solid #e2e8f0; padding: 10px 14px; border-radius: 8px; display: flex; flex-direction: column; justify-content: center; min-height: 54px; box-sizing: border-box;">
+                            <strong style="color:#64748b; font-size:11.5px; display:block; text-transform:uppercase; margin-bottom: 2px;">AVAILABILITY</strong>
+                            <span style="font-weight:700; color:${isInstock ? '#16a34a' : '#dc2626'}; line-height: 1.2;">${isInstock ? `In Stock (${p.countInStock || 15} left)` : 'Out of Stock'}</span>
                         </div>
                     </div>
 
