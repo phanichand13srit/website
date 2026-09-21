@@ -500,8 +500,8 @@
         }
 
         .addon-item-card {
-            flex: 0 0 144px !important;
-            min-width: 144px !important;
+            flex: 0 0 156px !important;
+            min-width: 156px !important;
             scroll-snap-align: start !important;
             background: #ffffff !important;
             border: 1px solid #e2ebd6 !important;
@@ -530,33 +530,40 @@
             color: #ffffff !important;
             font-size: 9px !important;
             font-weight: 800 !important;
-            padding: 1px 5px !important;
+            padding: 2px 6px !important;
             border-radius: 4px !important;
             z-index: 2 !important;
             letter-spacing: 0.3px !important;
+            box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3) !important;
         }
 
         .addon-img-box {
             width: 100% !important;
-            height: 72px !important;
+            height: 105px !important;
             border-radius: 8px !important;
             overflow: hidden !important;
-            background: #f8fafc !important;
+            background: #ffffff !important;
+            border: 1px solid #f1f5f9 !important;
+            padding: 4px !important;
             display: flex !important;
             align-items: center !important;
             justify-content: center !important;
             margin-bottom: 8px !important;
+            box-sizing: border-box !important;
         }
 
         .addon-img {
-            width: 100% !important;
-            height: 100% !important;
-            object-fit: cover !important;
+            max-width: 100% !important;
+            max-height: 100% !important;
+            width: auto !important;
+            height: auto !important;
+            object-fit: contain !important;
             transition: transform 0.3s ease !important;
+            border-radius: 4px !important;
         }
 
         .addon-item-card:hover .addon-img {
-            transform: scale(1.05) !important;
+            transform: scale(1.06) !important;
         }
 
         .addon-card-body {

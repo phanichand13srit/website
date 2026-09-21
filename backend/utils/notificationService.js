@@ -994,12 +994,128 @@ Support: support@arshithfresh.com | +91 8618471424
   }
 }
 
+/**
+ * Send Order Status Update Notification Email to Customer
+ * @param {Object} params - { order, newStatus, user }
+ */
+async function sendOrderStatusUpdateNotification({ order, newStatus, user }) {
+  try {
+    const baseUrl = process.env.FRONTEND_URL || 'http://localhost:5000';
+    const emailUser = process.env.EMAIL_USER;
+    const transporter = getTransporter();
+
+    if (!transporter || !emailUser) {
+      console.warn('⚠️ [Email Service] EMAIL_USER or EMAIL_PASS missing in environment variables.');
+      return;
+    }
+
+    let recipientEmail = order.customerEmail || '';
+    let customerName = order.customerName || 'Valued Customer';
+
+    const userId = order.user || (user && user._id);
+    if (userId) {
+      try {
+        const regUser = await User.findById(userId);
+        if (regUser) {
+          if (regUser.email) recipientEmail = regUser.email;
+          if (regUser.name) customerName = regUser.name;
+        }
+      } catch (e) {}
+    }
+
+    if (!recipientEmail && user && user.email) recipientEmail = user.email;
+
+    if (!recipientEmail) {
+      console.warn('⚠️ [Email Service] No recipient email address found for status update notification.');
+      return;
+    }
+
+    const orderId = order._id || order.transactionId || 'N/A';
+    const orderCode = 'AF-' + String(orderId).substring(0, 8).toUpperCase();
+    const dateStr = new Date(order.createdAt || Date.now()).toLocaleString('en-IN', {
+      dateStyle: 'medium',
+      timeStyle: 'short'
+    });
+
+    const totalPrice = Number(order.totalPrice || 0).toFixed(2);
+    const trackingUrl = `${baseUrl}/pages/profile.html#orders`;
+
+    const statusBadgeColors = {
+      Confirmed: { bg: '#e0f2fe', color: '#0369a1', border: '#bae6fd' },
+      Processing: { bg: '#fef3c7', color: '#b45309', border: '#fde68a' },
+      Dispatched: { bg: '#f0fdf4', color: '#15803d', border: '#bbf7d0' },
+      Shipped: { bg: '#f0fdf4', color: '#15803d', border: '#bbf7d0' },
+      Delivered: { bg: '#dcfce7', color: '#166534', border: '#86efac' },
+      Cancelled: { bg: '#fef2f2', color: '#991b1b', border: '#fecaca' }
+    };
+
+    const badgeStyle = statusBadgeColors[newStatus] || { bg: '#f1f5f9', color: '#334155', border: '#cbd5e1' };
+
+    const mailOptions = {
+      from: `"Arshith Fresh Order Desk" <${emailUser}>`,
+      to: recipientEmail,
+      subject: `📦 Order #${orderCode} Status Updated to ${newStatus} | Arshith Fresh`,
+      html: `
+        <!DOCTYPE html>
+        <html>
+        <head><meta charset="utf-8"></head>
+        <body style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px 0;">
+          <div style="max-width: 620px; margin: 0 auto; background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.06); border: 1px solid #e2e8f0;">
+            <div style="background: linear-gradient(135deg, #0f7139 0%, #15803d 100%); padding: 28px 24px; text-align: center;">
+              <h1 style="color: #ffffff; margin: 0; font-size: 24px; font-weight: 700;">Arshith Fresh</h1>
+              <p style="color: #e2e8f0; margin: 4px 0 0 0; font-size: 13px;">100% Pure & Authentic Natural Products</p>
+            </div>
+            <div style="padding: 28px 24px;">
+              <h2 style="color: #1e293b; font-size: 18px; margin: 0 0 12px 0;">Hello ${customerName},</h2>
+              <p style="color: #475569; font-size: 14px; line-height: 1.6; margin: 0 0 20px 0;">
+                Your order <strong>#${orderCode}</strong> status has been updated to:
+              </p>
+              <div style="text-align: center; margin: 20px 0;">
+                <span style="display: inline-block; background: ${badgeStyle.bg}; color: ${badgeStyle.color}; border: 1px solid ${badgeStyle.border}; padding: 10px 24px; border-radius: 30px; font-weight: 700; font-size: 16px;">
+                  Status: ${newStatus}
+                </span>
+              </div>
+              <div style="background: #f8fafc; border-radius: 12px; padding: 16px 20px; margin-bottom: 24px; border: 1px solid #e2e8f0;">
+                <div style="display: flex; justify-content: space-between; font-size: 13px; color: #64748b; margin-bottom: 6px;">
+                  <span>Order Reference:</span> <strong style="color: #1e293b;">#${orderCode}</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 13px; color: #64748b; margin-bottom: 6px;">
+                  <span>Order Date:</span> <strong style="color: #1e293b;">${dateStr}</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 13px; color: #64748b;">
+                  <span>Total Value:</span> <strong style="color: #0f7139;">₹${totalPrice}</strong>
+                </div>
+              </div>
+              <div style="text-align: center; margin: 28px 0 10px 0;">
+                <a href="${trackingUrl}" style="background: #0f7139; color: #ffffff; padding: 12px 28px; border-radius: 30px; text-decoration: none; font-weight: bold; font-size: 14px; display: inline-block;">
+                  View & Track Order Details
+                </a>
+              </div>
+            </div>
+            <div style="background: #f8fafc; text-align: center; padding: 16px; font-size: 12px; color: #94a3b8; border-top: 1px solid #f1f5f9;">
+              © 2026 Arshith Fresh India Pvt. Ltd. Bengaluru, Karnataka, India - 560076
+            </div>
+          </div>
+        </body>
+        </html>
+      `
+    };
+
+    await transporter.sendMail(mailOptions);
+    console.log(`📧 [Email Sent] Order status update (${newStatus}) delivered to ${recipientEmail}`);
+  } catch (err) {
+    console.error('❌ [Email Error] Error sending order status update email:', err.message);
+  }
+}
+
 module.exports = {
   sendOrderPlacedNotification,
   sendOrderCancelledNotification,
   sendAdminOrderPlacedNotification,
   sendStockAlertNotification,
   sendWelcomeRegistrationNotification,
-  sendOrderDeliveredNotification
+  sendOrderDeliveredNotification,
+  sendOrderStatusUpdateNotification
 };
+
 

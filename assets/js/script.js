@@ -432,224 +432,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     initCollectionSliders();
 
-    const FALLBACK_STOREFRONT_PRODUCTS = [
-        {
-            _id: "6a910cc273615f661cdfc429",
-            name: "Groundnut Oil (Premium Quality)",
-            category: "Oils",
-            price: 349,
-            originalPrice: 471,
-            unit: "1 Litre",
-            countInStock: 25,
-            brand: "Arshith Fresh",
-            image: "https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM_1.jpg?v=1757334051&width=533",
-            hoverImage: "https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-06-30_at_7.28.42_PM_1_3752719d-4e83-4d00-a8be-0c4d13076c23.jpg?v=1757334051&width=533",
-            description: "100% pure cold-pressed groundnut oil, ideal for healthy everyday cooking.",
-            rating: 4.9,
-            numReviews: 67,
-            isFeatured: true
-        },
-        {
-            _id: "6a910cc273615f661cdfc42a",
-            name: "Coconut Oil (Premium Quality)",
-            category: "Oils",
-            price: 165,
-            originalPrice: 214,
-            unit: "500 ml",
-            countInStock: 30,
-            brand: "Arshith Fresh",
-            image: "https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM_2.jpg?v=1757334050&width=533",
-            hoverImage: "https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-06-30_at_7.28.41_PM_887d3105-a7d1-45a3-b1b0-e0054291d902.jpg?v=1757334050&width=533",
-            description: "Unrefined, fragrant cold-pressed coconut oil from sun-dried copra.",
-            rating: 4.83,
-            numReviews: 54,
-            isFeatured: true
-        },
-        {
-            _id: "6a910cc273615f661cdfc42b",
-            name: "Pure Buffalo Ghee (Premium Quality)",
-            category: "Ghee & Honey",
-            price: 222,
-            originalPrice: 288,
-            unit: "250 ml",
-            countInStock: 20,
-            brand: "Arshith Fresh",
-            image: "https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-09-15_at_4.34.52_PM.jpg?v=1757934372&width=533",
-            hoverImage: "https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-06-30_at_7.32.29_PM_2_eb23ab0e-a49c-457d-9dad-00ce2758289c.jpg?v=1757934372&width=533",
-            description: "Traditional granular bilona buffalo ghee with rich aroma and taste.",
-            rating: 4.91,
-            numReviews: 32,
-            isFeatured: true
-        },
-        {
-            _id: "6a910cc273615f661cdfc42c",
-            name: "Sunflower Oil (Premium Quality)",
-            category: "Oils",
-            price: 499,
-            originalPrice: 608,
-            unit: "1 Litre",
-            countInStock: 18,
-            brand: "Arshith Fresh",
-            image: "https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-08-22_at_11.41.18_AM.jpg?v=1757334052&width=533",
-            description: "Light, nutrient-dense cold-pressed sunflower oil for light frying and baking.",
-            rating: 4.91,
-            numReviews: 54,
-            isFeatured: true
-        },
-        {
-            _id: "6a910cc273615f661cdfc42d",
-            name: "Flax Seeds (Premium Quality)",
-            category: "Seeds",
-            price: 29,
-            originalPrice: 36,
-            unit: "100 g",
-            countInStock: 50,
-            brand: "Arshith Fresh",
-            image: "https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-07-08_at_4.04.02_PM_2_ce2dcb8e-81dc-46c5-b343-1a14dff25208.jpg?v=1757334052&width=533",
-            description: "Omega-3 rich golden brown flax seeds for everyday smoothies and bowls.",
-            rating: 4.9,
-            numReviews: 31,
-            isFeatured: false
-        },
-        {
-            _id: "6a910cc273615f661cdfc42e",
-            name: "Chia Seeds (Premium Quality)",
-            category: "Seeds",
-            price: 49,
-            originalPrice: 53,
-            unit: "100 g",
-            countInStock: 45,
-            brand: "Arshith Fresh",
-            image: "https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-07-08_at_4.04.01_PM_6b2e5750-03f7-4a0a-b4e3-9ef639891875.jpg?v=1757333987&width=533",
-            description: "High-fiber superfood chia seeds, 100% natural and clean.",
-            rating: 4.91,
-            numReviews: 35,
-            isFeatured: false
-        },
-        {
-            _id: "6a910cc273615f661cdfc42f",
-            name: "Chana Dal Spice Powder (Pappula Podi)",
-            category: "Spice Powders",
-            price: 59,
-            originalPrice: 80,
-            unit: "100 g",
-            countInStock: 40,
-            brand: "Arshith Fresh",
-            image: "https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-07-08_at_4.19.01_PM_2_717030b8-c8a8-40a4-bdf0-7e516dec3029.jpg?v=1757334045&width=533",
-            description: "Authentic Andhra style homemade roasted chana dal podi with ghee flavor.",
-            rating: 5,
-            numReviews: 31,
-            isFeatured: true
-        },
-        {
-            _id: "6a910cc273615f661cdfc430",
-            name: "Garlic Powder (Velluli Karam)",
-            category: "Spice Powders",
-            price: 59,
-            originalPrice: 80,
-            unit: "100 g",
-            countInStock: 35,
-            brand: "Arshith Fresh",
-            image: "https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-07-08_at_4.19.01_PM_3_6262e177-7c59-4137-afc4-5d486daa9175.jpg?v=1757334046&width=533",
-            description: "Spicy, pungent country garlic podi blended with red chillies and cumin.",
-            rating: 4.97,
-            numReviews: 38,
-            isFeatured: true
-        },
-        {
-            _id: "6a910cc273615f661cdfc431",
-            name: "Sesame Oil (Premium Quality)",
-            category: "Oils",
-            price: 148,
-            originalPrice: 185,
-            unit: "500 ml",
-            countInStock: 25,
-            brand: "Arshith Fresh",
-            image: "https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-08-06_at_4.24.45_PM.jpg?v=1757334050&width=533",
-            hoverImage: "https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-06-30_at_8.00.57_PM_64984681-9604-4e2d-9310-2e3b9187bec1.jpg?v=1757334050&width=533",
-            description: "Traditional cold pressed gingelly sesame oil packed with nutrients and pure flavor.",
-            rating: 4.84,
-            numReviews: 55,
-            isFeatured: true
-        },
-        {
-            _id: "6a910cc273615f661cdfc432",
-            name: "Cashew nuts (Kaju) (Premium Quality)",
-            category: "Dry Fruits",
-            price: 368,
-            originalPrice: 491,
-            unit: "250 g",
-            countInStock: 35,
-            brand: "Arshith Fresh",
-            image: "https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-05-22_at_7.45.38_PM_83923da9-b703-43bd-ae6f-6bb812afa6ba.jpg?v=1757334003&width=533",
-            hoverImage: "https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-07-01_at_11.45.20_AM_2927d0dd-ed7b-43f7-8eb3-0fa0fd2e9a33.jpg?v=1757334004&width=533",
-            description: "Whole crispy premium cashew nuts rich in antioxidants and healthy fats.",
-            rating: 4.88,
-            numReviews: 43,
-            isFeatured: true
-        },
-        {
-            _id: "6a910cc273615f661cdfc433",
-            name: "Almonds (Badam) (Premium Quality)",
-            category: "Dry Fruits",
-            price: 347,
-            originalPrice: 438,
-            unit: "250 g",
-            countInStock: 40,
-            brand: "Arshith Fresh",
-            image: "https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-07-08_at_4.52.28_PM_2112456d-40bc-4ca8-a380-52828943ee32.jpg?v=1757334003&width=533",
-            hoverImage: "https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-06-30_at_9.53.36_AM_e4a9990f-ccf1-4aa3-a944-45faa606db78.jpg?v=1757334003&width=533",
-            description: "Hand-picked California almonds packed with protein and dietary fiber.",
-            rating: 4.9,
-            numReviews: 40,
-            isFeatured: true
-        },
-        {
-            _id: "6a910cc273615f661cdfc434",
-            name: "Figs (Dry Anjeer) (Premium Quality)",
-            category: "Dry Fruits",
-            price: 579,
-            originalPrice: 734,
-            unit: "250 g",
-            countInStock: 20,
-            brand: "Arshith Fresh",
-            image: "https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-05-16_at_6.03.06_PM_34ff0f49-adf5-47c3-979c-8e5ab7a6db71.jpg?v=1757334000&width=533",
-            description: "Rich, chewy dried figs naturally packed with iron and calcium.",
-            rating: 4.92,
-            numReviews: 37,
-            isFeatured: true
-        },
-        {
-            _id: "6a910cc273615f661cdfc435",
-            name: "Cloves (Lavangam)",
-            category: "Spices",
-            price: 119,
-            originalPrice: 150,
-            unit: "100 g",
-            countInStock: 35,
-            brand: "Arshith Fresh",
-            image: "https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-07-08_at_4.19.02_PM_1_211516e8-ea8c-4a34-8c88-e925b3ea66a4.jpg?v=1757334046&width=533",
-            description: "Aromatic handpicked whole cloves full of essential oils.",
-            rating: 4.92,
-            numReviews: 36,
-            isFeatured: true
-        },
-        {
-            _id: "6a910cc273615f661cdfc436",
-            name: "Himalayan Pink Rock Salt",
-            category: "Cooking Essentials",
-            price: 89,
-            originalPrice: 120,
-            unit: "1 kg",
-            countInStock: 40,
-            brand: "Arshith Fresh",
-            image: "https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/groceries_200x200_crop_center.jpg?v=1746965740",
-            description: "100% natural, unrefined pure mineral Himalayan rock salt.",
-            rating: 4.92,
-            numReviews: 45,
-            isFeatured: true
-        }
-    ];
+    const FALLBACK_STOREFRONT_PRODUCTS = [];
 
     // 9. Dynamic Live API & Collection Product Sync
     async function syncStorefrontProducts() {
@@ -673,6 +456,24 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             const path = window.location.pathname.toLowerCase();
+
+            // Populate Homepage Carousel grids from live database products if on homepage
+            if (apiProducts && apiProducts.length > 0) {
+                const favGrid = document.querySelector(".sec-favorites .products-grid");
+                if (favGrid) {
+                    const favProducts = apiProducts.filter(p => p.isFeatured !== false).slice(0, 10);
+                    if (favProducts.length > 0) {
+                        favGrid.innerHTML = favProducts.map(p => createProductCardHTML(p)).join('');
+                    }
+                }
+                const wellnessGrid = document.querySelector(".sec-wellness .products-grid");
+                if (wellnessGrid) {
+                    const wellnessProducts = apiProducts.slice(0, 10);
+                    if (wellnessProducts.length > 0) {
+                        wellnessGrid.innerHTML = wellnessProducts.map(p => createProductCardHTML(p)).join('');
+                    }
+                }
+            }
 
             const colGrid = document.getElementById("collectionsProductGrid");
             if (!colGrid) return;

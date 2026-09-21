@@ -396,7 +396,12 @@
             </span>
           </td>
           <td style="text-align:right;">
-            ${actionCellHtml}
+            <div style="display:inline-flex; align-items:center; gap:6px;">
+              ${actionCellHtml}
+              <button type="button" onclick="sendInvoiceEmail('${order._id}')" title="Send Invoice Email to Customer" style="padding: 5px 9px; background: #f0fdf4; color: #0f7139; border: 1px solid #bbf7d0; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 4px;">
+                <i class="fa-solid fa-envelope"></i> Email Invoice
+              </button>
+            </div>
           </td>
         `;
         tbody.appendChild(tr);
@@ -725,8 +730,24 @@
       searchInput.addEventListener('input', applyFilterAndRender);
     }
 
+    async function sendInvoiceEmail(orderId) {
+      try {
+        AdminToast.show('Sending invoice email...', 'info');
+        const res = await fetch(`${API_BASE}/orders/${orderId}/send-invoice`, { method: 'POST' });
+        const data = await res.json();
+        if (res.ok && data.success) {
+          AdminToast.show(data.message || 'Invoice email delivered successfully!', 'success');
+        } else {
+          AdminToast.show(data.message || 'Failed to send invoice email.', 'error');
+        }
+      } catch (err) {
+        AdminToast.show('Error sending email: ' + err.message, 'error');
+      }
+    }
+
     window.switchFilterTab = switchFilterTab;
     window.updateOrderStatus = updateOrderStatus;
+    window.sendInvoiceEmail = sendInvoiceEmail;
     document.addEventListener('DOMContentLoaded', () => {
       const urlParams = new URLSearchParams(window.location.search);
       const filterParam = urlParams.get('filter');

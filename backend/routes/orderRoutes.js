@@ -8,7 +8,8 @@ const {
   sendOrderCancelledNotification,
   sendAdminOrderPlacedNotification,
   sendStockAlertNotification,
-  sendOrderDeliveredNotification
+  sendOrderDeliveredNotification,
+  sendOrderStatusUpdateNotification
 } = require('../utils/notificationService');
 const { createShiprocketOrder } = require('../utils/shiprocketService');
 
@@ -374,6 +375,13 @@ router.put('/:id/status', async (req, res) => {
 
     const updatedOrder = await order.save();
 
+    // Trigger status update email if status changed to any active state
+    if (newStatus && newStatus !== oldStatus && newStatus !== 'Cancelled' && newStatus !== 'Delivered') {
+      sendOrderStatusUpdateNotification({ order: updatedOrder, newStatus }).catch(err => {
+        console.error('Error dispatching order status update email:', err.message);
+      });
+    }
+
     // Trigger non-blocking cancellation notification if status was changed to Cancelled
     if (newStatus === 'Cancelled' && oldStatus !== 'Cancelled') {
       sendOrderCancelledNotification({ order: updatedOrder }).catch(err => {
@@ -484,6 +492,36 @@ router.delete('/:id', async (req, res) => {
     res.json({ success: true, message: 'Order deleted successfully', id: req.params.id });
   } catch (error) {
     res.status(500).json({ message: 'Error deleting order', error: error.message });
+  }
+});
+
+// @route   POST /api/orders/:id/send-invoice
+// @desc    Manually trigger email invoice to customer (Admin action)
+router.post('/:id/send-invoice', async (req, res) => {
+  try {
+    const rawId = (req.params.id || '').trim();
+    const cleanId = rawId.replace(/^AF-/, '');
+
+    let order = null;
+    if (mongoose.Types.ObjectId.isValid(cleanId)) {
+      order = await Order.findById(cleanId);
+    }
+    if (!order) {
+      order = await Order.findOne({ transactionId: rawId });
+    }
+    if (!order) {
+      const allOrders = await Order.find({});
+      order = allOrders.find(o => String(o._id).includes(cleanId));
+    }
+
+    if (!order) {
+      return res.status(404).json({ message: 'Order not found' });
+    }
+
+    await sendOrderPlacedNotification({ order });
+    res.json({ success: true, message: `Invoice email dispatched to ${order.customerEmail || 'customer'}` });
+  } catch (error) {
+    res.status(500).json({ message: 'Error sending invoice email', error: error.message });
   }
 });
 
