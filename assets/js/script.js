@@ -1034,24 +1034,24 @@ document.addEventListener("DOMContentLoaded", () => {
                         ${subcategory ? `<span style="background: #f1f5f9; color: #475569; font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 20px;">${subcategory}</span>` : ''}
                     </div>
 
-                    <h1 style="font-family: 'Playfair Display', serif; font-size: 32px; color: #0f172a; margin: 0 0 12px 0; line-height: 1.25;">${name}</h1>
+                    <h1 class="product-detail-heading">${name}</h1>
 
                     <!-- 5-Star Rating Beside Photo (Synced with Amazon Reviews Section) -->
-                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 18px; flex-wrap: wrap;">
-                        <a href="#amazonReviewsSection" id="topRatingScoreLink" style="display: inline-flex; align-items: center; gap: 8px; text-decoration: none; cursor: pointer;" title="Jump to Customer Reviews">
-                            <div id="topRatingStarsVisual" style="color: #f59e0b; font-size: 17px; letter-spacing: 1.5px;">★★★★★</div>
-                            <strong id="topRatingScoreNum" style="font-size: 15px; color: #1e293b;">${(p.rating || 5.0).toFixed(1)}</strong>
-                            <span id="topRatingCountText" style="font-size: 13px; color: #0284c7; text-decoration: underline;">(${p.numReviews || 0} customer ratings)</span>
+                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 14px; flex-wrap: wrap;">
+                        <a href="#amazonReviewsSection" id="topRatingScoreLink" style="display: inline-flex; align-items: center; gap: 6px; text-decoration: none; cursor: pointer;" title="Jump to Customer Reviews">
+                            <div id="topRatingStarsVisual" style="color: #f59e0b; font-size: 15px; letter-spacing: 1px;">★★★★★</div>
+                            <strong id="topRatingScoreNum" style="font-size: 14px; color: #1e293b;">${(p.rating || 5.0).toFixed(1)}</strong>
+                            <span id="topRatingCountText" style="font-size: 12.5px; color: #0284c7; text-decoration: underline;">(${p.numReviews || 0} customer ratings)</span>
                         </a>
                         <span style="color: #cbd5e1;">•</span>
-                        <span style="color: #16a34a; font-size: 13px; font-weight: 600; background: #ecfdf5; padding: 2px 8px; border-radius: 12px;">✓ Verified Product</span>
+                        <span style="color: #16a34a; font-size: 12px; font-weight: 600; background: #ecfdf5; padding: 2px 8px; border-radius: 12px;">✓ Verified Product</span>
                     </div>
 
                     <!-- Price Box -->
-                    <div style="background: #f8fafc; padding: 16px 20px; border-radius: 12px; margin-bottom: 22px; border: 1px solid #edf2f7; display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap;">
-                        <span style="font-size: 32px; font-weight: 800; color: #0f7139;">₹${price.toFixed(2)}</span>
-                        ${originalPrice > price ? `<span style="font-size: 18px; text-decoration: line-through; color: #94a3b8; font-weight: 500;">₹${originalPrice.toFixed(2)}</span>` : ''}
-                        ${discount > 0 ? `<span style="font-size: 13px; color: #e11d48; font-weight: 700; background: #ffe4e6; padding: 2px 8px; border-radius: 4px;">Save ₹${discountAmount}</span>` : ''}
+                    <div class="product-detail-price-box">
+                        <span class="product-detail-sale-price">₹${price.toFixed(2)}</span>
+                        ${originalPrice > price ? `<span class="product-detail-regular-price">₹${originalPrice.toFixed(2)}</span>` : ''}
+                        ${discount > 0 ? `<span class="product-detail-save-badge">Save ₹${discountAmount}</span>` : ''}
                     </div>
 
                     <!-- Specs List -->
