@@ -8358,8 +8358,8 @@ body {
 .product-card {
     background: #ffffff !important;
     border: 2px solid #005d4a !important;
-    border-radius: 24px !important;
-    padding: 14px 14px 14px !important;
+    border-radius: 20px !important;
+    padding: 14px 14px 12px 14px !important;
     display: flex !important;
     flex-direction: column !important;
     justify-content: space-between !important;
@@ -8370,31 +8370,31 @@ body {
     position: relative !important;
     overflow: hidden !important;
     box-sizing: border-box !important;
-    height: 475px !important;
-    min-height: 475px !important;
-    max-height: 475px !important;
-    width: 260px !important;
-    min-width: 250px !important;
-    max-width: 270px !important;
-    flex: 0 0 260px !important;
+    height: 370px !important;
+    min-height: 370px !important;
+    max-height: 370px !important;
+    width: 250px !important;
+    min-width: 240px !important;
+    max-width: 260px !important;
+    flex: 0 0 250px !important;
 }
 
 .products-grid .product-card {
-    flex: 0 0 260px !important;
-    min-width: 250px !important;
-    max-width: 270px !important;
-    height: 475px !important;
-    min-height: 475px !important;
-    max-height: 475px !important;
+    flex: 0 0 250px !important;
+    min-width: 240px !important;
+    max-width: 260px !important;
+    height: 370px !important;
+    min-height: 370px !important;
+    max-height: 370px !important;
 }
 
 .collections-product-cards-grid .product-card {
     width: 100% !important;
     min-width: 0 !important;
     max-width: none !important;
-    height: 475px !important;
-    min-height: 475px !important;
-    max-height: 475px !important;
+    height: 370px !important;
+    min-height: 370px !important;
+    max-height: 370px !important;
 }
 
 .product-card:hover {
@@ -8408,7 +8408,7 @@ body {
     flex-direction: column !important;
     flex: 1 1 auto !important;
     width: 100% !important;
-    height: calc(100% - 46px) !important;
+    height: calc(100% - 44px) !important;
     text-decoration: none !important;
     color: inherit !important;
     cursor: pointer !important;
