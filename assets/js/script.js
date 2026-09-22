@@ -1418,10 +1418,11 @@ async function showFestiveOfferModal(force = false) {
     const isDeep = path.includes('/categories/') || path.includes('/policies/') || path.includes('/auth/');
     const rootPath = isDeep ? '../../' : (isSubpage ? '../' : '');
 
-    const resolveImg = (img) => {
-        if (!img) return rootPath + 'assets/images/festive-hamper-banner.jpg';
-        if (img.startsWith('http') || img.startsWith('data:')) return img;
-        return rootPath + img.replace(/^\/+/, '');
+    const resolveImg = (img, fallback) => {
+        if (!img) return fallback || rootPath + 'assets/images/festive-hamper-banner.jpg';
+        let clean = img.replace('https://arshithfresh.com/cdn/shop/', 'https://cdn.shopify.com/s/files/1/0858/0772/6869/');
+        if (clean.startsWith('http') || clean.startsWith('data:')) return clean;
+        return rootPath + clean.replace(/^\/+/, '');
     };
 
     const resolveLink = (link) => {
@@ -1430,7 +1431,15 @@ async function showFestiveOfferModal(force = false) {
         return rootPath + link.replace(/^\/+/, '');
     };
 
+    const deal1Default = 'https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/seeds_dry_fruits_nuts_webp_200x200_crop_center.jpg?v=1746963459';
+    const deal2Default = 'https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/groceries_200x200_crop_center.jpg?v=1746965740';
+    const deal3Default = 'https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/ghee_1_200x200_crop_center.jpg?v=1746964905';
+
     const imgHamper = resolveImg(banner.image);
+    const deal1ImgUrl = resolveImg(banner.deal1Image, deal1Default);
+    const deal2ImgUrl = resolveImg(banner.deal2Image, deal2Default);
+    const deal3ImgUrl = resolveImg(banner.deal3Image, deal3Default);
+
     const collectionsUrl = resolveLink(banner.buttonLink);
     const fruitsUrl = resolveLink(banner.deal1Link);
     const veggiesUrl = resolveLink(banner.deal2Link);
@@ -1502,7 +1511,7 @@ async function showFestiveOfferModal(force = false) {
                             <a href="${fruitsUrl}" class="festive-deal-card" onclick="closeFestiveOfferModal()">
                                 <span class="deal-card-badge">${banner.deal1Badge || '20% OFF'}</span>
                                 <div class="deal-card-icon-wrap">
-                                    <img src="${banner.deal1Image || 'https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/seeds_dry_fruits_nuts_webp_200x200_crop_center.jpg?v=1746963459'}" alt="${banner.deal1Title || 'Fresh Fruits'}" class="deal-card-img">
+                                    <img src="${deal1ImgUrl}" alt="${banner.deal1Title || 'Fresh Fruits'}" class="deal-card-img" onerror="this.onerror=null; this.src='${deal1Default}';">
                                 </div>
                                 <div class="deal-card-info">
                                     <h4 class="deal-title">${banner.deal1Title || '20% OFF on Fresh Fruits'}</h4>
@@ -1515,7 +1524,7 @@ async function showFestiveOfferModal(force = false) {
                             <a href="${veggiesUrl}" class="festive-deal-card" onclick="closeFestiveOfferModal()">
                                 <span class="deal-card-badge badge-green">${banner.deal2Badge || '30% OFF'}</span>
                                 <div class="deal-card-icon-wrap">
-                                    <img src="${banner.deal2Image || 'https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/groceries_200x200_crop_center.jpg?v=1746965740'}" alt="${banner.deal2Title || 'Vegetables'}" class="deal-card-img">
+                                    <img src="${deal2ImgUrl}" alt="${banner.deal2Title || 'Vegetables'}" class="deal-card-img" onerror="this.onerror=null; this.src='${deal2Default}';">
                                 </div>
                                 <div class="deal-card-info">
                                     <h4 class="deal-title">${banner.deal2Title || '30% OFF on Vegetables'}</h4>
@@ -1528,7 +1537,7 @@ async function showFestiveOfferModal(force = false) {
                             <a href="${comboUrl}" class="festive-deal-card" onclick="closeFestiveOfferModal()">
                                 <span class="deal-card-badge badge-gold">${banner.deal3Badge || '40% OFF'}</span>
                                 <div class="deal-card-icon-wrap">
-                                    <img src="${banner.deal3Image || 'https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/ghee_1_200x200_crop_center.jpg?v=1746964905'}" alt="${banner.deal3Title || 'Combo Offers'}" class="deal-card-img">
+                                    <img src="${deal3ImgUrl}" alt="${banner.deal3Title || 'Combo Offers'}" class="deal-card-img" onerror="this.onerror=null; this.src='${deal3Default}';">
                                 </div>
                                 <div class="deal-card-info">
                                     <h4 class="deal-title">${banner.deal3Title || '40% OFF on Combo Offers'}</h4>
@@ -2781,6 +2790,133 @@ window.closeAmazonReviewLightbox = function() {
     const lightbox = document.getElementById('amazonReviewLightbox');
     if (lightbox) lightbox.style.display = 'none';
 };
+
+// ============================================================
+// 🌟 DYNAMIC HOMEPAGE PRODUCT LISTINGS (ADMIN PORTAL IS SINGLE SOURCE OF TRUTH)
+// Synchronizes every section grid on index.html with live /api/products from Admin Portal
+// ============================================================
+async function syncHomepageProductsWithAdminDatabase() {
+    const favoriteGrid = document.querySelector('.sec-favorites .products-grid');
+    const oilsGrid = document.querySelector('.sec-oils .products-grid');
+    const dryfruitsGrid = document.querySelector('.sec-dryfruits .products-grid');
+    const powdersGrid = document.querySelector('.sec-powders .products-grid');
+    const wellnessGrid = document.querySelector('.sec-wellness .products-grid');
+
+    if (!favoriteGrid && !oilsGrid && !dryfruitsGrid && !powdersGrid && !wellnessGrid) {
+        return;
+    }
+
+    try {
+        const prodRes = await fetch('/api/products');
+        if (!prodRes.ok) return;
+        const products = await prodRes.json();
+        if (!Array.isArray(products) || products.length === 0) return;
+
+        // Active products from Admin Portal
+        const activeProducts = products.filter(p => (p.countInStock === undefined || Number(p.countInStock) >= 0) && p.status !== 'archived');
+
+        const buildCardHtml = (p) => {
+            const pId = p._id;
+            const name = escapeHtml(p.name || p.title || 'Product');
+            const price = Number(p.price) || 0;
+            const origPrice = Number(p.originalPrice) || 0;
+            const imgPrimary = p.image || (Array.isArray(p.images) && p.images[0] ? (typeof p.images[0] === 'object' ? p.images[0].url : p.images[0]) : '') || 'https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/spice_200x200_crop_center.png?v=1746963495';
+            const imgHover = (Array.isArray(p.images) && p.images[1] ? (typeof p.images[1] === 'object' ? p.images[1].url : p.images[1]) : '') || imgPrimary;
+
+            let discountTagHtml = '';
+            if (origPrice > price) {
+                const pct = Math.round(((origPrice - price) / origPrice) * 100);
+                if (pct > 0) discountTagHtml = `<span class="card-discount-tag">${pct}% Off</span>`;
+            } else if (p.isFeatured) {
+                discountTagHtml = `<span class="card-discount-tag" style="background:#005d4a;">Featured</span>`;
+            }
+
+            const ratingNum = Number(p.rating || 4.9).toFixed(1);
+            const numReviews = Number(p.numReviews || 0);
+            const starsFilled = Math.round(p.rating || 5);
+            const starsStr = '★'.repeat(starsFilled) + '☆'.repeat(5 - starsFilled);
+
+            const ratingText = numReviews > 0 ? `${ratingNum} / 5.0 (${numReviews})` : '4.9 / 5.0 (25+)';
+
+            return `
+                <div class="product-card" data-db-id="${pId}">
+                    <a href="pages/product.html?id=${pId}" class="product-card-link">
+                        <div class="product-image-container ${imgHover !== imgPrimary ? 'has-second-img' : ''}">
+                            <img src="${imgPrimary}" alt="${name}" class="primary-img" onerror="this.onerror=null; this.src='https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/spice_200x200_crop_center.png?v=1746963495';">
+                            ${imgHover !== imgPrimary ? `<img src="${imgHover}" alt="${name} Hover" class="hover-img" onerror="this.style.display='none';">` : ''}
+                            ${discountTagHtml}
+                        </div>
+                        <div class="product-info">
+                            <h3 class="card__heading">${name}</h3>
+                            <div class="rating-box">
+                                <span class="rating-stars">${starsStr}</span>
+                                <span class="rating-text">${ratingText}</span>
+                            </div>
+                            <div class="price-box">
+                                <span class="sale-price">Rs. ${price.toFixed(2)}</span>
+                                ${origPrice > price ? `<span class="regular-price">Rs. ${origPrice.toFixed(2)}</span>` : ''}
+                            </div>
+                        </div>
+                    </a>
+                    <button class="add-to-cart-btn" onclick="addToStoreCart('${pId}', '${name.replace(/'/g, "\\'")}', ${price}, '${imgPrimary}')">ADD TO CART</button>
+                </div>
+            `;
+        };
+
+        // 1. Favorites Section
+        if (favoriteGrid) {
+            const favProducts = activeProducts.filter(p => p.isFeatured).concat(activeProducts.filter(p => !p.isFeatured));
+            favoriteGrid.innerHTML = favProducts.slice(0, 10).map(buildCardHtml).join('');
+        }
+
+        // 2. Oils Section
+        if (oilsGrid) {
+            const oilProducts = activeProducts.filter(p => {
+                const cat = (p.category || '').toLowerCase();
+                const nm = (p.name || '').toLowerCase();
+                return cat.includes('oil') || nm.includes('oil') || cat.includes('ghee') || nm.includes('ghee');
+            });
+            const items = oilProducts.length > 0 ? oilProducts : activeProducts.slice(0, 8);
+            oilsGrid.innerHTML = items.map(buildCardHtml).join('');
+        }
+
+        // 3. Dry Fruits Section
+        if (dryfruitsGrid) {
+            const dfProducts = activeProducts.filter(p => {
+                const cat = (p.category || '').toLowerCase();
+                const nm = (p.name || '').toLowerCase();
+                return cat.includes('dry') || cat.includes('fruit') || nm.includes('almond') || nm.includes('cashew') || nm.includes('kaju') || nm.includes('badam') || nm.includes('fig') || nm.includes('anjeer') || nm.includes('walnut') || nm.includes('akhrot') || nm.includes('raisin') || nm.includes('kismis') || nm.includes('pista');
+            });
+            const items = dfProducts.length > 0 ? dfProducts : activeProducts.slice(0, 8);
+            dryfruitsGrid.innerHTML = items.map(buildCardHtml).join('');
+        }
+
+        // 4. Spice Powders Section
+        if (powdersGrid) {
+            const pwProducts = activeProducts.filter(p => {
+                const cat = (p.category || '').toLowerCase();
+                const nm = (p.name || '').toLowerCase();
+                return cat.includes('powder') || cat.includes('spice') || nm.includes('podi') || nm.includes('karam') || nm.includes('powder');
+            });
+            const items = pwProducts.length > 0 ? pwProducts : activeProducts.slice(0, 8);
+            powdersGrid.innerHTML = items.map(buildCardHtml).join('');
+        }
+
+        // 5. Wellness & Seeds Section
+        if (wellnessGrid) {
+            const wlProducts = activeProducts.filter(p => {
+                const cat = (p.category || '').toLowerCase();
+                const nm = (p.name || '').toLowerCase();
+                return cat.includes('seed') || nm.includes('seed') || cat.includes('spice') || nm.includes('spice') || cat.includes('essential') || cat.includes('cooking');
+            });
+            const items = wlProducts.length > 0 ? wlProducts : activeProducts.slice(0, 8);
+            wellnessGrid.innerHTML = items.map(buildCardHtml).join('');
+        }
+
+    } catch (err) {
+        console.error('[Homepage Sync Error]', err);
+    }
+}
 
 // ============================================================
 // 🌟 REAL REVIEWS & RATINGS SYNC (HOMEPAGE & STOREFRONT)

@@ -50,6 +50,22 @@ router.get('/', async (req, res) => {
   }
 });
 
+function sanitizeBanner(b) {
+  if (!b) return b;
+  const doc = b.toObject ? b.toObject() : { ...b };
+  const fixUrl = (url, fallback) => {
+    if (!url) return fallback;
+    if (url.includes('arshithfresh.com/cdn/shop/')) {
+      return url.replace('https://arshithfresh.com/cdn/shop/', 'https://cdn.shopify.com/s/files/1/0858/0772/6869/');
+    }
+    return url;
+  };
+  doc.deal1Image = fixUrl(doc.deal1Image, defaultBannerData.deal1Image);
+  doc.deal2Image = fixUrl(doc.deal2Image, defaultBannerData.deal2Image);
+  doc.deal3Image = fixUrl(doc.deal3Image, defaultBannerData.deal3Image);
+  return doc;
+}
+
 // @route   GET /api/banners/active
 // @desc    Get the current active banner for Homepage & Festive Popup
 router.get('/active', async (req, res) => {
@@ -62,10 +78,10 @@ router.get('/active', async (req, res) => {
         activeBanner = await Banner.create(defaultBannerData);
       }
     }
-    res.json({ success: true, banner: activeBanner });
+    res.json({ success: true, banner: sanitizeBanner(activeBanner) });
   } catch (error) {
     console.error('Error fetching active banner:', error);
-    res.json({ success: true, banner: defaultBannerData });
+    res.json({ success: true, banner: sanitizeBanner(defaultBannerData) });
   }
 });
 

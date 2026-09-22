@@ -45,32 +45,25 @@
       box-shadow: 0 0 0 2px rgba(44, 110, 203, 0.15);
     }
     .badge-category {
-      background: #f1f5f9;
-      color: #334155;
-      font-size: 11.5px;
-      font-weight: 500;
-      padding: 3px 8px;
-      border-radius: 4px;
+      background: #e8f5e9;
+      color: #0f7139;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 6px;
       display: inline-block;
-    }
-    .badge-subcategory {
-      background: #e0f2fe;
-      color: #0369a1;
-      font-size: 11px;
-      font-weight: 500;
-      padding: 2px 7px;
-      border-radius: 4px;
-      display: inline-block;
+      border: 1px solid #c8e6c9;
     }
     .action-btn-sm {
       background: none;
       border: 1px solid #d2d5d8;
       border-radius: 4px;
-      padding: 4px 8px;
+      padding: 4px 10px;
       cursor: pointer;
       font-size: 12px;
       color: #4a4d50;
       transition: background 0.15s;
+      font-weight: 600;
     }
     .action-btn-sm:hover {
       background: #f1f2f4;
@@ -82,12 +75,13 @@
       color: #dc2626;
     }
     .table-product-thumb {
-      width: 40px;
-      height: 40px;
+      width: 44px;
+      height: 44px;
       border-radius: 6px;
       object-fit: cover;
       background: #f8fafc;
       border: 1px solid #e2e8f0;
+      cursor: pointer;
     }
   </style>
 </head>
@@ -106,7 +100,7 @@
       </div>
     </div>
 
-    <!-- Center Global Search with CTRL K -->
+    <!-- Center Global Search -->
     <div class="topbar-center">
       <div class="search-box-wrapper">
         <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -118,7 +112,7 @@
       </div>
     </div>
 
-    <!-- Right Header Actions: View As, Notification, Store Name -->
+    <!-- Right Header Actions -->
     <div class="topbar-right">
       <a href="../index.html" target="_blank" class="btn-view-as" style="text-decoration:none; color:inherit;">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
@@ -154,7 +148,6 @@
             <span>Dashboard</span>
           </div>
         </a>
-
 
         <!-- Orders -->
         <a href="orders.html" class="menu-item">
@@ -243,13 +236,13 @@
       <!-- Main Data Card -->
       <div class="data-card">
         
-        <!-- Filter Tabs & Search Bar -->
+        <!-- Filter Bar & Search -->
         <div class="card-filter-bar" style="display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; padding: 12px 16px;">
           <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap; flex: 1;">
             
             <div class="table-search-input-box" style="max-width: 320px; min-width: 220px; margin: 0;">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-              <input type="text" id="productSearchInput" placeholder="Search by name or subcategory...">
+              <input type="text" id="productSearchInput" placeholder="Search product by name...">
             </div>
 
             <!-- Filter by Category -->
@@ -267,52 +260,27 @@
           </div>
         </div>
 
-        <!-- Quick Category Filter Chips Bar -->
+        <!-- Category Chips Bar -->
         <div id="prodCategoryChipsBar" style="display: flex; gap: 8px; padding: 10px 16px; background: #f8fafc; border-bottom: 1px solid #edf2f7; overflow-x: auto; flex-wrap: wrap; align-items: center;">
-          <!-- Dynamically populated category chips -->
         </div>
 
-        <!-- Bulk Actions Floating Bar -->
-        <div id="bulkActionsBar" class="bulk-actions-bar">
-          <div class="bulk-selection-info">
-            <span class="bulk-selection-badge"><i class="fa-solid fa-check"></i> <span id="bulkSelectedCount">0 items selected</span></span>
-          </div>
-          <div class="bulk-action-buttons">
-            <div class="bulk-dropdown">
-              <button type="button" class="btn-bulk-action bulk-dropdown-toggle"><i class="fa-solid fa-tags"></i> Set Status <i class="fa-solid fa-chevron-down" style="font-size: 10px; margin-left: 2px;"></i></button>
-              <div class="bulk-dropdown-menu">
-                <button type="button" class="bulk-dropdown-item" onclick="bulkSetProductStatus('active')"><i class="fa-solid fa-circle-check" style="color: #10b981;"></i> Mark as Active</button>
-                <button type="button" class="bulk-dropdown-item" onclick="bulkSetProductStatus('draft')"><i class="fa-solid fa-file-pen" style="color: #64748b;"></i> Mark as Draft</button>
-                <button type="button" class="bulk-dropdown-item" onclick="bulkSetProductStatus('archived')"><i class="fa-solid fa-box-archive" style="color: #d97706;"></i> Mark as Archived</button>
-              </div>
-            </div>
-
-            <button type="button" class="btn-bulk-action" onclick="bulkSetProductStock()"><i class="fa-solid fa-cubes"></i> Update Stock</button>
-            <button type="button" class="btn-bulk-action" onclick="exportSelectedProductsCSV()"><i class="fa-solid fa-file-csv"></i> Export CSV</button>
-            <button type="button" class="btn-bulk-action btn-bulk-danger" onclick="deleteSelectedProducts()"><i class="fa-solid fa-trash"></i> Delete Selected</button>
-            <button type="button" class="btn-bulk-close" onclick="deselectAllProducts()" title="Deselect All"><i class="fa-solid fa-xmark"></i></button>
-          </div>
-        </div>
-
-        <!-- Scrollable Table -->
+        <!-- Clean Product Table -->
         <div class="table-scroll-container">
           <table class="shopify-table" id="productsTable">
             <thead>
               <tr>
                 <th style="width: 36px;"><input type="checkbox" class="custom-checkbox" id="selectAllCheckbox"></th>
                 <th>Product</th>
-                <th>Status</th>
-                <th>Inventory</th>
                 <th>Category</th>
-                <th>Sub-category</th>
                 <th>Price</th>
-                <th>Vendor</th>
+                <th>Stock / Inventory</th>
+                <th>Status</th>
                 <th style="text-align: right;">Actions</th>
               </tr>
             </thead>
             <tbody id="productsTableBody">
               <tr>
-                <td colspan="9" style="text-align: center; padding: 30px; color: #6d7175;">
+                <td colspan="7" style="text-align: center; padding: 30px; color: #6d7175;">
                   <i class="fa-solid fa-spinner fa-spin" style="font-size: 20px; margin-bottom: 8px;"></i><br>
                   Loading live products from database...
                 </td>
@@ -328,7 +296,7 @@
        4. ADD / EDIT PRODUCT MODAL
        ========================================================================= -->
   <div class="modal-overlay" id="addProductModal">
-    <div class="modal-box" style="max-width: 680px; width: 95%;">
+    <div class="modal-box" style="max-width: 640px; width: 95%;">
       <div class="modal-header">
         <h3 id="modalHeading">Add New Product</h3>
         <button class="btn-icon" id="closeAddProductModalBtn" style="border:none; background:none; cursor:pointer; font-size:20px;">&times;</button>
@@ -343,20 +311,11 @@
             <input type="text" id="prodName" class="form-control" placeholder="e.g. Groundnut Oil (Wood Pressed)" required>
           </div>
 
-          <div class="form-row">
-            <div class="form-group">
-              <label class="form-label">Category *</label>
-              <select id="prodCategory" class="form-control" required onchange="onCategorySelectChange()">
-                <option value="" disabled selected>Select Category</option>
-              </select>
-            </div>
-
-            <div class="form-group">
-              <label class="form-label">Sub-category</label>
-              <select id="prodSubcategory" class="form-control">
-                <option value="">Select Sub-category (Optional)</option>
-              </select>
-            </div>
+          <div class="form-group">
+            <label class="form-label">Category *</label>
+            <select id="prodCategory" class="form-control" required>
+              <option value="" disabled selected>Select Category</option>
+            </select>
           </div>
 
           <div class="form-row">
@@ -366,25 +325,20 @@
             </div>
 
             <div class="form-group">
-              <label class="form-label">Original / MRP (₹)</label>
+              <label class="form-label">Original / MRP Price (₹)</label>
               <input type="number" id="prodOriginalPrice" class="form-control" placeholder="470" min="0">
             </div>
           </div>
 
           <div class="form-row">
             <div class="form-group">
-              <label class="form-label">Unit / Quantity *</label>
+              <label class="form-label">Unit / Size *</label>
               <input type="text" id="prodUnit" class="form-control" placeholder="e.g. 1 Litre, 500 g, 250 g" required>
             </div>
 
             <div class="form-group">
               <label class="form-label">Stock Quantity *</label>
               <input type="number" id="prodStock" class="form-control" placeholder="25" min="0" required>
-            </div>
-
-            <div class="form-group">
-              <label class="form-label">Brand / Vendor</label>
-              <input type="text" id="prodBrand" class="form-control" value="Arshith Fresh">
             </div>
           </div>
 
@@ -394,7 +348,7 @@
               <span id="modalImgCountBadge" style="font-size: 11.5px; color: #0f7139; font-weight: 600;">0 images</span>
             </label>
             
-            <!-- Choose Files from Laptop / Drag & Drop Box -->
+            <!-- Choose Files / Drag & Drop Box -->
             <div id="productImageDropzone" style="border: 2px dashed #cbd5e1; border-radius: 8px; padding: 18px 16px; text-align: center; cursor: pointer; background: #f8fafc; transition: all 0.2s ease;">
               <input type="file" id="prodImageFile" accept="image/*" multiple style="display: none;" onchange="handleModalMultipleFileSelect(event)">
               <i class="fa-solid fa-cloud-arrow-up" style="font-size: 28px; color: #0f7139; margin-bottom: 6px;"></i>
@@ -434,7 +388,6 @@
     </div>
   </div>
 
-  <script src="../assets/js/admin-bulk.js"></script>
   <script>
     const API_BASE = (window.location.origin && window.location.origin.startsWith('http')) ? `${window.location.origin}/api` : 'http://localhost:5000/api';
     const tableBody = document.getElementById('productsTableBody');
@@ -445,16 +398,16 @@
     let allCollections = [];
 
     const DEFAULT_COLLECTIONS = [
-      { title: 'Oils', subcategories: ['Cold-Pressed oils', 'seed oils', 'Groundnut Oil', 'Sesame Oil', 'Coconut Oil', 'Sunflower Oil'] },
-      { title: 'Dry Fruits', subcategories: ['Almonds (Badam)', 'Cashews (Kaju)', 'Dates (Khajoor)', 'Walnuts (Akhrot)', 'Pistachios (Pista)', 'Raisins (Kismis)', 'Dry Figs (Anjeer)'] },
-      { title: 'Seeds', subcategories: ['Chia Seeds', 'Flax Seeds', 'Pumpkin Seeds', 'Sunflower Seeds', 'Watermelon Seeds', 'Sesame Seeds (Til)'] },
-      { title: 'Ghee & Honey', subcategories: ['Pure Desi Cow Ghee', 'Pure Buffalo Ghee', 'Raw Wild Forest Honey', 'Organic Honeycomb'] },
-      { title: 'Spices', subcategories: ['Whole Spices', 'Black Pepper', 'Green Cardamom (Elaichi)', 'Cloves (Lavangam)', 'Cinnamon (Dalchina Chekka)', 'Cumin Seeds (Jeera)', 'Mustard Seeds (Avalu)'] },
-      { title: 'Spice Powders', subcategories: ['Chana Dal Podi (Pappula Podi)', 'Garlic Podi (Vellulli Karam)', 'Kandi Podi', 'Karivepaku Podi (Curry Leaf)', 'Flax Seed Podi', 'Sambar & Rasam Powder'] },
-      { title: 'Cooking Essentials', subcategories: ['Rice & Grains', 'Dals & Pulses', 'Natural Salt', 'Jaggery'] }
+      { title: 'Oils' },
+      { title: 'Dry Fruits' },
+      { title: 'Seeds' },
+      { title: 'Ghee & Honey' },
+      { title: 'Spices' },
+      { title: 'Spice Powders' },
+      { title: 'Cooking Essentials' }
     ];
 
-    // 1. Fetch Categories / Collections for dropdowns
+    // 1. Fetch Categories for dropdown
     async function fetchCollections() {
       try {
         const res = await fetch(`${API_BASE}/collections`);
@@ -468,7 +421,7 @@
       populateCategoryDropdown();
     }
 
-    function populateCategoryDropdown(selectedCategory = '', selectedSubcategory = '') {
+    function populateCategoryDropdown(selectedCategory = '') {
       const catSelect = document.getElementById('prodCategory');
       if (!catSelect) return;
 
@@ -476,26 +429,6 @@
       const opts = list.map(c => `<option value="${c.title}" ${c.title.toLowerCase().trim() === selectedCategory.toLowerCase().trim() ? 'selected' : ''}>${c.title}</option>`).join('');
       
       catSelect.innerHTML = '<option value="" disabled ' + (!selectedCategory ? 'selected' : '') + '>Select Category</option>' + opts;
-
-      updateSubcategoryDropdown(selectedSubcategory);
-    }
-
-    function onCategorySelectChange() {
-      updateSubcategoryDropdown();
-    }
-
-    function updateSubcategoryDropdown(selectedSubcategory = '') {
-      const catSelect = document.getElementById('prodCategory');
-      const subSelect = document.getElementById('prodSubcategory');
-      if (!catSelect || !subSelect) return;
-
-      const chosenCat = (catSelect.value || '').toLowerCase().trim();
-      const list = allCollections.length > 0 ? allCollections : DEFAULT_COLLECTIONS;
-      const matched = list.find(c => (c.title || '').toLowerCase().trim() === chosenCat);
-      const subs = (matched && Array.isArray(matched.subcategories)) ? matched.subcategories : [];
-
-      subSelect.innerHTML = '<option value="">Select Sub-category (Optional)</option>' +
-        subs.map(s => `<option value="${s}" ${s.toLowerCase().trim() === selectedSubcategory.toLowerCase().trim() ? 'selected' : ''}>${s}</option>`).join('');
     }
 
     let activeProdCategory = 'all';
@@ -562,8 +495,7 @@
       const filtered = allProducts.filter(p => {
         const name = (p.name || '').toLowerCase();
         const cat = (p.category || '').toLowerCase().trim();
-        const sub = (p.subcategory || '').toLowerCase();
-        const matchesSearch = !term || name.includes(term) || cat.includes(term) || sub.includes(term);
+        const matchesSearch = !term || name.includes(term) || cat.includes(term);
         const matchesCat = (activeProdCategory === 'all') || (cat === activeProdCategory.toLowerCase().trim());
         return matchesSearch && matchesCat;
       });
@@ -576,10 +508,10 @@
       renderProductsTable(filtered);
     }
 
-    // 2. Fetch Products from MongoDB
+    // 2. Fetch Products from Backend API
     async function fetchProducts() {
       try {
-        tableBody.innerHTML = `<tr><td colspan="9" style="text-align: center; padding: 25px; color: #6d7175;"><i class="fa-solid fa-spinner fa-spin"></i> Loading...</td></tr>`;
+        tableBody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 25px; color: #6d7175;"><i class="fa-solid fa-spinner fa-spin"></i> Loading products...</td></tr>`;
         
         const response = await fetch(`${API_BASE}/products`);
         allProducts = await response.json();
@@ -591,42 +523,42 @@
         applyProductFilters();
       } catch (err) {
         console.error('Error fetching products:', err);
-        tableBody.innerHTML = '<tr><td colspan="9" style="text-align: center; padding: 25px; color: #ef4444;">Failed to load products from backend API. Please make sure server is running on port 5000.</td></tr>';
+        tableBody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 25px; color: #ef4444;">Failed to load products from backend API. Please check server.</td></tr>';
       }
     }
 
-    // 3. Render Products in Table
+    // 3. Render Clean Products Table
     function renderProductsTable(products) {
       tableBody.innerHTML = ''; 
 
       if (!products || products.length === 0) {
-        tableBody.innerHTML = '<tr><td colspan="9" style="text-align: center; padding: 30px; color: #6d7175;"><i class="fa-solid fa-box-open" style="font-size:24px; margin-bottom:8px; display:block; opacity:0.6;"></i>No products found matching the selected category.</td></tr>';
+        tableBody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 30px; color: #6d7175;"><i class="fa-solid fa-box-open" style="font-size:24px; margin-bottom:8px; display:block; opacity:0.6;"></i>No products found matching criteria.</td></tr>';
         return;
       }
 
       products.forEach(product => {
         const title = product.name || 'Unnamed Product';
         const category = product.category || 'General';
-        const subcategory = product.subcategory || '-';
         const stock = Number(product.countInStock) || 0;
         const unit = product.unit || '1 unit';
         const price = product.price ? `₹${product.price}` : '₹0';
+        const mrp = product.originalPrice ? `<span style="font-size:11.5px; color:#94a3b8; text-decoration:line-through; margin-left:4px;">₹${product.originalPrice}</span>` : '';
         const imgUrl = product.image || 'https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/spice_200x200_crop_center.png?v=1746963495';
         
         let statusClass = 'active';
         let statusLabel = 'Active';
-        let stockHtml = `<span class="stock-badge-instock"><i class="fa-solid fa-check"></i> ${stock} in stock</span>`;
+        let stockHtml = `<span class="stock-badge-instock" style="color:#15803d; font-weight:600;"><i class="fa-solid fa-check"></i> ${stock} in stock</span>`;
         let rowBgStyle = '';
 
         if (stock === 0) {
           statusClass = 'out-of-stock';
-          statusLabel = '<i class="fa-solid fa-circle-xmark"></i> Out of stock (0)';
-          stockHtml = `<span class="stock-badge-out"><i class="fa-solid fa-circle-xmark"></i> 0 in stock</span>`;
+          statusLabel = 'Out of Stock';
+          stockHtml = `<span class="stock-badge-out" style="color:#dc2626; font-weight:600;"><i class="fa-solid fa-circle-xmark"></i> 0 in stock</span>`;
           rowBgStyle = 'background-color: #fef2f2;';
         } else if (stock < 10) {
           statusClass = 'low-stock';
-          statusLabel = `<i class="fa-solid fa-triangle-exclamation"></i> Low Stock (${stock})`;
-          stockHtml = `<span class="stock-badge-low"><i class="fa-solid fa-triangle-exclamation"></i> ${stock} in stock</span>`;
+          statusLabel = 'Low Stock';
+          stockHtml = `<span class="stock-badge-low" style="color:#d97706; font-weight:600;"><i class="fa-solid fa-triangle-exclamation"></i> ${stock} in stock</span>`;
           rowBgStyle = 'background-color: #fff8f8;';
         }
 
@@ -637,24 +569,22 @@
         tr.innerHTML = `
           <td><input type="checkbox" class="custom-checkbox"></td>
           <td>
-            <div class="table-product-item">
+            <div class="table-product-item" style="display:flex; align-items:center; gap:12px;">
               <img src="${imgUrl}" class="table-product-thumb" alt="${title}" onerror="this.onerror=null; this.src='https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/spice_200x200_crop_center.png?v=1746963495';">
               <div>
-                <span class="table-product-name" style="font-weight:600; color:#1a1a1a;">${title}</span>
-                <div style="font-size:11.5px; color:#6d7175; margin-top:2px;">${unit}</div>
+                <span class="table-product-name" style="font-weight:600; color:#1a1a1a; font-size:13.5px;">${title}</span>
+                <div style="font-size:11.5px; color:#64748b; margin-top:2px;">Size / Unit: ${unit}</div>
               </div>
             </div>
           </td>
-          <td><span class="status-pill ${statusClass}">${statusLabel}</span></td>
-          <td>${stockHtml}</td>
           <td><span class="badge-category">${category}</span></td>
-          <td>${subcategory !== '-' ? `<span class="badge-subcategory">${subcategory}</span>` : '<span style="color:#94a3b8; font-size:12px;">-</span>'}</td>
-          <td><strong>${price}</strong></td>
-          <td style="color:#475569; font-size:12.5px;">${product.brand || 'Arshith Fresh'}</td>
+          <td><strong style="color:#0f7139; font-size:14px;">${price}</strong>${mrp}</td>
+          <td>${stockHtml}</td>
+          <td><span class="status-pill ${statusClass}">${statusLabel}</span></td>
           <td style="text-align: right;">
             <div style="display:flex; gap:6px; justify-content:flex-end;">
-              <button class="action-btn-sm" title="Edit Product" onclick="window.location.href='product-detail.html?id=${product._id}'"><i class="fa-solid fa-pen"></i></button>
-              <button class="action-btn-sm action-btn-danger" title="Delete Product" onclick="deleteProduct('${product._id}', '${title.replace(/'/g, "\\'")}')"><i class="fa-solid fa-trash"></i></button>
+              <button class="action-btn-sm" title="Edit Product" onclick="openEditProductModal('${product._id}')"><i class="fa-solid fa-pen"></i> Edit</button>
+              <button class="action-btn-sm action-btn-danger" title="Delete Product" onclick="deleteProduct('${product._id}', '${title.replace(/'/g, "\\'")}')"><i class="fa-solid fa-trash"></i> Delete</button>
             </div>
           </td>
         `;
@@ -662,196 +592,20 @@
       });
     }
 
-    // 4. Search & Filter Listeners
+    // 4. Listeners
     if (searchInput) searchInput.addEventListener('input', applyProductFilters);
     const prodCatFilterSelect = document.getElementById('prodCategoryFilter');
     if (prodCatFilterSelect) prodCatFilterSelect.addEventListener('change', (e) => selectProdCategory(e.target.value));
 
-    // 5. Select All & Bulk Actions Checkboxes
-    function updateBulkActionsBar() {
-      const checkedBoxes = tableBody.querySelectorAll('.custom-checkbox:checked');
-      const allCheckboxes = tableBody.querySelectorAll('.custom-checkbox');
-      const bulkBar = document.getElementById('bulkActionsBar');
-      const countLabel = document.getElementById('bulkSelectedCount');
-      if (!bulkBar) return;
-
-      const count = checkedBoxes.length;
-
-      // Update row selection styling
-      allCheckboxes.forEach(cb => {
-        const row = cb.closest('tr');
-        if (row) {
-          if (cb.checked) row.classList.add('row-selected');
-          else row.classList.remove('row-selected');
-        }
-      });
-
-      if (count > 0) {
-        countLabel.textContent = `${count} item${count > 1 ? 's' : ''} selected`;
-        bulkBar.classList.add('active');
-      } else {
-        bulkBar.classList.remove('active');
-      }
-
-      if (selectAllCheckbox) {
-        if (allCheckboxes.length > 0 && count === allCheckboxes.length) {
-          selectAllCheckbox.checked = true;
-          selectAllCheckbox.indeterminate = false;
-        } else if (count > 0) {
-          selectAllCheckbox.checked = false;
-          selectAllCheckbox.indeterminate = true;
-        } else {
-          selectAllCheckbox.checked = false;
-          selectAllCheckbox.indeterminate = false;
-        }
-      }
-    }
-
+    // 5. Select All Checkbox
     if (selectAllCheckbox) {
       selectAllCheckbox.addEventListener('change', function() {
         const checkboxes = tableBody.querySelectorAll('.custom-checkbox');
         checkboxes.forEach(cb => cb.checked = selectAllCheckbox.checked);
-        updateBulkActionsBar();
       });
     }
 
-    tableBody.addEventListener('change', function(e) {
-      if (e.target.classList.contains('custom-checkbox')) {
-        updateBulkActionsBar();
-      }
-    });
-
-    function deselectAllProducts() {
-      if (selectAllCheckbox) {
-        selectAllCheckbox.checked = false;
-        selectAllCheckbox.indeterminate = false;
-      }
-      tableBody.querySelectorAll('.custom-checkbox').forEach(cb => cb.checked = false);
-      updateBulkActionsBar();
-    }
-
-    function getSelectedProductIds() {
-      const checkedBoxes = tableBody.querySelectorAll('.custom-checkbox:checked');
-      const ids = [];
-      checkedBoxes.forEach(cb => {
-        const tr = cb.closest('tr');
-        if (tr && tr.dataset.id) ids.push(tr.dataset.id);
-      });
-      return ids;
-    }
-
-    async function bulkSetProductStatus(status) {
-      const ids = getSelectedProductIds();
-      if (ids.length === 0) return;
-
-      try {
-        const res = await fetch(`${API_BASE}/products/bulk-status`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json', 'x-admin-dev': 'true' },
-          body: JSON.stringify({ ids, status })
-        });
-
-        if (res.ok) {
-          AdminToast.show(`Updated status to "${status}" for ${ids.length} product(s)!`, 'success');
-          deselectAllProducts();
-          fetchProducts();
-        } else {
-          const errData = await res.json().catch(() => ({}));
-          AdminToast.show('Failed to update status: ' + (errData.message || 'Server error'), 'error');
-        }
-      } catch (e) {
-        AdminToast.show('Error updating product status: ' + e.message, 'error');
-      }
-    }
-
-    async function bulkSetProductStock() {
-      const ids = getSelectedProductIds();
-      if (ids.length === 0) return;
-
-      const qtyStr = prompt(`Set stock quantity for ${ids.length} selected product(s):`, '30');
-      if (qtyStr === null) return;
-      const qty = parseInt(qtyStr, 10);
-      if (isNaN(qty) || qty < 0) {
-        AdminToast.show('Please enter a valid non-negative number', 'error');
-        return;
-      }
-
-      try {
-        const res = await fetch(`${API_BASE}/products/bulk-stock`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json', 'x-admin-dev': 'true' },
-          body: JSON.stringify({ ids, quantity: qty, operation: 'set' })
-        });
-
-        if (res.ok) {
-          AdminToast.show(`Set stock to ${qty} for ${ids.length} product(s)!`, 'success');
-          deselectAllProducts();
-          fetchProducts();
-        } else {
-          const errData = await res.json().catch(() => ({}));
-          AdminToast.show('Failed to update stock: ' + (errData.message || 'Server error'), 'error');
-        }
-      } catch (e) {
-        AdminToast.show('Error updating stock: ' + e.message, 'error');
-      }
-    }
-
-    function exportSelectedProductsCSV() {
-      const checkedBoxes = tableBody.querySelectorAll('.custom-checkbox:checked');
-      if (checkedBoxes.length === 0) return;
-
-      const selected = [];
-      checkedBoxes.forEach(cb => {
-        const tr = cb.closest('tr');
-        const p = allProducts.find(prod => String(prod._id) === String(tr.dataset.id));
-        if (p) selected.push(p);
-      });
-
-      const headers = ['Product ID', 'Product Name', 'Category', 'Subcategory', 'Price (₹)', 'Stock', 'Status', 'Vendor'];
-      const rows = selected.map(p => [
-        p._id,
-        p.name || p.title || '',
-        p.category || '',
-        p.subcategory || '-',
-        p.price || 0,
-        p.countInStock || 0,
-        p.status || 'Active',
-        p.brand || 'Arshith Fresh'
-      ]);
-
-      AdminExport.downloadCSV('products_export', headers, rows);
-    }
-
-    async function deleteSelectedProducts() {
-      const idsToDelete = getSelectedProductIds();
-      if (idsToDelete.length === 0) return;
-      if (!confirm(`⚠️ Are you sure you want to permanently delete ${idsToDelete.length} selected product(s)?`)) return;
-
-      try {
-        const res = await fetch(`${API_BASE}/products/bulk-delete`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'x-admin-dev': 'true' },
-          body: JSON.stringify({ ids: idsToDelete })
-        });
-
-        if (res.ok) {
-          AdminToast.show(`Successfully deleted ${idsToDelete.length} product(s)!`, 'success');
-          deselectAllProducts();
-          fetchProducts();
-        } else {
-          AdminToast.show('Failed to delete selected products', 'error');
-        }
-      } catch (err) {
-        AdminToast.show('Error deleting selected products: ' + err.message, 'error');
-      }
-    }
-    window.deleteSelectedProducts = deleteSelectedProducts;
-    window.bulkSetProductStatus = bulkSetProductStatus;
-    window.bulkSetProductStock = bulkSetProductStock;
-    window.exportSelectedProductsCSV = exportSelectedProductsCSV;
-    window.deselectAllProducts = deselectAllProducts;
-
-    // 6. Modal Multiple Image Handlers
+    // 6. Modal Image Handling
     let modalUploadedImages = [];
 
     function renderModalImagesGrid() {
@@ -949,7 +703,7 @@
       }
     }
 
-    // Setup Drag & Drop for Image Dropzone
+    // Drag & Drop
     const dropzone = document.getElementById('productImageDropzone');
     if (dropzone) {
       dropzone.addEventListener('click', () => {
@@ -977,23 +731,11 @@
       });
     }
 
-    // 7. Modal Handlers: Add & Edit
+    // Modal Add & Edit Handlers
     const modal = document.getElementById('addProductModal');
     const openBtn = document.getElementById('openAddProductModalBtn');
     const closeBtn = document.getElementById('closeAddProductModalBtn');
     const cancelBtn = document.getElementById('cancelModalBtn');
-
-    function updateProdStockModalColor() {
-      const stockInput = document.getElementById('prodStock');
-      if (!stockInput) return;
-      const val = Number(stockInput.value) || 0;
-      stockInput.classList.remove('stock-input-low', 'stock-input-out');
-      if (val === 0) {
-        stockInput.classList.add('stock-input-out');
-      } else if (val < 10) {
-        stockInput.classList.add('stock-input-low');
-      }
-    }
 
     function openAddModal() {
       document.getElementById('addProductForm').reset();
@@ -1002,7 +744,6 @@
       modalUploadedImages = [];
       renderModalImagesGrid();
       populateCategoryDropdown();
-      updateProdStockModalColor();
       modal.classList.add('active');
     }
 
@@ -1016,10 +757,8 @@
       document.getElementById('prodOriginalPrice').value = prod.originalPrice || '';
       document.getElementById('prodUnit').value = prod.unit || '1 kg';
       document.getElementById('prodStock').value = prod.countInStock ?? 15;
-      document.getElementById('prodBrand').value = prod.brand || 'Arshith Fresh';
       document.getElementById('prodDesc').value = prod.description || '';
       document.getElementById('prodIsFeatured').checked = !!prod.isFeatured;
-      updateProdStockModalColor();
 
       modalUploadedImages = [];
       if (Array.isArray(prod.images) && prod.images.length > 0) {
@@ -1028,14 +767,11 @@
         modalUploadedImages = [prod.image];
       }
       renderModalImagesGrid();
-      populateCategoryDropdown(prod.category || '', prod.subcategory || '');
+      populateCategoryDropdown(prod.category || '');
 
       document.getElementById('modalHeading').textContent = 'Edit Product';
       modal.classList.add('active');
     }
-
-    const prodStockEl = document.getElementById('prodStock');
-    if (prodStockEl) prodStockEl.addEventListener('input', updateProdStockModalColor);
 
     function closeModal() {
       modal.classList.remove('active');
@@ -1045,19 +781,17 @@
     if (closeBtn) closeBtn.addEventListener('click', closeModal);
     if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
 
-    // 8. Save Product (POST / PUT)
+    // Save Product Form Handler
     document.getElementById('addProductForm').addEventListener('submit', async function(e) {
       e.preventDefault();
       
       const id = document.getElementById('prodEditId').value;
       const name = document.getElementById('prodName').value.trim();
       const category = document.getElementById('prodCategory').value;
-      const subcategory = document.getElementById('prodSubcategory').value;
       const price = Number(document.getElementById('prodPrice').value);
       const originalPrice = Number(document.getElementById('prodOriginalPrice').value) || 0;
       const unit = document.getElementById('prodUnit').value.trim();
       const countInStock = Number(document.getElementById('prodStock').value) || 0;
-      const brand = document.getElementById('prodBrand').value.trim() || 'Arshith Fresh';
       const description = document.getElementById('prodDesc').value.trim();
       const isFeatured = document.getElementById('prodIsFeatured').checked;
 
@@ -1067,12 +801,11 @@
       const payload = {
         name,
         category,
-        subcategory,
         price,
         originalPrice,
         unit,
         countInStock,
-        brand,
+        brand: 'Arshith Fresh',
         image,
         images,
         description,
@@ -1109,7 +842,7 @@
       }
     });
 
-    // 9. Delete Product
+    // Delete Product Handler
     async function deleteProduct(id, name) {
       if (!confirm(`Are you sure you want to delete "${name}"?`)) return;
 
@@ -1127,7 +860,7 @@
       }
     }
 
-    // 10. Fetch Orders Count for sidebar
+    // Sidebar Orders Count
     async function fetchOrdersCount() {
       try {
         const res = await fetch(`${API_BASE}/orders`);
@@ -1141,39 +874,7 @@
 
     // Expose functions globally
     window.openEditProductModal = openEditProductModal;
-    function openImageLightbox(e, src, title) {
-      if (e && e.stopPropagation) e.stopPropagation();
-      const lightbox = document.getElementById('imgPreviewLightbox');
-      const img = document.getElementById('imgPreviewLightboxImg');
-      const caption = document.getElementById('imgPreviewLightboxTitle');
-      if (!lightbox || !img) return;
-
-      img.src = src;
-      caption.textContent = title || 'Product Image Preview';
-      lightbox.classList.add('active');
-    }
-
-    function closeImageLightbox(e) {
-      if (e && e.stopPropagation) e.stopPropagation();
-      const lightbox = document.getElementById('imgPreviewLightbox');
-      if (lightbox) lightbox.classList.remove('active');
-    }
-
-    document.addEventListener('click', function(e) {
-      if (e.target && e.target.classList && e.target.classList.contains('table-product-thumb')) {
-        e.stopPropagation();
-        openImageLightbox(e, e.target.src, e.target.alt || e.target.title || 'Product Image');
-      }
-    });
-
-    document.addEventListener('keydown', function(e) {
-      if (e.key === 'Escape') closeImageLightbox();
-    });
-
-    window.openImageLightbox = openImageLightbox;
-    window.closeImageLightbox = closeImageLightbox;
     window.deleteProduct = deleteProduct;
-    window.onCategorySelectChange = onCategorySelectChange;
     window.renderModalImagesGrid = renderModalImagesGrid;
     window.handleModalMultipleFileSelect = handleModalMultipleFileSelect;
     window.addModalImageUrl = addModalImageUrl;
@@ -1187,15 +888,5 @@
       fetchOrdersCount();
     });
   </script>
-
-  <!-- Universal Image Preview Lightbox Modal -->
-  <div id="imgPreviewLightbox" class="img-preview-lightbox" onclick="closeImageLightbox(event)">
-    <div class="img-preview-card" onclick="event.stopPropagation()">
-      <button type="button" class="img-preview-close-btn" onclick="closeImageLightbox(event)">&times;</button>
-      <img id="imgPreviewLightboxImg" src="" alt="Full Preview">
-      <div id="imgPreviewLightboxTitle" class="img-preview-title">Product Image</div>
-    </div>
-  </div>
-
 </body>
 </html>
