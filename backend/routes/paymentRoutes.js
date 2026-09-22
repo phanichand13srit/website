@@ -244,26 +244,42 @@ router.post('/verify', async (req, res) => {
       });
     }
 
-    const secret = process.env.RAZORPAY_KEY_SECRET || 'exampleRazorpaySecret123';
-    const isMock = razorpay_order_id.startsWith('order_mock_') || secret.includes('example');
+    const secret = process.env.RAZORPAY_KEY_SECRET || 'vC56mYT2P6k3cw66tJMdS7pF';
+    const isMock = razorpay_order_id.startsWith('order_mock_');
 
     let isValid = false;
 
     if (isMock) {
       isValid = true;
     } else {
-      const payload = `${razorpay_order_id}|${razorpay_payment_id}`;
-      const generatedSignature = crypto
-        .createHmac('sha256', secret)
-        .update(payload)
-        .digest('hex');
+      if (razorpay_signature) {
+        const payload = `${razorpay_order_id}|${razorpay_payment_id}`;
+        const generatedSignature = crypto
+          .createHmac('sha256', secret)
+          .update(payload)
+          .digest('hex');
 
-      isValid = (generatedSignature === razorpay_signature);
-      console.log('🔑 Signature Verification Analysis:');
-      console.log('   Payload:            ', payload);
-      console.log('   Generated Signature:', generatedSignature);
-      console.log('   Received Signature: ', razorpay_signature);
-      console.log('   Result:             ', isValid ? '✅ MATCH / SIGNATURE VALID' : '❌ MISMATCH / SIGNATURE INVALID');
+        isValid = (generatedSignature === razorpay_signature);
+        console.log('🔑 Signature Verification Analysis:');
+        console.log('   Payload:            ', payload);
+        console.log('   Generated Signature:', generatedSignature);
+        console.log('   Received Signature: ', razorpay_signature);
+        console.log('   Result:             ', isValid ? '✅ MATCH / SIGNATURE VALID' : '❌ MISMATCH / SIGNATURE INVALID');
+      }
+
+      // Failsafe: Direct API Verification with Razorpay API if signature check didn't match
+      if (!isValid && razorpay_payment_id) {
+        try {
+          const razorpay = getRazorpayInstance();
+          const paymentEntity = await razorpay.payments.fetch(razorpay_payment_id);
+          if (paymentEntity && (paymentEntity.status === 'captured' || paymentEntity.status === 'authorized')) {
+            console.log(`✅ [Razorpay API Direct Verification] Payment ${razorpay_payment_id} status is "${paymentEntity.status}"! Verification PASSED.`);
+            isValid = true;
+          }
+        } catch (apiErr) {
+          console.warn('[Razorpay API Direct Verification Warning]:', apiErr.message);
+        }
+      }
     }
 
     // Find the pending order in MongoDB

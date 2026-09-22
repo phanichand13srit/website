@@ -1742,3 +1742,133 @@
         gap: 16px !important;
     }
 }
+
+/* ====================================================
+   ORDER SUCCESS CONFIRMATION MODAL
+   ==================================================== */
+.order-success-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 999999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    box-sizing: border-box;
+}
+
+.order-success-modal.show {
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+.order-success-box {
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 32px 24px;
+    max-width: 440px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.5);
+    transform: scale(0.9) translateY(20px);
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    border: 1px solid #cbd5e1;
+    box-sizing: border-box;
+}
+
+.order-success-modal.show .order-success-box {
+    transform: scale(1) translateY(0);
+}
+
+.success-icon-circle {
+    width: 64px;
+    height: 64px;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: #ffffff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    font-weight: 800;
+    margin: 0 auto 16px auto;
+    box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4);
+    animation: successPop 0.4s ease;
+}
+
+@keyframes successPop {
+    0% { transform: scale(0.5); }
+    70% { transform: scale(1.15); }
+    100% { transform: scale(1); }
+}
+
+.success-title {
+    font-size: 24px;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0 0 8px 0;
+}
+
+.success-desc {
+    font-size: 13.5px;
+    color: #64748b;
+    margin: 0 0 20px 0;
+    line-height: 1.45;
+}
+
+.order-info-pill {
+    background: #f8fafc;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 14px 16px;
+    text-align: left;
+    margin-bottom: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-size: 13px;
+    color: #334155;
+}
+
+.order-info-pill div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.order-info-pill span {
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.btn-continue-store {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 13px 24px;
+    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+    color: #ffffff !important;
+    font-weight: 800;
+    font-size: 14.5px;
+    border-radius: 12px;
+    text-decoration: none;
+    box-shadow: 0 6px 20px rgba(5, 150, 105, 0.35);
+    transition: all 0.25s ease;
+    box-sizing: border-box;
+}
+
+.btn-continue-store:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(5, 150, 105, 0.5);
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+}
