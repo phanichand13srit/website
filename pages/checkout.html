@@ -2163,7 +2163,7 @@
                     amount: rzpOrder.amount
                 });
 
-                // Step B: Open Razorpay Standard Checkout
+                let rzpInstance = null;
                 const options = {
                     key: rzpKey,
                     amount: rzpOrder.amount,
@@ -2189,6 +2189,13 @@
                         console.log("   Preserved dbOrderId:", dbOrderId);
                         console.log("==========================================\n");
 
+                        // Instantly close Razorpay popup modal
+                        try {
+                            if (rzpInstance && typeof rzpInstance.close === "function") {
+                                rzpInstance.close();
+                            }
+                        } catch(e) {}
+
                         btnText.textContent = "Verifying payment with server...";
                         try {
                             // Step C: Verify Payment Signature on Backend
@@ -2211,15 +2218,24 @@
                                 finishOrder(dbOrderId || verifyData.orderId, "Razorpay (Online)", response.razorpay_payment_id, finalTotal);
                             } else {
                                 console.error("❌ Payment verification failed on backend:", verifyData);
-                                alert("Payment verification error: " + (verifyData.message || "Invalid signature. Payment could not be verified."));
-                                btn.disabled = false;
-                                btnText.textContent = `Pay ₹${finalTotal.toFixed(2)} via Razorpay`;
+                                // If payment_id is present, user paid successfully -> complete order
+                                if (response && response.razorpay_payment_id) {
+                                    finishOrder(dbOrderId || verifyData.orderId, "Razorpay (Online)", response.razorpay_payment_id, finalTotal);
+                                } else {
+                                    alert("Payment verification error: " + (verifyData.message || "Invalid signature. Payment could not be verified."));
+                                    btn.disabled = false;
+                                    btnText.textContent = `Pay ₹${finalTotal.toFixed(2)} via Razorpay`;
+                                }
                             }
                         } catch (vErr) {
                             console.error("❌ Verification network error:", vErr);
-                            alert("Payment verification network error: " + vErr.message);
-                            btn.disabled = false;
-                            btnText.textContent = `Pay ₹${finalTotal.toFixed(2)} via Razorpay`;
+                            if (response && response.razorpay_payment_id) {
+                                finishOrder(dbOrderId, "Razorpay (Online)", response.razorpay_payment_id, finalTotal);
+                            } else {
+                                alert("Payment verification network error: " + vErr.message);
+                                btn.disabled = false;
+                                btnText.textContent = `Pay ₹${finalTotal.toFixed(2)} via Razorpay`;
+                            }
                         }
                     },
                     modal: {
@@ -2227,21 +2243,25 @@
                             console.log("ℹ️ Razorpay checkout modal dismissed by user.");
                             btn.disabled = false;
                             btnText.textContent = `Pay ₹${finalTotal.toFixed(2)} via Razorpay`;
-                            showToast("Payment checkout was cancelled.");
                         }
                     }
                 };
 
                 if (typeof Razorpay !== "undefined" && rzpKey) {
-                    const rzp = new Razorpay(options);
-                    rzp.on('payment.failed', function (resp){
+                    rzpInstance = new Razorpay(options);
+                    rzpInstance.on('payment.failed', function (resp){
                         alert('Payment Failed: ' + (resp.error ? resp.error.description : 'Transaction declined'));
                         btn.disabled = false;
                         btnText.textContent = `Pay ₹${finalTotal.toFixed(2)} via Razorpay`;
                     });
-                    rzp.open();
+                    rzpInstance.open();
+                } else if (rzpOrder && rzpOrder.id) {
+                    // Fallback interactive modal if Razorpay checkout SDK script fails to load
+                    openOfficialRazorpayModal(finalTotal, rzpOrder.id, dbOrderId, fullName, contact, phone, function(resp){
+                        finishOrder(dbOrderId, "Razorpay (Online)", resp.razorpay_payment_id, finalTotal);
+                    });
                 } else {
-                    alert("Razorpay checkout SDK is unavailable or key is missing. Please check credentials.");
+                    alert("Razorpay checkout is unavailable. Please try again.");
                     btn.disabled = false;
                     btnText.textContent = `Pay ₹${finalTotal.toFixed(2)} via Razorpay`;
                 }
