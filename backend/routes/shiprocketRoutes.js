@@ -29,70 +29,113 @@ router.all('/test', (req, res) => {
 // @desc    Pull orders for Shiprocket in standard custom channel format
 router.get('/orders', verifyApiKey, async (req, res) => {
   try {
-    const { status, from_date, to_date } = req.query;
+    const { status, from_date, to_date, format } = req.query;
     let filter = {};
 
     if (status) {
-      const statusList = status.split(',').map(s => s.trim());
-      filter.status = { $in: statusList };
+      const statusList = status.split(',').map(s => s.trim().toLowerCase());
+      
+      // If Shiprocket asks for 'all' or 'any', do NOT filter by status except excluding Cancelled
+      if (statusList.includes('all') || statusList.includes('any')) {
+        filter.status = { $ne: 'Cancelled' };
+      } else {
+        const mappedStatuses = [];
+        statusList.forEach(s => {
+          if (s === 'new' || s === 'pending' || s === 'placed' || s === 'processing') {
+            mappedStatuses.push('Placed', 'Pending', 'Confirmed', 'Processing');
+          } else if (s === 'confirmed') {
+            mappedStatuses.push('Confirmed', 'Processing');
+          } else if (s === 'cancelled' || s === 'canceled') {
+            mappedStatuses.push('Cancelled');
+          } else if (s === 'shipped' || s === 'dispatched' || s === 'delivered' || s === 'completed') {
+            mappedStatuses.push('Dispatched', 'Shipped', 'Delivered');
+          } else {
+            // Capitalize first letter e.g. "placed" -> "Placed"
+            mappedStatuses.push(s.charAt(0).toUpperCase() + s.slice(1));
+          }
+        });
+        filter.status = { $in: [...new Set(mappedStatuses)] };
+      }
     } else {
-      filter.status = { $in: ['Placed', 'Confirmed', 'Processing', 'Pending'] };
+      // Default: fetch all active non-cancelled orders if no status parameter is passed
+      filter.status = { $ne: 'Cancelled' };
     }
 
     if (from_date || to_date) {
       filter.createdAt = {};
-      if (from_date) filter.createdAt.$gte = new Date(from_date);
-      if (to_date) filter.createdAt.$lte = new Date(to_date);
+      if (from_date) {
+        const fDate = new Date(from_date);
+        if (!isNaN(fDate.getTime())) filter.createdAt.$gte = fDate;
+      }
+      if (to_date) {
+        const tDate = new Date(to_date);
+        if (!isNaN(tDate.getTime())) {
+          if (to_date.length <= 10) tDate.setHours(23, 59, 59, 999);
+          filter.createdAt.$lte = tDate;
+        }
+      }
+      if (Object.keys(filter.createdAt).length === 0) {
+        delete filter.createdAt;
+      }
     }
 
     const orders = await Order.find(filter).sort({ createdAt: -1 }).limit(100);
 
-    const formattedOrders = orders.map(order => ({
-      order_id: order._id.toString(),
-      order_date: order.createdAt ? order.createdAt.toISOString().split('T')[0] + ' ' + order.createdAt.toTimeString().split(' ')[0] : new Date().toISOString(),
-      channel_order_id: order._id.toString(),
-      channel_name: 'Custom',
-      status: order.status || 'Processing',
-      payment_method: order.paymentMethod && order.paymentMethod.toLowerCase().includes('cod') ? 'COD' : 'Prepaid',
-      payment_status: order.isPaid ? 'PAID' : 'PENDING',
-      customer_name: order.customerName || 'Customer',
-      customer_email: order.customerEmail || 'orders@arshithfresh.com',
-      customer_phone: order.customerPhone || '9999999999',
-      billing_address: {
-        first_name: order.customerName ? order.customerName.split(' ')[0] : 'Customer',
-        last_name: order.customerName ? order.customerName.split(' ').slice(1).join(' ') || '' : '',
-        address_1: (order.shippingAddress && order.shippingAddress.address) || 'Street Address',
-        address_2: (order.shippingAddress && order.shippingAddress.apartment) || '',
-        city: (order.shippingAddress && order.shippingAddress.city) || 'Bangalore',
-        state: (order.shippingAddress && order.shippingAddress.state) || 'Karnataka',
-        pincode: (order.shippingAddress && order.shippingAddress.postalCode) || '560001',
-        country: (order.shippingAddress && order.shippingAddress.country) || 'India',
-        phone: order.customerPhone || '9999999999',
-      },
-      shipping_address: {
-        first_name: order.customerName ? order.customerName.split(' ')[0] : 'Customer',
-        last_name: order.customerName ? order.customerName.split(' ').slice(1).join(' ') || '' : '',
-        address_1: (order.shippingAddress && order.shippingAddress.address) || 'Street Address',
-        address_2: (order.shippingAddress && order.shippingAddress.apartment) || '',
-        city: (order.shippingAddress && order.shippingAddress.city) || 'Bangalore',
-        state: (order.shippingAddress && order.shippingAddress.state) || 'Karnataka',
-        pincode: (order.shippingAddress && order.shippingAddress.postalCode) || '560001',
-        country: (order.shippingAddress && order.shippingAddress.country) || 'India',
-        phone: order.customerPhone || '9999999999',
-      },
-      products: (order.orderItems || []).map(item => ({
-        product_id: item.product ? item.product.toString() : item._id ? item._id.toString() : 'PROD-1',
-        name: item.name || 'Product',
-        sku: item.name ? item.name.replace(/\s+/g, '-').toUpperCase() : 'SKU-001',
-        quantity: item.qty || 1,
-        price: item.price || 0,
-        subtotal: (item.price || 0) * (item.qty || 1)
-      })),
-      total_price: order.totalPrice || 0,
-      subtotal: order.itemsPrice || order.totalPrice || 0,
-      shipping_charges: order.shippingPrice || 0,
-      discount: order.discountPrice || 0
-    }));
+    const formattedOrders = orders.map(order => {
+      const createdAtDate = order.createdAt ? new Date(order.createdAt) : new Date();
+      const dateString = createdAtDate.toISOString().split('T')[0] + ' ' + createdAtDate.toTimeString().split(' ')[0];
+
+      return {
+        order_id: order._id.toString(),
+        order_date: dateString,
+        channel_order_id: order._id.toString(),
+        channel_name: 'Custom',
+        status: order.status || 'Processing',
+        payment_method: order.paymentMethod && order.paymentMethod.toLowerCase().includes('cod') ? 'COD' : 'Prepaid',
+        payment_status: order.isPaid ? 'PAID' : 'PENDING',
+        customer_name: order.customerName || 'Customer',
+        customer_email: order.customerEmail || 'orders@arshithfresh.com',
+        customer_phone: order.customerPhone || '9999999999',
+        billing_address: {
+          first_name: order.customerName ? order.customerName.split(' ')[0] : 'Customer',
+          last_name: order.customerName ? order.customerName.split(' ').slice(1).join(' ') || '' : '',
+          address_1: (order.shippingAddress && order.shippingAddress.address) || 'Street Address',
+          address_2: (order.shippingAddress && order.shippingAddress.apartment) || '',
+          city: (order.shippingAddress && order.shippingAddress.city) || 'Bangalore',
+          state: (order.shippingAddress && order.shippingAddress.state) || 'Karnataka',
+          pincode: (order.shippingAddress && order.shippingAddress.postalCode) || '560001',
+          country: (order.shippingAddress && order.shippingAddress.country) || 'India',
+          phone: order.customerPhone || '9999999999',
+        },
+        shipping_address: {
+          first_name: order.customerName ? order.customerName.split(' ')[0] : 'Customer',
+          last_name: order.customerName ? order.customerName.split(' ').slice(1).join(' ') || '' : '',
+          address_1: (order.shippingAddress && order.shippingAddress.address) || 'Street Address',
+          address_2: (order.shippingAddress && order.shippingAddress.apartment) || '',
+          city: (order.shippingAddress && order.shippingAddress.city) || 'Bangalore',
+          state: (order.shippingAddress && order.shippingAddress.state) || 'Karnataka',
+          pincode: (order.shippingAddress && order.shippingAddress.postalCode) || '560001',
+          country: (order.shippingAddress && order.shippingAddress.country) || 'India',
+          phone: order.customerPhone || '9999999999',
+        },
+        products: (order.orderItems || []).map(item => ({
+          product_id: item.product ? item.product.toString() : item._id ? item._id.toString() : 'PROD-1',
+          name: item.name || 'Product',
+          sku: item.name ? item.name.replace(/\s+/g, '-').toUpperCase() : 'SKU-001',
+          quantity: item.qty || 1,
+          price: item.price || 0,
+          subtotal: (item.price || 0) * (item.qty || 1)
+        })),
+        total_price: order.totalPrice || 0,
+        subtotal: order.itemsPrice || order.totalPrice || 0,
+        shipping_charges: order.shippingPrice || 0,
+        discount: order.discountPrice || 0
+      };
+    });
+
+    if (format === 'array' || format === 'raw') {
+      return res.json(formattedOrders);
+    }
 
     res.json({
       success: true,
