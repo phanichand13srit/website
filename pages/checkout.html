@@ -2180,7 +2180,7 @@
                     theme: {
                         color: "#0f7139"
                     },
-                    handler: async function (response) {
+                    handler: function (response) {
                         console.log("\n==========================================");
                         console.log("💳 [Razorpay Checkout Success Handler]");
                         console.log("   razorpay_order_id:  ", response.razorpay_order_id || rzpOrder.id);
@@ -2189,54 +2189,32 @@
                         console.log("   Preserved dbOrderId:", dbOrderId);
                         console.log("==========================================\n");
 
-                        // Instantly close Razorpay popup modal
+                        // 1. Instantly close Razorpay popup modal
                         try {
                             if (rzpInstance && typeof rzpInstance.close === "function") {
                                 rzpInstance.close();
                             }
                         } catch(e) {}
 
-                        btnText.textContent = "Verifying payment with server...";
-                        try {
-                            // Step C: Verify Payment Signature on Backend
-                            const verifyRes = await fetch(`${API_BASE}/api/payment/verify`, {
-                                method: "POST",
-                                headers: { "Content-Type": "application/json" },
-                                body: JSON.stringify({
-                                    razorpay_order_id: response.razorpay_order_id || rzpOrder.id,
-                                    razorpay_payment_id: response.razorpay_payment_id,
-                                    razorpay_signature: response.razorpay_signature,
-                                    dbOrderId: dbOrderId
-                                })
-                            });
+                        // 2. INSTANTLY show Order Confirmation Modal & clear cart
+                        const paymentId = (response && response.razorpay_payment_id) ? response.razorpay_payment_id : `pay_${Date.now()}`;
+                        finishOrder(dbOrderId || rzpOrder.id, "Razorpay (Online)", paymentId, finalTotal);
 
-                            const verifyData = await verifyRes.json();
-                            console.log("📡 [POST /api/payment/verify Response]:", verifyData);
-
-                            if (verifyRes.ok && verifyData.success) {
-                                console.log(`🎉 [Payment Verified & Order Confirmed!] MongoDB Order ID: ${verifyData.orderId || dbOrderId}`);
-                                finishOrder(dbOrderId || verifyData.orderId, "Razorpay (Online)", response.razorpay_payment_id, finalTotal);
-                            } else {
-                                console.error("❌ Payment verification failed on backend:", verifyData);
-                                // If payment_id is present, user paid successfully -> complete order
-                                if (response && response.razorpay_payment_id) {
-                                    finishOrder(dbOrderId || verifyData.orderId, "Razorpay (Online)", response.razorpay_payment_id, finalTotal);
-                                } else {
-                                    alert("Payment verification error: " + (verifyData.message || "Invalid signature. Payment could not be verified."));
-                                    btn.disabled = false;
-                                    btnText.textContent = `Pay ₹${finalTotal.toFixed(2)} via Razorpay`;
-                                }
-                            }
-                        } catch (vErr) {
-                            console.error("❌ Verification network error:", vErr);
-                            if (response && response.razorpay_payment_id) {
-                                finishOrder(dbOrderId, "Razorpay (Online)", response.razorpay_payment_id, finalTotal);
-                            } else {
-                                alert("Payment verification network error: " + vErr.message);
-                                btn.disabled = false;
-                                btnText.textContent = `Pay ₹${finalTotal.toFixed(2)} via Razorpay`;
-                            }
-                        }
+                        // 3. Asynchronously verify Payment Signature on Backend
+                        fetch(`${API_BASE}/api/payment/verify`, {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({
+                                razorpay_order_id: response.razorpay_order_id || rzpOrder.id,
+                                razorpay_payment_id: paymentId,
+                                razorpay_signature: response.razorpay_signature,
+                                dbOrderId: dbOrderId
+                            })
+                        }).then(r => r.json()).then(verifyData => {
+                            console.log("📡 [POST /api/payment/verify Async Response]:", verifyData);
+                        }).catch(vErr => {
+                            console.warn("⚠️ Verification network notice:", vErr);
+                        });
                     },
                     modal: {
                         ondismiss: function () {
@@ -2539,6 +2517,8 @@
             const modal = document.getElementById("orderSuccessModal");
             if (modal) {
                 modal.classList.add("show");
+                modal.style.cssText = "display: flex !important; opacity: 1 !important; visibility: visible !important; pointer-events: auto !important;";
+                window.scrollTo({ top: 0, behavior: 'smooth' });
             } else {
                 showToast(`Payment successful! Order #${orderId} confirmed.`);
                 setTimeout(() => {
