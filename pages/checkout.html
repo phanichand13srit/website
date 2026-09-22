@@ -2163,6 +2163,11 @@
                     amount: rzpOrder.amount
                 });
 
+                // Store pending order ID for page reload recovery
+                try {
+                    if (dbOrderId) localStorage.setItem("pending_arshith_order_id", dbOrderId);
+                } catch(e) {}
+
                 let rzpInstance = null;
                 const options = {
                     key: rzpKey,
@@ -2180,7 +2185,7 @@
                     theme: {
                         color: "#0f7139"
                     },
-                    handler: function (response) {
+                    handler: async function (response) {
                         console.log("\n==========================================");
                         console.log("💳 [Razorpay Checkout Success Handler]");
                         console.log("   razorpay_order_id:  ", response.razorpay_order_id || rzpOrder.id);
@@ -2189,32 +2194,42 @@
                         console.log("   Preserved dbOrderId:", dbOrderId);
                         console.log("==========================================\n");
 
-                        // 1. Instantly close Razorpay popup modal
+                        btnText.textContent = "Verifying payment securely with server...";
                         try {
-                            if (rzpInstance && typeof rzpInstance.close === "function") {
-                                rzpInstance.close();
+                            const verifyRes = await fetch(`${API_BASE}/api/payment/verify`, {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({
+                                    razorpay_order_id: response.razorpay_order_id || rzpOrder.id,
+                                    razorpay_payment_id: response.razorpay_payment_id,
+                                    razorpay_signature: response.razorpay_signature,
+                                    dbOrderId: dbOrderId
+                                })
+                            });
+
+                            const verifyData = await verifyRes.json();
+                            console.log("📡 [POST /api/payment/verify Response]:", verifyData);
+
+                            if (verifyRes.ok && verifyData.success) {
+                                try {
+                                    if (rzpInstance && typeof rzpInstance.close === "function") {
+                                        rzpInstance.close();
+                                    }
+                                } catch(e) {}
+                                try { localStorage.removeItem("pending_arshith_order_id"); } catch(e) {}
+                                finishOrder(verifyData.orderId || dbOrderId, "Razorpay (Online)", response.razorpay_payment_id, finalTotal);
+                            } else {
+                                console.error("❌ Payment verification failed:", verifyData);
+                                alert("Payment verification error: " + (verifyData.message || "Invalid signature. Payment could not be verified."));
+                                btn.disabled = false;
+                                btnText.textContent = `Pay ₹${finalTotal.toFixed(2)} via Razorpay`;
                             }
-                        } catch(e) {}
-
-                        // 2. INSTANTLY show Order Confirmation Modal & clear cart
-                        const paymentId = (response && response.razorpay_payment_id) ? response.razorpay_payment_id : `pay_${Date.now()}`;
-                        finishOrder(dbOrderId || rzpOrder.id, "Razorpay (Online)", paymentId, finalTotal);
-
-                        // 3. Asynchronously verify Payment Signature on Backend
-                        fetch(`${API_BASE}/api/payment/verify`, {
-                            method: "POST",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({
-                                razorpay_order_id: response.razorpay_order_id || rzpOrder.id,
-                                razorpay_payment_id: paymentId,
-                                razorpay_signature: response.razorpay_signature,
-                                dbOrderId: dbOrderId
-                            })
-                        }).then(r => r.json()).then(verifyData => {
-                            console.log("📡 [POST /api/payment/verify Async Response]:", verifyData);
-                        }).catch(vErr => {
-                            console.warn("⚠️ Verification network notice:", vErr);
-                        });
+                        } catch (vErr) {
+                            console.error("❌ Verification network error:", vErr);
+                            alert("Payment verification network error: " + vErr.message);
+                            btn.disabled = false;
+                            btnText.textContent = `Pay ₹${finalTotal.toFixed(2)} via Razorpay`;
+                        }
                     },
                     modal: {
                         ondismiss: function () {
@@ -2800,8 +2815,32 @@
             renderAvailableCoupons();
         }
 
+        async function checkPendingRazorpayOrder() {
+            try {
+                const pendingOrderId = localStorage.getItem("pending_arshith_order_id");
+                if (pendingOrderId) {
+                    const statusRes = await fetch(`${API_BASE}/api/payment/check-status/${pendingOrderId}`);
+                    if (statusRes.ok) {
+                        const statusData = await statusRes.json();
+                        if (statusData.success && statusData.isPaid && statusData.order) {
+                            try { localStorage.removeItem("pending_arshith_order_id"); } catch(e) {}
+                            finishOrder(
+                                statusData.order._id,
+                                "Razorpay (Online)",
+                                statusData.order.razorpayPaymentId || "Paid",
+                                statusData.order.totalPrice
+                            );
+                        }
+                    }
+                }
+            } catch(e) {
+                console.warn("Check pending order warning:", e);
+            }
+        }
+
         document.addEventListener("DOMContentLoaded", async () => {
             renderCheckoutPage();
+            await checkPendingRazorpayOrder();
             await fetchLiveAddonsFromDB();
             renderClassicAddons();
             renderAvailableCoupons();
