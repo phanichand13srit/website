@@ -137,6 +137,7 @@ router.post('/create-order', async (req, res) => {
         amount: amountInPaise,
         currency: 'INR',
         receipt: `rcpt_${Date.now().toString().slice(-8)}`,
+        payment_capture: 1,
         notes: {
           customerName: customerName || 'Customer',
           customerEmail: customerEmail || '',
