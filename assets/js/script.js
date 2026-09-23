@@ -722,7 +722,9 @@ document.addEventListener("DOMContentLoaded", () => {
         const path = window.location.pathname.toLowerCase();
         if (path.endsWith('/cart.html') || path.endsWith('/cart') || path.endsWith('/checkout.html') || path.endsWith('/checkout')) {
             const existing = document.getElementById("stickyCartBar");
-            if (existing) existing.style.display = "none";
+            if (existing) {
+                existing.style.setProperty("display", "none", "important");
+            }
             return null;
         }
 
@@ -740,7 +742,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     <div class="cart-bar-left-group">
                         <span class="cart-bar-icon-box">🛒</span>
                         <span id="cartBarCount" class="cart-bar-count">0 items</span>
-                        <span id="cartBarTotal" class="cart-bar-price">₹0.00</span>
+                        <span id="cartBarTotal" class="cart-bar-price">₹0</span>
                     </div>
                     <span class="cart-bar-link">Cart</span>
                 </div>
@@ -753,7 +755,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     <div class="cart-bar-left-group">
                         <span class="cart-bar-icon-box">🛒</span>
                         <span id="cartBarCount" class="cart-bar-count">0 items</span>
-                        <span id="cartBarTotal" class="cart-bar-price">₹0.00</span>
+                        <span id="cartBarTotal" class="cart-bar-price">₹0</span>
                     </div>
                     <span class="cart-bar-link">Cart</span>
                 `;
@@ -782,6 +784,17 @@ document.addEventListener("DOMContentLoaded", () => {
             b.textContent = totalCount;
         });
 
+        // Always update any sticky cart bar count and price elements in the document
+        const allBarCounts = document.querySelectorAll("#cartBarCount, .cart-bar-count");
+        allBarCounts.forEach(el => {
+            el.textContent = `${totalCount} item${totalCount !== 1 ? 's' : ''}`;
+        });
+
+        const allBarTotals = document.querySelectorAll("#cartBarTotal, .cart-bar-price");
+        allBarTotals.forEach(el => {
+            el.textContent = `₹${subtotal.toFixed(0)}`;
+        });
+
         const barElement = ensureStickyCartBarElement();
         if (barElement) {
             const barHeader = document.getElementById("cartBarHeader") || barElement.querySelector('.cart-bar-header');
@@ -789,17 +802,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (subtotal >= 1000) {
                     barHeader.textContent = "🎉 You unlocked FREE Shipping!";
                 } else if (subtotal > 0) {
-                    barHeader.textContent = "Free Shipping on all orders above 1000/-";
+                    barHeader.textContent = `FREE Shipping on all orders above ₹1,000 (Add ₹${Math.max(0, 1000 - subtotal).toFixed(0)} more)`;
                 } else {
-                    barHeader.textContent = "Free Shipping on all orders above 1000/-";
+                    barHeader.textContent = "FREE Shipping on all orders above ₹1,000";
                 }
             }
-
-            const barCount = document.getElementById("cartBarCount") || barElement.querySelector('#cartBarCount');
-            if (barCount) barCount.textContent = `${totalCount} item${totalCount !== 1 ? 's' : ''}`;
-
-            const barTotal = document.getElementById("cartBarTotal") || barElement.querySelector('#cartBarTotal');
-            if (barTotal) barTotal.textContent = `₹${subtotal.toFixed(2)}`;
 
             const cartUrl = getStoreCartUrl();
             barElement.setAttribute("href", cartUrl);
@@ -812,7 +819,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (totalCount > 0) {
                 barElement.style.cssText = "display: flex !important; opacity: 1 !important; visibility: visible !important; pointer-events: auto !important;";
             } else {
-                barElement.style.cssText = "display: none !important;";
+                barElement.style.setProperty("display", "none", "important");
             }
         }
     }
