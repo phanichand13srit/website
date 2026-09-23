@@ -1497,7 +1497,6 @@
                             <span class="bill-info-icon" title="Free delivery on orders">i</span>
                         </div>
                         <div class="bill-row-value">
-                            <span class="bill-mrp-crossed">₹30</span>
                             <span class="bill-free-text" id="checkoutShipping">FREE</span>
                         </div>
                     </div>
@@ -1829,19 +1828,13 @@
             const totalSavings = itemSavings + appliedDiscount + redeemedCoinsDiscount;
 
             const shippingEl = document.getElementById('checkoutShipping');
-            const shippingCrossedEl = document.querySelector('.bill-mrp-crossed');
             if (shippingEl) {
                 if (deliveryCharge > 0) {
                     shippingEl.textContent = `₹${deliveryCharge}`;
                     shippingEl.style.color = "#111827";
-                    if (shippingCrossedEl) shippingCrossedEl.style.display = "none";
                 } else {
                     shippingEl.textContent = "FREE";
                     shippingEl.style.color = "#0f7139";
-                    if (shippingCrossedEl) {
-                        shippingCrossedEl.textContent = "₹49";
-                        shippingCrossedEl.style.display = subtotal >= 500 ? "inline" : "none";
-                    }
                 }
             }
 
