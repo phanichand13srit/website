@@ -277,6 +277,7 @@
             if (typeof consolidateCartItems === 'function') {
                 CART_ITEMS = consolidateCartItems(CART_ITEMS);
                 window.CART_ITEMS = CART_ITEMS;
+                if (typeof saveCart === 'function') saveCart();
             }
 
             if (CART_ITEMS.length === 0) {

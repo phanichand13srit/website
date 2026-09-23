@@ -571,27 +571,58 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    function normalizeCartProductKey(item) {
+        if (!item) return '';
+        const titleStr = String(item.title || item.name || '').trim();
+        if (titleStr) {
+            return titleStr.toLowerCase().replace(/[^a-z0-9]/g, '');
+        }
+        const idStr = String(item.id || item._id || item.product || '').trim();
+        return idStr.toLowerCase().replace(/[^a-z0-9]/g, '');
+    }
+
+    function sanitizeCartItemPrice(rawPrice) {
+        let p = Number(rawPrice) || 0;
+        if (p > 0 && p < 1) {
+            p = Math.round(p * 100);
+        }
+        if (p <= 0) p = 59;
+        return Math.round(p * 100) / 100;
+    }
+
     // Helper to consolidate duplicate products in cart array into single entries with total combined quantity
     function consolidateCartItems(items) {
         if (!Array.isArray(items) || items.length === 0) return [];
         const map = new Map();
         items.forEach(item => {
             if (!item) return;
-            const key = String(item.id || item._id || item.product || item.title || item.name || '').trim().toLowerCase();
+            const key = normalizeCartProductKey(item);
+            if (!key) return;
+
             const qty = Math.max(1, Number(item.quantity || item.qty || 1));
-            const price = Number(item.price || 0);
+            const price = sanitizeCartItemPrice(item.price);
+            let title = String(item.title || item.name || "Arshith Fresh Product").trim().replace(/([a-zA-Z0-9])\(/g, '$1 (');
+
             if (map.has(key)) {
                 const existing = map.get(key);
                 const newQty = (Number(existing.quantity || existing.qty || 1)) + qty;
                 existing.quantity = newQty;
                 existing.qty = newQty;
+                existing.price = Math.max(Number(existing.price || 0), price);
+                if (existing.price > 0 && existing.price < 1) {
+                    existing.price = sanitizeCartItemPrice(existing.price);
+                }
                 if (!existing.image && item.image) existing.image = item.image;
+                if (title.includes(' (') && !existing.title.includes(' (')) {
+                    existing.title = title;
+                    existing.name = title;
+                }
             } else {
                 map.set(key, {
                     ...item,
-                    id: item.id || item._id || item.product || String(Date.now()),
-                    title: item.title || item.name || "Arshith Fresh Product",
-                    name: item.name || item.title || "Arshith Fresh Product",
+                    id: item.id || item._id || item.product || key,
+                    title: title,
+                    name: title,
                     price: price,
                     quantity: qty,
                     qty: qty
@@ -637,24 +668,28 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function addToStoreCart(id, name, price, image, qty = 1) {
         CART_ITEMS = consolidateCartItems(CART_ITEMS);
-        const searchKey = String(id || name || '').trim().toLowerCase();
+        const cleanName = String(name || '').trim().replace(/([a-zA-Z0-9])\(/g, '$1 (');
+        const searchKey = (cleanName || id || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+        
         const existing = CART_ITEMS.find(item => {
-            const itemId = String(item.id || item._id || item.product || '').trim().toLowerCase();
-            const itemTitle = String(item.title || item.name || '').trim().toLowerCase();
-            return (searchKey && (itemId === searchKey || itemTitle === searchKey));
+            const key = normalizeCartProductKey(item);
+            return key && key === searchKey;
         });
 
         let finalQty = Number(qty);
+        let sanitizedPrice = sanitizeCartItemPrice(price);
+
         if (existing) {
             existing.quantity = (Number(existing.quantity || existing.qty || 1)) + Number(qty);
             existing.qty = existing.quantity;
+            existing.price = Math.max(Number(existing.price || 0), sanitizedPrice);
             finalQty = existing.quantity;
         } else {
             CART_ITEMS.push({
                 id: id || String(Date.now()),
-                title: name,
-                name: name,
-                price: Number(price) || 0,
+                title: cleanName || "Arshith Fresh Product",
+                name: cleanName || "Arshith Fresh Product",
+                price: sanitizedPrice,
                 image: image || "https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/spice_200x200_crop_center.png?v=1746963495",
                 quantity: Number(qty),
                 qty: Number(qty)
@@ -662,9 +697,9 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         saveCart();
         if (typeof showToast === "function") {
-            showToast(`Added ${name} to cart! (Quantity: ${finalQty})`);
+            showToast(`Added ${cleanName} to cart! (Quantity: ${finalQty})`);
         } else {
-            alert(`Added ${name} to cart! (Quantity: ${finalQty})`);
+            alert(`Added ${cleanName} to cart! (Quantity: ${finalQty})`);
         }
     }
     window.addToStoreCart = addToStoreCart;
@@ -683,6 +718,50 @@ document.addEventListener("DOMContentLoaded", () => {
         saveCart();
     }
 
+    function ensureStickyCartBarElement() {
+        const path = window.location.pathname.toLowerCase();
+        if (path.endsWith('/cart.html') || path.endsWith('/cart') || path.endsWith('/checkout.html') || path.endsWith('/checkout')) {
+            const existing = document.getElementById("stickyCartBar");
+            if (existing) existing.style.display = "none";
+            return null;
+        }
+
+        let bar = document.getElementById("stickyCartBar");
+        if (!bar) {
+            bar = document.createElement("a");
+            bar.id = "stickyCartBar";
+            bar.className = "sticky-cart-bar";
+            bar.setAttribute("aria-label", "Open cart");
+            bar.innerHTML = `
+                <div class="cart-bar-header" id="cartBarHeader">
+                    Free Shipping on all orders above 1000/-
+                </div>
+                <div class="cart-bar-body">
+                    <div class="cart-bar-left-group">
+                        <span class="cart-bar-icon-box">🛒</span>
+                        <span id="cartBarCount" class="cart-bar-count">0 items</span>
+                        <span id="cartBarTotal" class="cart-bar-price">₹0.00</span>
+                    </div>
+                    <span class="cart-bar-link">Cart</span>
+                </div>
+            `;
+            document.body.appendChild(bar);
+        } else {
+            const body = bar.querySelector('.cart-bar-body');
+            if (body && !body.querySelector('.cart-bar-left-group')) {
+                body.innerHTML = `
+                    <div class="cart-bar-left-group">
+                        <span class="cart-bar-icon-box">🛒</span>
+                        <span id="cartBarCount" class="cart-bar-count">0 items</span>
+                        <span id="cartBarTotal" class="cart-bar-price">₹0.00</span>
+                    </div>
+                    <span class="cart-bar-link">Cart</span>
+                `;
+            }
+        }
+        return bar;
+    }
+
     function updateCartCountBadge() {
         let items = CART_ITEMS || [];
         try {
@@ -694,8 +773,8 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         } catch (e) {}
 
-        const totalCount = items.reduce((sum, item) => sum + (Number(item.quantity) || 1), 0);
-        const subtotal = items.reduce((sum, item) => sum + ((Number(item.price) || 0) * (Number(item.quantity) || 1)), 0);
+        const totalCount = items.reduce((sum, item) => sum + Math.max(1, Number(item.quantity || item.qty || 1)), 0);
+        const subtotal = items.reduce((sum, item) => sum + ((Number(item.price || 0)) * Math.max(1, Number(item.quantity || item.qty || 1))), 0);
 
         // Update all badge elements across pages
         const badges = document.querySelectorAll(".cart-count, .cart-badge-num, #checkoutTopCartCount, .cart-count-badge");
@@ -703,12 +782,38 @@ document.addEventListener("DOMContentLoaded", () => {
             b.textContent = totalCount;
         });
 
-        const barCount = document.getElementById("cartBarCount");
-        if (barCount) barCount.textContent = `${totalCount} item${totalCount !== 1 ? 's' : ''}`;
+        const barElement = ensureStickyCartBarElement();
+        if (barElement) {
+            const barHeader = document.getElementById("cartBarHeader") || barElement.querySelector('.cart-bar-header');
+            if (barHeader) {
+                if (subtotal >= 1000) {
+                    barHeader.textContent = "🎉 You unlocked FREE Shipping!";
+                } else if (subtotal > 0) {
+                    barHeader.textContent = "Free Shipping on all orders above 1000/-";
+                } else {
+                    barHeader.textContent = "Free Shipping on all orders above 1000/-";
+                }
+            }
 
-        const barTotal = document.getElementById("cartBarTotal");
-        if (barTotal) {
-            barTotal.textContent = `₹${subtotal.toFixed(2)}`;
+            const barCount = document.getElementById("cartBarCount") || barElement.querySelector('#cartBarCount');
+            if (barCount) barCount.textContent = `${totalCount} item${totalCount !== 1 ? 's' : ''}`;
+
+            const barTotal = document.getElementById("cartBarTotal") || barElement.querySelector('#cartBarTotal');
+            if (barTotal) barTotal.textContent = `₹${subtotal.toFixed(2)}`;
+
+            const cartUrl = getStoreCartUrl();
+            barElement.setAttribute("href", cartUrl);
+            barElement.onclick = function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                window.location.href = cartUrl;
+            };
+
+            if (totalCount > 0) {
+                barElement.style.cssText = "display: flex !important; opacity: 1 !important; visibility: visible !important; pointer-events: auto !important;";
+            } else {
+                barElement.style.cssText = "display: none !important;";
+            }
         }
     }
 
@@ -724,23 +829,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function initStickyCartBar() {
-        const cartUrl = getStoreCartUrl();
-        const cartBars = document.querySelectorAll(".sticky-cart-bar, #stickyCartBar");
-        const isCartPage = window.location.pathname.endsWith('/cart.html') || window.location.pathname.endsWith('/cart');
-
-        cartBars.forEach(bar => {
-            if (isCartPage) {
-                bar.style.display = "none";
-                return;
-            }
-            bar.setAttribute("href", cartUrl);
-            bar.style.cursor = "pointer";
-            bar.onclick = function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                window.location.href = cartUrl;
-            };
-        });
+        updateCartCountBadge();
     }
 
     // Auto-update badges & sticky bar on page load, history navigation, and cross-tab storage changes
