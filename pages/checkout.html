@@ -1658,12 +1658,17 @@
         }
 
         function getActiveCartItems() {
-            let items = window.CART_ITEMS || [];
-            if (!items || items.length === 0) {
+            let items = window.CART_ITEMS;
+            if (!items || !Array.isArray(items)) {
                 try {
-                    items = JSON.parse(localStorage.getItem("arshith_cart")) || [];
+                    const saved = localStorage.getItem("arshith_cart");
+                    if (saved !== null) {
+                        items = JSON.parse(saved) || [];
+                    }
                 } catch(e) {}
             }
+            if (!items) items = [];
+
             if (typeof consolidateCartItems === 'function') {
                 items = consolidateCartItems(items);
             } else if (Array.isArray(items) && items.length > 0) {
@@ -1683,8 +1688,8 @@
                 items = Array.from(map.values());
             }
 
-            if (items.length === 0) {
-                return [
+            if (!localStorage.getItem("arshith_cart") && items.length === 0) {
+                items = [
                     {
                         product: "664c12345678901234567890",
                         title: "Ajwain (Premium Quality)",
@@ -1698,6 +1703,48 @@
                 ];
             }
             return items;
+        }
+
+        function removeCheckoutItem(index) {
+            let items = getActiveCartItems();
+            if (index >= 0 && index < items.length) {
+                const removedItem = items[index];
+                items.splice(index, 1);
+                window.CART_ITEMS = items;
+                try {
+                    localStorage.setItem("arshith_cart", JSON.stringify(items));
+                } catch(e) {}
+                if (typeof updateCartCountBadge === 'function') updateCartCountBadge();
+                if (typeof showToast === 'function') {
+                    showToast(`Removed "${removedItem.title || removedItem.name || 'Product'}" from order.`);
+                }
+                renderCheckoutPage();
+                if (typeof renderClassicAddons === 'function') renderClassicAddons();
+                if (typeof renderAvailableCoupons === 'function') renderAvailableCoupons();
+            }
+        }
+
+        function updateCheckoutItemQty(index, delta) {
+            let items = getActiveCartItems();
+            if (index >= 0 && index < items.length) {
+                const item = items[index];
+                const currentQty = Number(item.quantity || item.qty || 1);
+                const newQty = currentQty + delta;
+                if (newQty <= 0) {
+                    removeCheckoutItem(index);
+                } else {
+                    item.quantity = newQty;
+                    item.qty = newQty;
+                    window.CART_ITEMS = items;
+                    try {
+                        localStorage.setItem("arshith_cart", JSON.stringify(items));
+                    } catch(e) {}
+                    if (typeof updateCartCountBadge === 'function') updateCartCountBadge();
+                    renderCheckoutPage();
+                    if (typeof renderClassicAddons === 'function') renderClassicAddons();
+                    if (typeof renderAvailableCoupons === 'function') renderAvailableCoupons();
+                }
+            }
         }
 
         let isRedeemCoinsChecked = false;
@@ -1776,25 +1823,69 @@
                 if (coinsDiscountRowEl) coinsDiscountRowEl.style.display = 'none';
             }
 
+            const deliveryCharge = (subtotal > 0 && subtotal < 500) ? 49 : 0;
             const itemSavings = Math.max(0, itemsOriginalMRP - subtotal);
-            const finalTotal = Math.max(0, subtotal - appliedDiscount - redeemedCoinsDiscount + selectedDonationAmount);
+            const finalTotal = Math.max(0, subtotal - appliedDiscount - redeemedCoinsDiscount + deliveryCharge + selectedDonationAmount);
             const totalSavings = itemSavings + appliedDiscount + redeemedCoinsDiscount;
 
-            summaryList.innerHTML = items.map(item => `
-                <div class="summary-item-row">
-                    <div class="summary-item-left">
-                        <div class="summary-img-wrap">
-                            <img src="${item.image || 'https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/spice_200x200_crop_center.png?v=1746963495'}" alt="${item.title || item.name}" class="summary-img" onerror="this.onerror=null; this.src='https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/spice_200x200_crop_center.png?v=1746963495';">
-                            <span class="summary-qty-badge">${item.quantity || item.qty || 1}</span>
+            const shippingEl = document.getElementById('checkoutShipping');
+            const shippingCrossedEl = document.querySelector('.bill-mrp-crossed');
+            if (shippingEl) {
+                if (deliveryCharge > 0) {
+                    shippingEl.textContent = `₹${deliveryCharge}`;
+                    shippingEl.style.color = "#111827";
+                    if (shippingCrossedEl) shippingCrossedEl.style.display = "none";
+                } else {
+                    shippingEl.textContent = "FREE";
+                    shippingEl.style.color = "#0f7139";
+                    if (shippingCrossedEl) {
+                        shippingCrossedEl.textContent = "₹49";
+                        shippingCrossedEl.style.display = subtotal >= 500 ? "inline" : "none";
+                    }
+                }
+            }
+
+            if (items.length === 0) {
+                summaryList.innerHTML = `
+                    <div style="text-align: center; padding: 24px 16px; background: #ffffff; border-radius: 12px; border: 1px dashed #cbd5e1; margin-bottom: 20px;">
+                        <div style="font-size: 32px; margin-bottom: 8px;">🛒</div>
+                        <h4 style="font-size: 15px; font-weight: 600; color: #1e293b; margin: 0 0 6px 0;">Your cart is empty</h4>
+                        <p style="font-size: 12.5px; color: #64748b; margin: 0 0 14px 0;">Add items from our collection to complete your order.</p>
+                        <a href="collections.html?category=all" style="display: inline-block; padding: 8px 18px; background: #0f7139; color: #ffffff; text-decoration: none; border-radius: 6px; font-size: 13px; font-weight: 600;">Browse Products</a>
+                    </div>
+                `;
+            } else {
+                summaryList.innerHTML = items.map((item, index) => `
+                    <div class="summary-item-row">
+                        <div class="summary-item-left">
+                            <div class="summary-img-wrap">
+                                <img src="${item.image || 'https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/spice_200x200_crop_center.png?v=1746963495'}" alt="${item.title || item.name}" class="summary-img" onerror="this.onerror=null; this.src='https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/spice_200x200_crop_center.png?v=1746963495';">
+                                <span class="summary-qty-badge">${item.quantity || item.qty || 1}</span>
+                            </div>
+                            <div>
+                                <h4 class="summary-item-title">${item.title || item.name}</h4>
+                                <p class="summary-item-weight">${item.weight || item.unit || 'Standard'}</p>
+                                <div class="summary-qty-controls">
+                                    <button type="button" class="summary-qty-btn" onclick="updateCheckoutItemQty(${index}, -1)" title="Decrease quantity">&minus;</button>
+                                    <span class="summary-qty-num">${item.quantity || item.qty || 1}</span>
+                                    <button type="button" class="summary-qty-btn" onclick="updateCheckoutItemQty(${index}, 1)" title="Increase quantity">+</button>
+                                </div>
+                            </div>
                         </div>
-                        <div>
-                            <h4 class="summary-item-title">${item.title || item.name}</h4>
-                            <p class="summary-item-weight">${item.weight || item.unit || 'Standard'}</p>
+                        <div class="summary-item-right">
+                            <div class="summary-item-price">₹${((item.price || 0) * (item.quantity || item.qty || 1)).toFixed(0)}</div>
+                            <button type="button" class="summary-remove-btn" onclick="removeCheckoutItem(${index})" title="Remove item" aria-label="Remove product">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="3 6 5 6 21 6"></polyline>
+                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                    <line x1="10" y1="11" x2="10" y2="17"></line>
+                                    <line x1="14" y1="11" x2="14" y2="17"></line>
+                                </svg>
+                            </button>
                         </div>
                     </div>
-                    <div class="summary-item-price">₹${((item.price || 0) * (item.quantity || item.qty || 1)).toFixed(0)}</div>
-                </div>
-            `).join("");
+                `).join("");
+            }
 
             subtotalEl.textContent = `₹${Math.round(subtotal)}`;
 
@@ -2030,7 +2121,10 @@
 
             const items = getActiveCartItems();
             const subtotal = items.reduce((sum, item) => sum + ((item.price || 0) * (item.quantity || item.qty || 1)), 0);
-            const finalTotal = Math.max(0, subtotal - appliedDiscount + selectedDonationAmount);
+            const deliveryCharge = (subtotal > 0 && subtotal < 500) ? 49 : 0;
+            let userCoinsBalance = parseInt(localStorage.getItem('arshith_user_coins') || '0', 10);
+            let redeemedCoinsDiscount = (typeof isRedeemCoinsChecked !== 'undefined' && isRedeemCoinsChecked && userCoinsBalance > 0) ? Math.min(userCoinsBalance, Math.max(0, subtotal - appliedDiscount)) : 0;
+            const finalTotal = Math.max(0, subtotal - appliedDiscount - redeemedCoinsDiscount + deliveryCharge + selectedDonationAmount);
 
             // Format & consolidate items for Backend Order Model
             const itemMap = new Map();
@@ -2102,7 +2196,7 @@
                             itemsPrice: subtotal,
                             discountPrice: appliedDiscount,
                             couponCode: appliedCouponCode,
-                            shippingPrice: 0,
+                            shippingPrice: deliveryCharge,
                             totalPrice: finalTotal
                         })
                     });
@@ -2143,7 +2237,7 @@
                         itemsPrice: subtotal,
                         discountPrice: appliedDiscount,
                         couponCode: appliedCouponCode,
-                        shippingPrice: 0,
+                        shippingPrice: deliveryCharge,
                         totalPrice: finalTotal
                     })
                 });
