@@ -2844,10 +2844,12 @@
                                 badge: badge
                             };
                         });
+                        renderClassicAddons();
                     }
                 }
             } catch (e) {
                 console.warn("Using default database addons list:", e);
+                renderClassicAddons();
             }
         }
 
@@ -2893,38 +2895,48 @@
 
         function renderClassicAddons() {
             const container = document.getElementById("checkoutAddonsList");
+            const box = document.getElementById("checkoutAddonsContainer");
             if (!container) return;
 
             const cartItems = getActiveCartItems();
             const subtotal = cartItems.reduce((sum, item) => sum + ((item.price || 0) * (item.quantity || item.qty || 1)), 0);
 
-            // Dynamic add-ons filtering by cart subtotal:
-            // Subtotal >= ₹1000 -> Show ₹300 - ₹600 products (and premium range)
-            // Subtotal ₹300 - ₹999 (e.g. ₹500) -> Show ₹100 - ₹300 products
-            // Subtotal < ₹300 -> Show budget add-on products (under ₹100)
+            let availableAddons = (CLASSIC_ADDONS || []).filter(addon => {
+                return !cartItems.some(item => 
+                    String(item.id || item._id || '').trim() === String(addon.product || addon.id).trim() ||
+                    String(item.title || item.name || '').trim().toLowerCase() === String(addon.title || '').trim().toLowerCase()
+                );
+            });
+
+            if (availableAddons.length < 3) {
+                availableAddons = CLASSIC_ADDONS || [];
+            }
+
             let filteredAddons = [];
             if (subtotal >= 1000) {
-                filteredAddons = CLASSIC_ADDONS.filter(a => a.price >= 300 && a.price <= 600);
-                if (filteredAddons.length < 3) {
-                    filteredAddons = CLASSIC_ADDONS.filter(a => a.price >= 200 && a.price <= 650);
-                }
+                filteredAddons = availableAddons.filter(a => Number(a.price || 0) >= 150);
             } else if (subtotal >= 300) {
-                filteredAddons = CLASSIC_ADDONS.filter(a => a.price >= 100 && a.price <= 300);
-                if (filteredAddons.length < 3) {
-                    filteredAddons = CLASSIC_ADDONS.filter(a => a.price >= 70 && a.price <= 300);
-                }
+                filteredAddons = availableAddons.filter(a => Number(a.price || 0) >= 49 && Number(a.price || 0) <= 350);
             } else {
-                filteredAddons = CLASSIC_ADDONS.filter(a => a.price <= 100);
+                filteredAddons = availableAddons.filter(a => Number(a.price || 0) <= 150);
+            }
+
+            if (!filteredAddons || filteredAddons.length < 3) {
+                filteredAddons = availableAddons;
             }
 
             if (!filteredAddons || filteredAddons.length === 0) {
-                filteredAddons = CLASSIC_ADDONS;
+                if (box) box.style.display = "none";
+                container.innerHTML = "";
+                return;
             }
+
+            if (box) box.style.display = "block";
 
             container.innerHTML = filteredAddons.map(addon => {
                 const isAdded = cartItems.some(item => 
                     String(item.id || item._id || '').trim() === String(addon.product || addon.id).trim() ||
-                    String(item.title || item.name || '').trim().toLowerCase() === addon.title.toLowerCase() ||
+                    String(item.title || item.name || '').trim().toLowerCase() === String(addon.title || '').trim().toLowerCase() ||
                     (item.addonId && String(item.addonId) === String(addon.id))
                 );
 
@@ -2945,7 +2957,7 @@
                         </div>
                         <div class="addon-card-body">
                             <h5 class="addon-info-title">${addon.title}</h5>
-                            <div class="addon-info-meta">${addon.weight} ${addon.rating ? '• ' + addon.rating : ''}</div>
+                            <div class="addon-info-meta">${addon.weight || 'Standard'} ${addon.rating ? '• ' + addon.rating : ''}</div>
                             <div class="addon-price-row">
                                 <span class="addon-curr-price">₹${addon.price}</span>
                                 ${addon.originalPrice ? `<span class="addon-orig-price">₹${addon.originalPrice}</span>` : ''}
@@ -2958,13 +2970,13 @@
         }
 
         function toggleAddonItem(addonId) {
-            const addon = CLASSIC_ADDONS.find(a => String(a.id) === String(addonId) || String(a.product) === String(addonId));
+            const addon = (CLASSIC_ADDONS || []).find(a => String(a.id) === String(addonId) || String(a.product) === String(addonId));
             if (!addon) return;
 
             let items = getActiveCartItems();
             const itemIndex = items.findIndex(item => 
                 String(item.id || item._id || '').trim() === String(addon.product || addon.id).trim() ||
-                String(item.title || item.name || '').trim().toLowerCase() === addon.title.toLowerCase() ||
+                String(item.title || item.name || '').trim().toLowerCase() === String(addon.title || '').trim().toLowerCase() ||
                 (item.addonId && String(item.addonId) === String(addonId))
             );
 
@@ -3021,15 +3033,15 @@
             }
         }
 
-        document.addEventListener("DOMContentLoaded", async () => {
+        document.addEventListener("DOMContentLoaded", () => {
             renderCheckoutPage();
-            await checkPendingRazorpayOrder();
-            await fetchLiveAddonsFromDB();
             renderClassicAddons();
             renderAvailableCoupons();
             setupAddonsCarouselInteractions();
+            
+            checkPendingRazorpayOrder().catch(err => console.warn(err));
+            fetchLiveAddonsFromDB().catch(err => console.warn(err));
         });
-    </script>
 </body>
 
 </html>
