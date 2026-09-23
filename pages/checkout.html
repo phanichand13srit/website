@@ -2853,8 +2853,19 @@
             if (!container) return;
 
             const cartItems = getActiveCartItems();
+            const subtotal = cartItems.reduce((sum, item) => sum + ((item.price || 0) * (item.quantity || item.qty || 1)), 0);
 
-            container.innerHTML = CLASSIC_ADDONS.map(addon => {
+            // Dynamic add-ons sorting:
+            // - If cart subtotal > ₹1,000: Show highest price products first (descending)
+            // - If cart subtotal <= ₹1,000: Show lowest-to-medium price products first (ascending)
+            let sortedAddons = [...CLASSIC_ADDONS];
+            if (subtotal > 1000) {
+                sortedAddons.sort((a, b) => Number(b.price || 0) - Number(a.price || 0));
+            } else {
+                sortedAddons.sort((a, b) => Number(a.price || 0) - Number(b.price || 0));
+            }
+
+            container.innerHTML = sortedAddons.map(addon => {
                 const isAdded = cartItems.some(item => 
                     String(item.id || item._id || '').trim() === String(addon.product || addon.id).trim() ||
                     String(item.title || item.name || '').trim().toLowerCase() === addon.title.toLowerCase() ||
