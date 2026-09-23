@@ -427,76 +427,73 @@
             text-transform: uppercase !important;
         }
 
-        .addons-nav-arrows {
-            display: flex !important;
-            align-items: center !important;
-            gap: 6px !important;
-        }
-
-        .addon-nav-arrow {
-            width: 28px !important;
-            height: 28px !important;
-            border-radius: 50% !important;
-            background: #ffffff !important;
-            border: 1.5px solid #0f7139 !important;
-            color: #0f7139 !important;
-            font-size: 16px !important;
-            font-weight: 800 !important;
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            cursor: pointer !important;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
-            line-height: 1 !important;
-            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06) !important;
-            padding: 0 !important;
-        }
-
-        .addon-nav-arrow:hover {
-            background: #0f7139 !important;
-            color: #ffffff !important;
-            transform: scale(1.08) !important;
-            box-shadow: 0 3px 8px rgba(15, 113, 57, 0.25) !important;
-        }
-
-        .addon-nav-arrow:active {
-            transform: scale(0.95) !important;
-        }
-
         .addons-carousel-wrapper {
             position: relative !important;
             width: 100% !important;
-            box-sizing: border-box !important;
             overflow: hidden !important;
         }
 
         .addons-list {
             display: flex !important;
             flex-direction: row !important;
-            gap: 10px !important;
+            align-items: stretch !important;
+            gap: 12px !important;
             overflow-x: auto !important;
+            overflow-y: hidden !important;
             scroll-snap-type: x mandatory !important;
             scroll-behavior: smooth !important;
-            padding: 4px 2px 8px 2px !important;
-            scrollbar-width: thin !important;
             -webkit-overflow-scrolling: touch !important;
+            padding: 4px 2px 8px 2px !important;
             width: 100% !important;
             box-sizing: border-box !important;
-            cursor: grab !important;
-            user-select: none !important;
-        }
-
-        .addons-list:active {
-            cursor: grabbing !important;
         }
 
         .addons-list::-webkit-scrollbar {
-            height: 4px !important;
+            display: none !important;
+            height: 0px !important;
+            width: 0px !important;
         }
 
-        .addons-list::-webkit-scrollbar-thumb {
-            background: #cbd5e1 !important;
-            border-radius: 4px !important;
+        .addons-scroll-track-row {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: flex-start !important;
+            gap: 6px !important;
+            margin-top: 10px !important;
+            padding: 0 4px !important;
+        }
+
+        .addons-track-arrow {
+            background: transparent !important;
+            border: none !important;
+            color: #94a3b8 !important;
+            font-size: 10px !important;
+            cursor: pointer !important;
+            padding: 0 2px !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            line-height: 1 !important;
+        }
+
+        .addons-track-bar {
+            width: 76px !important;
+            height: 7px !important;
+            background: #e2e8f0 !important;
+            border-radius: 10px !important;
+            position: relative !important;
+            overflow: hidden !important;
+        }
+
+        .addons-track-thumb {
+            position: absolute !important;
+            top: 0 !important;
+            height: 100% !important;
+            background: #8e9b90 !important;
+            border-radius: 10px !important;
+            transition: left 0.1s linear, width 0.1s ease !important;
+            width: 36px !important;
+            left: 0px !important;
         }
 
         .addon-item-card {
@@ -1373,16 +1370,20 @@
                 <div class="checkout-addons-header">
                     <div class="checkout-addons-title">
                         <span>✨ Complete Your Order</span>
-                        <span class="checkout-addons-badge">Add-ons</span>
-                    </div>
-                    <div class="addons-nav-arrows">
-                        <button type="button" class="addon-nav-arrow" onclick="scrollAddonsList(-1)" title="Previous items" aria-label="Previous items">‹</button>
-                        <button type="button" class="addon-nav-arrow" onclick="scrollAddonsList(1)" title="Next items" aria-label="Next items">›</button>
+                        <span class="checkout-addons-badge">ADD-ONS</span>
                     </div>
                 </div>
                 
                 <div class="addons-carousel-wrapper">
                     <div id="checkoutAddonsList" class="addons-list"></div>
+                </div>
+
+                <div class="addons-scroll-track-row">
+                    <button type="button" class="addons-track-arrow" onclick="scrollAddonsList(-1)" title="Scroll left" aria-label="Scroll left">◄</button>
+                    <div class="addons-track-bar">
+                        <div id="addonsScrollThumb" class="addons-track-thumb"></div>
+                    </div>
+                    <button type="button" class="addons-track-arrow" onclick="scrollAddonsList(1)" title="Scroll right" aria-label="Scroll right">►</button>
                 </div>
             </div>
 
@@ -1745,7 +1746,6 @@
             renderClassicAddons();
             renderAvailableCoupons();
         }
-        }
 
         let isRedeemCoinsChecked = false;
 
@@ -1845,7 +1845,6 @@
                 if (coinsDiscountRowEl) coinsDiscountRowEl.style.display = 'none';
             }
 
-            const deliveryCharge = (subtotal > 0 && subtotal < 500) ? 49 : 0;
             const itemSavings = Math.max(0, itemsOriginalMRP - subtotal);
             const finalTotal = Math.max(0, subtotal - appliedDiscount - redeemedCoinsDiscount + deliveryCharge + selectedDonationAmount);
             const totalSavings = itemSavings + appliedDiscount + redeemedCoinsDiscount;
@@ -1894,7 +1893,6 @@
                         </div>
                     `;
                 }).join("");
-            }
             }
 
             subtotalEl.textContent = `₹${Math.round(subtotal)}`;
@@ -2671,6 +2669,39 @@
         // REAL DATABASE PRODUCTS FOR CHECKOUT ADD-ONS
         let CLASSIC_ADDONS = [
             {
+                id: "6aa672a89eac14d5a49387f1_almonds",
+                product: "6aa672a89eac14d5a49387f1",
+                title: "Almonds (Badam) (Premium Quality)",
+                weight: "250 g",
+                rating: "4.9 ★",
+                price: 225,
+                originalPrice: 295,
+                image: "https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/dryfruits_200x200_crop_center.png?v=1746965740",
+                badge: "Bestseller"
+            },
+            {
+                id: "6aa672a89eac14d5a49387f2_figs",
+                product: "6aa672a89eac14d5a49387f2",
+                title: "Figs (Dry Anjeer) (Premium Quality)",
+                weight: "250 g",
+                rating: "4.92 ★",
+                price: 375,
+                originalPrice: 480,
+                image: "https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/dryfruits_200x200_crop_center.png?v=1746965740",
+                badge: "Premium"
+            },
+            {
+                id: "6aa672a89eac14d5a49387f3_walnuts",
+                product: "6aa672a89eac14d5a49387f3",
+                title: "Walnuts (Akhrot) (Premium Quality)",
+                weight: "250 g",
+                rating: "4.9 ★",
+                price: 320,
+                originalPrice: 420,
+                image: "https://cdn.shopify.com/s/files/1/0858/0772/6869/collections/dryfruits_200x200_crop_center.png?v=1746965740",
+                badge: "Superfood"
+            },
+            {
                 id: "6aa672a89eac14d5a49387f7",
                 product: "6aa672a89eac14d5a49387f7",
                 title: "Pure Buffalo Ghee (Premium Quality)",
@@ -2860,9 +2891,43 @@
             }
         }
 
+        function updateAddonsScrollProgress() {
+            const list = document.getElementById("checkoutAddonsList");
+            const thumb = document.getElementById("addonsScrollThumb");
+            if (!list || !thumb) return;
+
+            const maxScroll = list.scrollWidth - list.clientWidth;
+            if (maxScroll <= 0) {
+                thumb.style.width = "100%";
+                thumb.style.left = "0px";
+                return;
+            }
+
+            const currentScroll = list.scrollLeft;
+            const ratio = Math.min(1, Math.max(0, currentScroll / maxScroll));
+            const trackWidth = 76; // track width in px
+            const thumbWidth = 36; // thumb width in px
+            const maxLeft = trackWidth - thumbWidth;
+            const leftPx = Math.round(ratio * maxLeft);
+
+            thumb.style.width = `${thumbWidth}px`;
+            thumb.style.left = `${leftPx}px`;
+        }
+
+        function scrollAddonsList(direction) {
+            const list = document.getElementById("checkoutAddonsList");
+            if (list) {
+                list.scrollBy({ left: direction * 165, behavior: 'smooth' });
+                setTimeout(updateAddonsScrollProgress, 120);
+                setTimeout(updateAddonsScrollProgress, 300);
+            }
+        }
+
         function setupAddonsCarouselInteractions() {
             const list = document.getElementById("checkoutAddonsList");
             if (!list) return;
+
+            list.addEventListener('scroll', updateAddonsScrollProgress, { passive: true });
 
             let isDown = false;
             let startX, scrollLeft;
@@ -2890,7 +2955,10 @@
                 const x = e.pageX - list.offsetLeft;
                 const walk = (x - startX) * 1.5;
                 list.scrollLeft = scrollLeft - walk;
+                updateAddonsScrollProgress();
             });
+
+            updateAddonsScrollProgress();
         }
 
         function renderClassicAddons() {
@@ -2898,40 +2966,111 @@
             const box = document.getElementById("checkoutAddonsContainer");
             if (!container) return;
 
+            if (box) box.style.display = "block";
+
             const cartItems = getActiveCartItems();
             const subtotal = cartItems.reduce((sum, item) => sum + ((item.price || 0) * (item.quantity || item.qty || 1)), 0);
 
-            let availableAddons = (CLASSIC_ADDONS || []).filter(addon => {
-                return !cartItems.some(item => 
-                    String(item.id || item._id || '').trim() === String(addon.product || addon.id).trim() ||
-                    String(item.title || item.name || '').trim().toLowerCase() === String(addon.title || '').trim().toLowerCase()
-                );
+            // Default affordable impulse catalog items under ₹100
+            const defaultBudgetItems = [
+                {
+                    id: "6aa672a89eac14d5a49387f9_flax",
+                    product: "6aa672a89eac14d5a49387f9",
+                    title: "Flax Seeds (Premium Quality)",
+                    weight: "100 g",
+                    rating: "4.9 ★",
+                    price: 39,
+                    originalPrice: 55,
+                    image: "https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-07-08_at_4.04.02_PM_2_ce2dcb8e-81dc-46c5-b343-1a14dff25208.jpg?v=1757334052&width=533",
+                    badge: "29% OFF"
+                },
+                {
+                    id: "6aa672a89eac14d5a49387fa_chia",
+                    product: "6aa672a89eac14d5a49387fa",
+                    title: "Chia Seeds (Premium Quality)",
+                    weight: "100 g",
+                    rating: "4.9 ★",
+                    price: 59,
+                    originalPrice: 85,
+                    image: "https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-07-08_at_4.04.01_PM_6b2e5750-03f7-4a0a-b4e3-9ef639891875.jpg?v=1757333987&width=533",
+                    badge: "30% OFF"
+                },
+                {
+                    id: "6aa672a89eac14d5a49387fb_pod",
+                    product: "6aa672a89eac14d5a49387fb",
+                    title: "Chana Dal Spice Powder (Pappula Podi)",
+                    weight: "100 g",
+                    rating: "5.0 ★",
+                    price: 59,
+                    originalPrice: 79,
+                    image: "https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-07-08_at_4.19.01_PM_2_717030b8-c8a8-40a4-bdf0-7e516dec3029.jpg?v=1757334045&width=533",
+                    badge: "25% OFF"
+                },
+                {
+                    id: "6aa672a89eac14d5a49387fc_garlic",
+                    product: "6aa672a89eac14d5a49387fc",
+                    title: "Garlic Powder (Velluli Karam)",
+                    weight: "100 g",
+                    rating: "4.97 ★",
+                    price: 59,
+                    originalPrice: 79,
+                    image: "https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-07-08_at_4.19.01_PM_3_6262e177-7c59-4137-afc4-5d486daa9175.jpg?v=1757334046&width=533",
+                    badge: "25% OFF"
+                },
+                {
+                    id: "6aa672a89eac14d5a49387f8_sunflower",
+                    product: "6aa672a89eac14d5a49387f8",
+                    title: "Sunflower Seeds (Premium Quality)",
+                    weight: "100 g",
+                    rating: "4.9 ★",
+                    price: 69,
+                    originalPrice: 80,
+                    image: "https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-07-08_at_4.04.03_PM_1_6a153ddd-2028-47c7-8388-3b9f9c660240.jpg?v=1757333989&width=533",
+                    badge: "14% OFF"
+                },
+                {
+                    id: "6aa672a89eac14d5a49387fb_cinnamon",
+                    product: "6aa672a89eac14d5a49387fb",
+                    title: "Cinnamon (Premium Quality)",
+                    weight: "100 g",
+                    rating: "4.88 ★",
+                    price: 99,
+                    originalPrice: 110,
+                    image: "https://cdn.shopify.com/s/files/1/0858/0772/6869/files/WhatsApp_Image_2025-07-08_at_4.04.01_PM_6b2e5750-03f7-4a0a-b4e3-9ef639891875.jpg?v=1757333987&width=533",
+                    badge: "10% OFF"
+                }
+            ];
+
+            let pool = (CLASSIC_ADDONS && CLASSIC_ADDONS.length > 0) ? [...CLASSIC_ADDONS] : [...defaultBudgetItems];
+            
+            // Merge default budget items into pool if missing
+            defaultBudgetItems.forEach(b => {
+                if (!pool.some(item => String(item.id || item._id) === String(b.id) || (item.title && item.title.toLowerCase() === b.title.toLowerCase()))) {
+                    pool.push(b);
+                }
             });
 
-            if (availableAddons.length < 3) {
-                availableAddons = CLASSIC_ADDONS || [];
-            }
-
+            // Strict Price Matching according to cart subtotal:
+            // 1. Bill < ₹350 (e.g. ₹286): ONLY show affordable impulse items (price <= ₹120).
+            // 2. Bill ₹350 – ₹699: Show items price <= ₹250.
+            // 3. Bill ₹700 – ₹999: Show items price <= ₹400.
+            // 4. Bill >= ₹1000: Show premium items (₹200 to ₹650) first.
             let filteredAddons = [];
-            if (subtotal >= 1000) {
-                filteredAddons = availableAddons.filter(a => Number(a.price || 0) >= 150);
-            } else if (subtotal >= 300) {
-                filteredAddons = availableAddons.filter(a => Number(a.price || 0) >= 49 && Number(a.price || 0) <= 350);
+            if (subtotal < 350) {
+                filteredAddons = pool.filter(a => Number(a.price) <= 120);
+                if (filteredAddons.length === 0) filteredAddons = defaultBudgetItems;
+            } else if (subtotal < 700) {
+                filteredAddons = pool.filter(a => Number(a.price) <= 250);
+                if (filteredAddons.length === 0) filteredAddons = pool.filter(a => Number(a.price) <= 350);
+            } else if (subtotal < 1000) {
+                const mid = pool.filter(a => Number(a.price) >= 100 && Number(a.price) <= 400);
+                const rest = pool.filter(a => Number(a.price) < 100 || Number(a.price) > 400);
+                filteredAddons = [...mid, ...rest];
             } else {
-                filteredAddons = availableAddons.filter(a => Number(a.price || 0) <= 150);
+                const high = pool.filter(a => Number(a.price) >= 200 && Number(a.price) <= 650);
+                const rest = pool.filter(a => Number(a.price) < 200 || Number(a.price) > 650);
+                filteredAddons = [...high, ...rest];
             }
-
-            if (!filteredAddons || filteredAddons.length < 3) {
-                filteredAddons = availableAddons;
-            }
-
-            if (!filteredAddons || filteredAddons.length === 0) {
-                if (box) box.style.display = "none";
-                container.innerHTML = "";
-                return;
-            }
-
-            if (box) box.style.display = "block";
 
             container.innerHTML = filteredAddons.map(addon => {
                 const isAdded = cartItems.some(item => 
@@ -2967,6 +3106,8 @@
                     </div>
                 `;
             }).join("");
+
+            setTimeout(updateAddonsScrollProgress, 50);
         }
 
         function toggleAddonItem(addonId) {
@@ -3042,6 +3183,7 @@
             checkPendingRazorpayOrder().catch(err => console.warn(err));
             fetchLiveAddonsFromDB().catch(err => console.warn(err));
         });
+    </script>
 </body>
 
 </html>
