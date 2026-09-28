@@ -13,7 +13,7 @@ const defaultBannerData = {
   couponCode: 'FESTIVE40',
   buttonText: 'SHOP NOW',
   buttonLink: 'pages/collections.html?category=all',
-  image: 'assets/images/festive-hamper-banner.jpg',
+  image: 'assets/images/festive-dussehra-banner.jpg',
   bannerType: 'homepage_festive',
   isActive: true,
   showPopupModal: true,

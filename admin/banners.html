@@ -677,7 +677,7 @@
             </div>
           </div>
           <div class="live-img-frame">
-            <img id="prevHamperImg" src="../assets/images/festive-hamper-banner.jpg" alt="Active Banner Image">
+            <img id="prevHamperImg" src="../assets/images/festive-dussehra-banner.jpg" alt="Active Banner Image">
           </div>
         </div>
       </div>
@@ -771,11 +771,11 @@
 
             <div style="display:flex; align-items:center; gap:8px; margin-top:10px;">
               <span style="font-size:12px; color:#64748b; font-weight:600;">OR Image URL:</span>
-              <input type="text" id="bannerImageUrlInput" class="form-control" placeholder="assets/images/festive-hamper-banner.jpg or https://..." oninput="updateImagePreview(this.value)">
+              <input type="text" id="bannerImageUrlInput" class="form-control" placeholder="assets/images/festive-dussehra-banner.jpg or https://..." oninput="updateImagePreview(this.value)">
             </div>
 
             <div class="image-preview-box" id="formImgPreviewBox">
-              <img id="formImgPreview" src="../assets/images/festive-hamper-banner.jpg" alt="Preview">
+              <img id="formImgPreview" src="../assets/images/festive-dussehra-banner.jpg" alt="Preview">
               <div>
                 <div style="font-size:12.5px; font-weight:600; color:#1e293b;" id="formImgName">Current Image</div>
                 <div style="font-size:11px; color:#64748b;">Will be displayed in banner showcase & blink-up modal</div>
@@ -914,7 +914,7 @@
       }
 
       tbody.innerHTML = allBanners.map(b => {
-        const imgSrc = b.image && b.image.startsWith('http') ? b.image : `../${b.image || 'assets/images/festive-hamper-banner.jpg'}`;
+        const imgSrc = b.image && b.image.startsWith('http') ? b.image : `../${b.image || 'assets/images/festive-dussehra-banner.jpg'}`;
         return `
           <tr>
             <td>
@@ -971,7 +971,7 @@
       document.getElementById('prevDiscountText').textContent = activeBanner.discountText || 'UP TO 40% OFF';
       document.getElementById('prevCodeText').textContent = activeBanner.couponCode || 'FESTIVE40';
 
-      const imgSrc = activeBanner.image && activeBanner.image.startsWith('http') ? activeBanner.image : `../${activeBanner.image || 'assets/images/festive-hamper-banner.jpg'}`;
+      const imgSrc = activeBanner.image && activeBanner.image.startsWith('http') ? activeBanner.image : `../${activeBanner.image || 'assets/images/festive-dussehra-banner.jpg'}`;
       document.getElementById('prevHamperImg').src = imgSrc;
     }
 
@@ -1028,7 +1028,7 @@
         document.getElementById('bannerSubtitleInput').value = 'Celebrate More. Save More. Shop Your Favorites.';
         document.getElementById('bannerDiscountInput').value = 'UP TO 40% OFF';
         document.getElementById('bannerCodeInput').value = 'FESTIVE40';
-        document.getElementById('bannerImageUrlInput').value = 'assets/images/festive-hamper-banner.jpg';
+        document.getElementById('bannerImageUrlInput').value = 'assets/images/festive-dussehra-banner.jpg';
         document.getElementById('bannerActiveSwitch').checked = true;
         document.getElementById('bannerPopupSwitch').checked = true;
 
@@ -1047,7 +1047,7 @@
         document.getElementById('deal3Sub').value = 'A2 Bilona Ghee + Wood-Pressed Oils Hamper';
         document.getElementById('deal3Link').value = 'pages/collections.html?category=all';
 
-        updateImagePreview('assets/images/festive-hamper-banner.jpg');
+        updateImagePreview('assets/images/festive-dussehra-banner.jpg');
       }
 
       modal.classList.add('active');
@@ -1060,7 +1060,7 @@
     function updateImagePreview(val) {
       const img = document.getElementById('formImgPreview');
       if (!val) {
-        img.src = '../assets/images/festive-hamper-banner.jpg';
+        img.src = '../assets/images/festive-dussehra-banner.jpg';
         return;
       }
       const fullSrc = val.startsWith('http') || val.startsWith('data:') ? val : `../${val}`;

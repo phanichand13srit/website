@@ -41,7 +41,7 @@ const bannerSchema = new mongoose.Schema({
   image: {
     type: String,
     trim: true,
-    default: 'assets/images/festive-hamper-banner.jpg'
+    default: 'assets/images/festive-dussehra-banner.jpg'
   },
   bannerType: {
     type: String,

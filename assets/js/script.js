@@ -2150,7 +2150,7 @@ let currentActiveBannerConfig = {
     couponCode: 'FESTIVE40',
     buttonText: 'SHOP NOW',
     buttonLink: 'pages/collections.html?category=all',
-    image: 'assets/images/festive-hamper-banner.jpg',
+    image: 'assets/images/festive-dussehra-banner.jpg',
     isActive: true,
     showPopupModal: true,
     deal1Title: '20% OFF on Fresh Fruits',
@@ -2213,7 +2213,7 @@ function showFestiveOfferModal(force = false) {
     const rootPath = isDeep ? '../../' : (isSubpage ? '../' : '');
 
     const resolveImg = (img, fallback) => {
-        if (!img) return fallback || rootPath + 'assets/images/festive-hamper-banner.jpg';
+        if (!img) return fallback || rootPath + 'assets/images/festive-dussehra-banner.jpg';
         let clean = img.replace('https://arshithfresh.com/cdn/shop/', 'https://cdn.shopify.com/s/files/1/0858/0772/6869/');
         if (clean.startsWith('http') || clean.startsWith('data:')) return clean;
         return rootPath + clean.replace(/^\/+/, '');
